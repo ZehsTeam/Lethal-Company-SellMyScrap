@@ -53,7 +53,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items on the confirmation screen. |
 
 ## Screenshots
-<h4><code>sell <amount></code></h4>
+#### ```sell <amount>```
 <div>
     <img src="https://i.imgur.com/4WjGIrH.png" width="412px">
     <img src="https://i.imgur.com/ZfRkS1c.png" width="412px">
