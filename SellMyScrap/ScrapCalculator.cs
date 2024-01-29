@@ -1,137 +1,136 @@
 ﻿using System.Collections.Generic;
 
-namespace SellMyScrap
+namespace Zehs.SellMyScrap;
+
+internal class ScrapCalculator
 {
-    internal class ScrapCalculator
+    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int quota, float rate)
     {
-        public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int quota, float rate)
+        int target = (int)((float)quota / rate);
+        int progress = 0;
+        List<GrabbableObject> foundScrap = new List<GrabbableObject>();
+
+        // Get highest items
+        while (true)
         {
-            int target = (int)((float)quota / rate);
-            int progress = 0;
-            List<GrabbableObject> foundScrap = new List<GrabbableObject>();
+            GrabbableObject item = GetHighestItem(scrap, target - progress);
+            if (item == null) break;
 
-            // Get highest items
-            while (true)
+            foundScrap.Add(item);
+            scrap.Remove(item);
+            progress += item.scrapValue;
+        }
+
+        // Needs one more scrap, get lowest item
+        if (target - progress > 0)
+        {
+            GrabbableObject item = GetLowestItem(scrap);
+
+            if (item != null)
             {
-                GrabbableObject item = GetHighestItem(scrap, target - progress);
-                if (item == null) break;
-
                 foundScrap.Add(item);
                 scrap.Remove(item);
                 progress += item.scrapValue;
             }
+        }
 
-            // Needs one more scrap, get lowest item
-            if (target - progress > 0)
+        if (progress == 0 || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact quota or no scrap left
+
+        int difference = progress - target;
+        GrabbableObject replacement = null;
+        GrabbableObject previous = null;
+
+        foundScrap.ForEach(item =>
+        {
+            if (replacement != null) return;
+
+            GrabbableObject found = GetExactItem(scrap, item.scrapValue - difference);
+
+            if (found != null)
             {
-                GrabbableObject item = GetLowestItem(scrap);
-
-                if (item != null)
-                {
-                    foundScrap.Add(item);
-                    scrap.Remove(item);
-                    progress += item.scrapValue;
-                }
+                previous = item;
+                replacement = found;
             }
+        });
 
-            if (progress == 0 || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact quota or no scrap left
-
-            int difference = progress - target;
-            GrabbableObject replacement = null;
-            GrabbableObject previous = null;
-
-            foundScrap.ForEach(item =>
-            {
-                if (replacement != null) return;
-
-                GrabbableObject found = GetExactItem(scrap, item.scrapValue - difference);
-
-                if (found != null)
-                {
-                    previous = item;
-                    replacement = found;
-                }
-            });
-
-            if (replacement != null)
-            {
-                foundScrap.Add(replacement);
-                foundScrap.Remove(previous);
-                scrap.Remove(replacement);
-
-                return new ScrapToSell(foundScrap);
-            }
+        if (replacement != null)
+        {
+            foundScrap.Add(replacement);
+            foundScrap.Remove(previous);
+            scrap.Remove(replacement);
 
             return new ScrapToSell(foundScrap);
         }
 
-        public static GrabbableObject GetExactItem(List<GrabbableObject> scrap, int target)
+        return new ScrapToSell(foundScrap);
+    }
+
+    public static GrabbableObject GetExactItem(List<GrabbableObject> scrap, int target)
+    {
+        GrabbableObject selected = null;
+
+        scrap.ForEach(item =>
         {
-            GrabbableObject selected = null;
+            if (selected != null) return;
 
-            scrap.ForEach(item =>
-            {
-                if (selected != null) return;
+            if (item.scrapValue == target) selected = item;
+        });
 
-                if (item.scrapValue == target) selected = item;
-            });
+        return selected;
+    }
 
-            return selected;
-        }
+    public static GrabbableObject GetHighestItem(List<GrabbableObject> scrap, int target)
+    {
+        bool search = true;
+        GrabbableObject selected = null;
 
-        public static GrabbableObject GetHighestItem(List<GrabbableObject> scrap, int target)
+        scrap.ForEach(item =>
         {
-            bool search = true;
-            GrabbableObject selected = null;
+            if (!search) return;
 
-            scrap.ForEach(item =>
+            // First item
+            if (selected == null)
             {
-                if (!search) return;
+                if (item.scrapValue > target) return;
 
-                // First item
-                if (selected == null)
-                {
-                    if (item.scrapValue > target) return;
+                selected = item;
+                return;
+            }
 
-                    selected = item;
-                    return;
-                }
+            // Find better item
+            if (item.scrapValue > selected.scrapValue && item.scrapValue <= target)
+            {
+                selected = item;
+                return;
+            }
 
-                // Find better item
-                if (item.scrapValue > selected.scrapValue && item.scrapValue <= target)
-                {
-                    selected = item;
-                    return;
-                }
+            if (selected.scrapValue == target) search = false; // Found perfect match
+        });
 
-                if (selected.scrapValue == target) search = false; // Found perfect match
-            });
+        return selected;
+    }
 
-            return selected;
-        }
+    public static GrabbableObject GetLowestItem(List<GrabbableObject> scrap)
+    {
+        GrabbableObject selected = null;
 
-        public static GrabbableObject GetLowestItem(List<GrabbableObject> scrap)
+        scrap.ForEach(item =>
         {
-            GrabbableObject selected = null;
-
-            scrap.ForEach(item =>
+            // First item
+            if (selected == null)
             {
-                // First item
-                if (selected == null)
-                {
-                    selected = item;
-                    return;
-                }
+                selected = item;
+                return;
+            }
 
-                // Find better item
-                if (item.scrapValue < selected.scrapValue)
-                {
-                    selected = item;
-                    return;
-                }
-            });
+            // Find better item
+            if (item.scrapValue < selected.scrapValue)
+            {
+                selected = item;
+                return;
+            }
+        });
 
-            return selected;
-        }
+        return selected;
     }
 }

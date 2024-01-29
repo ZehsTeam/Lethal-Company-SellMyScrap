@@ -1,124 +1,142 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using SellMyScrap.Patches;
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
+using Zehs.SellMyScrap.Patches;
 
-namespace SellMyScrap
+namespace Zehs.SellMyScrap;
+
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+public class SellMyScrapBase : BaseUnityPlugin
 {
-    [BepInPlugin(modGUID, modName, modVersion)]
-    public class SellMyScrapBase : BaseUnityPlugin
+    private readonly Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+
+    internal static SellMyScrapBase Instance;
+    internal static ManualLogSource mls;
+    internal SyncedConfig ConfigManager;
+
+    public SellRequest sellRequest;
+    public ScrapToSell scrapToSell;
+    private string[] dontSellList;
+
+    void Awake()
     {
-        private const string modGUID = "Zehs.SellMyScrap";
-        private const string modName = "Sell My Scrap";
-        private const string modVersion = "1.1.4";
+        if (Instance == null) Instance = this;
 
-        private readonly Harmony harmony = new Harmony(modGUID);
+        mls = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
+        mls.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
-        internal static SellMyScrapBase Instance;
-        internal static ManualLogSource mls;
-        internal ConfigurationController ConfigManager;
+        harmony.PatchAll(typeof(NetworkObjectManagerPatch));
+        harmony.PatchAll(typeof(StartOfRoundPatch));
+        harmony.PatchAll(typeof(TerminalPatch));
+        harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
-        public SellRequest sellRequest;
-        public ScrapToSell scrapToSell;
-        public string[] dontSellList;
+        ConfigManager = new SyncedConfig();
+        ConfigManager.RebindConfigs(new SyncedConfigData());
+        dontSellList = Instance.ConfigManager.DontSellListJson;
 
-        void Awake()
+        NetcodePatcherAwake();
+    }
+
+    private void NetcodePatcherAwake()
+    {
+        var types = Assembly.GetExecutingAssembly().GetTypes();
+
+        foreach (var type in types)
         {
-            if (Instance == null) Instance = this;
-
-            mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
-            mls.LogInfo($"{modName} has awoken!");
-
-            harmony.PatchAll(typeof(TerminalPatch));
-
-            ConfigManager = new ConfigurationController(Config);
-            dontSellList = Instance.ConfigManager.DontSellListJson;
-        }
-
-        public ScrapToSell GetScrapToSell(int amount, GameObject ship)
-        {
-            // Get all scrap
-            if (amount == -1)
+            var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            foreach (var method in methods)
             {
-                scrapToSell = new ScrapToSell(GetScrapFromShip(ship));
-                return scrapToSell;
-            }
+                var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
 
-            // Get scrap based on amount
-            scrapToSell = ScrapCalculator.GetScrapToSell(GetScrapFromShip(ship), amount, StartOfRound.Instance.companyBuyingRate);
+                if (attributes.Length > 0)
+                {
+                    method.Invoke(null, null);
+                }
+            }
+        }
+    }
+
+    public ScrapToSell GetScrapToSell(int amount, GameObject ship)
+    {
+        // Get all scrap
+        if (amount == -1)
+        {
+            scrapToSell = new ScrapToSell(GetScrapFromShip(ship));
             return scrapToSell;
         }
 
-        public void RequestSell(int amount, GameObject ship, DepositItemsDesk depositItemsDesk)
+        // Get scrap based on amount
+        scrapToSell = ScrapCalculator.GetScrapToSell(GetScrapFromShip(ship), amount, StartOfRound.Instance.companyBuyingRate);
+        return scrapToSell;
+    }
+
+    public void RequestSell(int amount, GameObject ship, DepositItemsDesk depositItemsDesk)
+    {
+        if (scrapToSell == null|| scrapToSell.value != amount)
         {
-            if (scrapToSell == null|| scrapToSell.value != amount)
-            {
-                GetScrapToSell(amount, ship);
-            }
-
-            PerformSell(scrapToSell.scrap, depositItemsDesk);
-
-            scrapToSell = null;
+            GetScrapToSell(amount, ship);
         }
 
-        public void RequestSellAll(GameObject ship, DepositItemsDesk depositItemsDesk)
+        PerformSell(scrapToSell.scrap, depositItemsDesk);
+
+        scrapToSell = null;
+    }
+
+    public void RequestSellAll(GameObject ship, DepositItemsDesk depositItemsDesk)
+    {
+        PerformSell(GetScrapFromShip(ship), depositItemsDesk);
+    }
+
+    public List<GrabbableObject> GetScrapFromShip(GameObject ship)
+    {
+        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
+        List<GrabbableObject> scrap = new List<GrabbableObject>();
+
+        foreach (var item in itemsInShip)
         {
-            PerformSell(GetScrapFromShip(ship), depositItemsDesk);
+            if (!IsItemAllowedScrap(item)) continue;
+            scrap.Add(item);
         }
 
-        public static List<GrabbableObject> GetScrapFromShip(GameObject ship)
+        return scrap;
+    }
+
+    public bool IsItemAllowedScrap(GrabbableObject item)
+    {
+        if (!item.itemProperties.isScrap) return false;
+        if (item.isPocketed) return false;
+        if (item.isHeld) return false;
+
+        string itemName = item.itemProperties.itemName;
+        if (itemName == "Gift" && !Instance.ConfigManager.SellGifts) return false;
+        if (itemName == "Shotgun" && !Instance.ConfigManager.SellShotguns) return false;
+        if (itemName == "Ammo" && !Instance.ConfigManager.SellAmmo) return false;
+        if (itemName == "Homemade flashbang" && !Instance.ConfigManager.SellHomemadeFlashbang) return false;
+        if (itemName == "Jar of pickles" && !Instance.ConfigManager.SellPickles) return false;
+
+        // Dont sell list
+        foreach (var dontSellItem in dontSellList)
         {
-            GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
-            List<GrabbableObject> scrap = new List<GrabbableObject>();
-
-            for (int i = 0; i < itemsInShip.Length; i++)
-            {
-                GrabbableObject itemInShip = itemsInShip[i];
-                if (!IsItemAllowedScrap(itemInShip)) continue;
-
-                scrap.Add(itemInShip);
-            }
-
-            return scrap;
+            if (itemName.ToLower() == dontSellItem.ToLower()) return false;
         }
 
-        public static bool IsItemAllowedScrap(GrabbableObject item)
-        {
-            if (!item.itemProperties.isScrap) return false;
-            if (item.isPocketed) return false;
-            if (item.isHeld) return false;
+        // Add item to sell pool
+        return true;
+    }
 
-            string itemName = item.itemProperties.itemName;
-            if (itemName == "Gift" && !Instance.ConfigManager.SellGifts) return false;
-            if (itemName == "Shotgun" && !Instance.ConfigManager.SellShotguns) return false;
-            if (itemName == "Ammo" && !Instance.ConfigManager.SellAmmo) return false;
-            if (itemName == "Homemade flashbang" && !Instance.ConfigManager.SellHomemadeFlashbang) return false;
-            if (itemName == "Jar of pickles" && !Instance.ConfigManager.SellPickles) return false;
+    public void PerformSell(List<GrabbableObject> scrap, DepositItemsDesk depositItemsDesk)
+    {
+        scrap.ForEach(item =>
+        {
+            item.transform.parent = depositItemsDesk.deskObjectsContainer.transform;
             
-            // Dont sell list
-            for (int i = 0; i < Instance.dontSellList.Length; i++)
-            {
-                if (itemName.ToLower().Contains(Instance.dontSellList[i].ToLower())) return false;
-            }
+            depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
+        });
 
-            return true;
-        }
-
-        public static void PerformSell(List<GrabbableObject> scrap, DepositItemsDesk depositItemsDesk)
-        {
-            Instance.scrapToSell = null;
-
-            scrap.ForEach(item =>
-            {
-                item.transform.parent = depositItemsDesk.deskObjectsContainer.transform;
-                
-                depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
-            });
-
-            depositItemsDesk.SellItemsOnServer();
-        }
+        depositItemsDesk.SellItemsOnServer();
     }
 }
