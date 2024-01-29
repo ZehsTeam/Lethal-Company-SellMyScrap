@@ -11,11 +11,11 @@ This mod will try to sell scrap as close to the target amount as possible. You m
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
-| Command | Description | Usage example |
-| ----------- | ----------- | ----------- |
-| `sell <amount>` | Will sell scrap for a total of the `<amount>` specified. `<amount>` is a positive integer. | `sell 500` |
-| `sell-quota` | Will sell scrap to reach the profit quota. | |
-| `sell-all` | Will sell all of your scrap. | |
+| Command | Description |
+| ----------- | ----------- |
+| `sell <amount>` | Will sell scrap for a total of the `<amount>` specified. `<amount>` is a positive integer. |
+| `sell-quota` | Will sell scrap to reach the profit quota. |
+| `sell-all` | Will sell all of your scrap. |
 
 * Only the host can use these commands for now.
 * You must be landed at The Company building to use these commands.
@@ -55,18 +55,18 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 ## Screenshots
 <h4><code>sell <amount></code></h4>
 <div>
-    <img src="https://i.imgur.com/4WjGIrH.png" width="503px">
-    <img src="https://i.imgur.com/ZfRkS1c.png" width="503px">
+    <img src="https://i.imgur.com/4WjGIrH.png" width="412px">
+    <img src="https://i.imgur.com/ZfRkS1c.png" width="412px">
 </div>
 <h4><code>sell-quota</code></h4>
 <div>
-    <img src="https://i.imgur.com/R53wn2s.png" width="503px">
-    <img src="https://i.imgur.com/XB4MDgh.png" width="503px">
+    <img src="https://i.imgur.com/R53wn2s.png" width="412px">
+    <img src="https://i.imgur.com/XB4MDgh.png" width="412px">
 </div>
 <h4><code>sell-all</code></h4>
 <div>
-    <img src="https://i.imgur.com/TwPeAYV.png" width="503px">
-    <img src="https://i.imgur.com/zDsPJLG.png" width="503px">
+    <img src="https://i.imgur.com/TwPeAYV.png" width="412px">
+    <img src="https://i.imgur.com/zDsPJLG.png" width="412px">
 </div>
 <div>
 <h4><code>view-scrap</code></h4>
