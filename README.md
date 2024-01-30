@@ -25,7 +25,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 | Command | Description |
 | ----------- | ----------- |
-| `view-scrap` | Shows a detailed list of all the scrap in the ship on the terminal. |
+| `view-scrap` | Shows a detailed list of all the scrap in the ship. |
 
 ## Config Settings
 | Sell Settings | Setting type | Default value | Description |
