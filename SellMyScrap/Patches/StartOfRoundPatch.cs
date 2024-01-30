@@ -34,6 +34,6 @@ internal class StartOfRoundPatch
 
         SellMyScrapBase.mls.LogInfo($"Sending config to client: {clientId}");
 
-        ConfigSyncBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
+        MainNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
     }
 }

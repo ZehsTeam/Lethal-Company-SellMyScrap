@@ -17,7 +17,6 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell-quota` | Will sell scrap to reach the profit quota. |
 | `sell-all` | Will sell all of your scrap. |
 
-* Only the host can use these commands for now.
 * You must be landed at The Company building to use these commands.
 * Each command will sell items based on the config settings.
 * Each command requires confirmation before selling your scrap.

@@ -20,7 +20,7 @@ namespace com.github.zehsteam.SellMyScrap.Patches
             AssetBundle MainAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
             networkPrefab = (GameObject)MainAssetBundle.LoadAsset("NetworkHandler");
-            networkPrefab.AddComponent<ConfigSyncBehaviour>();
+            networkPrefab.AddComponent<MainNetworkBehaviour>();
 
             NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
         }

@@ -171,7 +171,17 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
-        PerformSell();
+        if (NetworkManager.Singleton.IsHost)
+        {
+            PerformSell();
+        }
+        else
+        {
+            MainNetworkBehaviour.Instance.RequestSellServerRpc(sellRequest.amountFound);
+        }
+
+        sellRequest = null;
+        scrapToSell = null;
     }
 
     public void CancelSellRequest()

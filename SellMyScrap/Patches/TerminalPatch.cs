@@ -100,10 +100,10 @@ internal class TerminalPatch
     #region Parse Sell Commands
     private static CommandResponse CanUseSellCommands()
     {
-        if (!GameNetworkManager.Instance.isHostingGame)
-        {
-            return new CommandResponse(false, "Only the host can use sell commands!\n\n");
-        }
+        //if (!NetworkManager.Singleton.IsHost)
+        //{
+        //    return new CommandResponse(false, "Only the host can use sell commands!\n\n");
+        //}
 
         StartOfRound startOfRound = StartOfRound.Instance;
 
