@@ -2,7 +2,7 @@
 using System;
 using Unity.Netcode;
 
-namespace Zehs.SellMyScrap
+namespace com.github.zehsteam.SellMyScrap
 {
     [Serializable]
     public class SyncedConfigData : INetworkSerializable

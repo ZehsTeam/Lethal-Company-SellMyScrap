@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace Zehs.SellMyScrap.Patches;
+namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch

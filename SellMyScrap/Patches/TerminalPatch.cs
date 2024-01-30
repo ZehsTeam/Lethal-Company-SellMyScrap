@@ -3,7 +3,7 @@ using HarmonyLib;
 using System.Linq;
 using UnityEngine;
 
-namespace Zehs.SellMyScrap.Patches;
+namespace com.github.zehsteam.SellMyScrap.Patches;
 
 public enum CommandType
 {

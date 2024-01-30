@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
-using Zehs.SellMyScrap.Patches;
+using com.github.zehsteam.SellMyScrap.Patches;
 
-namespace Zehs.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class SellMyScrapBase : BaseUnityPlugin

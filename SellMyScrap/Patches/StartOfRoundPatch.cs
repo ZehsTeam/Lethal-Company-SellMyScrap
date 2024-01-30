@@ -2,7 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Zehs.SellMyScrap.Patches;
+namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(StartOfRound))]
 internal class StartOfRoundPatch

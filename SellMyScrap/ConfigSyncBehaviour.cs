@@ -1,6 +1,6 @@
 ﻿using Unity.Netcode;
 
-namespace Zehs.SellMyScrap
+namespace com.github.zehsteam.SellMyScrap
 {
     internal class ConfigSyncBehaviour : NetworkBehaviour
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zehs.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap;
 
 internal class StringUtils
 {

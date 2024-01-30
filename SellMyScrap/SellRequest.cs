@@ -1,4 +1,4 @@
-﻿namespace Zehs.SellMyScrap;
+﻿namespace com.github.zehsteam.SellMyScrap;
 
 public enum SellType
 {

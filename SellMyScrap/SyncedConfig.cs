@@ -1,7 +1,7 @@
 ﻿using BepInEx.Configuration;
 using Newtonsoft.Json;
 
-namespace Zehs.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap;
 
 /// <summary>
 /// This will hold and manage all configs used by the config manager
