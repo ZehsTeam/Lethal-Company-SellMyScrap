@@ -5,13 +5,6 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
-public enum CommandType
-{
-    None,
-    Sell,
-    ViewScrap,
-}
-
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
@@ -19,10 +12,10 @@ internal class TerminalPatch
     [HarmonyPrefix]
     static bool ParsePlayerSentencePatch(Terminal __instance, ref TerminalNode __result)
     {
-        string[] array = __instance.screenText.text.Split(new char[1] { '\n' });
+        string[] array = __instance.screenText.text.Split('\n');
         if (array.Length == 0) return true;
 
-        string[] array2 = array.Last().Trim().ToLower().Split(new char[1] { ' ' });
+        string[] array2 = array.Last().Trim().ToLower().Split(' ');
 
         PlayerControllerB localPlayerController = GameNetworkManager.Instance.localPlayerController;
         if (localPlayerController == null) return true;
@@ -30,123 +23,113 @@ internal class TerminalPatch
         StartOfRound startOfRound = localPlayerController.playersManager;
         if (startOfRound == null) return true;
 
-        string first = array2[0].ToLower();
+        // Parse command confirmation
+        CommandResponse response = ParseCommandConfirmation(array2);
 
-        CommandType commandType = CommandType.None;
-        SellType sellType = SellType.None;
-
-        // Find command
-        switch (first)
+        // Found valid command confirmation
+        if (response.success)
         {
-            case "sell":
-                {
-                    commandType = CommandType.Sell;
-                    sellType = SellType.SellAmount;
-                    break;
-                }
-            case "sell-quota":
-                {
-                    commandType = CommandType.Sell;
-                    sellType = SellType.SellQuota;
-                    break;
-                }
-            case "sell-all":
-                {
-                    commandType = CommandType.Sell;
-                    sellType = SellType.SellAll;
-                    break;
-                }
-            case "view-scrap":
-                {
-                    commandType = CommandType.ViewScrap;
-                    break;
-                }
-        }
-
-        // Trying to sell
-        if (sellType != SellType.None)
-        {
-            // Check if host
-            if (!GameNetworkManager.Instance.isHostingGame)
-            {
-                __result = CreateTerminalNode("Only the host can use sell commands!\n\n");
-                return false;
-            }
-
-            // Check if at The Company building
-            if (!IsAtTheCompany(startOfRound) || startOfRound.inShipPhase || startOfRound.travellingToNewLevel)
-            {
-                __result = CreateTerminalNode($"You must be landed at The Company building to sell your scrap!\n\n");
-                return false;
-            }
-        }
-
-        // Parse sell <amount>
-        if (commandType == CommandType.Sell && sellType == SellType.SellAmount)
-        {
-            __result = CreateTerminalNode(ParseSellAmount(array2));
+            __result = CreateTerminalNode(response.result);
             return false;
         }
 
-        // Parse sell-quota
-        if (commandType == CommandType.Sell && sellType == SellType.SellQuota)
+        // Parse command
+        response = ParseCommand(array2);
+
+        // Found valid command
+        if (response.success)
         {
-            __result = CreateTerminalNode(ParseSellQuota(array2));
+            __result = CreateTerminalNode(response.result);
             return false;
         }
 
-        // Parse sell-all
-        if (commandType == CommandType.Sell && sellType == SellType.SellAll)
-        {
-            __result = CreateTerminalNode(ParseSellAll(array2));
-            return false;
-        }
-
-        // Parse sell confirmation
-        bool showSellConfirmation = (commandType == CommandType.None && SellMyScrapBase.Instance.sellRequest != null && SellMyScrapBase.Instance.sellRequest.awaitingConfirmation);
-
-        if (showSellConfirmation)
-        {
-            __result = CreateTerminalNode(ParseSellConfirmation(array2));
-            return false;
-        }
-
-        // Parse view
-        if (commandType == CommandType.ViewScrap)
-        {
-            __result = CreateTerminalNode(ParseViewScrap(array2));
-            return false;
-        }
-
+        // Nothing to do here. Continue.
         return true;
     }
 
-    private static bool IsAtTheCompany(StartOfRound playersManager)
+    #region Main Parse
+    private static CommandResponse ParseCommand(string[] array)
     {
-        int companyBuildingLevelID = 3;
+        string command = array[0].ToLower();
 
-        return playersManager.currentLevel.levelID == companyBuildingLevelID;
-    } 
+        if (command == "sell") return new CommandResponse(true, ParseSellAmount(array));
+        if (command == "sell-quota") return new CommandResponse(true, ParseSellQuota(array));
+        if (command == "sell-all") return new CommandResponse(true, ParseSellAll(array));
+        if (command == "view-scrap") return new CommandResponse(true, ParseViewScrap(array));
 
-    private static GameObject GetShipGameObject()
-    {
-        return GameObject.Find("/Environment/HangarShip");
+        return new CommandResponse(false, string.Empty);
     }
 
-    private static int GetCompanyBuyingRate()
+    private static CommandResponse ParseCommandConfirmation(string[] array)
     {
-        return (int)(100f * StartOfRound.Instance.companyBuyingRate);
+        CommandResponse response = ParseSellCommandConfirmation(array);
+        if (response.success) return response;
+
+        return new CommandResponse(false, string.Empty);
+    }
+
+    private static CommandResponse ParseSellCommandConfirmation(string[] array)
+    {
+        SellRequest sellRequest = SellMyScrapBase.Instance.sellRequest;
+
+        // No sellReqest found
+        if (sellRequest == null) return new CommandResponse(false, string.Empty);
+
+        // Not awaiting a sell confirmation
+        if (sellRequest.confirmationType != ConfirmationType.AwaitingConfirmation) return new CommandResponse(false, string.Empty);
+
+        string command = array[0].ToLower();
+
+        if ("confirm".Contains(command))
+        {
+            SellMyScrapBase.Instance.ConfirmSellRequest();
+            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.amountFound}...\n\n");
+        }
+
+        if ("deny".Contains(command))
+        {
+            SellMyScrapBase.Instance.CancelSellRequest();
+            return new CommandResponse(true, "Sell aborted.\n\n");
+        }
+
+        SellMyScrapBase.Instance.CancelSellRequest();
+        return new CommandResponse(true, "Invalid input. Sell aborted.\n\n");
+    }
+    #endregion
+
+    #region Parse Sell Commands
+    private static CommandResponse CanUseSellCommands()
+    {
+        if (!GameNetworkManager.Instance.isHostingGame)
+        {
+            return new CommandResponse(false, "Only the host can use sell commands!\n\n");
+        }
+
+        StartOfRound startOfRound = StartOfRound.Instance;
+
+        bool isAtCompany = startOfRound.currentLevelID == 3;
+        bool isLanded = !startOfRound.inShipPhase && !startOfRound.travellingToNewLevel;
+
+        if (!isAtCompany || !isLanded)
+        {
+            return new CommandResponse(false, $"You must be landed at The Company building to sell your scrap!\n\n");
+        }
+
+        return new CommandResponse(true, string.Empty);
     }
 
     private static string ParseSellAmount(string[] array)
     {
+        CommandResponse response = CanUseSellCommands();
+        if (!response.success) return response.result;
+
         // Amount not specified
         if (array.Length < 2)
         {
             return "Please specify an amount to sell.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer\nExample: sell 500\n\n";
         }
 
-        int amount = 0;
+        int amount;
         int.TryParse(array[1], out amount);
 
         // Invalid sell amount
@@ -155,9 +138,8 @@ internal class TerminalPatch
             return "ERROR! Sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer\nExample: sell 500\n\n";
         }
 
-        GameObject ship = GetShipGameObject();
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(amount, ship);
-        int rate = GetCompanyBuyingRate();
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
+        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
 
         // No items to sell
         if (scrapToSell.scrap.Count == 0)
@@ -182,7 +164,7 @@ internal class TerminalPatch
 
         message += "Please CONFIRM or DENY.\n\n";
 
-        SellMyScrapBase.Instance.sellRequest = new SellRequest(SellType.SellAmount, scrapToSell.value, amount, true);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
 
         // Return confirmation message
         return message;
@@ -190,6 +172,9 @@ internal class TerminalPatch
 
     private static string ParseSellQuota(string[] array)
     {
+        CommandResponse response = CanUseSellCommands();
+        if (!response.success) return response.result;
+
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
         int amount = profitQuota - quotaFulfilled;
@@ -200,9 +185,8 @@ internal class TerminalPatch
             return "Quota has already been fulfilled.\n\n";
         }
 
-        GameObject ship = GetShipGameObject();
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(amount, ship);
-        int rate = GetCompanyBuyingRate();
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
+        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
 
         // No items to sell
         if (scrapToSell.scrap.Count == 0)
@@ -227,7 +211,7 @@ internal class TerminalPatch
 
         message += "Please CONFIRM or DENY.\n\n";
 
-        SellMyScrapBase.Instance.sellRequest = new SellRequest(SellType.SellQuota, scrapToSell.value, amount, true);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
 
         // Return confirmation message
         return message;
@@ -235,9 +219,11 @@ internal class TerminalPatch
 
     private static string ParseSellAll(string[] array)
     {
-        GameObject ship = GetShipGameObject();
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(-1, ship);
-        int rate = GetCompanyBuyingRate();
+        CommandResponse response = CanUseSellCommands();
+        if (!response.success) return response.result;
+
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllAllowedScrapToSell();
+        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
 
         // No items to sell
         if (scrapToSell.scrap.Count == 0)
@@ -262,65 +248,16 @@ internal class TerminalPatch
 
         message += "Please CONFIRM or DENY.\n\n";
 
-        SellMyScrapBase.Instance.sellRequest = new SellRequest(SellType.SellAll, scrapToSell.value, -1, true);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
 
         // Return confirmation message
         return message;
     }
-
-    private static string ParseSellConfirmation(string[] array)
-    {
-        DepositItemsDesk depositItemsDesk = UnityEngine.Object.FindAnyObjectByType<DepositItemsDesk>();
-
-        if (depositItemsDesk == null)
-        {
-            SellMyScrapBase.Instance.sellRequest = null;
-            SellMyScrapBase.Instance.scrapToSell = null;
-
-            return "ERROR! Cannot find DepositItemsDesk. Sell aborted.\n\n";
-        }
-
-        // CONFIRM
-        if ("confirm".Contains(array[0].ToLower()))
-        {
-            SellRequest sellRequest = SellMyScrapBase.Instance.sellRequest;
-
-            GameObject ship = GameObject.Find("/Environment/HangarShip");
-
-            // sell <amount> OR sell-quota
-            if (sellRequest.type == SellType.SellAmount || sellRequest.type == SellType.SellQuota)
-            {
-                SellMyScrapBase.Instance.RequestSell(sellRequest.amount, ship, depositItemsDesk);
-
-                return $"Sell confirmed. Processing ${sellRequest.amount}...\n\n";
-            }
-
-            // sell-all
-            if (sellRequest.type == SellType.SellAll)
-            {
-                SellMyScrapBase.Instance.RequestSellAll(ship, depositItemsDesk);
-
-                return $"Sell confirmed. Processing ${sellRequest.amount}...\n\n";
-            }
-        }
-
-        // DENY
-        if ("deny".Contains(array[0].ToLower()))
-        {
-            SellMyScrapBase.Instance.sellRequest = null;
-
-            return "Sell aborted.\n\n";
-        }
-
-        SellMyScrapBase.Instance.sellRequest = null;
-
-        return "Invalid input. Sell aborted.\n\n";
-    }
+    #endregion
 
     private static string ParseViewScrap(string[] array)
     {
-        GameObject ship = GetShipGameObject();
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(-1, ship);
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllScrapToSell();
 
         // No items found
         if (scrapToSell.scrap.Count == 0)
@@ -335,6 +272,7 @@ internal class TerminalPatch
         return message;
     }
 
+    #region Create TerminalNode
     private static TerminalNode CreateTerminalNode(string message)
     {
         return CreateTerminalNode(message, true);
@@ -348,5 +286,18 @@ internal class TerminalPatch
         terminalNode.clearPreviousText = clearPreviousText;
 
         return terminalNode;
+    }
+    #endregion
+}
+
+public class CommandResponse
+{
+    public bool success;
+    public string result;
+
+    public CommandResponse(bool success, string result)
+    {
+        this.success = success;
+        this.result = result;
     }
 }

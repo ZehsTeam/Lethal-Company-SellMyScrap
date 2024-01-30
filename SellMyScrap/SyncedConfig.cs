@@ -9,6 +9,7 @@ namespace com.github.zehsteam.SellMyScrap;
 public class SyncedConfig
 {
     // Sell Settings
+    private ConfigEntry<bool> SpeakInShipCfg;
     private ConfigEntry<bool> SellGiftsCfg;
     private ConfigEntry<bool> SellShotgunsCfg;
     private ConfigEntry<bool> SellAmmoCfg;
@@ -25,6 +26,7 @@ public class SyncedConfig
     private ConfigEntry<bool> AlignFoundItemsPriceCfg;
 
     // Sell Settings
+    internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
     internal bool SellGifts { get { return SellGiftsCfg.Value; } set => SellGiftsCfg.Value = value; }
     internal bool SellShotguns { get { return SellShotgunsCfg.Value; } set => SellShotgunsCfg.Value = value; }
     internal bool SellAmmo { get { return SellAmmoCfg.Value; } set => SellAmmoCfg.Value = value; }
@@ -50,32 +52,38 @@ public class SyncedConfig
     internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
-    public void RebindConfigs(SyncedConfigData newConfigData)
+    public void RebindConfigs(SyncedConfigData syncedData)
     {
         // Sell Settings
+        SpeakInShipCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Sell Settings", "speakInShip"),
+            true,
+            new ConfigDescription("The Company will speak inside your ship after selling.")
+        );
+
         SellGiftsCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
-            newConfigData.sellGifts,
+            syncedData.sellGifts,
             new ConfigDescription("Do you want to sell Gifts?")
         );
         SellShotgunsCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
-            newConfigData.sellShotguns,
+            syncedData.sellShotguns,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
         SellAmmoCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
-            newConfigData.sellAmmo,
+            syncedData.sellAmmo,
             new ConfigDescription("Do you want to sell Ammo?")
         );
         SellHomemadeFlashbangCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellHomemadeFlashbang"),
-            newConfigData.sellHomemadeFlashbangs,
+            syncedData.sellHomemadeFlashbangs,
             new ConfigDescription("Do you want to sell Homemade flashbangs?")
         );
         SellPicklesCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
-            newConfigData.sellPickles,
+            syncedData.sellPickles,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
@@ -86,7 +94,7 @@ public class SyncedConfig
         dontSellListJsonCfgDescription += "Example: [\"Gift\", \"Shotgun\", \"Ammo\"]\n";
         DontSellListJsonCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
-            newConfigData.dontSellListJson,
+            syncedData.dontSellListJson,
             new ConfigDescription(dontSellListJsonCfgDescription)
         );
 

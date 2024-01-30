@@ -21,7 +21,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * You must be landed at The Company building to use these commands.
 * Each command will sell items based on the config settings.
 * Each command requires confirmation before selling your scrap.
-* Additional information is given on the confirmation screen.
+    * Additional information is given on the confirmation screen.
     * See screenshots for details.
 
 | Command | Description |
@@ -31,6 +31,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 ## Config Settings
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
+| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling. |
 | `sellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
 | `sellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
 | `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |

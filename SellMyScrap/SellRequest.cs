@@ -2,24 +2,31 @@
 
 public enum SellType
 {
-    None = -1,
-    SellAmount = 0,
-    SellQuota = 1,
-    SellAll = 2,
+    None,
+    SellAmount,
+    SellQuota,
+    SellAll,
+}
+
+public enum ConfirmationType
+{
+    None,
+    AwaitingConfirmation,
+    Confirmed,
 }
 
 public class SellRequest
 {
     public SellType type;
-    public int amount;
+    public int amountFound;
     public int requestedAmount;
-    public bool awaitingConfirmation;
+    public ConfirmationType confirmationType;
 
-    public SellRequest(SellType type, int amount, int requestedAmount, bool awaitingConfirmation)
+    public SellRequest(SellType type, int amountFound, int requestedAmount, ConfirmationType confirmationType)
     {
         this.type = type;
-        this.amount = amount;
+        this.amountFound = amountFound;
         this.requestedAmount = requestedAmount;
-        this.awaitingConfirmation = awaitingConfirmation;
+        this.confirmationType = confirmationType;
     }
 }

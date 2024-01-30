@@ -66,7 +66,7 @@ public class ScrapToSell
     }
 }
 
-// FOR INFORMATION LOGGING ONLY
+// For GetListAsString() ONLY
 public class ScrapItemStackManager
 {
     public List<ScrapItemStack> itemStacks = new List<ScrapItemStack>();

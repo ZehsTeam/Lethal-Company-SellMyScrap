@@ -20,6 +20,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public SellRequest sellRequest;
     public ScrapToSell scrapToSell;
+
     private string[] dontSellList;
 
     void Awake()
@@ -36,6 +37,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         ConfigManager = new SyncedConfig();
         ConfigManager.RebindConfigs(new SyncedConfigData());
+
         dontSellList = Instance.ConfigManager.DontSellListJson;
 
         NetcodePatcherAwake();
@@ -60,58 +62,87 @@ public class SellMyScrapBase : BaseUnityPlugin
         }
     }
 
-    public ScrapToSell GetScrapToSell(int amount, GameObject ship)
+    #region Get ScrapToSell
+    public ScrapToSell GetAllowedScrapToSell(int amount)
     {
-        // Get all scrap
-        if (amount == -1)
-        {
-            scrapToSell = new ScrapToSell(GetScrapFromShip(ship));
-            return scrapToSell;
-        }
+        scrapToSell = ScrapCalculator.GetScrapToSell(GetAllowedScrapFromShip(), amount, StartOfRound.Instance.companyBuyingRate);
 
-        // Get scrap based on amount
-        scrapToSell = ScrapCalculator.GetScrapToSell(GetScrapFromShip(ship), amount, StartOfRound.Instance.companyBuyingRate);
         return scrapToSell;
     }
 
-    public void RequestSell(int amount, GameObject ship, DepositItemsDesk depositItemsDesk)
+    public ScrapToSell GetAllAllowedScrapToSell()
     {
-        if (scrapToSell == null|| scrapToSell.value != amount)
-        {
-            GetScrapToSell(amount, ship);
-        }
+        scrapToSell = new ScrapToSell(GetAllowedScrapFromShip());
 
-        PerformSell(scrapToSell.scrap, depositItemsDesk);
-
-        scrapToSell = null;
+        return scrapToSell;
     }
 
-    public void RequestSellAll(GameObject ship, DepositItemsDesk depositItemsDesk)
+    public ScrapToSell GetScrapToSell(int amount)
     {
-        PerformSell(GetScrapFromShip(ship), depositItemsDesk);
+        scrapToSell = ScrapCalculator.GetScrapToSell(GetScrapFromShip(), amount, StartOfRound.Instance.companyBuyingRate);
+
+        return scrapToSell;
     }
 
-    public List<GrabbableObject> GetScrapFromShip(GameObject ship)
+    public ScrapToSell GetAllScrapToSell()
     {
+        scrapToSell = new ScrapToSell(GetScrapFromShip());
+
+        return scrapToSell;
+    }
+    #endregion
+
+    #region Getting Scrap
+    public GameObject GetShipGameObject()
+    {
+        return GameObject.Find("/Environment/HangarShip");
+    }
+
+    public List<GrabbableObject> GetScrapFromShip()
+    {
+        GameObject ship = GetShipGameObject();
         GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
         foreach (var item in itemsInShip)
         {
-            if (!IsItemAllowedScrap(item)) continue;
+            if (!IsScrapItem(item)) continue;
             scrap.Add(item);
         }
 
         return scrap;
     }
 
-    public bool IsItemAllowedScrap(GrabbableObject item)
+    public List<GrabbableObject> GetAllowedScrapFromShip()
+    {
+        GameObject ship = GetShipGameObject();
+        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
+        List<GrabbableObject> scrap = new List<GrabbableObject>();
+
+        foreach (var item in itemsInShip)
+        {
+            if (!IsAllowedScrapItem(item)) continue;
+            scrap.Add(item);
+        }
+
+        return scrap;
+    }
+
+    public bool IsScrapItem(GrabbableObject item)
     {
         if (!item.itemProperties.isScrap) return false;
         if (item.isPocketed) return false;
         if (item.isHeld) return false;
 
+        return true;
+    }
+
+    public bool IsAllowedScrapItem(GrabbableObject item)
+    {
+        if (!IsScrapItem(item)) return false;
+
         string itemName = item.itemProperties.itemName;
+
         if (itemName == "Gift" && !Instance.ConfigManager.SellGifts) return false;
         if (itemName == "Shotgun" && !Instance.ConfigManager.SellShotguns) return false;
         if (itemName == "Ammo" && !Instance.ConfigManager.SellAmmo) return false;
@@ -124,13 +155,50 @@ public class SellMyScrapBase : BaseUnityPlugin
             if (itemName.ToLower() == dontSellItem.ToLower()) return false;
         }
 
-        // Add item to sell pool
         return true;
     }
+    #endregion
 
-    public void PerformSell(List<GrabbableObject> scrap, DepositItemsDesk depositItemsDesk)
+    #region SellRequest Methods
+    public void CreateSellRequest(SellType sellType, int amountFound, int requestedAmount, ConfirmationType confirmationType)
     {
-        scrap.ForEach(item =>
+        sellRequest = new SellRequest(sellType, amountFound, requestedAmount, confirmationType);
+    }
+
+    public void ConfirmSellRequest()
+    {
+        if (sellRequest == null) return;
+
+        sellRequest.confirmationType = ConfirmationType.Confirmed;
+
+        PerformSell();
+    }
+
+    public void CancelSellRequest()
+    {
+        sellRequest = null;
+        scrapToSell = null;
+    }
+    #endregion
+
+    public void PerformSell()
+    {
+        DepositItemsDesk depositItemsDesk = UnityEngine.Object.FindAnyObjectByType<DepositItemsDesk>();
+
+        if (depositItemsDesk == null)
+        {
+            mls.LogError($"ERROR! Could not find depositItemsDesk. Are you landed at The Company building?");
+            return;
+        }
+
+        // Has valid sell request?
+        if (sellRequest == null) return;
+        if (sellRequest.confirmationType != ConfirmationType.Confirmed) return;
+
+        // Has scrap to sell?
+        if (scrapToSell == null) return;
+
+        scrapToSell.scrap.ForEach(item =>
         {
             item.transform.parent = depositItemsDesk.deskObjectsContainer.transform;
             

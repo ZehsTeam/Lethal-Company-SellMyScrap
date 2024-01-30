@@ -16,6 +16,9 @@ internal class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(clip, 1f);
 
         // Play audio clip in the ship
-        StartOfRound.Instance.speakerAudioSource.PlayOneShot(clip);
+        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip)
+        {
+            StartOfRound.Instance.speakerAudioSource.PlayOneShot(clip);
+        }
     }
 }
