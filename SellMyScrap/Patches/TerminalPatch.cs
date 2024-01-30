@@ -47,6 +47,13 @@ internal class TerminalPatch
         return true;
     }
 
+    [HarmonyPatch("QuitTerminal")]
+    [HarmonyPostfix]
+    static void QuitTerminalPatch()
+    {
+        SellMyScrapBase.Instance.CancelSellRequest();
+    }
+
     #region Main Parse
     private static CommandResponse ParseCommand(string[] array)
     {

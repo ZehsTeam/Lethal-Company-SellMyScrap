@@ -21,7 +21,7 @@ public class SellMyScrapBase : BaseUnityPlugin
     public SellRequest sellRequest;
     public ScrapToSell scrapToSell;
 
-    private string[] dontSellList;
+    private string[] cachedDontSellList;
 
     void Awake()
     {
@@ -36,9 +36,6 @@ public class SellMyScrapBase : BaseUnityPlugin
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
         ConfigManager = new SyncedConfig();
-        ConfigManager.RebindConfigs(new SyncedConfigData());
-
-        dontSellList = Instance.ConfigManager.DontSellListJson;
 
         NetcodePatcherAwake();
     }
@@ -60,6 +57,11 @@ public class SellMyScrapBase : BaseUnityPlugin
                 }
             }
         }
+    }
+
+    public void UpdateCachedDontSellList(string[] dontSellList)
+    {
+        this.cachedDontSellList = dontSellList;
     }
 
     #region Get ScrapToSell
@@ -150,7 +152,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (itemName == "Jar of pickles" && !Instance.ConfigManager.SellPickles) return false;
 
         // Dont sell list
-        foreach (var dontSellItem in dontSellList)
+        foreach (var dontSellItem in cachedDontSellList)
         {
             if (itemName.ToLower() == dontSellItem.ToLower()) return false;
         }

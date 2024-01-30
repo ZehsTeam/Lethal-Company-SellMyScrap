@@ -18,7 +18,7 @@ namespace com.github.zehsteam.SellMyScrap
 
             SellMyScrapBase.mls.LogInfo("Syncing config with host.");
 
-            SellMyScrapBase.Instance.ConfigManager.RebindConfigs(syncedConfigData);
+            SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(syncedConfigData);
         }
 
         [ServerRpc(RequireOwnership = false)]

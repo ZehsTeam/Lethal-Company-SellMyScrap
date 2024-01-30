@@ -8,6 +8,8 @@ namespace com.github.zehsteam.SellMyScrap;
 /// </summary>
 public class SyncedConfig
 {
+    private SyncedConfigData hostConfigData;
+
     // Sell Settings
     private ConfigEntry<bool> SpeakInShipCfg;
     private ConfigEntry<bool> SellGiftsCfg;
@@ -27,17 +29,69 @@ public class SyncedConfig
 
     // Sell Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    internal bool SellGifts { get { return SellGiftsCfg.Value; } set => SellGiftsCfg.Value = value; }
-    internal bool SellShotguns { get { return SellShotgunsCfg.Value; } set => SellShotgunsCfg.Value = value; }
-    internal bool SellAmmo { get { return SellAmmoCfg.Value; } set => SellAmmoCfg.Value = value; }
-    internal bool SellHomemadeFlashbang { get { return SellHomemadeFlashbangCfg.Value; } set => SellHomemadeFlashbangCfg.Value = value; }
-    internal bool SellPickles { get { return SellPicklesCfg.Value; } set => SellPicklesCfg.Value = value; }
+    
+    internal bool SellGifts
+    { 
+        get
+        {
+            if (hostConfigData != null) return hostConfigData.sellGifts;
+
+            return SellGiftsCfg.Value;
+        } 
+        set => SellGiftsCfg.Value = value;
+    }
+    
+    internal bool SellShotguns
+    { 
+        get
+        {
+            if (hostConfigData != null) return hostConfigData.sellShotguns;
+
+            return SellShotgunsCfg.Value;
+        } 
+        set => SellShotgunsCfg.Value = value;
+    }
+    
+    internal bool SellAmmo 
+    {
+        get 
+        {
+            if (hostConfigData != null) return hostConfigData.sellAmmo;
+
+            return SellAmmoCfg.Value;
+        }
+        set => SellAmmoCfg.Value = value;
+    }
+    
+    internal bool SellHomemadeFlashbang
+    { 
+        get
+        {
+            if (hostConfigData != null) return hostConfigData.sellHomemadeFlashbangs;
+
+            return SellHomemadeFlashbangCfg.Value;
+        }
+        set => SellHomemadeFlashbangCfg.Value = value;
+    }
+
+    internal bool SellPickles
+    { 
+        get
+        {
+            if (hostConfigData != null) return hostConfigData.sellPickles;
+            
+            return SellPicklesCfg.Value;
+        }
+        set => SellPicklesCfg.Value = value;
+    }
 
     // Advanced Sell Settings
     internal string[] DontSellListJson
     { 
         get
         {
+            if (hostConfigData != null) return JsonConvert.DeserializeObject<string[]>(hostConfigData.dontSellListJson);
+
             return JsonConvert.DeserializeObject<string[]>(DontSellListJsonCfg.Value);
         }
         set
@@ -52,7 +106,12 @@ public class SyncedConfig
     internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
-    public void RebindConfigs(SyncedConfigData syncedData)
+    public SyncedConfig()
+    {
+        BindConfigs();
+    }
+
+    private void BindConfigs()
     {
         // Sell Settings
         SpeakInShipCfg = SellMyScrapBase.Instance.Config.Bind(
@@ -60,30 +119,29 @@ public class SyncedConfig
             true,
             new ConfigDescription("The Company will speak inside your ship after selling.")
         );
-
         SellGiftsCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
-            syncedData.sellGifts,
+            false,
             new ConfigDescription("Do you want to sell Gifts?")
         );
         SellShotgunsCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
-            syncedData.sellShotguns,
+            false,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
         SellAmmoCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
-            syncedData.sellAmmo,
+            false,
             new ConfigDescription("Do you want to sell Ammo?")
         );
         SellHomemadeFlashbangCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellHomemadeFlashbang"),
-            syncedData.sellHomemadeFlashbangs,
+            true,
             new ConfigDescription("Do you want to sell Homemade flashbangs?")
         );
         SellPicklesCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
-            syncedData.sellPickles,
+            true,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
@@ -94,14 +152,39 @@ public class SyncedConfig
         dontSellListJsonCfgDescription += "Example: [\"Gift\", \"Shotgun\", \"Ammo\"]\n";
         DontSellListJsonCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
-            syncedData.dontSellListJson,
+            "[]",
             new ConfigDescription(dontSellListJsonCfgDescription)
         );
 
+        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
+
         // Confirmation Settings
-        ShowFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(new ConfigDefinition("Confirmation Settings", "showFoundItems"), true, new ConfigDescription("Show found items on the confirmation screen."));
-        ShowFoundItemsLimitCfg = SellMyScrapBase.Instance.Config.Bind(new ConfigDefinition("Confirmation Settings", "showFoundItemsLimit"), 100, new ConfigDescription("Won't show founds items if the total item count is over the limit."));
-        SortFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(new ConfigDefinition("Confirmation Settings", "sortFoundItems"), true, new ConfigDescription("Sorts found items from most to least expensive on the confirmation screen. This might cost more performance."));
-        AlignFoundItemsPriceCfg = SellMyScrapBase.Instance.Config.Bind(new ConfigDefinition("Confirmation Settings", "alignFoundItemsPrice"), true, new ConfigDescription("Align all prices of found items on the confirmation screen. This might cost more performance."));
+        ShowFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Confirmation Settings", "showFoundItems"),
+            true,
+            new ConfigDescription("Show found items on the confirmation screen.")
+        );
+        ShowFoundItemsLimitCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Confirmation Settings", "showFoundItemsLimit"),
+            100,
+            new ConfigDescription("Won't show founds items if the total item count is over the limit.")
+        );
+        SortFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Confirmation Settings", "sortFoundItems"),
+            true,
+            new ConfigDescription("Sorts found items from most to least expensive on the confirmation screen. This might cost more performance.")
+        );
+        AlignFoundItemsPriceCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Confirmation Settings", "alignFoundItemsPrice"),
+            true,
+            new ConfigDescription("Align all prices of found items on the confirmation screen. This might cost more performance.")
+        );
+    }
+
+    public void SetHostConfigData(SyncedConfigData syncedConfigData)
+    {
+        hostConfigData = syncedConfigData;
+
+        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
     }
 }

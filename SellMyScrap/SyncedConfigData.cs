@@ -16,13 +16,7 @@ namespace com.github.zehsteam.SellMyScrap
 
         public SyncedConfigData()
         {
-            // Default values
-            sellGifts = false;
-            sellShotguns = false;
-            sellAmmo = false;
-            sellHomemadeFlashbangs = true;
-            sellPickles = true;
-            dontSellListJson = "[]";
+
         }
 
         public SyncedConfigData(SyncedConfig config)

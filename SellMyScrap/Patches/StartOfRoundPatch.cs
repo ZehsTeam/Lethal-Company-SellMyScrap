@@ -36,4 +36,13 @@ internal class StartOfRoundPatch
 
         MainNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
     }
+
+    [HarmonyPatch("OnLocalDisconnect")]
+    [HarmonyPrefix]
+    static void OnLocalDisconnectPatch()
+    {
+        SellMyScrapBase.mls.LogInfo($"Local player disconnected. Removing hostConfigData.");
+
+        SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(null);
+    }
 }
