@@ -1,6 +1,7 @@
 ﻿using GameNetcodeStuff;
 using HarmonyLib;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
@@ -10,21 +11,12 @@ internal class TerminalPatch
 {
     [HarmonyPatch("ParsePlayerSentence")]
     [HarmonyPrefix]
-    static bool ParsePlayerSentencePatch(Terminal __instance, ref TerminalNode __result)
+    static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
-        string[] array = __instance.screenText.text.Split('\n');
-        if (array.Length == 0) return true;
-
-        string[] array2 = array.Last().Trim().ToLower().Split(' ');
-
-        PlayerControllerB localPlayerController = GameNetworkManager.Instance.localPlayerController;
-        if (localPlayerController == null) return true;
-
-        StartOfRound startOfRound = localPlayerController.playersManager;
-        if (startOfRound == null) return true;
+        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');
 
         // Parse command confirmation
-        CommandResponse response = ParseCommandConfirmation(array2);
+        CommandResponse response = ParseCommandConfirmation(array);
 
         // Found valid command confirmation
         if (response.success)
@@ -34,7 +26,7 @@ internal class TerminalPatch
         }
 
         // Parse command
-        response = ParseCommand(array2);
+        response = ParseCommand(array);
 
         // Found valid command
         if (response.success)
@@ -51,7 +43,7 @@ internal class TerminalPatch
     [HarmonyPostfix]
     static void QuitTerminalPatch()
     {
-        SellMyScrapBase.Instance.CancelSellRequest();
+        SellMyScrapBase.Instance.OnTerminalQuit();
     }
 
     #region Main Parse
@@ -63,6 +55,7 @@ internal class TerminalPatch
         if (command == "sell-quota") return new CommandResponse(true, ParseSellQuota(array));
         if (command == "sell-all") return new CommandResponse(true, ParseSellAll(array));
         if (command == "view-scrap") return new CommandResponse(true, ParseViewScrap(array));
+        if (command == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
 
         return new CommandResponse(false, string.Empty);
     }

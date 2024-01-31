@@ -41,8 +41,6 @@ internal class StartOfRoundPatch
     [HarmonyPrefix]
     static void OnLocalDisconnectPatch()
     {
-        SellMyScrapBase.mls.LogInfo($"Local player disconnected. Removing hostConfigData.");
-
-        SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(null);
+        SellMyScrapBase.Instance.OnLocalDisconnect();
     }
 }

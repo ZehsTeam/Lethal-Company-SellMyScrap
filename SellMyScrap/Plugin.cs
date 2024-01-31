@@ -59,6 +59,19 @@ public class SellMyScrapBase : BaseUnityPlugin
         }
     }
 
+    public void OnLocalDisconnect()
+    {
+        mls.LogInfo($"Local player disconnected. Removing hostConfigData.");
+        ConfigManager.SetHostConfigData(null);
+
+        CancelSellRequest();
+    }
+
+    public void OnTerminalQuit()
+    {
+        CancelSellRequest();
+    }
+
     public void UpdateCachedDontSellList(string[] dontSellList)
     {
         this.cachedDontSellList = dontSellList;
