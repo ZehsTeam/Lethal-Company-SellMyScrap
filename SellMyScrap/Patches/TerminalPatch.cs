@@ -1,7 +1,4 @@
-﻿using GameNetcodeStuff;
-using HarmonyLib;
-using System.Linq;
-using TMPro;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;

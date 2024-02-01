@@ -108,14 +108,9 @@ public class SellMyScrapBase : BaseUnityPlugin
     #endregion
 
     #region Getting Scrap
-    public GameObject GetShipGameObject()
-    {
-        return GameObject.Find("/Environment/HangarShip");
-    }
-
     public List<GrabbableObject> GetScrapFromShip()
     {
-        GameObject ship = GetShipGameObject();
+        GameObject ship = GameObject.Find("/Environment/HangarShip");
         GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
@@ -130,7 +125,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public List<GrabbableObject> GetAllowedScrapFromShip()
     {
-        GameObject ship = GetShipGameObject();
+        GameObject ship = GameObject.Find("/Environment/HangarShip");
         GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 

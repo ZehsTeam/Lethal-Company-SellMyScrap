@@ -82,9 +82,6 @@
   </Target>
 
   <Target Name="CopyToPluginsFolder" AfterTargets="PostBuildEvent" DependsOnTargets="NetcodePatch">
-    <PropertyGroup>
-      <ModFile>$(TargetPath)</ModFile>
-    </PropertyGroup>
-    <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(ModFile)" />
+    <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
   </Target>
 </Project>

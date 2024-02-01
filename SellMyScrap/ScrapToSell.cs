@@ -66,7 +66,7 @@ public class ScrapToSell
     }
 }
 
-// For GetListAsString() ONLY
+// For ScrapToSell.GetListAsString() ONLY
 public class ScrapItemStackManager
 {
     public List<ScrapItemStack> itemStacks = new List<ScrapItemStack>();
