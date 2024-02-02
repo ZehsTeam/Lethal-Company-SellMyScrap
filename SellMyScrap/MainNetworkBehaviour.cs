@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using com.github.zehsteam.SellMyScrap.Patches;
+using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -31,5 +32,11 @@ internal class MainNetworkBehaviour : NetworkBehaviour
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
         SellMyScrapBase.Instance.CreateSellRequest(SellType.None, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
         SellMyScrapBase.Instance.ConfirmSellRequest();
+    }
+
+    [ClientRpc]
+    public void SoldFromTerminalClientRpc()
+    {
+        DepositItemsDeskPatch.speakInShip = true;
     }
 }

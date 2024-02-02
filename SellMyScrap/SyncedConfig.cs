@@ -15,7 +15,6 @@ public class SyncedConfig
     private ConfigEntry<bool> SellGiftsCfg;
     private ConfigEntry<bool> SellShotgunsCfg;
     private ConfigEntry<bool> SellAmmoCfg;
-    private ConfigEntry<bool> SellHomemadeFlashbangCfg;
     private ConfigEntry<bool> SellPicklesCfg;
 
     // Advanced Sell Settings
@@ -63,17 +62,6 @@ public class SyncedConfig
         set => SellAmmoCfg.Value = value;
     }
     
-    internal bool SellHomemadeFlashbang
-    { 
-        get
-        {
-            if (hostConfigData != null) return hostConfigData.sellHomemadeFlashbangs;
-
-            return SellHomemadeFlashbangCfg.Value;
-        }
-        set => SellHomemadeFlashbangCfg.Value = value;
-    }
-
     internal bool SellPickles
     { 
         get
@@ -133,11 +121,6 @@ public class SyncedConfig
             new ConfigDefinition("Sell Settings", "sellAmmo"),
             false,
             new ConfigDescription("Do you want to sell Ammo?")
-        );
-        SellHomemadeFlashbangCfg = SellMyScrapBase.Instance.Config.Bind(
-            new ConfigDefinition("Sell Settings", "sellHomemadeFlashbang"),
-            true,
-            new ConfigDescription("Do you want to sell Homemade flashbangs?")
         );
         SellPicklesCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),

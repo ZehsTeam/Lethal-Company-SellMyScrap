@@ -1,7 +1,7 @@
 # SellMyScrap
-Easily sell your scrap to The Company using the ship's terminal.
+Adds a few terminal commands to sell your scrap from the ship.
 
-This mod will try to sell scrap as close to the target amount as possible. You might find some rare cases where you might sell over the target amount even if a suitable match is possible due to performance reasons.
+This mod aims to sell scrap as close to the target amount as possible. In rare cases, it may exceed the target amount due to performance reasons, even if a suitable match is possible.
 
 * This mod will NOT sell Gifts, Shotguns, or Ammo by default.
     * See config settings for more info.
@@ -28,13 +28,14 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `view-scrap` | Shows a detailed list of all the scrap in the ship. |
 
 ## Config Settings
+Sell config settings will be synced with the host when joining a lobby.
+
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling. |
+| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 | `sellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
 | `sellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
 | `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
-| `sellHomemadeFlashbang` | `Boolean` | `true` | Do you want to sell Homemade flashbangs? |
 | `sellPickles` | `Boolean` | `true` | Do you want to sell Jar of pickles? |
 
 | Advanced Sell Settings | Setting type |Default value | Example value | Description |

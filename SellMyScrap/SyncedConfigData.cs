@@ -10,7 +10,6 @@ public class SyncedConfigData : INetworkSerializable
     public bool sellGifts;
     public bool sellShotguns;
     public bool sellAmmo;
-    public bool sellHomemadeFlashbangs;
     public bool sellPickles;
     public string dontSellListJson;
 
@@ -24,7 +23,6 @@ public class SyncedConfigData : INetworkSerializable
         sellGifts = config.SellGifts;
         sellShotguns = config.SellShotguns;
         sellAmmo = config.SellAmmo;
-        sellHomemadeFlashbangs = config.SellHomemadeFlashbang;
         sellPickles = config.SellPickles;
         dontSellListJson = JsonConvert.SerializeObject(config.DontSellListJson);
     }
@@ -34,7 +32,6 @@ public class SyncedConfigData : INetworkSerializable
         serializer.SerializeValue(ref sellGifts);
         serializer.SerializeValue(ref sellShotguns);
         serializer.SerializeValue(ref sellAmmo);
-        serializer.SerializeValue(ref sellHomemadeFlashbangs);
         serializer.SerializeValue(ref sellPickles);
         serializer.SerializeValue(ref dontSellListJson);
     }

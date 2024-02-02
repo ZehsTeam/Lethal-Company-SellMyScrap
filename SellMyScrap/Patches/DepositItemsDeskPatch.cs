@@ -6,6 +6,8 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
+    public static bool speakInShip = false;
+
     [HarmonyPatch("MicrophoneSpeak")]
     [HarmonyPrefix]
     static void MicrophoneSpeakPatch(ref DepositItemsDesk __instance, ref System.Random ___CompanyLevelRandom)
@@ -16,8 +18,10 @@ internal class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(clip, 1f);
 
         // Play audio clip in the ship
-        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip)
+        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip && speakInShip)
         {
+            speakInShip = false;
+
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(clip);
         }
     }

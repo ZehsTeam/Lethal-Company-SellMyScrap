@@ -156,7 +156,6 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (itemName == "Gift" && !Instance.ConfigManager.SellGifts) return false;
         if (itemName == "Shotgun" && !Instance.ConfigManager.SellShotguns) return false;
         if (itemName == "Ammo" && !Instance.ConfigManager.SellAmmo) return false;
-        if (itemName == "Homemade flashbang" && !Instance.ConfigManager.SellHomemadeFlashbang) return false;
         if (itemName == "Jar of pickles" && !Instance.ConfigManager.SellPickles) return false;
 
         // Dont sell list
@@ -201,8 +200,10 @@ public class SellMyScrapBase : BaseUnityPlugin
     }
     #endregion
 
-    public void PerformSell()
+    private void PerformSell()
     {
+        if (!NetworkManager.Singleton.IsHost) return;
+
         DepositItemsDesk depositItemsDesk = UnityEngine.Object.FindAnyObjectByType<DepositItemsDesk>();
 
         if (depositItemsDesk == null)
@@ -224,6 +225,8 @@ public class SellMyScrapBase : BaseUnityPlugin
             
             depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
         });
+
+        MainNetworkBehaviour.Instance.SoldFromTerminalClientRpc();
 
         depositItemsDesk.SellItemsOnServer();
     }
