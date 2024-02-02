@@ -53,6 +53,13 @@ Sell Settings and Advanced Sell Settings will be synced with the host when joini
 | `sortFoundItems` | `Boolean` | `true` | Sorts found items from most to least expensive on the confirmation screen. |
 | `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items on the confirmation screen. |
 
+## Bug Reports, Help, or Suggestions
+[Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC)<br>
+└── #mod-releases > [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320)
+
+[Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU)<br>
+└── #mod-releases > [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177)
+
 ## Screenshots
 #### ```sell <amount>```
 <div>
