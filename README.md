@@ -13,7 +13,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 ## Terminal Commands
 | Command | Command alias | Description |
 | ----------- | ----------- | ----------- |
-| `sell <amount>` |  | Will sell scrap for a total of the amount specified. Amount is a positive integer. |
+| `sell <amount>` |  | Will sell scrap for a total of the amount specified. |
 | `sell-quota` | `sell quota` | Will sell scrap to reach the profit quota. |
 | `sell-all` | `sell all` | Will sell all of your scrap. |
 
@@ -27,7 +27,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `view-scrap` | `view scrap` | Shows a detailed list of all the scrap in the ship. |
 
 ## Config Settings
-**Sell Settings** and **Advanced Sell** Settings will be synced with the host when joining a lobby.
+**Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a lobby.
 
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
