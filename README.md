@@ -11,28 +11,26 @@ This mod aims to sell scrap as close to the target amount as possible. In rare c
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
-| Command | Description |
-| ----------- | ----------- |
-| `sell <amount>` | Will sell scrap for a total of the `<amount>` specified. `<amount>` is a positive integer. |
-| `sell-quota` | Will sell scrap to reach the profit quota. |
-| `sell-all` | Will sell all of your scrap. |
+| Command | Command alias | Description |
+| ----------- | ----------- | ----------- |
+| `sell <amount>` |  | Will sell scrap for a total of the amount specified. Amount is a positive integer. |
+| `sell-quota` | `sell quota` | Will sell scrap to reach the profit quota. |
+| `sell-all` | `sell all` | Will sell all of your scrap. |
 
 * You must be landed at The Company building to use these commands.
 * Each command will sell items based on the config settings.
 * Each command requires confirmation before selling your scrap.
     * Additional information is given on the confirmation screen.
-    * See screenshots for details.
 
-| Command | Description |
-| ----------- | ----------- |
-| `view-scrap` | Shows a detailed list of all the scrap in the ship. |
+| Command | Command alias | Description |
+| ----------- | ----------- | ----------- |
+| `view-scrap` | `view scrap` | Shows a detailed list of all the scrap in the ship. |
 
 ## Config Settings
-Sell Settings and Advanced Sell Settings will be synced with the host when joining a lobby.
+**Sell Settings** and **Advanced Sell** Settings will be synced with the host when joining a lobby.
 
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 | `sellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
 | `sellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
 | `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
@@ -43,8 +41,7 @@ Sell Settings and Advanced Sell Settings will be synced with the host when joini
 | `dontSellListJson` | `String` | `[]` | `["Gift", "Shotgun", "Ammo"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
 * Use the `view-scrap` command or scan in-world to see the correct item names to use.
-* Item names are not case-sensitive.
-* Spaces do matter for item names.
+* Item names are not case-sensitive. Spaces do matter for item names.
 
 | Confirmation Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -53,14 +50,23 @@ Sell Settings and Advanced Sell Settings will be synced with the host when joini
 | `sortFoundItems` | `Boolean` | `true` | Sorts found items from most to least expensive on the confirmation screen. |
 | `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items on the confirmation screen. |
 
-## Bug Reports, Help, or Suggestions
-[Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC)<br>
-└── #mod-releases > [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320)
+| Misc Settings | Setting type | Default value | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 
-[Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU)<br>
-└── #mod-releases > [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177)
+## Bug Reports, Help, or Suggestions
+
+| Discord server | Channel | Post |
+| ----------- | ----------- | ----------- |
+| [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
+| [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
 
 ## Screenshots
+<div>
+    <img src="https://i.imgur.com/N0MIFdd.png" width="273px">
+    <img src="https://i.imgur.com/0yt2sfm.png" width="273px">
+    <img src="https://i.imgur.com/dADxskd.png" width="273px">
+</div>
 #### ```sell <amount>```
 <div>
     <img src="https://i.imgur.com/4WjGIrH.png" width="412px">

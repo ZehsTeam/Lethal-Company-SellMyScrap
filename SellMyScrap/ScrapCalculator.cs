@@ -4,9 +4,9 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapCalculator
 {
-    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int quota, float rate)
+    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int amount, float rate)
     {
-        int target = (int)((float)quota / rate);
+        int target = (int)((float)amount / rate);
         int progress = 0;
         List<GrabbableObject> foundScrap = new List<GrabbableObject>();
 
@@ -24,7 +24,7 @@ internal class ScrapCalculator
         // Needs one more scrap, get lowest item
         if (target - progress > 0)
         {
-            GrabbableObject item = GetLowestItem(scrap);
+            GrabbableObject item = GetLowestItem(scrap, target - progress);
 
             if (item != null)
             {
@@ -34,7 +34,7 @@ internal class ScrapCalculator
             }
         }
 
-        if (progress == 0 || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact quota or no scrap left
+        if (progress == target || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact amount or no scrap left
 
         int difference = progress - target;
         GrabbableObject replacement = null;
@@ -110,7 +110,7 @@ internal class ScrapCalculator
         return selected;
     }
 
-    public static GrabbableObject GetLowestItem(List<GrabbableObject> scrap)
+    public static GrabbableObject GetLowestItem(List<GrabbableObject> scrap, int target)
     {
         GrabbableObject selected = null;
 
@@ -123,8 +123,14 @@ internal class ScrapCalculator
                 return;
             }
 
+            if (selected.scrapValue < target && item.scrapValue > selected.scrapValue)
+            {
+                selected = item;
+                return;
+            }
+
             // Find better item
-            if (item.scrapValue < selected.scrapValue)
+            if (item.scrapValue < selected.scrapValue && item.scrapValue >= target)
             {
                 selected = item;
                 return;

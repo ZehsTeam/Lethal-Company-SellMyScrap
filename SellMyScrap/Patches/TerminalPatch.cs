@@ -84,7 +84,7 @@ internal class TerminalPatch
         string command = array[0].ToLower();
         string second = array.Length > 1 ? array[1].ToLower() : string.Empty;
 
-        if (command == "sell" && second == string.Empty) return new CommandResponse(true, ParseHelpCommand(array));
+        if (command == "sell" && (second == "help" || second == string.Empty)) return new CommandResponse(true, ParseHelpCommand(array));
         if (command == "sell-quota" || (command == "sell" && second == "quota")) return new CommandResponse(true, ParseSellQuota(array));
         if (command == "sell-all" || (command == "sell" && second == "all")) return new CommandResponse(true, ParseSellAll(array));
         if (command == "sell") return new CommandResponse(true, ParseSellAmount(array));
