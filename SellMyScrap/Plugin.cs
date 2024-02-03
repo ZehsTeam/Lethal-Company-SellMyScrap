@@ -72,6 +72,13 @@ public class SellMyScrapBase : BaseUnityPlugin
         CancelSellRequest();
     }
 
+    public void DisplayGlobalNotification(string displayText)
+    {
+        HUDManager.Instance.globalNotificationAnimator.SetTrigger("TriggerNotif");
+        HUDManager.Instance.globalNotificationText.text = displayText;
+        HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
+    }
+
     public void UpdateCachedDontSellList(string[] dontSellList)
     {
         this.cachedDontSellList = dontSellList;
@@ -182,11 +189,12 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         if (NetworkManager.Singleton.IsHost)
         {
-            PerformSell();
+            PerformSellServer();
         }
         else
         {
-            MainNetworkBehaviour.Instance.RequestSellServerRpc(sellRequest.amountFound);
+            string username = GameNetworkManager.Instance.localPlayerController.playerUsername;
+            MainNetworkBehaviour.Instance.RequestSellServerRpc(username, sellRequest.amountFound, scrapToSell.scrap.Count);
         }
 
         sellRequest = null;
@@ -200,7 +208,7 @@ public class SellMyScrapBase : BaseUnityPlugin
     }
     #endregion
 
-    private void PerformSell()
+    private void PerformSellServer()
     {
         if (!NetworkManager.Singleton.IsHost) return;
 
@@ -222,7 +230,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         scrapToSell.scrap.ForEach(item =>
         {
             item.transform.parent = depositItemsDesk.deskObjectsContainer.transform;
-            
+
             depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
         });
 

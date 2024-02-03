@@ -3,21 +3,17 @@ using Newtonsoft.Json;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-/// <summary>
-/// This will hold and manage all configs used by the config manager
-/// </summary>
 public class SyncedConfig
 {
     private SyncedConfigData hostConfigData;
 
-    // Sell Settings
-    private ConfigEntry<bool> SpeakInShipCfg;
+    // Sell Settings (Synced)
     private ConfigEntry<bool> SellGiftsCfg;
     private ConfigEntry<bool> SellShotgunsCfg;
     private ConfigEntry<bool> SellAmmoCfg;
     private ConfigEntry<bool> SellPicklesCfg;
 
-    // Advanced Sell Settings
+    // Advanced Sell Settings (Synced)
     private ConfigEntry<string> DontSellListJsonCfg;
 
     // Confirmation Settings
@@ -26,9 +22,10 @@ public class SyncedConfig
     private ConfigEntry<bool> SortFoundItemsCfg;
     private ConfigEntry<bool> AlignFoundItemsPriceCfg;
 
-    // Sell Settings
-    internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    
+    // Misc Settings
+    private ConfigEntry<bool> SpeakInShipCfg;
+
+    // Sell Settings (Synced)
     internal bool SellGifts
     { 
         get
@@ -73,7 +70,7 @@ public class SyncedConfig
         set => SellPicklesCfg.Value = value;
     }
 
-    // Advanced Sell Settings
+    // Advanced Sell Settings (Synced)
     internal string[] DontSellListJson
     { 
         get
@@ -94,6 +91,9 @@ public class SyncedConfig
     internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
+    // Misc Settings
+    internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
+
     public SyncedConfig()
     {
         BindConfigs();
@@ -102,11 +102,6 @@ public class SyncedConfig
     private void BindConfigs()
     {
         // Sell Settings
-        SpeakInShipCfg = SellMyScrapBase.Instance.Config.Bind(
-            new ConfigDefinition("Sell Settings", "speakInShip"),
-            true,
-            new ConfigDescription("The Company will speak inside your ship after selling.")
-        );
         SellGiftsCfg = SellMyScrapBase.Instance.Config.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
             false,
@@ -161,6 +156,13 @@ public class SyncedConfig
             new ConfigDefinition("Confirmation Settings", "alignFoundItemsPrice"),
             true,
             new ConfigDescription("Align all prices of found items on the confirmation screen. This might cost more performance.")
+        );
+
+        // Misc Settings
+        SpeakInShipCfg = SellMyScrapBase.Instance.Config.Bind(
+            new ConfigDefinition("Misc Settings", "speakInShip"),
+            true,
+            new ConfigDescription("The Company will speak inside your ship after selling.")
         );
     }
 

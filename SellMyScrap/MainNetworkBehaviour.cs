@@ -23,14 +23,14 @@ internal class MainNetworkBehaviour : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void RequestSellServerRpc(int amount, ServerRpcParams serverRpcParams = default)
+    public void RequestSellServerRpc(string username, int value, int amount, ServerRpcParams serverRpcParams = default)
     {
-        var clientId = serverRpcParams.Receive.SenderClientId;
+        string message = $"Player {username} has requested to sell {amount} items for a total of ${value}";
+        SellMyScrapBase.mls.LogInfo(message);
+        SellMyScrapBase.Instance.DisplayGlobalNotification(message);
 
-        SellMyScrapBase.mls.LogInfo($"Player {clientId} has requested to sell ${amount}");
-
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.None, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(value);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.None, scrapToSell.value, value, ConfirmationType.AwaitingConfirmation);
         SellMyScrapBase.Instance.ConfirmSellRequest();
     }
 

@@ -6,6 +6,41 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
+    static bool hasOverrideTerminalNodes = false;
+
+    [HarmonyPatch("Start")]
+    [HarmonyPrefix]
+    static void StartPatch(ref TerminalNodesList ___terminalNodes)
+    {
+        if (hasOverrideTerminalNodes) return;
+        hasOverrideTerminalNodes = true;
+
+        OverrideWelcomeTerminalNode(___terminalNodes, 1);
+        OverrideHelpTerminalNode(___terminalNodes, 13);
+    }
+
+    #region TerminalNode Overrides
+    private static void OverrideWelcomeTerminalNode(TerminalNodesList terminalNodes, int index)
+    {
+        string defaultMessage = terminalNodes.specialNodes[index].displayText;
+        
+        string message = defaultMessage.Trim();
+        message += $"\n\n\nSellMyScrap v{MyPluginInfo.PLUGIN_VERSION}\n\nType \"Sell\" for a list of commands.\n\n\n\n";
+
+        terminalNodes.specialNodes[index].displayText = message;
+    }
+
+    private static void OverrideHelpTerminalNode(TerminalNodesList terminalNodes, int index)
+    {
+        string defaultMessage = terminalNodes.specialNodes[index].displayText;
+        
+        string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();
+        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n";
+
+        terminalNodes.specialNodes[index].displayText = message;
+    }
+    #endregion
+
     [HarmonyPatch("ParsePlayerSentence")]
     [HarmonyPrefix]
     static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
@@ -47,11 +82,12 @@ internal class TerminalPatch
     private static CommandResponse ParseCommand(string[] array)
     {
         string command = array[0].ToLower();
-        string second = array.Length > 1 ? array[1].ToLower() : "";
+        string second = array.Length > 1 ? array[1].ToLower() : string.Empty;
 
+        if (command == "sell" && second == string.Empty) return new CommandResponse(true, ParseHelpCommand(array));
         if (command == "sell-quota" || (command == "sell" && second == "quota")) return new CommandResponse(true, ParseSellQuota(array));
-        if (command == "sell-all"   || (command == "sell" && second == "all"  )) return new CommandResponse(true, ParseSellAll(array));
-        if (command == "sell")   return new CommandResponse(true, ParseSellAmount(array));
+        if (command == "sell-all" || (command == "sell" && second == "all")) return new CommandResponse(true, ParseSellAll(array));
+        if (command == "sell") return new CommandResponse(true, ParseSellAmount(array));
         if (command == "view-scrap" || (command == "view" && second == "scrap")) return new CommandResponse(true, ParseViewScrap(array));
         if (command == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
 
@@ -65,44 +101,24 @@ internal class TerminalPatch
 
         return new CommandResponse(false, string.Empty);
     }
-
-    private static CommandResponse ParseSellCommandConfirmation(string[] array)
-    {
-        SellRequest sellRequest = SellMyScrapBase.Instance.sellRequest;
-
-        // No sellReqest found
-        if (sellRequest == null) return new CommandResponse(false, string.Empty);
-
-        // Not awaiting a sell confirmation
-        if (sellRequest.confirmationType != ConfirmationType.AwaitingConfirmation) return new CommandResponse(false, string.Empty);
-
-        string command = array[0].ToLower();
-
-        if ("confirm".Contains(command))
-        {
-            SellMyScrapBase.Instance.ConfirmSellRequest();
-            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.amountFound}...\n\n");
-        }
-
-        if ("deny".Contains(command))
-        {
-            SellMyScrapBase.Instance.CancelSellRequest();
-            return new CommandResponse(true, "Sell aborted.\n\n");
-        }
-
-        SellMyScrapBase.Instance.CancelSellRequest();
-        return new CommandResponse(true, "Invalid input. Sell aborted.\n\n");
-    }
     #endregion
+
+    private static string ParseHelpCommand(string[] array)
+    {
+        string message = string.Empty;
+        message += $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION}\n\n";
+        message += "The following commands are available:\n\n";
+        message += "sell <amount>\n";
+        message += "sell-quota        sell quota\n";
+        message += "sell-all          sell all\n";
+        message += "view-scrap        view scrap\n\n";
+
+        return message;
+    }
 
     #region Parse Sell Commands
     private static CommandResponse CanUseSellCommands()
     {
-        //if (!NetworkManager.Singleton.IsHost)
-        //{
-        //    return new CommandResponse(false, "Only the host can use sell commands!\n\n");
-        //}
-
         StartOfRound startOfRound = StartOfRound.Instance;
 
         bool isAtCompany = startOfRound.currentLevelID == 3;
@@ -250,6 +266,34 @@ internal class TerminalPatch
 
         // Return confirmation message
         return message;
+    }
+
+    private static CommandResponse ParseSellCommandConfirmation(string[] array)
+    {
+        SellRequest sellRequest = SellMyScrapBase.Instance.sellRequest;
+
+        // No sellReqest found
+        if (sellRequest == null) return new CommandResponse(false, string.Empty);
+
+        // Not awaiting a sell confirmation
+        if (sellRequest.confirmationType != ConfirmationType.AwaitingConfirmation) return new CommandResponse(false, string.Empty);
+
+        string command = array[0].ToLower();
+
+        if ("confirm".Contains(command))
+        {
+            SellMyScrapBase.Instance.ConfirmSellRequest();
+            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.amountFound}...\n\n");
+        }
+
+        if ("deny".Contains(command))
+        {
+            SellMyScrapBase.Instance.CancelSellRequest();
+            return new CommandResponse(true, "Sell aborted.\n\n");
+        }
+
+        SellMyScrapBase.Instance.CancelSellRequest();
+        return new CommandResponse(true, "Invalid input. Sell aborted.\n\n");
     }
     #endregion
 
