@@ -67,7 +67,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
     <img src="https://i.imgur.com/0yt2sfm.png" width="273px">
     <img src="https://i.imgur.com/dADxskd.png" width="273px">
 </div>
-#### ```sell <amount>```
+<h4><code>sell &lt;amount&gt;</code></h4>
 <div>
     <img src="https://i.imgur.com/4WjGIrH.png" width="412px">
     <img src="https://i.imgur.com/ZfRkS1c.png" width="412px">
