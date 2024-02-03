@@ -47,11 +47,12 @@ internal class TerminalPatch
     private static CommandResponse ParseCommand(string[] array)
     {
         string command = array[0].ToLower();
+        string second = array.Length > 1 ? array[1].ToLower() : "";
 
-        if (command == "sell") return new CommandResponse(true, ParseSellAmount(array));
-        if (command == "sell-quota") return new CommandResponse(true, ParseSellQuota(array));
-        if (command == "sell-all") return new CommandResponse(true, ParseSellAll(array));
-        if (command == "view-scrap") return new CommandResponse(true, ParseViewScrap(array));
+        if (command == "sell-quota" || (command == "sell" && second == "quota")) return new CommandResponse(true, ParseSellQuota(array));
+        if (command == "sell-all"   || (command == "sell" && second == "all"  )) return new CommandResponse(true, ParseSellAll(array));
+        if (command == "sell")   return new CommandResponse(true, ParseSellAmount(array));
+        if (command == "view-scrap" || (command == "view" && second == "scrap")) return new CommandResponse(true, ParseViewScrap(array));
         if (command == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
 
         return new CommandResponse(false, string.Empty);
