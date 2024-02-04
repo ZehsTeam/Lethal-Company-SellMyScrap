@@ -20,7 +20,7 @@ internal class NetworkObjectManagerPatch
         AssetBundle MainAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
         networkPrefab = (GameObject)MainAssetBundle.LoadAsset("NetworkHandler");
-        networkPrefab.AddComponent<MainNetworkBehaviour>();
+        networkPrefab.AddComponent<PluginNetworkBehaviour>();
 
         NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
     }

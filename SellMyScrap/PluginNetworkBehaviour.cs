@@ -1,11 +1,11 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
-using Unity.Netcode;
+﻿using Unity.Netcode;
+using com.github.zehsteam.SellMyScrap.Patches;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class MainNetworkBehaviour : NetworkBehaviour
+internal class PluginNetworkBehaviour : NetworkBehaviour
 {
-    public static MainNetworkBehaviour Instance;
+    public static PluginNetworkBehaviour Instance;
 
     void Awake()
     {

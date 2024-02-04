@@ -34,7 +34,7 @@ internal class StartOfRoundPatch
 
         SellMyScrapBase.mls.LogInfo($"Sending config to client: {clientId}");
 
-        MainNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
+        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
     }
 
     [HarmonyPatch("OnLocalDisconnect")]

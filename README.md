@@ -53,6 +53,8 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add some additional info. |
+| `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add some additional info. |
 
 ## Bug Reports, Help, or Suggestions
 

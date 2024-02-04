@@ -194,7 +194,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         else
         {
             string username = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            MainNetworkBehaviour.Instance.RequestSellServerRpc(username, sellRequest.amountFound, scrapToSell.scrap.Count);
+            PluginNetworkBehaviour.Instance.RequestSellServerRpc(username, sellRequest.amountFound, scrapToSell.scrap.Count);
         }
 
         sellRequest = null;
@@ -234,7 +234,7 @@ public class SellMyScrapBase : BaseUnityPlugin
             depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
         });
 
-        MainNetworkBehaviour.Instance.SoldFromTerminalClientRpc();
+        PluginNetworkBehaviour.Instance.SoldFromTerminalClientRpc();
 
         depositItemsDesk.SellItemsOnServer();
     }

@@ -12,16 +12,19 @@ internal class TerminalPatch
     [HarmonyPrefix]
     static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
-        if (hasOverrideTerminalNodes) return;
-        hasOverrideTerminalNodes = true;
+        if (!hasOverrideTerminalNodes)
+        {
+            hasOverrideTerminalNodes = true;
 
-        OverrideWelcomeTerminalNode(___terminalNodes, 1);
-        OverrideHelpTerminalNode(___terminalNodes, 13);
+            if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage) OverrideWelcomeTerminalNode(___terminalNodes);
+            if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage) OverrideHelpTerminalNode(___terminalNodes);
+        }
     }
 
     #region TerminalNode Overrides
-    private static void OverrideWelcomeTerminalNode(TerminalNodesList terminalNodes, int index)
+    private static void OverrideWelcomeTerminalNode(TerminalNodesList terminalNodes)
     {
+        int index = 1;
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Trim();
@@ -30,8 +33,9 @@ internal class TerminalPatch
         terminalNodes.specialNodes[index].displayText = message;
     }
 
-    private static void OverrideHelpTerminalNode(TerminalNodesList terminalNodes, int index)
+    private static void OverrideHelpTerminalNode(TerminalNodesList terminalNodes)
     {
+        int index = 13;
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();

@@ -24,6 +24,8 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
+    private ConfigEntry<bool> OverrideWelcomeMessageCfg;
+    private ConfigEntry<bool> OverrideHelpMessageCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -93,6 +95,8 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
+    internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
+    internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -101,23 +105,25 @@ public class SyncedConfig
 
     private void BindConfigs()
     {
+        ConfigFile config = SellMyScrapBase.Instance.Config;
+
         // Sell Settings
-        SellGiftsCfg = SellMyScrapBase.Instance.Config.Bind(
+        SellGiftsCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
             false,
             new ConfigDescription("Do you want to sell Gifts?")
         );
-        SellShotgunsCfg = SellMyScrapBase.Instance.Config.Bind(
+        SellShotgunsCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
             false,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
-        SellAmmoCfg = SellMyScrapBase.Instance.Config.Bind(
+        SellAmmoCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
             false,
             new ConfigDescription("Do you want to sell Ammo?")
         );
-        SellPicklesCfg = SellMyScrapBase.Instance.Config.Bind(
+        SellPicklesCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
             true,
             new ConfigDescription("Do you want to sell Jar of pickles?")
@@ -128,7 +134,7 @@ public class SyncedConfig
         dontSellListJsonCfgDescription += "Item names are not case-sensitive.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n\n";
         dontSellListJsonCfgDescription += "Example: [\"Gift\", \"Shotgun\", \"Ammo\"]\n";
-        DontSellListJsonCfg = SellMyScrapBase.Instance.Config.Bind(
+        DontSellListJsonCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             "[]",
             new ConfigDescription(dontSellListJsonCfgDescription)
@@ -137,32 +143,42 @@ public class SyncedConfig
         SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
 
         // Confirmation Settings
-        ShowFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(
+        ShowFoundItemsCfg = config.Bind(
             new ConfigDefinition("Confirmation Settings", "showFoundItems"),
             true,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
-        ShowFoundItemsLimitCfg = SellMyScrapBase.Instance.Config.Bind(
+        ShowFoundItemsLimitCfg = config.Bind(
             new ConfigDefinition("Confirmation Settings", "showFoundItemsLimit"),
             100,
             new ConfigDescription("Won't show founds items if the total item count is over the limit.")
         );
-        SortFoundItemsCfg = SellMyScrapBase.Instance.Config.Bind(
+        SortFoundItemsCfg = config.Bind(
             new ConfigDefinition("Confirmation Settings", "sortFoundItems"),
             true,
             new ConfigDescription("Sorts found items from most to least expensive on the confirmation screen. This might cost more performance.")
         );
-        AlignFoundItemsPriceCfg = SellMyScrapBase.Instance.Config.Bind(
+        AlignFoundItemsPriceCfg = config.Bind(
             new ConfigDefinition("Confirmation Settings", "alignFoundItemsPrice"),
             true,
             new ConfigDescription("Align all prices of found items on the confirmation screen. This might cost more performance.")
         );
 
         // Misc Settings
-        SpeakInShipCfg = SellMyScrapBase.Instance.Config.Bind(
+        SpeakInShipCfg = config.Bind(
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling.")
+        );
+        OverrideWelcomeMessageCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "overrideWelcomeMessage"),
+            true,
+            new ConfigDescription("Overrides the terminal welcome message to add some additional info.")
+        );
+        OverrideHelpMessageCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "overrideHelpMessage"),
+            true,
+            new ConfigDescription("Overrides the terminal help message to add some additional info.")
         );
     }
 
