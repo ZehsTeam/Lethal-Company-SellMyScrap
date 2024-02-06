@@ -6,7 +6,7 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
-    static bool hasOverrideTerminalNodes = false;
+    private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch("Start")]
     [HarmonyPrefix]
@@ -113,9 +113,9 @@ internal class TerminalPatch
         message += $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION}\n\n";
         message += "The following commands are available:\n\n";
         message += "sell <amount>\n";
-        message += "sell-quota        sell quota\n";
-        message += "sell-all          sell all\n";
-        message += "view-scrap        view scrap\n\n";
+        message += "sell quota        sell-quota\n";
+        message += "sell all          sell-all\n";
+        message += "view scrap        view-scrap\n\n";
 
         return message;
     }

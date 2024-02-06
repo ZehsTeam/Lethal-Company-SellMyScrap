@@ -16,7 +16,9 @@ public class SyncedConfig
     // Advanced Sell Settings (Synced)
     private ConfigEntry<string> DontSellListJsonCfg;
 
-    // Confirmation Settings
+    // Terminal Settings
+    private ConfigEntry<bool> OverrideWelcomeMessageCfg;
+    private ConfigEntry<bool> OverrideHelpMessageCfg;
     private ConfigEntry<bool> ShowFoundItemsCfg;
     private ConfigEntry<int> ShowFoundItemsLimitCfg;
     private ConfigEntry<bool> SortFoundItemsCfg;
@@ -24,8 +26,6 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
-    private ConfigEntry<bool> OverrideWelcomeMessageCfg;
-    private ConfigEntry<bool> OverrideHelpMessageCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -87,7 +87,9 @@ public class SyncedConfig
         }
     }
 
-    // Confirmation Settings
+    // Terminal Settings
+    internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
+    internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
     internal bool ShowFoundItems { get { return ShowFoundItemsCfg.Value; } set => ShowFoundItemsCfg.Value = value; }
     internal int ShowFoundItemsLimit { get { return ShowFoundItemsLimitCfg.Value; } set => ShowFoundItemsLimitCfg.Value = value; }
     internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
@@ -95,8 +97,6 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
-    internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -142,26 +142,36 @@ public class SyncedConfig
 
         SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
 
-        // Confirmation Settings
+        // Terminal Settings
+        OverrideWelcomeMessageCfg = config.Bind(
+            new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
+            true,
+            new ConfigDescription("Overrides the terminal welcome message to add some additional info.")
+        );
+        OverrideHelpMessageCfg = config.Bind(
+            new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
+            true,
+            new ConfigDescription("Overrides the terminal help message to add some additional info.")
+        );
         ShowFoundItemsCfg = config.Bind(
-            new ConfigDefinition("Confirmation Settings", "showFoundItems"),
+            new ConfigDefinition("Terminal Settings", "showFoundItems"),
             true,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
         ShowFoundItemsLimitCfg = config.Bind(
-            new ConfigDefinition("Confirmation Settings", "showFoundItemsLimit"),
+            new ConfigDefinition("Terminal Settings", "showFoundItemsLimit"),
             100,
-            new ConfigDescription("Won't show founds items if the total item count is over the limit.")
+            new ConfigDescription("Won't show found items if the total item count is over the limit.")
         );
         SortFoundItemsCfg = config.Bind(
-            new ConfigDefinition("Confirmation Settings", "sortFoundItems"),
+            new ConfigDefinition("Terminal Settings", "sortFoundItems"),
             true,
-            new ConfigDescription("Sorts found items from most to least expensive on the confirmation screen. This might cost more performance.")
+            new ConfigDescription("Sorts found items from most to least expensive.")
         );
         AlignFoundItemsPriceCfg = config.Bind(
-            new ConfigDefinition("Confirmation Settings", "alignFoundItemsPrice"),
+            new ConfigDefinition("Terminal Settings", "alignFoundItemsPrice"),
             true,
-            new ConfigDescription("Align all prices of found items on the confirmation screen. This might cost more performance.")
+            new ConfigDescription("Align all prices of found items.")
         );
 
         // Misc Settings
@@ -169,16 +179,6 @@ public class SyncedConfig
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling.")
-        );
-        OverrideWelcomeMessageCfg = config.Bind(
-            new ConfigDefinition("Misc Settings", "overrideWelcomeMessage"),
-            true,
-            new ConfigDescription("Overrides the terminal welcome message to add some additional info.")
-        );
-        OverrideHelpMessageCfg = config.Bind(
-            new ConfigDefinition("Misc Settings", "overrideHelpMessage"),
-            true,
-            new ConfigDescription("Overrides the terminal help message to add some additional info.")
         );
     }
 
