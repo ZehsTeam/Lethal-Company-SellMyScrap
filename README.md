@@ -29,6 +29,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | ----------- | ----------- | ----------- |
 | `sell help` | `sell` | Will show a help message. |
 | `view scrap` | `view-scrap` | Shows a detailed list of all the scrap in the ship. |
+| `view config` | `view-config` | Shows your config settings. |
 
 ## Config Settings
 **Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a lobby.

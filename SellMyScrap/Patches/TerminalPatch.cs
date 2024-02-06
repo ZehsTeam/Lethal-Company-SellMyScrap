@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using Newtonsoft.Json;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
@@ -10,18 +12,22 @@ internal class TerminalPatch
 
     [HarmonyPatch("Start")]
     [HarmonyPrefix]
+    [HarmonyPriority(int.MaxValue)]
     static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
-        if (!hasOverrideTerminalNodes)
-        {
-            hasOverrideTerminalNodes = true;
-
-            if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage) OverrideWelcomeTerminalNode(___terminalNodes);
-            if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage) OverrideHelpTerminalNode(___terminalNodes);
-        }
+        OverrideTerminalNodes(___terminalNodes);
     }
 
     #region TerminalNode Overrides
+    private static void OverrideTerminalNodes(TerminalNodesList terminalNodes)
+    {
+        if (hasOverrideTerminalNodes) return;
+        hasOverrideTerminalNodes = true;
+
+        if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage) OverrideWelcomeTerminalNode(terminalNodes);
+        if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage) OverrideHelpTerminalNode(terminalNodes);
+    }
+
     private static void OverrideWelcomeTerminalNode(TerminalNodesList terminalNodes)
     {
         int index = 1;
@@ -47,6 +53,7 @@ internal class TerminalPatch
 
     [HarmonyPatch("ParsePlayerSentence")]
     [HarmonyPrefix]
+    [HarmonyPriority(int.MaxValue)]
     static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
         string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');
@@ -85,15 +92,20 @@ internal class TerminalPatch
     #region Main Parse
     private static CommandResponse ParseCommand(string[] array)
     {
-        string command = array[0].ToLower();
+        string first = array[0].ToLower();
         string second = array.Length > 1 ? array[1].ToLower() : string.Empty;
+        string third = array.Length > 2 ? array[2].ToLower() : string.Empty;
 
-        if (command == "sell" && (second == "help" || second == string.Empty)) return new CommandResponse(true, ParseHelpCommand(array));
-        if (command == "sell-quota" || (command == "sell" && second == "quota")) return new CommandResponse(true, ParseSellQuota(array));
-        if (command == "sell-all" || (command == "sell" && second == "all")) return new CommandResponse(true, ParseSellAll(array));
-        if (command == "sell") return new CommandResponse(true, ParseSellAmount(array));
-        if (command == "view-scrap" || (command == "view" && second == "scrap")) return new CommandResponse(true, ParseViewScrap(array));
-        if (command == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
+        string[] args = [first, second, third];
+
+        if (IsHelpCommand(args)) return new CommandResponse(true, ParseHelpCommand(array));
+        if (IsSellQuotaCommand(args)) return new CommandResponse(true, ParseSellQuotaCommand(array));
+        if (IsSellAllCommand(args)) return new CommandResponse(true, ParseSellAllCommand(array));
+        if (IsSellAmountCommand(args)) return new CommandResponse(true, ParseSellAmountCommand(array));
+        if (IsViewScrapCommand(args)) return new CommandResponse(true, ParseViewScrapCommand(array));
+        if (IsViewConfigCommand(args)) return new CommandResponse(true, ParseViewConfigCommand(array));
+
+        if (array[0] == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
 
         return new CommandResponse(false, string.Empty);
     }
@@ -107,6 +119,56 @@ internal class TerminalPatch
     }
     #endregion
 
+    #region Is Command
+    private static bool IsHelpCommand(string[] array)
+    {
+        if (array[0] == "sell" && array[1] == string.Empty) return true;
+        if (array[0] == "sell" && array[1] == "help") return true;
+        if (array[0] == "sell-help") return true;
+
+        return false;
+    }
+
+    private static bool IsSellQuotaCommand(string[] array)
+    {
+        if (array[0] == "sell" && array[1] == "quota") return true;
+        if (array[0] == "sell-quota") return true;
+
+        return false;
+    }
+
+    private static bool IsSellAllCommand(string[] array)
+    {
+        if (array[0] == "sell" && array[1] == "all") return true;
+        if (array[0] == "sell-all") return true;
+
+        return false;
+    }
+
+    private static bool IsSellAmountCommand(string[] array)
+    {
+        if (array[0] == "sell" && array[1] != string.Empty) return true;
+
+        return false;
+    }
+
+    private static bool IsViewScrapCommand(string[] array)
+    {
+        if (array[0] == "view" && array[1] == "scrap") return true;
+        if (array[0] == "view-scrap") return true;
+
+        return false;
+    }
+    
+    private static bool IsViewConfigCommand(string[] array)
+    {
+        if (array[0] == "view" && array[1] == "config") return true;
+        if (array[0] == "view-config") return true;
+
+        return false;
+    }
+    #endregion
+
     private static string ParseHelpCommand(string[] array)
     {
         string message = string.Empty;
@@ -115,7 +177,8 @@ internal class TerminalPatch
         message += "sell <amount>\n";
         message += "sell quota        sell-quota\n";
         message += "sell all          sell-all\n";
-        message += "view scrap        view-scrap\n\n";
+        message += "view scrap        view-scrap\n";
+        message += "view config       view-config\n\n";
 
         return message;
     }
@@ -136,7 +199,7 @@ internal class TerminalPatch
         return new CommandResponse(true, string.Empty);
     }
 
-    private static string ParseSellAmount(string[] array)
+    private static string ParseSellAmountCommand(string[] array)
     {
         CommandResponse response = CanUseSellCommands();
         if (!response.success) return response.result;
@@ -188,7 +251,7 @@ internal class TerminalPatch
         return message;
     }
 
-    private static string ParseSellQuota(string[] array)
+    private static string ParseSellQuotaCommand(string[] array)
     {
         CommandResponse response = CanUseSellCommands();
         if (!response.success) return response.result;
@@ -235,7 +298,7 @@ internal class TerminalPatch
         return message;
     }
 
-    private static string ParseSellAll(string[] array)
+    private static string ParseSellAllCommand(string[] array)
     {
         CommandResponse response = CanUseSellCommands();
         if (!response.success) return response.result;
@@ -301,7 +364,7 @@ internal class TerminalPatch
     }
     #endregion
 
-    private static string ParseViewScrap(string[] array)
+    private static string ParseViewScrapCommand(string[] array)
     {
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllScrapToSell();
 
@@ -318,6 +381,34 @@ internal class TerminalPatch
         return message;
     }
 
+    private static string ParseViewConfigCommand(string[] array)
+    {
+        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+
+        string syncedMessage = NetworkManager.Singleton.IsHost ? string.Empty : " (Synced with host)";
+
+        string message = string.Empty;
+        message += $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config\n\n";
+        message += $"[Sell Settings]{syncedMessage}\n";
+        message += $"sellGifts:    {configManager.SellGifts}\n";
+        message += $"sellShotguns: {configManager.SellShotguns}\n";
+        message += $"sellAmmo:     {configManager.SellAmmo}\n";
+        message += $"sellPickles:  {configManager.SellPickles}\n\n";
+        message += $"[Advanced Sell Settings]{syncedMessage}\n";
+        message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
+        message += "[Terminal Settings]\n";
+        message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
+        message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
+        message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
+        message += $"showFoundItemsLimit:    {configManager.ShowFoundItemsLimit}\n";
+        message += $"sortFoundItems:         {configManager.SortFoundItems}\n";
+        message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
+        message += "[Misc Settings]\n";
+        message += $"speakInShip: {configManager.SpeakInShip}\n\n";
+
+        return message;
+    }
+
     #region Create TerminalNode
     private static TerminalNode CreateTerminalNode(string message)
     {
@@ -330,6 +421,7 @@ internal class TerminalPatch
 
         terminalNode.displayText = message;
         terminalNode.clearPreviousText = clearPreviousText;
+        terminalNode.maxCharactersToType = 100;
 
         return terminalNode;
     }
