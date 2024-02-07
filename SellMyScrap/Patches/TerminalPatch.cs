@@ -169,6 +169,7 @@ internal class TerminalPatch
     }
     #endregion
 
+    #region Parse Commands
     private static string ParseHelpCommand(string[] array)
     {
         string message = string.Empty;
@@ -408,6 +409,7 @@ internal class TerminalPatch
 
         return message;
     }
+    #endregion
 
     #region Create TerminalNode
     private static TerminalNode CreateTerminalNode(string message)
@@ -421,7 +423,7 @@ internal class TerminalPatch
 
         terminalNode.displayText = message;
         terminalNode.clearPreviousText = clearPreviousText;
-        terminalNode.maxCharactersToType = 100;
+        terminalNode.maxCharactersToType = 50;
 
         return terminalNode;
     }

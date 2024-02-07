@@ -3,8 +3,10 @@ Adds a few terminal commands to sell your scrap from the ship.
 
 This mod aims to sell scrap as close to the target amount as possible. In rare cases, it may exceed the target amount due to performance reasons, even if a suitable match is possible.
 
+* You must be landed at The Company building to use sell commands.
+<br><br>
 * This mod will NOT sell Gifts, Shotguns, or Ammo by default.
-    * See **Config Settings** for more info.
+    * See **Sell Settings** for more info.
 <br><br>
 * This mod has support for excluding custom / modded scrap items from the sell algorithm.
     * See **Advanced Sell Settings** for more info.
@@ -14,24 +16,27 @@ This mod aims to sell scrap as close to the target amount as possible. In rare c
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
-| Command | Alias | Description |
-| ----------- | ----------- | ----------- |
-| `sell <amount>` |  | Will sell scrap for a total of the amount specified. Amount is a positive integer. |
-| `sell quota` | `sell-quota` | Will sell scrap to reach the profit quota. |
-| `sell all` | `sell-all` | Will sell all of your scrap. |
+| Command | Description |
+| ----------- | ----------- |
+| `sell <amount>` | Will sell scrap for a total of the amount specified. Amount is a positive integer. |
+| `sell quota` | Will sell scrap to reach the profit quota. |
+| `sell all` | Will sell all of your scrap. |
 
 * You must be landed at The Company building to use these commands.
-* Each command will sell items based on the config settings.
+* Each command will sell items based on your config settings.
 * Each command requires confirmation before selling your scrap.
     * Additional information is given on the confirmation screen.
 
-| Command | Alias | Description |
-| ----------- | ----------- | ----------- |
-| `sell help` | `sell` | Will show a help message. |
-| `view scrap` | `view-scrap` | Shows a detailed list of all the scrap in the ship. |
-| `view config` | `view-config` | Shows your config settings. |
+| Command |Description |
+| ----------- | ----------- |
+| `sell` |Will show a help message. |
+| `view scrap` | Shows a detailed list of all the scrap in the ship. |
+| `view config` | Shows your config settings. |
 
 ## Config Settings
+If you are experiencing any issues with config settings not working, try deleting the config file and regenerating it by launching the game.<br>
+*Reason*: Config files from previous versions might have different categories and keys.
+
 **Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a lobby.
 
 | Sell Settings | Setting type | Default value | Description |
@@ -78,18 +83,22 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
     <img src="https://i.imgur.com/4WjGIrH.png" width="412px">
     <img src="https://i.imgur.com/ZfRkS1c.png" width="412px">
 </div>
-<h4><code>sell-quota</code></h4>
+<h4><code>sell quota</code></h4>
 <div>
     <img src="https://i.imgur.com/R53wn2s.png" width="412px">
     <img src="https://i.imgur.com/XB4MDgh.png" width="412px">
 </div>
-<h4><code>sell all</code> / <code>sell-all</code></h4>
+<h4><code>sell all</code></h4>
 <div>
     <img src="https://i.imgur.com/TwPeAYV.png" width="412px">
     <img src="https://i.imgur.com/zDsPJLG.png" width="412px">
 </div>
 <div>
-<h4><code>view scrap</code> / <code>view-scrap</code></h4>
+<h4><code>view scrap</code></h4>
 <div>
     <img src="https://i.imgur.com/CWnmoZW.png" width="100%">
+</div>
+<h4><code>view config</code></h4>
+<div>
+    <img src="" width="100%">
 </div>

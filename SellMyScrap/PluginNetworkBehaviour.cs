@@ -25,8 +25,8 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RequestSellServerRpc(string username, int value, int amount, ServerRpcParams serverRpcParams = default)
     {
-        string message = $"Player {username} has requested to sell {amount} items for a total of ${value}";
-        SellMyScrapBase.mls.LogInfo(message);
+        string message = $"{username} has requested to sell {amount} items for a total of ${value}";
+        SellMyScrapBase.mls.LogInfo($"Player {message}");
         SellMyScrapBase.Instance.DisplayGlobalNotification(message);
 
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(value);
