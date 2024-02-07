@@ -74,9 +74,9 @@ If you are experiencing any issues with config settings not working, try deletin
 
 ## Screenshots
 <div>
-    <img src="https://i.imgur.com/N0MIFdd.png" width="273px">
+    <img src="https://i.imgur.com/0nyTcob.png" width="273px">
     <img src="https://i.imgur.com/0yt2sfm.png" width="273px">
-    <img src="https://i.imgur.com/dADxskd.png" width="273px">
+    <img src="https://i.imgur.com/fAL8Fzd.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -100,5 +100,5 @@ If you are experiencing any issues with config settings not working, try deletin
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="" width="100%">
+    <img src="https://i.imgur.com/SoZigr1.png" width="100%">
 </div>
