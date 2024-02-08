@@ -132,6 +132,7 @@ public class SyncedConfig
         // Advanced Sell Settings
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
         dontSellListJsonCfgDescription += "Item names are not case-sensitive.\n";
+        dontSellListJsonCfgDescription += "Spaces do matter for item names.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n\n";
         dontSellListJsonCfgDescription += "Example: [\"Gift\", \"Shotgun\", \"Ammo\"]\n";
         DontSellListJsonCfg = config.Bind(
@@ -178,7 +179,7 @@ public class SyncedConfig
         SpeakInShipCfg = config.Bind(
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
-            new ConfigDescription("The Company will speak inside your ship after selling.")
+            new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
     }
 
