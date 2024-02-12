@@ -16,6 +16,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     internal static SellMyScrapBase Instance;
     internal static ManualLogSource mls;
+
     internal SyncedConfig ConfigManager;
 
     public SellRequest sellRequest;

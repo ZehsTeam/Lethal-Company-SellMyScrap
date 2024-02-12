@@ -34,7 +34,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Trim();
-        message += $"\n\n\nSellMyScrap v{MyPluginInfo.PLUGIN_VERSION}\n\nType \"Sell\" for a list of commands.\n\n\n\n";
+        message += $"\n\n[SellMyScrap v{MyPluginInfo.PLUGIN_VERSION}]\nType \"Sell\" for a list of commands.\n\n\n\n";
 
         terminalNodes.specialNodes[index].displayText = message;
     }
@@ -123,8 +123,6 @@ internal class TerminalPatch
     private static bool IsHelpCommand(string[] array)
     {
         if (array[0] == "sell" && array[1] == string.Empty) return true;
-        if (array[0] == "sell" && array[1] == "help") return true;
-        if (array[0] == "sell-help") return true;
 
         return false;
     }

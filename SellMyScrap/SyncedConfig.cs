@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using Newtonsoft.Json;
+using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -35,8 +36,12 @@ public class SyncedConfig
             if (hostConfigData != null) return hostConfigData.sellGifts;
 
             return SellGiftsCfg.Value;
-        } 
-        set => SellGiftsCfg.Value = value;
+        }
+        set
+        {
+            SellGiftsCfg.Value = value;
+            ConfigsChanged();
+        }
     }
     
     internal bool SellShotguns
@@ -46,8 +51,12 @@ public class SyncedConfig
             if (hostConfigData != null) return hostConfigData.sellShotguns;
 
             return SellShotgunsCfg.Value;
-        } 
-        set => SellShotgunsCfg.Value = value;
+        }
+        set
+        {
+            SellShotgunsCfg.Value = value;
+            ConfigsChanged();
+        }
     }
     
     internal bool SellAmmo 
@@ -58,7 +67,11 @@ public class SyncedConfig
 
             return SellAmmoCfg.Value;
         }
-        set => SellAmmoCfg.Value = value;
+        set
+        {
+            SellAmmoCfg.Value = value;
+            ConfigsChanged();
+        }
     }
     
     internal bool SellPickles
@@ -69,7 +82,11 @@ public class SyncedConfig
             
             return SellPicklesCfg.Value;
         }
-        set => SellPicklesCfg.Value = value;
+        set
+        {
+            SellPicklesCfg.Value = value;
+            ConfigsChanged();
+        }
     }
 
     // Advanced Sell Settings (Synced)
@@ -84,6 +101,7 @@ public class SyncedConfig
         set
         {
             DontSellListJsonCfg.Value = JsonConvert.SerializeObject(value);
+            ConfigsChanged();
         }
     }
 
@@ -188,5 +206,12 @@ public class SyncedConfig
         hostConfigData = syncedConfigData;
 
         SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
+    }
+
+    private void ConfigsChanged()
+    {
+        if (!NetworkManager.Singleton.IsHost) return;
+
+        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));
     }
 }
