@@ -34,7 +34,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Trim();
-        message += $"\n\n[SellMyScrap v{MyPluginInfo.PLUGIN_VERSION}]\nType \"Sell\" for a list of commands.\n\n\n\n";
+        message += $"\n\n[SellMyScrap]\nType \"Sell\" for a list of commands.\n\n\n\n";
 
         terminalNodes.specialNodes[index].displayText = message;
     }
