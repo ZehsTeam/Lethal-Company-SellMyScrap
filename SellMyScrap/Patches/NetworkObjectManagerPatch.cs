@@ -32,7 +32,7 @@ internal class NetworkObjectManagerPatch
 
             NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
 
-            SellMyScrapBase.mls.LogError("Successfully loaded assets from AssetBundle!");
+            SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }
         catch (Exception e)
         {

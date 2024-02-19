@@ -21,7 +21,6 @@ public class SyncedConfig
     private ConfigEntry<bool> OverrideWelcomeMessageCfg;
     private ConfigEntry<bool> OverrideHelpMessageCfg;
     private ConfigEntry<bool> ShowFoundItemsCfg;
-    private ConfigEntry<int> ShowFoundItemsLimitCfg;
     private ConfigEntry<bool> SortFoundItemsCfg;
     private ConfigEntry<bool> AlignFoundItemsPriceCfg;
 
@@ -109,7 +108,6 @@ public class SyncedConfig
     internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
     internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
     internal bool ShowFoundItems { get { return ShowFoundItemsCfg.Value; } set => ShowFoundItemsCfg.Value = value; }
-    internal int ShowFoundItemsLimit { get { return ShowFoundItemsLimitCfg.Value; } set => ShowFoundItemsLimitCfg.Value = value; }
     internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
@@ -176,11 +174,6 @@ public class SyncedConfig
             new ConfigDefinition("Terminal Settings", "showFoundItems"),
             true,
             new ConfigDescription("Show found items on the confirmation screen.")
-        );
-        ShowFoundItemsLimitCfg = config.Bind(
-            new ConfigDefinition("Terminal Settings", "showFoundItemsLimit"),
-            100,
-            new ConfigDescription("Won't show found items if the total item count is over the limit.")
         );
         SortFoundItemsCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "sortFoundItems"),

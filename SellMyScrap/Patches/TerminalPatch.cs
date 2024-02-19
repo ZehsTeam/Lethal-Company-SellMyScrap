@@ -8,6 +8,7 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
+    private static string currentTerminalMessage;
     private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch("Start")]
@@ -45,7 +46,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();
-        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n[numberOfItemsOnRoute]";
+        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n\n[numberOfItemsOnRoute]";
 
         terminalNodes.specialNodes[index].displayText = message;
     }
@@ -206,7 +207,7 @@ internal class TerminalPatch
         // Amount not specified
         if (array.Length < 2)
         {
-            return "Please specify an amount to sell.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer\nExample: sell 500\n\n";
+            return "Please specify an amount to sell.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n";
         }
 
         int amount;
@@ -215,7 +216,7 @@ internal class TerminalPatch
         // Invalid sell amount
         if (amount <= 0)
         {
-            return "ERROR! Sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer\nExample: sell 500\n\n";
+            return "Error: sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n";
         }
 
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
@@ -227,19 +228,14 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of ${scrapToSell.value}\nRequested amount: ${amount}\nThe Company is buying at %{rate}\n\n";
+        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
+        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nRequested amount: ${amount}\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {
-            if (scrapToSell.scrap.Count <= SellMyScrapBase.Instance.ConfigManager.ShowFoundItemsLimit)
-            {
-                message += $"{scrapToSell.GetListAsString()}\n\n";
-            }
-            else
-            {
-                message += $"[Too many items to show]\n\n";
-            }
+            message += $"{scrapToSell.GetListAsString()}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";
@@ -274,19 +270,14 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of ${scrapToSell.value}\nProfit quota: ${quotaFulfilled} / ${profitQuota} (${amount})\nThe Company is buying at %{rate}\n\n";
+        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
+        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nProfit quota: ${quotaFulfilled} / ${profitQuota} (${amount})\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {
-            if (scrapToSell.scrap.Count <= SellMyScrapBase.Instance.ConfigManager.ShowFoundItemsLimit)
-            {
-                message += $"{scrapToSell.GetListAsString()}\n\n";
-            }
-            else
-            {
-                message += $"[Too many items to show]\n\n";
-            }
+            message += $"{scrapToSell.GetListAsString()}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";
@@ -311,19 +302,14 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of ${scrapToSell.value}\nThe Company is buying at %{rate}\n\n";
+        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
+        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {
-            if (scrapToSell.scrap.Count <= SellMyScrapBase.Instance.ConfigManager.ShowFoundItemsLimit)
-            {
-                message += $"{scrapToSell.GetListAsString()}\n\n";
-            }
-            else
-            {
-                message += $"[Too many items to show]\n\n";
-            }
+            message += $"{scrapToSell.GetListAsString()}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";
@@ -349,7 +335,11 @@ internal class TerminalPatch
         if ("confirm".Contains(command))
         {
             SellMyScrapBase.Instance.ConfirmSellRequest();
-            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.valueFound}...\n\n");
+
+            float rate = StartOfRound.Instance.companyBuyingRate;
+            int realValue = (int)(sellRequest.valueFound * StartOfRound.Instance.companyBuyingRate);
+            string valueString = rate == 1f ? $"${realValue}" : $"${realValue} ({sellRequest.valueFound})";
+            return new CommandResponse(true, $"Sell confirmed. Processing {valueString}...\n\n");
         }
 
         if ("deny".Contains(command))
@@ -358,8 +348,7 @@ internal class TerminalPatch
             return new CommandResponse(true, "Sell aborted.\n\n");
         }
 
-        SellMyScrapBase.Instance.CancelSellRequest();
-        return new CommandResponse(true, "Invalid input. Sell aborted.\n\n");
+        return new CommandResponse(true, currentTerminalMessage);
     }
     #endregion
 
@@ -399,7 +388,6 @@ internal class TerminalPatch
         message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
         message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
         message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
-        message += $"showFoundItemsLimit:    {configManager.ShowFoundItemsLimit}\n";
         message += $"sortFoundItems:         {configManager.SortFoundItems}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
@@ -422,6 +410,8 @@ internal class TerminalPatch
         terminalNode.displayText = message;
         terminalNode.clearPreviousText = clearPreviousText;
         terminalNode.maxCharactersToType = 50;
+
+        currentTerminalMessage = message;
 
         return terminalNode;
     }
