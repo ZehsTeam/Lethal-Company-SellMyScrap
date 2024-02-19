@@ -1,11 +1,12 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using com.github.zehsteam.SellMyScrap.Patches;
 using HarmonyLib;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
-using com.github.zehsteam.SellMyScrap.Patches;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -33,6 +34,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         harmony.PatchAll(typeof(NetworkObjectManagerPatch));
         harmony.PatchAll(typeof(StartOfRoundPatch));
+        harmony.PatchAll(typeof(HUDManagerPatch));
         harmony.PatchAll(typeof(TerminalPatch));
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
@@ -177,9 +179,9 @@ public class SellMyScrapBase : BaseUnityPlugin
     #endregion
 
     #region SellRequest Methods
-    public void CreateSellRequest(SellType sellType, int amountFound, int requestedAmount, ConfirmationType confirmationType)
+    public void CreateSellRequest(SellType sellType, int valueFound, int valueRequested, ConfirmationType confirmationType)
     {
-        sellRequest = new SellRequest(sellType, amountFound, requestedAmount, confirmationType);
+        sellRequest = new SellRequest(sellType, valueFound, valueRequested, confirmationType);
     }
 
     public void ConfirmSellRequest()
@@ -188,18 +190,32 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
-        if (NetworkManager.Singleton.IsHost)
+        bool isHostOrSever = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+
+        if (isHostOrSever)
         {
-            PerformSellServer();
+            ConfirmSellRequestOnServer();
         }
         else
         {
-            string username = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            PluginNetworkBehaviour.Instance.RequestSellServerRpc(username, sellRequest.amountFound, scrapToSell.scrap.Count);
+            ConfirmSellRequestOnClient();
         }
 
         sellRequest = null;
         scrapToSell = null;
+    }
+
+    private void ConfirmSellRequestOnServer()
+    {
+        StartCoroutine(PerformSellOnServer());
+    }
+
+    private void ConfirmSellRequestOnClient()
+    {
+        int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
+        string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap);
+
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.valueFound, scrapToSell.scrap.Count);
     }
 
     public void CancelSellRequest()
@@ -209,34 +225,30 @@ public class SellMyScrapBase : BaseUnityPlugin
     }
     #endregion
 
-    private void PerformSellServer()
+    public void PerformSellOnServerFromClient(List<GrabbableObject> scrap, SellType sellType)
     {
-        if (!NetworkManager.Singleton.IsHost) return;
+        scrapToSell = new ScrapToSell(scrap);
+        CreateSellRequest(sellType, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
+        ConfirmSellRequest();
+    }
 
-        DepositItemsDesk depositItemsDesk = UnityEngine.Object.FindAnyObjectByType<DepositItemsDesk>();
+    public IEnumerator PerformSellOnServer()
+    {
+        if (scrapToSell == null) yield return null;
+        if (sellRequest == null) yield return null;
+        if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
-        if (depositItemsDesk == null)
+        if (DepositItemsDeskPatch.DepositItemsDesk == null)
         {
-            mls.LogError($"ERROR! Could not find depositItemsDesk. Are you landed at The Company building?");
-            return;
+            mls.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
+            yield return null;
         }
 
-        // Has valid sell request?
-        if (sellRequest == null) return;
-        if (sellRequest.confirmationType != ConfirmationType.Confirmed) return;
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterServerRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
+        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
 
-        // Has scrap to sell?
-        if (scrapToSell == null) return;
+        yield return new WaitForSeconds(0.2f);
 
-        scrapToSell.scrap.ForEach(item =>
-        {
-            item.transform.parent = depositItemsDesk.deskObjectsContainer.transform;
-
-            depositItemsDesk.AddObjectToDeskServerRpc(item.gameObject.GetComponent<NetworkObject>());
-        });
-
-        PluginNetworkBehaviour.Instance.SoldFromTerminalClientRpc();
-
-        depositItemsDesk.SellItemsOnServer();
+        DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
     }
 }

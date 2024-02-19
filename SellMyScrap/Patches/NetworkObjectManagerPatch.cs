@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -13,15 +14,29 @@ internal class NetworkObjectManagerPatch
     [HarmonyPostfix]
     static void Start()
     {
+        LoadAssetsFromAssetBundle();
+    }
+
+    private static void LoadAssetsFromAssetBundle()
+    {
         if (networkPrefab != null) return;
 
-        var dllFolderPath = System.IO.Path.GetDirectoryName(SellMyScrapBase.Instance.Info.Location);
-        var assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "sellmyscrap_assets");
-        AssetBundle MainAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
+        try
+        {
+            var dllFolderPath = System.IO.Path.GetDirectoryName(SellMyScrapBase.Instance.Info.Location);
+            var assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "sellmyscrap_assets");
+            AssetBundle MainAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
-        networkPrefab = (GameObject)MainAssetBundle.LoadAsset("NetworkHandler");
-        networkPrefab.AddComponent<PluginNetworkBehaviour>();
+            networkPrefab = MainAssetBundle.LoadAsset<GameObject>("NetworkHandler");
+            networkPrefab.AddComponent<PluginNetworkBehaviour>();
 
-        NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
+            NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
+
+            SellMyScrapBase.mls.LogError("Successfully loaded assets from AssetBundle!");
+        }
+        catch (Exception e)
+        {
+            SellMyScrapBase.mls.LogError($"Error: failed to load assets from AssetBundle.\n\n{e}");
+        }
     }
 }

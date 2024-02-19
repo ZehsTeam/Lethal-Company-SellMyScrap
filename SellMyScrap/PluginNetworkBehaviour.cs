@@ -1,5 +1,8 @@
-﻿using Unity.Netcode;
-using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Patches;
+using GameNetcodeStuff;
+using System;
+using System.Collections.Generic;
+using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -18,25 +21,39 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer) return;
 
         SellMyScrapBase.mls.LogInfo("Syncing config with host.");
-
         SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(syncedConfigData);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void RequestSellServerRpc(string username, int value, int amount, ServerRpcParams serverRpcParams = default)
+    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int totalValue, int itemsAmount)
     {
-        string message = $"{username} has requested to sell {amount} items for a total of ${value}";
-        SellMyScrapBase.mls.LogInfo($"Player {message}");
-        SellMyScrapBase.Instance.DisplayGlobalNotification(message);
+        PlayerControllerB fromPlayerScript = StartOfRound.Instance.allPlayerScripts[fromPlayerId];
+        List<GrabbableObject> grabbableObjects = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+        string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {itemsAmount} items for ${totalValue}";
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(value);
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.None, scrapToSell.value, value, ConfirmationType.AwaitingConfirmation);
-        SellMyScrapBase.Instance.ConfirmSellRequest();
+        SellMyScrapBase.mls.LogInfo(message);
+        SellMyScrapBase.Instance.DisplayGlobalNotification(message);
+        SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlaceItemsOnCounterServerRpc(string networkObjectIdsString)
+    {
+        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
+        PlaceItemsOnCounterClientRpc(networkObjectIdsString);
     }
 
     [ClientRpc]
-    public void SoldFromTerminalClientRpc()
+    public void PlaceItemsOnCounterClientRpc(string networkObjectIdsString)
     {
-        DepositItemsDeskPatch.speakInShip = true;
+        if (IsHost || IsServer) return;
+
+        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
+    }
+
+    [ClientRpc]
+    public void EnableSpeakInShipClientRpc()
+    {
+        DepositItemsDeskPatch.enableSpeakInShip = true;
     }
 }

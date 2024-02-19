@@ -17,16 +17,16 @@ public enum ConfirmationType
 
 public class SellRequest
 {
-    public SellType type;
-    public int amountFound;
-    public int requestedAmount;
+    public SellType sellType;
+    public int valueFound;
+    public int valueRequested;
     public ConfirmationType confirmationType;
 
-    public SellRequest(SellType type, int amountFound, int requestedAmount, ConfirmationType confirmationType)
+    public SellRequest(SellType type, int valueFound, int valueRequested, ConfirmationType confirmationType)
     {
-        this.type = type;
-        this.amountFound = amountFound;
-        this.requestedAmount = requestedAmount;
+        this.sellType = type;
+        this.valueFound = valueFound;
+        this.valueRequested = valueRequested;
         this.confirmationType = confirmationType;
     }
 }

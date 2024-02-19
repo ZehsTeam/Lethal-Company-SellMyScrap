@@ -45,7 +45,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();
-        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n";
+        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n[numberOfItemsOnRoute]";
 
         terminalNodes.specialNodes[index].displayText = message;
     }
@@ -349,7 +349,7 @@ internal class TerminalPatch
         if ("confirm".Contains(command))
         {
             SellMyScrapBase.Instance.ConfirmSellRequest();
-            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.amountFound}...\n\n");
+            return new CommandResponse(true, $"Sell confirmed. Processing ${sellRequest.valueFound}...\n\n");
         }
 
         if ("deny".Contains(command))

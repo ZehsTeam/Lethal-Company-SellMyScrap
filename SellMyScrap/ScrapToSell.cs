@@ -17,11 +17,16 @@ public class ScrapToSell
 
     public string GetListAsString()
     {
-        ScrapItemStackManager itemStackManager = new ScrapItemStackManager();
-        scrap.ForEach(item => itemStackManager.AddItem(item.itemProperties.itemName, item.scrapValue));
-
         bool sortFoundItems = SellMyScrapBase.Instance.ConfigManager.SortFoundItems;
         bool alignFoundItemsPrice = SellMyScrapBase.Instance.ConfigManager.AlignFoundItemsPrice;
+
+        return GetListAsString(sortFoundItems, alignFoundItemsPrice);
+    }
+
+    public string GetListAsString(bool sortFoundItems, bool alignFoundItemsPrice)
+    {
+        ScrapItemStackManager itemStackManager = new ScrapItemStackManager();
+        scrap.ForEach(item => itemStackManager.AddItem(item.itemProperties.itemName, item.scrapValue));
 
         // Sort found items
         if (sortFoundItems) itemStackManager.SortItemStackList();

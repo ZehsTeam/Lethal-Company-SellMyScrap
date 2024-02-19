@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
@@ -6,7 +8,22 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
-    public static bool speakInShip = false;
+    private static DepositItemsDesk depositItemsDesk;
+
+    public static DepositItemsDesk DepositItemsDesk
+    {
+        get
+        {
+            if (depositItemsDesk == null)
+            {
+                depositItemsDesk = Object.FindAnyObjectByType<DepositItemsDesk>();
+            }
+
+            return depositItemsDesk;
+        }
+    }
+
+    public static bool enableSpeakInShip = false;
 
     [HarmonyPatch("MicrophoneSpeak")]
     [HarmonyPrefix]
@@ -18,11 +35,37 @@ internal class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(clip, 1f);
 
         // Play audio clip in the ship
-        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip && speakInShip)
+        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip && enableSpeakInShip)
         {
-            speakInShip = false;
+            enableSpeakInShip = false;
 
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(clip);
         }
+    }
+
+    public static void PlaceItemsOnCounter(List<GrabbableObject> grabbableObjects)
+    {
+        if (DepositItemsDesk == null) return;
+
+        grabbableObjects.ForEach(PlaceItemOnCounter);
+    }
+
+    public static void PlaceItemOnCounter(GrabbableObject grabbableObject)
+    {
+        if (DepositItemsDesk == null) return;
+
+        NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
+        if (DepositItemsDesk.itemsOnCounter.Contains(grabbableObject)) return;
+
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+
+        if (isHostOrServer)
+        {
+            DepositItemsDesk.itemsOnCounterNetworkObjects.Add(networkObject);
+            DepositItemsDesk.itemsOnCounter.Add(grabbableObject);
+        }
+
+        Transform parent = DepositItemsDesk.deskObjectsContainer.transform;
+        grabbableObject.transform.SetParent(parent, true);
     }
 }
