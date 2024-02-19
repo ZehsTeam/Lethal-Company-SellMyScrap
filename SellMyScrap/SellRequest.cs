@@ -1,4 +1,6 @@
-﻿namespace com.github.zehsteam.SellMyScrap;
+﻿using UnityEngine;
+
+namespace com.github.zehsteam.SellMyScrap;
 
 public enum SellType
 {
@@ -19,8 +21,10 @@ public class SellRequest
 {
     public SellType sellType;
     public int valueFound;
+    public int realValueFound => ScrapCalculator.GetRealValue(valueFound);
     public int valueRequested;
     public ConfirmationType confirmationType;
+
 
     public SellRequest(SellType type, int valueFound, int valueRequested, ConfirmationType confirmationType)
     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -6,6 +7,7 @@ public class ScrapToSell
 {
     public List<GrabbableObject> scrap;
     public int value;
+    public int realValue => ScrapCalculator.GetRealValue(value);
 
     public ScrapToSell(List<GrabbableObject> scrap)
     {

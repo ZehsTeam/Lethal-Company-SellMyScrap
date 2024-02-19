@@ -228,8 +228,7 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
-        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
         string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nRequested amount: ${amount}\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
@@ -270,8 +269,7 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
-        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
         string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nProfit quota: ${quotaFulfilled} / ${profitQuota} (${amount})\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
@@ -302,8 +300,7 @@ internal class TerminalPatch
             return "No items found to sell.\n\n";
         }
 
-        int realValue = (int)(scrapToSell.value * StartOfRound.Instance.companyBuyingRate);
-        string valueString = rate == 100 ? $"${realValue}" : $"${realValue} (${scrapToSell.value})";
+        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
         string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nThe Company is buying at %{rate}\n\n";
 
         // Display found scrap items
@@ -337,8 +334,7 @@ internal class TerminalPatch
             SellMyScrapBase.Instance.ConfirmSellRequest();
 
             float rate = StartOfRound.Instance.companyBuyingRate;
-            int realValue = (int)(sellRequest.valueFound * StartOfRound.Instance.companyBuyingRate);
-            string valueString = rate == 1f ? $"${realValue}" : $"${realValue} (${sellRequest.valueFound})";
+            string valueString = rate == 1f ? $"${sellRequest.realValueFound}" : $"${sellRequest.realValueFound} (${sellRequest.valueFound})";
             return new CommandResponse(true, $"Sell confirmed. Processing {valueString}...\n\n");
         }
 

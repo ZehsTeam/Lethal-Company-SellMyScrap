@@ -7,7 +7,7 @@ internal class ScrapCalculator
 {
     public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int amount, float rate)
     {
-        int target = (int)Mathf.Ceil(amount / rate);
+        int target = (int)Mathf.Round(amount / rate);
         int remaining = target;
         List<GrabbableObject> foundScrap = new List<GrabbableObject>();
 
@@ -146,5 +146,10 @@ internal class ScrapCalculator
         });
 
         return selected;
+    }
+
+    public static int GetRealValue(int value)
+    {
+        return (int)Mathf.Round(value * StartOfRound.Instance.companyBuyingRate);
     }
 }
