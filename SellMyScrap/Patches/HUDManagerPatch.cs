@@ -20,7 +20,7 @@ internal class HUDManagerPatch
         string message = scrapToSell.GetListAsString();
 
         __instance.moneyRewardsListText.text = message;
-        __instance.moneyRewardsTotalText.text = $"TOTAL: ${scrapToSell.value}";
+        __instance.moneyRewardsTotalText.text = $"TOTAL: ${creditsEarned}";
         __instance.moneyRewardsAnimator.SetTrigger("showRewards");
         __instance.rewardsScrollbar.value = 1f;
 

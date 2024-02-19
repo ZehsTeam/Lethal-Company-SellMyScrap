@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -6,37 +7,37 @@ internal class ScrapCalculator
 {
     public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int amount, float rate)
     {
-        int target = (int)((float)amount / rate);
-        int progress = 0;
+        int target = (int)Mathf.Ceil(amount / rate);
+        int remaining = target;
         List<GrabbableObject> foundScrap = new List<GrabbableObject>();
 
-        // Get highest items
+        // Get highest value items
         while (true)
         {
-            GrabbableObject item = GetHighestItem(scrap, target - progress);
+            GrabbableObject item = GetHighestItem(scrap, remaining);
             if (item == null) break;
 
             foundScrap.Add(item);
             scrap.Remove(item);
-            progress += item.scrapValue;
+            remaining -= item.scrapValue;
         }
 
-        // Needs one more scrap, get lowest item
-        if (target - progress > 0)
+        // Needs one more scrap, get lowest value item to match
+        if (remaining > 0)
         {
-            GrabbableObject item = GetLowestItem(scrap, target - progress);
+            GrabbableObject item = GetLowestItem(scrap, remaining);
 
             if (item != null)
             {
                 foundScrap.Add(item);
                 scrap.Remove(item);
-                progress += item.scrapValue;
+                remaining -= item.scrapValue;
             }
         }
 
-        if (progress == target || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact amount or no scrap left
+        if (remaining == 0 || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact value or no scrap left
 
-        int difference = progress - target;
+        int difference = Mathf.Abs(remaining);
         GrabbableObject replacement = null;
         GrabbableObject previous = null;
 
@@ -73,7 +74,11 @@ internal class ScrapCalculator
         {
             if (selected != null) return;
 
-            if (item.scrapValue == target) selected = item;
+            if (item.scrapValue == target)
+            {
+                selected = item;
+                return;
+            }
         });
 
         return selected;
@@ -81,13 +86,10 @@ internal class ScrapCalculator
 
     public static GrabbableObject GetHighestItem(List<GrabbableObject> scrap, int target)
     {
-        bool search = true;
         GrabbableObject selected = null;
 
         scrap.ForEach(item =>
         {
-            if (!search) return;
-
             // First item
             if (selected == null)
             {
@@ -97,14 +99,19 @@ internal class ScrapCalculator
                 return;
             }
 
-            // Find better item
-            if (item.scrapValue > selected.scrapValue && item.scrapValue <= target)
+            // Found exact match
+            if (item.scrapValue == target)
             {
                 selected = item;
                 return;
             }
 
-            if (selected.scrapValue == target) search = false; // Found perfect match
+            // Find better item
+            if (item.scrapValue < target && item.scrapValue > selected.scrapValue)
+            {
+                selected = item;
+                return;
+            }
         });
 
         return selected;
@@ -123,14 +130,15 @@ internal class ScrapCalculator
                 return;
             }
 
-            if (selected.scrapValue < target && item.scrapValue > selected.scrapValue)
+            // Found exact match
+            if (item.scrapValue == target)
             {
                 selected = item;
                 return;
             }
 
-            // Find better item
-            if (item.scrapValue < selected.scrapValue && item.scrapValue >= target)
+            // Find better item.
+            if (item.scrapValue > target && item.scrapValue < selected.scrapValue)
             {
                 selected = item;
                 return;

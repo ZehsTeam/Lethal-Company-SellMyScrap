@@ -338,7 +338,7 @@ internal class TerminalPatch
 
             float rate = StartOfRound.Instance.companyBuyingRate;
             int realValue = (int)(sellRequest.valueFound * StartOfRound.Instance.companyBuyingRate);
-            string valueString = rate == 1f ? $"${realValue}" : $"${realValue} ({sellRequest.valueFound})";
+            string valueString = rate == 1f ? $"${realValue}" : $"${realValue} (${sellRequest.valueFound})";
             return new CommandResponse(true, $"Sell confirmed. Processing {valueString}...\n\n");
         }
 
