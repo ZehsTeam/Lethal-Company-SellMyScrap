@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace com.github.zehsteam.SellMyScrap;
+﻿namespace com.github.zehsteam.SellMyScrap;
 
 public enum SellType
 {
@@ -25,10 +23,9 @@ public class SellRequest
     public int valueRequested;
     public ConfirmationType confirmationType;
 
-
-    public SellRequest(SellType type, int valueFound, int valueRequested, ConfirmationType confirmationType)
+    public SellRequest(SellType sellType, int valueFound, int valueRequested, ConfirmationType confirmationType)
     {
-        this.sellType = type;
+        this.sellType = sellType;
         this.valueFound = valueFound;
         this.valueRequested = valueRequested;
         this.confirmationType = confirmationType;

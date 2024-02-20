@@ -12,7 +12,7 @@ internal class NetworkObjectManagerPatch
 
     [HarmonyPatch("Start")]
     [HarmonyPostfix]
-    static void Start()
+    static void StartPatch()
     {
         LoadAssetsFromAssetBundle();
     }
