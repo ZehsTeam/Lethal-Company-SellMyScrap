@@ -11,7 +11,7 @@ This mod aims to sell scrap as close to the target amount as possible. In rare c
 * This mod has support for excluding custom / modded scrap items from the sell algorithm.
     * See **Advanced Sell Settings** for more info.
 
-## ![Download Icon](https://i.imgur.com/TpnrFSH.png) Download
+## <img src="https://i.imgur.com/TpnrFSH.png" width="20px"> Download
 
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
@@ -58,7 +58,6 @@ If you are experiencing any issues with config settings not working, try deletin
 | `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add some additional info. |
 | `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add some additional info. |
 | `showFoundItems` | `Boolean` | `true` | Show found items on the confirmation screen. |
-| `showFoundItemsLimit` | `Int32` | `100` | Won't show found items if the total item count is over the limit. |
 | `sortFoundItems` | `Boolean` | `true` | Sorts found items from most to least expensive. |
 | `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items. |
 
@@ -67,6 +66,8 @@ If you are experiencing any issues with config settings not working, try deletin
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 
 ## Bug Reports, Help, or Suggestions
+https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
+
 | Discord server | Channel | Post |
 | ----------- | ----------- | ----------- |
 | [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
@@ -74,9 +75,9 @@ If you are experiencing any issues with config settings not working, try deletin
 
 ## Screenshots
 <div>
-    <img src="https://i.imgur.com/0nyTcob.png" width="273px">
+    <img src="https://i.imgur.com/1GfuewX.png" width="273px">
     <img src="https://i.imgur.com/0yt2sfm.png" width="273px">
-    <img src="https://i.imgur.com/fAL8Fzd.png" width="273px">
+    <img src="https://i.imgur.com/jGagYfl.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -100,5 +101,5 @@ If you are experiencing any issues with config settings not working, try deletin
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/SoZigr1.png" width="100%">
+    <img src="https://i.imgur.com/Ey7iinn.png" width="100%">
 </div>
