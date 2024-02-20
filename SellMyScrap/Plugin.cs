@@ -244,7 +244,8 @@ public class SellMyScrapBase : BaseUnityPlugin
             yield return null;
         }
 
-        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterServerRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
+        DepositItemsDeskPatch.PlaceItemsOnCounter(scrapToSell.scrap);
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
         PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
 
         yield return new WaitForSeconds(0.2f);

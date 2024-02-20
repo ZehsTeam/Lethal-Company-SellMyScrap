@@ -36,13 +36,6 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void PlaceItemsOnCounterServerRpc(string networkObjectIdsString)
-    {
-        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
-        PlaceItemsOnCounterClientRpc(networkObjectIdsString);
-    }
-
     [ClientRpc]
     public void PlaceItemsOnCounterClientRpc(string networkObjectIdsString)
     {
