@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -34,7 +33,7 @@ internal class NetworkObjectManagerPatch
 
             SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             SellMyScrapBase.mls.LogError($"Error: failed to load assets from AssetBundle.\n\n{e}");
         }

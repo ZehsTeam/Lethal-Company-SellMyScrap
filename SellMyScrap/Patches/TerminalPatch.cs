@@ -329,7 +329,7 @@ internal class TerminalPatch
 
         string command = array[0].ToLower();
 
-        if ("confirm".Contains(command))
+        if ("confirm".Contains(command) && command.Length > 0)
         {
             SellMyScrapBase.Instance.ConfirmSellRequest();
 
@@ -338,7 +338,7 @@ internal class TerminalPatch
             return new CommandResponse(true, $"Sell confirmed. Processing {valueString}...\n\n");
         }
 
-        if ("deny".Contains(command))
+        if ("deny".Contains(command) && command.Length > 0)
         {
             SellMyScrapBase.Instance.CancelSellRequest();
             return new CommandResponse(true, "Sell aborted.\n\n");

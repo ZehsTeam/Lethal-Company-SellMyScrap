@@ -182,17 +182,22 @@ public class SellMyScrapBase : BaseUnityPlugin
     public void CreateSellRequest(SellType sellType, int valueFound, int valueRequested, ConfirmationType confirmationType)
     {
         sellRequest = new SellRequest(sellType, valueFound, valueRequested, confirmationType);
+
+        mls.LogInfo($"Created sell request. {scrapToSell.scrap.Count} items for ${valueFound}.");
     }
 
     public void ConfirmSellRequest()
     {
+        if (scrapToSell == null) return;
         if (sellRequest == null) return;
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
-        bool isHostOrSever = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+        mls.LogInfo($"Attempting to sell {scrapToSell.scrap.Count} items for ${scrapToSell.value}.");
 
-        if (isHostOrSever)
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+
+        if (isHostOrServer)
         {
             ConfirmSellRequestOnServer();
         }
@@ -207,7 +212,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     private void ConfirmSellRequestOnServer()
     {
-        StartCoroutine(PerformSellOnServer());
+        StartOfRound.Instance.StartCoroutine(PerformSellOnServer());
     }
 
     private void ConfirmSellRequestOnClient()
