@@ -106,7 +106,7 @@ internal class EditConfigCommand : Command
         string key = args[0];
         string value = args[1];
 
-        if (hostOnlySettings.Contains(value))
+        if (hostOnlySettings.Contains(key))
         {
             return TerminalPatch.CreateTerminalNode(GetMainMessage("Only the host can edit this setting.\n\n"));
         }
@@ -176,7 +176,7 @@ internal class EditConfigCommand : Command
 
     private TerminalNode EditDontSellListJson(string[] args)
     {
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || !NetworkManager.Singleton.IsServer;
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
         if (!isHostOrServer)
         {

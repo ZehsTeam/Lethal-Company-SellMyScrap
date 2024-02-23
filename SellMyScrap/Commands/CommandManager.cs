@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
