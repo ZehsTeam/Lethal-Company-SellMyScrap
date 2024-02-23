@@ -48,6 +48,7 @@ If you are experiencing any issues with config settings not working, try deletin
 
 | Advanced Sell Settings | Setting type |Default value | Example value | Description |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
+| `sellScrapWorthZero` | `Boolean` | `false` |  | Do you want to sell scrap worth zero? |
 | `dontSellListJson` | `String` | `[]` | `["Gift", "Shotgun", "Ammo"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
 * Use the `view-scrap` command or scan in-world to see the correct item names to use.
@@ -75,31 +76,31 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 
 ## Screenshots
 <div>
-    <img src="https://i.imgur.com/1GfuewX.png" width="273px">
-    <img src="https://i.imgur.com/0yt2sfm.png" width="273px">
-    <img src="https://i.imgur.com/jGagYfl.png" width="273px">
+    <img src="https://i.imgur.com/ieTZCez.png" width="273px">
+    <img src="https://i.imgur.com/atzmgX8.png" width="273px">
+    <img src="https://i.imgur.com/4s3oPzD.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/4WjGIrH.png" width="412px">
-    <img src="https://i.imgur.com/ZfRkS1c.png" width="412px">
+    <img src="https://i.imgur.com/wW6VGUI.png" width="412px">
+    <img src="https://i.imgur.com/YvBuyAT.png" width="412px">
 </div>
 <h4><code>sell quota</code></h4>
 <div>
-    <img src="https://i.imgur.com/R53wn2s.png" width="412px">
-    <img src="https://i.imgur.com/XB4MDgh.png" width="412px">
+    <img src="https://i.imgur.com/3aE4I8J.png" width="412px">
+    <img src="https://i.imgur.com/9rty096.png" width="412px">
 </div>
 <h4><code>sell all</code></h4>
 <div>
-    <img src="https://i.imgur.com/TwPeAYV.png" width="412px">
-    <img src="https://i.imgur.com/zDsPJLG.png" width="412px">
+    <img src="https://i.imgur.com/XZAcZYO.png" width="412px">
+    <img src="https://i.imgur.com/5tcgCKR.png" width="412px">
 </div>
 <div>
 <h4><code>view scrap</code></h4>
 <div>
-    <img src="https://i.imgur.com/CWnmoZW.png" width="100%">
+    <img src="https://i.imgur.com/bsfeVpk.png" width="100%">
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/Ey7iinn.png" width="100%">
+    <img src="https://i.imgur.com/SUDsFt2.png" width="100%">
 </div>
