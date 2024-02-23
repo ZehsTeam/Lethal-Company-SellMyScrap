@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Patches;
 using HarmonyLib;
 using System.Collections;
@@ -40,6 +41,8 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         ConfigManager = new SyncedConfig();
 
+        CommandManager.Initialize();
+
         NetcodePatcherAwake();
     }
 
@@ -67,11 +70,13 @@ public class SellMyScrapBase : BaseUnityPlugin
         mls.LogInfo($"Local player disconnected. Removing hostConfigData.");
         ConfigManager.SetHostConfigData(null);
 
+        CommandManager.OnLocalDisconnect();
         CancelSellRequest();
     }
 
     public void OnTerminalQuit()
     {
+        CommandManager.OnTerminalQuit();
         CancelSellRequest();
     }
 
@@ -179,11 +184,11 @@ public class SellMyScrapBase : BaseUnityPlugin
     #endregion
 
     #region SellRequest Methods
-    public void CreateSellRequest(SellType sellType, int valueFound, int valueRequested, ConfirmationType confirmationType)
+    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType)
     {
-        sellRequest = new SellRequest(sellType, valueFound, valueRequested, confirmationType);
+        sellRequest = new SellRequest(sellType, value, requestedValue, confirmationType);
 
-        mls.LogInfo($"Created sell request. {scrapToSell.scrap.Count} items for ${valueFound}.");
+        mls.LogInfo($"Created sell request. {scrapToSell.scrap.Count} items for ${value}.");
     }
 
     public void ConfirmSellRequest()
@@ -220,7 +225,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
         string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap);
 
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.valueFound, scrapToSell.scrap.Count);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.value, scrapToSell.scrap.Count);
     }
 
     public void CancelSellRequest()

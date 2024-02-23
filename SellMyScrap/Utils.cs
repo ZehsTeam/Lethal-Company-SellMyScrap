@@ -2,7 +2,7 @@
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class StringUtils
+internal class Utils
 {
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {
@@ -19,5 +19,19 @@ internal class StringUtils
         }
 
         return longest;
+    }
+
+    public static bool IsInt(string text)
+    {
+        float result;
+
+        if (float.TryParse(text, out result))
+        {
+            if (result == Math.Floor(result)) return true;
+
+            return false;
+        }
+
+        return false;
     }
 }

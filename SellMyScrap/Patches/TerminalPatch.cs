@@ -1,6 +1,5 @@
-﻿using HarmonyLib;
-using Newtonsoft.Json;
-using Unity.Netcode;
+﻿using com.github.zehsteam.SellMyScrap.Commands;
+using HarmonyLib;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
@@ -8,7 +7,6 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
-    private static string currentTerminalMessage;
     private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch("Start")]
@@ -52,37 +50,6 @@ internal class TerminalPatch
     }
     #endregion
 
-    [HarmonyPatch("ParsePlayerSentence")]
-    [HarmonyPrefix]
-    [HarmonyPriority(int.MaxValue)]
-    static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
-    {
-        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');
-
-        // Parse command confirmation
-        CommandResponse response = ParseCommandConfirmation(array);
-
-        // Found valid command confirmation
-        if (response.success)
-        {
-            __result = CreateTerminalNode(response.result);
-            return false;
-        }
-
-        // Parse command
-        response = ParseCommand(array);
-
-        // Found valid command
-        if (response.success)
-        {
-            __result = CreateTerminalNode(response.result);
-            return false;
-        }
-
-        // Nothing to do here. Continue.
-        return true;
-    }
-
     [HarmonyPatch("QuitTerminal")]
     [HarmonyPostfix]
     static void QuitTerminalPatch()
@@ -90,316 +57,34 @@ internal class TerminalPatch
         SellMyScrapBase.Instance.OnTerminalQuit();
     }
 
-    #region Main Parse
-    private static CommandResponse ParseCommand(string[] array)
+    [HarmonyPatch("ParsePlayerSentence")]
+    [HarmonyPrefix]
+    [HarmonyPriority(int.MaxValue)]
+    static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
-        string first = array[0].ToLower();
-        string second = array.Length > 1 ? array[1].ToLower() : string.Empty;
-        string third = array.Length > 2 ? array[2].ToLower() : string.Empty;
+        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');
 
-        string[] args = [first, second, third];
-
-        if (IsHelpCommand(args)) return new CommandResponse(true, ParseHelpCommand(array));
-        if (IsSellQuotaCommand(args)) return new CommandResponse(true, ParseSellQuotaCommand(array));
-        if (IsSellAllCommand(args)) return new CommandResponse(true, ParseSellAllCommand(array));
-        if (IsSellAmountCommand(args)) return new CommandResponse(true, ParseSellAmountCommand(array));
-        if (IsViewScrapCommand(args)) return new CommandResponse(true, ParseViewScrapCommand(array));
-        if (IsViewConfigCommand(args)) return new CommandResponse(true, ParseViewConfigCommand(array));
-
-        if (array[0] == "cosmic") return new CommandResponse(true, "Cosmic is gay.\n\n");
-
-        return new CommandResponse(false, string.Empty);
-    }
-
-    private static CommandResponse ParseCommandConfirmation(string[] array)
-    {
-        CommandResponse response = ParseSellCommandConfirmation(array);
-        if (response.success) return response;
-
-        return new CommandResponse(false, string.Empty);
-    }
-    #endregion
-
-    #region Is Command
-    private static bool IsHelpCommand(string[] array)
-    {
-        if (array[0] == "sell" && array[1] == string.Empty) return true;
-
-        return false;
-    }
-
-    private static bool IsSellQuotaCommand(string[] array)
-    {
-        if (array[0] == "sell" && array[1] == "quota") return true;
-        if (array[0] == "sell-quota") return true;
-
-        return false;
-    }
-
-    private static bool IsSellAllCommand(string[] array)
-    {
-        if (array[0] == "sell" && array[1] == "all") return true;
-        if (array[0] == "sell-all") return true;
-
-        return false;
-    }
-
-    private static bool IsSellAmountCommand(string[] array)
-    {
-        if (array[0] == "sell" && array[1] != string.Empty) return true;
-
-        return false;
-    }
-
-    private static bool IsViewScrapCommand(string[] array)
-    {
-        if (array[0] == "view" && array[1] == "scrap") return true;
-        if (array[0] == "view-scrap") return true;
-
-        return false;
-    }
-    
-    private static bool IsViewConfigCommand(string[] array)
-    {
-        if (array[0] == "view" && array[1] == "config") return true;
-        if (array[0] == "view-config") return true;
-
-        return false;
-    }
-    #endregion
-
-    #region Parse Commands
-    private static string ParseHelpCommand(string[] array)
-    {
-        string message = string.Empty;
-        message += $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION}\n\n";
-        message += "The following commands are available:\n\n";
-        message += "sell <amount>\n";
-        message += "sell quota        sell-quota\n";
-        message += "sell all          sell-all\n";
-        message += "view scrap        view-scrap\n";
-        message += "view config       view-config\n\n";
-
-        return message;
-    }
-
-    #region Parse Sell Commands
-    private static CommandResponse CanUseSellCommands()
-    {
-        StartOfRound startOfRound = StartOfRound.Instance;
-
-        bool isAtCompany = startOfRound.currentLevelID == 3;
-        bool isLanded = !startOfRound.inShipPhase && !startOfRound.travellingToNewLevel;
-
-        if (!isAtCompany || !isLanded)
+        if (CommandManager.TryExecuteCommand(array, out TerminalNode terminalNode))
         {
-            return new CommandResponse(false, $"You must be landed at The Company building to sell your scrap!\n\n");
+            if (terminalNode == null)
+            {
+                __result = CreateTerminalNode("Error: terminalNode is null!\n\n");
+                return false;
+            }
+
+            __result = terminalNode;
+            return false;
         }
 
-        return new CommandResponse(true, string.Empty);
+        return true;
     }
 
-    private static string ParseSellAmountCommand(string[] array)
-    {
-        CommandResponse response = CanUseSellCommands();
-        if (!response.success) return response.result;
-
-        // Amount not specified
-        if (array.Length < 2)
-        {
-            return "Please specify an amount to sell.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n";
-        }
-
-        int amount;
-        int.TryParse(array[1], out amount);
-
-        // Invalid sell amount
-        if (amount <= 0)
-        {
-            return "Error: sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n";
-        }
-
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
-        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
-
-        // No items to sell
-        if (scrapToSell.scrap.Count == 0)
-        {
-            return "No items found to sell.\n\n";
-        }
-
-        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nRequested amount: ${amount}\nThe Company is buying at %{rate}\n\n";
-
-        // Display found scrap items
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
-        {
-            message += $"{scrapToSell.GetListAsString()}\n\n";
-        }
-
-        message += "Please CONFIRM or DENY.\n\n";
-
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
-
-        // Return confirmation message
-        return message;
-    }
-
-    private static string ParseSellQuotaCommand(string[] array)
-    {
-        CommandResponse response = CanUseSellCommands();
-        if (!response.success) return response.result;
-
-        int profitQuota = TimeOfDay.Instance.profitQuota;
-        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
-        int amount = profitQuota - quotaFulfilled;
-
-        // Quota has already been fulfilled
-        if (amount <= 0)
-        {
-            return "Quota has already been fulfilled.\n\n";
-        }
-
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(amount);
-        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
-
-        // No items to sell
-        if (scrapToSell.scrap.Count == 0)
-        {
-            return "No items found to sell.\n\n";
-        }
-
-        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nProfit quota: ${quotaFulfilled} / ${profitQuota} (${amount})\nThe Company is buying at %{rate}\n\n";
-
-        // Display found scrap items
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
-        {
-            message += $"{scrapToSell.GetListAsString()}\n\n";
-        }
-
-        message += "Please CONFIRM or DENY.\n\n";
-
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, amount, ConfirmationType.AwaitingConfirmation);
-
-        // Return confirmation message
-        return message;
-    }
-
-    private static string ParseSellAllCommand(string[] array)
-    {
-        CommandResponse response = CanUseSellCommands();
-        if (!response.success) return response.result;
-
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllAllowedScrapToSell();
-        int rate = (int)(100f * StartOfRound.Instance.companyBuyingRate);
-
-        // No items to sell
-        if (scrapToSell.scrap.Count == 0)
-        {
-            return "No items found to sell.\n\n";
-        }
-
-        string valueString = rate == 100 ? $"${scrapToSell.realValue}" : $"${scrapToSell.realValue} (${scrapToSell.value})";
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of {valueString}\nThe Company is buying at %{rate}\n\n";
-
-        // Display found scrap items
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
-        {
-            message += $"{scrapToSell.GetListAsString()}\n\n";
-        }
-
-        message += "Please CONFIRM or DENY.\n\n";
-
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
-
-        // Return confirmation message
-        return message;
-    }
-
-    private static CommandResponse ParseSellCommandConfirmation(string[] array)
-    {
-        SellRequest sellRequest = SellMyScrapBase.Instance.sellRequest;
-
-        // No sellReqest found
-        if (sellRequest == null) return new CommandResponse(false, string.Empty);
-
-        // Not awaiting a sell confirmation
-        if (sellRequest.confirmationType != ConfirmationType.AwaitingConfirmation) return new CommandResponse(false, string.Empty);
-
-        string command = array[0].ToLower();
-
-        if ("confirm".Contains(command) && command.Length > 0)
-        {
-            SellMyScrapBase.Instance.ConfirmSellRequest();
-
-            float rate = StartOfRound.Instance.companyBuyingRate;
-            string valueString = rate == 1f ? $"${sellRequest.realValueFound}" : $"${sellRequest.realValueFound} (${sellRequest.valueFound})";
-            return new CommandResponse(true, $"Sell confirmed. Processing {valueString}...\n\n");
-        }
-
-        if ("deny".Contains(command) && command.Length > 0)
-        {
-            SellMyScrapBase.Instance.CancelSellRequest();
-            return new CommandResponse(true, "Sell aborted.\n\n");
-        }
-
-        return new CommandResponse(true, currentTerminalMessage);
-    }
-    #endregion
-
-    private static string ParseViewScrapCommand(string[] array)
-    {
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllScrapToSell();
-
-        // No items found
-        if (scrapToSell.scrap.Count == 0)
-        {
-            return "No items found.\n\n";
-        }
-
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of ${scrapToSell.value}\n\n";
-
-        message += $"{scrapToSell.GetListAsString()}\n\n";
-
-        return message;
-    }
-
-    private static string ParseViewConfigCommand(string[] array)
-    {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
-
-        string syncedMessage = NetworkManager.Singleton.IsHost ? string.Empty : " (Synced with host)";
-
-        string message = string.Empty;
-        message += $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config\n\n";
-        message += $"[Sell Settings]{syncedMessage}\n";
-        message += $"sellGifts:    {configManager.SellGifts}\n";
-        message += $"sellShotguns: {configManager.SellShotguns}\n";
-        message += $"sellAmmo:     {configManager.SellAmmo}\n";
-        message += $"sellPickles:  {configManager.SellPickles}\n\n";
-        message += $"[Advanced Sell Settings]{syncedMessage}\n";
-        message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
-        message += "[Terminal Settings]\n";
-        message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
-        message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
-        message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
-        message += $"sortFoundItems:         {configManager.SortFoundItems}\n";
-        message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
-        message += "[Misc Settings]\n";
-        message += $"speakInShip: {configManager.SpeakInShip}\n\n";
-
-        return message;
-    }
-    #endregion
-
-    #region Create TerminalNode
-    private static TerminalNode CreateTerminalNode(string message)
+    public static TerminalNode CreateTerminalNode(string message)
     {
         return CreateTerminalNode(message, true);
     }
 
-    private static TerminalNode CreateTerminalNode(string message, bool clearPreviousText)
+    public static TerminalNode CreateTerminalNode(string message, bool clearPreviousText)
     {
         TerminalNode terminalNode = ScriptableObject.CreateInstance<TerminalNode>();
 
@@ -407,21 +92,6 @@ internal class TerminalPatch
         terminalNode.clearPreviousText = clearPreviousText;
         terminalNode.maxCharactersToType = 50;
 
-        currentTerminalMessage = message;
-
         return terminalNode;
-    }
-    #endregion
-}
-
-public class CommandResponse
-{
-    public bool success;
-    public string result;
-
-    public CommandResponse(bool success, string result)
-    {
-        this.success = success;
-        this.result = result;
     }
 }

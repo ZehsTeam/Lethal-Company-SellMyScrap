@@ -18,16 +18,16 @@ public enum ConfirmationType
 public class SellRequest
 {
     public SellType sellType;
-    public int valueFound;
-    public int realValueFound => ScrapCalculator.GetRealValue(valueFound);
-    public int valueRequested;
+    public int value;
+    public int realValue => ScrapCalculator.GetRealValue(value);
+    public int requestedValue;
     public ConfirmationType confirmationType;
 
-    public SellRequest(SellType sellType, int valueFound, int valueRequested, ConfirmationType confirmationType)
+    public SellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType)
     {
         this.sellType = sellType;
-        this.valueFound = valueFound;
-        this.valueRequested = valueRequested;
+        this.value = value;
+        this.requestedValue = requestedValue;
         this.confirmationType = confirmationType;
     }
 }

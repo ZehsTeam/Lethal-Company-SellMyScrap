@@ -5,6 +5,7 @@ namespace com.github.zehsteam.SellMyScrap;
 public class ScrapToSell
 {
     public List<GrabbableObject> scrap;
+    public int count => scrap.Count;
     public int value;
     public int realValue => ScrapCalculator.GetRealValue(value);
 
@@ -57,7 +58,7 @@ public class ScrapToSell
     {
         List<string> array = new List<string>();
         itemStacks.ForEach(itemStack => array.Add($"{itemStack.name} (x{itemStack.amount}) :"));
-        int maxLength = StringUtils.GetLongestStringFromArray(array.ToArray()).Length;
+        int maxLength = Utils.GetLongestStringFromArray(array.ToArray()).Length;
 
         string result = string.Empty;
 
@@ -65,7 +66,7 @@ public class ScrapToSell
         {
             string a = $"{itemStack.name} (x{itemStack.amount}) :";
             string b = $"${itemStack.value}";
-            result += StringUtils.GetStringWithSpacingInBetween(a, b, maxLength) + "\n";
+            result += Utils.GetStringWithSpacingInBetween(a, b, maxLength) + "\n";
         });
 
         return result.Trim();
