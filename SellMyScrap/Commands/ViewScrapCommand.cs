@@ -22,7 +22,7 @@ internal class ViewScrapCommand : Command
             return TerminalPatch.CreateTerminalNode("No items found.\n\n");
         }
 
-        string message = $"Found {scrapToSell.scrap.Count} items with a total of ${scrapToSell.value}\n\n";
+        string message = $"Found {scrapToSell.scrap.Count} items with a total value of ${scrapToSell.value}\n\n";
         message += $"{scrapToSell.GetListAsString()}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);

@@ -213,8 +213,10 @@ public class SyncedConfig
 
     private void ConfigsChanged()
     {
-        if (!NetworkManager.Singleton.IsHost) return;
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+        if (!isHostOrServer) return;
 
+        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));
     }
 }

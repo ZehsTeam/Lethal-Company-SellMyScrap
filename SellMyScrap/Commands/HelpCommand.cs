@@ -23,7 +23,8 @@ internal class HelpCommand : Command
         message += "sell quota        sell-quota\n";
         message += "sell all          sell-all\n";
         message += "view scrap        view-scrap\n";
-        message += "view config       view-config\n\n";
+        message += "view config       view-config\n";
+        message += "edit config       edit-config\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

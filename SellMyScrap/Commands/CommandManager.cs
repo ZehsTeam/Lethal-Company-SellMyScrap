@@ -18,6 +18,7 @@ internal class CommandManager
             new SellAmountCommand(),
             new ViewScrapCommand(),
             new ViewConfigCommand(),
+            new EditConfigCommand(),
         ];
 
         awaitingConfirmationCommand = null;
@@ -57,13 +58,12 @@ internal class CommandManager
 
     private static string[] GetArgs(string[] array, int length)
     {
-        if (array.Length >= length) return array;
+        List<string> args = new List<string>();
 
-        List<string> args = array.ToList();
-
-        for (int i = 0; i < length - array.Length; i++)
+        for (int i = 0; i < length; i++)
         {
-            args.Add(string.Empty);
+            string item = (i <= array.Length - 1) ? array[i].ToLower() : string.Empty;
+            args.Add(item);
         }
 
         return args.ToArray();

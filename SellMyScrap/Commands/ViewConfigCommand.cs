@@ -28,8 +28,8 @@ internal class ViewConfigCommand : Command
         message += $"sellAmmo:     {configManager.SellAmmo}\n";
         message += $"sellPickles:  {configManager.SellPickles}\n\n";
         message += $"[Advanced Sell Settings]{syncedMessage}\n";
-        message += $"sellScrapWorthZero:  {configManager.SellScrapWorthZero}\n";
-        message += $"dontSellListJson:    {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
+        message += $"sellScrapWorthZero: {configManager.SellScrapWorthZero}\n";
+        message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
         message += "[Terminal Settings]\n";
         message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
         message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
