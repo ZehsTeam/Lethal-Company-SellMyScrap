@@ -15,6 +15,7 @@ public class SyncedConfig
     private ConfigEntry<bool> SellPicklesCfg;
 
     // Advanced Sell Settings (Synced)
+    private ConfigEntry<bool> SellScrapWorthZeroCfg;
     private ConfigEntry<string> DontSellListJsonCfg;
 
     // Terminal Settings
@@ -32,9 +33,7 @@ public class SyncedConfig
     { 
         get
         {
-            if (hostConfigData != null) return hostConfigData.sellGifts;
-
-            return SellGiftsCfg.Value;
+            return hostConfigData == null ? SellGiftsCfg.Value : hostConfigData.sellGifts;
         }
         set
         {
@@ -47,9 +46,7 @@ public class SyncedConfig
     { 
         get
         {
-            if (hostConfigData != null) return hostConfigData.sellShotguns;
-
-            return SellShotgunsCfg.Value;
+            return hostConfigData == null ? SellShotgunsCfg.Value : hostConfigData.sellShotguns;
         }
         set
         {
@@ -62,9 +59,7 @@ public class SyncedConfig
     {
         get 
         {
-            if (hostConfigData != null) return hostConfigData.sellAmmo;
-
-            return SellAmmoCfg.Value;
+            return hostConfigData == null ? SellAmmoCfg.Value : hostConfigData.sellAmmo;
         }
         set
         {
@@ -77,9 +72,7 @@ public class SyncedConfig
     { 
         get
         {
-            if (hostConfigData != null) return hostConfigData.sellPickles;
-            
-            return SellPicklesCfg.Value;
+            return hostConfigData == null ? SellPicklesCfg.Value : hostConfigData.sellPickles;
         }
         set
         {
@@ -89,13 +82,24 @@ public class SyncedConfig
     }
 
     // Advanced Sell Settings (Synced)
+    internal bool SellScrapWorthZero
+    {
+        get
+        {
+            return hostConfigData == null ? SellScrapWorthZeroCfg.Value : hostConfigData.sellScrapWorthZero;
+        }
+        set
+        {
+            SellScrapWorthZeroCfg.Value = value;
+            ConfigsChanged();
+        }
+    }
+
     internal string[] DontSellListJson
     { 
         get
         {
-            if (hostConfigData != null) return JsonConvert.DeserializeObject<string[]>(hostConfigData.dontSellListJson);
-
-            return JsonConvert.DeserializeObject<string[]>(DontSellListJsonCfg.Value);
+            return hostConfigData == null ? JsonConvert.DeserializeObject<string[]>(DontSellListJsonCfg.Value) : JsonConvert.DeserializeObject<string[]>(hostConfigData.dontSellListJson);
         }
         set
         {
@@ -146,6 +150,12 @@ public class SyncedConfig
         );
 
         // Advanced Sell Settings
+        SellScrapWorthZeroCfg = config.Bind(
+            new ConfigDefinition("Sell Settings", "sellScrapWorthZero"),
+            false,
+            new ConfigDescription("Do you want to sell scrap worth zero?")
+        );
+
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
         dontSellListJsonCfgDescription += "Item names are not case-sensitive.\n";
         dontSellListJsonCfgDescription += "Spaces do matter for item names.\n";

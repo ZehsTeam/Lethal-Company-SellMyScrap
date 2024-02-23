@@ -165,6 +165,7 @@ public class SellMyScrapBase : BaseUnityPlugin
     public bool IsAllowedScrapItem(GrabbableObject item)
     {
         if (!IsScrapItem(item)) return false;
+        if (!ConfigManager.SellScrapWorthZero && item.scrapValue <= 0) return false;
 
         string itemName = item.itemProperties.itemName;
 
