@@ -8,7 +8,7 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class EditConfigCommand : Command
 {
-    private bool editingJson = false;
+    private bool editingDontSellListJson = false;
 
     public override bool IsCommand(string[] args)
     {
@@ -20,7 +20,7 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        editingJson = false;
+        editingDontSellListJson = false;
         awaitingConfirmation = true;
 
         return TerminalPatch.CreateTerminalNode(GetMainMessage());
@@ -28,9 +28,9 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
-        if ((args[0] == "exit" || args[0] == "quit") && editingJson)
+        if ((args[0] == "exit" || args[0] == "quit") && editingDontSellListJson)
         {
-            editingJson = false;
+            editingDontSellListJson = false;
             return TerminalPatch.CreateTerminalNode(GetMainMessage());
         }
 
@@ -40,14 +40,14 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
-        if (editingJson)
+        if (editingDontSellListJson)
         {
-            return EditJson(args);
+            return EditDontSellListJson(args);
         }
 
         if (args[0] == "json" || args[0] == "dontselllistjson")
         {
-            editingJson = true;
+            editingDontSellListJson = true;
             return TerminalPatch.CreateTerminalNode(GetJsonMessage());
         }
 
@@ -99,30 +99,82 @@ internal class EditConfigCommand : Command
 
     private TerminalNode EditConfigSettings(string[] args)
     {
+        string[] hostOnlySettings = ["sellgifts", "sellshotguns", "sellammo", "sellpickles", "sellscrapworthzero"];
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
         SyncedConfig syncedConfig = SellMyScrapBase.Instance.ConfigManager;
 
         string key = args[0];
         string value = args[1];
 
-        if (bool.TryParse(value, out bool booleanValue))
+        if (hostOnlySettings.Contains(value))
         {
-            if (key == "sellgifts") syncedConfig.SellGifts = booleanValue;
-            if (key == "Sellshotguns") syncedConfig.SellShotguns = booleanValue;
-            if (key == "sellammo") syncedConfig.SellAmmo = booleanValue;
-            if (key == "sellpickles") syncedConfig.SellPickles = booleanValue;
-            if (key == "sellscrapworthzero") syncedConfig.SellScrapWorthZero = booleanValue;
-            if (key == "overridewelcomemessage") syncedConfig.OverrideWelcomeMessage = booleanValue;
-            if (key == "overridehelpmessage") syncedConfig.OverrideHelpMessage = booleanValue;
-            if (key == "showfounditems") syncedConfig.ShowFoundItems = booleanValue;
-            if (key == "sortfounditems") syncedConfig.SortFoundItems = booleanValue;
-            if (key == "alignfounditemsprice") syncedConfig.AlignFoundItemsPrice = booleanValue;
-            if (key == "speakinship") syncedConfig.SpeakInShip = booleanValue;
+            return TerminalPatch.CreateTerminalNode(GetMainMessage("Only the host can edit this setting.\n\n"));
         }
 
-        return TerminalPatch.CreateTerminalNode(GetMainMessage());
+        bool parsedBool = bool.TryParse(value, out bool booleanValue);
+        string editedConfigSetting = string.Empty;
+
+        if (key == "sellgifts" && parsedBool)
+        {
+            syncedConfig.SellGifts = booleanValue;
+            editedConfigSetting = "sellGifts";
+        }
+        if (key == "sellshotguns" && parsedBool)
+        {
+            syncedConfig.SellShotguns = booleanValue;
+            editedConfigSetting = "sellShotguns";
+        }
+        if (key == "sellammo" && parsedBool)
+        {
+            syncedConfig.SellAmmo = booleanValue;
+            editedConfigSetting = "sellAmmo";
+        }
+        if (key == "sellpickles" && parsedBool)
+        {
+            syncedConfig.SellPickles = booleanValue;
+            editedConfigSetting = "sellPickles";
+        }
+        if (key == "sellscrapworthzero" && parsedBool)
+        {
+            syncedConfig.SellScrapWorthZero = booleanValue;
+            editedConfigSetting = "sellScrapWorthZero";
+        }
+        if (key == "overridewelcomemessage" && parsedBool)
+        {
+            syncedConfig.OverrideWelcomeMessage = booleanValue;
+            editedConfigSetting = "overrideWelcomeMessage";
+        }
+        if (key == "overridehelpmessage" && parsedBool)
+        {
+            syncedConfig.OverrideHelpMessage = booleanValue;
+            editedConfigSetting = "overrideHelpMessage";
+        }
+        if (key == "showfounditems" && parsedBool)
+        {
+            syncedConfig.ShowFoundItems = booleanValue;
+            editedConfigSetting = "showFoundItems";
+        }
+        if (key == "sortfounditems" && parsedBool)
+        {
+            syncedConfig.SortFoundItems = booleanValue;
+            editedConfigSetting = "sortFoundItems";
+        }
+        if (key == "alignfounditemsprice" && parsedBool)
+        {
+            syncedConfig.AlignFoundItemsPrice = booleanValue;
+            editedConfigSetting = "alignFoundItemsPrice";
+        }
+        if (key == "speakinship" && parsedBool)
+        {
+            syncedConfig.SpeakInShip = booleanValue;
+            editedConfigSetting = "speakInShip";
+        }
+
+        string additionalMessage = editedConfigSetting != string.Empty ? $"Set {editedConfigSetting} to {booleanValue}\n\n" : string.Empty;
+        return TerminalPatch.CreateTerminalNode(GetMainMessage(additionalMessage));
     }
 
-    private TerminalNode EditJson(string[] args)
+    private TerminalNode EditDontSellListJson(string[] args)
     {
         bool isHostOrServer = NetworkManager.Singleton.IsHost || !NetworkManager.Singleton.IsServer;
 
