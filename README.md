@@ -1,5 +1,5 @@
 # SellMyScrap
-Adds a few terminal commands to sell your scrap from the ship.
+Adds a few terminal commands to sell your scrap from the ship. Highly Configurable.
 
 This mod aims to sell scrap as close to the target amount as possible. In rare cases, it may exceed the target amount due to performance reasons, even if a suitable match is possible.
 
@@ -79,7 +79,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/4s3oPzD.png" width="273px">
+    <img src="https://i.imgur.com/NICcl7M.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -104,4 +104,9 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <h4><code>view config</code></h4>
 <div>
     <img src="https://i.imgur.com/SUDsFt2.png" width="100%">
+</div>
+<h4><code>edit config</code></h4>
+<div>
+    <img src="https://i.imgur.com/FauX3bR.png" width="412px">
+    <img src="https://i.imgur.com/vIFu60m.png" width="412px">
 </div>
