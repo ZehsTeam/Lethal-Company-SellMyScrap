@@ -21,14 +21,16 @@ internal class Utils
         return longest;
     }
 
-    public static string[] GetArrayToLower(string[] list)
+    public static string[] GetArrayToLower(string[] array)
     {
-        for (int i = 0; i < list.Length; i++)
+        List<string> list = new List<string>();
+
+        foreach (var item in array)
         {
-            list[i] = list[i].ToLower();
+            list.Add(item.ToLower());
         }
 
-        return list;
+        return list.ToArray();
     }
 
     public static string GetItemFromList(List<string> list, string item)

@@ -27,7 +27,7 @@ internal class CommandManager
     {
         terminalNode = null;
 
-        string[] args = GetArgs(array, 5);
+        string[] args = GetArgs(array, 3);
 
         if (awaitingConfirmationCommand != null)
         {
@@ -59,10 +59,18 @@ internal class CommandManager
     {
         List<string> args = new List<string>();
 
-        for (int i = 0; i < length; i++)
+        foreach (string arg in array)
         {
-            string arg = (i <= array.Length - 1) ? array[i] : string.Empty;
-            args.Add(arg);
+            if (arg.Trim() == string.Empty) continue;
+
+            args.Add(arg.Trim());
+        }
+
+        if (args.Count > length) return args.ToArray();
+
+        for (int i = 0; i < length - args.Count; i++)
+        {
+            args.Add(string.Empty);
         }
 
         return args.ToArray();

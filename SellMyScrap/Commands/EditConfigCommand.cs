@@ -16,7 +16,7 @@ internal class EditConfigCommand : Command
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
-        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", configManager.DontSellListJson.ToList(), value =>
+        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, configManager.DontSellListJson.ToList(), value =>
         {
             configManager.DontSellListJson = value;
         });
@@ -44,13 +44,15 @@ internal class EditConfigCommand : Command
     {
         string[] _args = Utils.GetArrayToLower(args);
 
-        if ((_args[0] == "exit" || _args[0] == "quit") && editingDontSellListJson)
+        string[] exitStrings = ["exit", "quit", "close", "leave", "back"];
+        
+        if (exitStrings.Contains(_args[0]) && editingDontSellListJson)
         {
             editingDontSellListJson = false;
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
-        if (_args[0] == "exit" || _args[0] == "quit")
+        if (exitStrings.Contains(_args[0]))
         {
             awaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
@@ -124,12 +126,14 @@ internal class EditConfigCommand : Command
 class JsonListEditor
 {
     private string key;
+    public bool isHostOnly = false;
     public List<string> list;
     private Action<string[]> SetValue;
 
-    public JsonListEditor(string key, List<string> list, Action<string[]> SetValue)
+    public JsonListEditor(string key, bool isHostOnly, List<string> list, Action<string[]> SetValue)
     {
         this.key = key;
+        this.isHostOnly = isHostOnly;
         this.list = list;
         this.SetValue = SetValue;
     }
@@ -144,6 +148,13 @@ class JsonListEditor
     {
         string[] _args = Utils.GetArrayToLower(args);
         this.list = list;
+
+        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+
+        if (!isHostOrServer && isHostOnly)
+        {
+            return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can change this setting.\n\n"));
+        }
 
         if (_args[1] == string.Empty)
         {
@@ -165,7 +176,12 @@ class JsonListEditor
 
     private TerminalNode Add(string[] args)
     {
-        string item = string.Join(" ", args).Replace(args[0], "").Replace("\"", "").Trim();
+        string item = GetItemName(args);
+
+        if (item == string.Empty)
+        {
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
+        }
 
         list.Add(item);
         SetValue(list.ToArray());
@@ -175,7 +191,13 @@ class JsonListEditor
 
     private TerminalNode Remove(string[] args)
     {
-        string item = string.Join(" ", args).Replace(args[0], "").Replace("\"", "").Trim();
+        string item = GetItemName(args);
+
+        if (item == string.Empty)
+        {
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
+        }
+
         string _item = Utils.GetItemFromList(list, item);
 
         if (_item == string.Empty)
@@ -187,6 +209,11 @@ class JsonListEditor
         SetValue(list.ToArray());
 
         return TerminalPatch.CreateTerminalNode(GetMessage($"Removed \"{_item}\"\n\n"));
+    }
+
+    private string GetItemName(string[] args)
+    {
+        return string.Join(" ", args).Substring(args[0].Length).Replace("\"", "").Replace("\\", "").Trim();
     }
 
     private string GetMessage()
