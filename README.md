@@ -32,6 +32,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell` |Will show a help message. |
 | `view scrap` | Shows a detailed list of all the scrap in the ship. |
 | `view config` | Shows your config settings. |
+| `edit config` | Edit config settings in the terminal. |
 
 ## Config Settings
 If you are experiencing any issues with config settings not working, try deleting the config file and regenerating it by launching the game.<br>
