@@ -61,8 +61,8 @@ internal class CommandManager
 
         for (int i = 0; i < length; i++)
         {
-            string item = (i <= array.Length - 1) ? array[i].ToLower() : string.Empty;
-            args.Add(item);
+            string arg = (i <= array.Length - 1) ? array[i] : string.Empty;
+            args.Add(arg);
         }
 
         return args.ToArray();

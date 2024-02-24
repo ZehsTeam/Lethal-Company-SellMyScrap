@@ -6,6 +6,8 @@ internal class SellQuotaCommand : SellCommand
 {
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "sell" && args[1] == "quota") return true;
         if (args[0] == "sell-quota") return true;
 

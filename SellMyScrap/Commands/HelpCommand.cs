@@ -6,10 +6,13 @@ internal class HelpCommand : Command
 {
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "sell" && args[1] == string.Empty) return true;
         if (args[0] == "sell" && args[1] == "help") return true;
         if (args[0] == "sell-help") return true;
         if (args[0] == "sellmyscrap") return true;
+        if (args[0] == "sell" && args[1] == "my" && args[2] == "scrap") return true;
         if (args[0] == "sms") return true;
 
         return false;

@@ -6,6 +6,8 @@ internal class SellAllCommand : SellCommand
 {
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "sell" && args[1] == "all") return true;
         if (args[0] == "sell-all") return true;
 

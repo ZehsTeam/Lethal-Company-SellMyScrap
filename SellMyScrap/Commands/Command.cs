@@ -26,7 +26,7 @@ public class Command
     {
         return TerminalPatch.CreateTerminalNode("Execute override was not found.\n\n");
     }
-
+    
     public virtual TerminalNode ExecuteConfirmation(string[] args)
     {
         string arg = args[0].ToLower();

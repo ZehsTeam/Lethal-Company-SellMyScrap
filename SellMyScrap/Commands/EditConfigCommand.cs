@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
@@ -9,9 +10,22 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 internal class EditConfigCommand : Command
 {
     private bool editingDontSellListJson = false;
+    private JsonListEditor dontSellListJsonEditor;
+
+    public EditConfigCommand()
+    {
+        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+
+        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", configManager.DontSellListJson.ToList(), value =>
+        {
+            configManager.DontSellListJson = value;
+        });
+    }
 
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "edit" && args[1] == "config") return true;
         if (args[0] == "edit-config") return true;
 
@@ -23,73 +37,57 @@ internal class EditConfigCommand : Command
         editingDontSellListJson = false;
         awaitingConfirmation = true;
 
-        return TerminalPatch.CreateTerminalNode(GetMainMessage());
+        return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
-        if ((args[0] == "exit" || args[0] == "quit") && editingDontSellListJson)
+        string[] _args = Utils.GetArrayToLower(args);
+
+        if ((_args[0] == "exit" || _args[0] == "quit") && editingDontSellListJson)
         {
             editingDontSellListJson = false;
-            return TerminalPatch.CreateTerminalNode(GetMainMessage());
+            return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
-        if (args[0] == "exit" || args[0] == "quit")
+        if (_args[0] == "exit" || _args[0] == "quit")
         {
             awaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
+        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+
         if (editingDontSellListJson)
         {
-            return EditDontSellListJson(args);
+            return dontSellListJsonEditor.ExecuteConfirmation(args, configManager.DontSellListJson.ToList());
         }
 
-        if (args[0] == "json" || args[0] == "dontselllistjson")
+        if (_args[0] == "json" || _args[0] == "dontselllistjson")
         {
             editingDontSellListJson = true;
-            return TerminalPatch.CreateTerminalNode(GetJsonMessage());
+            return dontSellListJsonEditor.Execute(configManager.DontSellListJson.ToList());
         }
 
-        if (args[0] != string.Empty && args[1] != string.Empty)
+        if (_args[0] != string.Empty && _args[1] != string.Empty)
         {
             return EditConfigSettings(args);
         }
 
-        return TerminalPatch.CreateTerminalNode(GetMainMessage());
+        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
     }
 
-    private string GetMainMessage()
+    private string GetMessage()
     {
-        return GetMainMessage(string.Empty);
+        return GetMessage(string.Empty);
     }
 
-    private string GetMainMessage(string additionMessage)
+    private string GetMessage(string additionMessage)
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
-
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-        string syncedMessage = isHostOrServer ? string.Empty : " (Synced with host)";
-
         string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += $"[Sell Settings]{syncedMessage}\n";
-        message += $"sellGifts:    {configManager.SellGifts}\n";
-        message += $"sellShotguns: {configManager.SellShotguns}\n";
-        message += $"sellAmmo:     {configManager.SellAmmo}\n";
-        message += $"sellPickles:  {configManager.SellPickles}\n\n";
-        message += $"[Advanced Sell Settings]{syncedMessage}\n";
-        message += $"sellScrapWorthZero: {configManager.SellScrapWorthZero}\n";
-        message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
-        message += "[Terminal Settings]\n";
-        message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
-        message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
-        message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
-        message += $"sortFoundItems:         {configManager.SortFoundItems}\n";
-        message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
-        message += "[Misc Settings]\n";
-        message += $"speakInShip: {configManager.SpeakInShip}\n\n";
+        message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
         message += $"The following commands are available:\n\n";
-        message += $"<config> <value>\n";
+        message += $"<key> <value>\n";
         message += $"json\n";
         message += $"exit\n\n";
         message += additionMessage;
@@ -99,148 +97,113 @@ internal class EditConfigCommand : Command
 
     private TerminalNode EditConfigSettings(string[] args)
     {
-        string[] hostOnlySettings = ["sellgifts", "sellshotguns", "sellammo", "sellpickles", "sellscrapworthzero"];
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-        SyncedConfig syncedConfig = SellMyScrapBase.Instance.ConfigManager;
-
         string key = args[0];
         string value = args[1];
 
-        if (hostOnlySettings.Contains(key))
-        {
-            return TerminalPatch.CreateTerminalNode(GetMainMessage("Only the host can edit this setting.\n\n"));
-        }
-
-        bool parsedBool = bool.TryParse(value, out bool booleanValue);
-        string editedConfigSetting = string.Empty;
-
-        if (key == "sellgifts" && parsedBool)
-        {
-            syncedConfig.SellGifts = booleanValue;
-            editedConfigSetting = "sellGifts";
-        }
-        if (key == "sellshotguns" && parsedBool)
-        {
-            syncedConfig.SellShotguns = booleanValue;
-            editedConfigSetting = "sellShotguns";
-        }
-        if (key == "sellammo" && parsedBool)
-        {
-            syncedConfig.SellAmmo = booleanValue;
-            editedConfigSetting = "sellAmmo";
-        }
-        if (key == "sellpickles" && parsedBool)
-        {
-            syncedConfig.SellPickles = booleanValue;
-            editedConfigSetting = "sellPickles";
-        }
-        if (key == "sellscrapworthzero" && parsedBool)
-        {
-            syncedConfig.SellScrapWorthZero = booleanValue;
-            editedConfigSetting = "sellScrapWorthZero";
-        }
-        if (key == "overridewelcomemessage" && parsedBool)
-        {
-            syncedConfig.OverrideWelcomeMessage = booleanValue;
-            editedConfigSetting = "overrideWelcomeMessage";
-        }
-        if (key == "overridehelpmessage" && parsedBool)
-        {
-            syncedConfig.OverrideHelpMessage = booleanValue;
-            editedConfigSetting = "overrideHelpMessage";
-        }
-        if (key == "showfounditems" && parsedBool)
-        {
-            syncedConfig.ShowFoundItems = booleanValue;
-            editedConfigSetting = "showFoundItems";
-        }
-        if (key == "sortfounditems" && parsedBool)
-        {
-            syncedConfig.SortFoundItems = booleanValue;
-            editedConfigSetting = "sortFoundItems";
-        }
-        if (key == "alignfounditemsprice" && parsedBool)
-        {
-            syncedConfig.AlignFoundItemsPrice = booleanValue;
-            editedConfigSetting = "alignFoundItemsPrice";
-        }
-        if (key == "speakinship" && parsedBool)
-        {
-            syncedConfig.SpeakInShip = booleanValue;
-            editedConfigSetting = "speakInShip";
-        }
-
-        string additionalMessage = editedConfigSetting != string.Empty ? $"Set {editedConfigSetting} to {booleanValue}\n\n" : string.Empty;
-        return TerminalPatch.CreateTerminalNode(GetMainMessage(additionalMessage));
-    }
-
-    private TerminalNode EditDontSellListJson(string[] args)
-    {
         bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
-        if (!isHostOrServer)
+        if (ConfigHelper.TrySetConfigValue(key, value, out ConfigItem configItem, out string parsedValue))
         {
-            return TerminalPatch.CreateTerminalNode(GetJsonMessage("Only the host can edit this setting.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.key} to {parsedValue}\n\n"));
         }
 
-        SyncedConfig syncedConfig = SellMyScrapBase.Instance.ConfigManager;
-
-        List<string> list = syncedConfig.DontSellListJson.ToList();
-        string value = string.Join(" ", args).Replace(args[0], "").Replace("\"", "").Trim();
-
-        if (args[0] == "add")
+        if (configItem == null)
         {
-            list.Add(value);
-            syncedConfig.DontSellListJson = list.ToArray();
-            return TerminalPatch.CreateTerminalNode(GetJsonMessage($"Added \"{value}\"\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
 
-        if (args[0] == "remove")
+        if (configItem.isHostOnly && !isHostOrServer)
         {
-            string key = GetListItem(list, value);
-
-            if (list.Remove(key))
-            {
-                syncedConfig.DontSellListJson = list.ToArray();
-                return TerminalPatch.CreateTerminalNode(GetJsonMessage($"Removed \"{key}\"\n\n"));
-            }
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can change this setting.\n\n"));
         }
 
-        return TerminalPatch.CreateTerminalNode(GetJsonMessage());
+        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid value.\n\n"));
     }
+}
 
-    private string GetListItem(List<string> list, string data)
+class JsonListEditor
+{
+    private string key;
+    public List<string> list;
+    private Action<string[]> SetValue;
+
+    public JsonListEditor(string key, List<string> list, Action<string[]> SetValue)
     {
-        string result = string.Empty;
-
-        list.ForEach(item =>
-        {
-            if (result != string.Empty) return;
-
-            if (item.ToLower() == data)
-            {
-                result = item;
-            }
-        });
-
-        return result;
+        this.key = key;
+        this.list = list;
+        this.SetValue = SetValue;
     }
 
-    private string GetJsonMessage()
+    public TerminalNode Execute(List<string> list)
     {
-        return GetJsonMessage(string.Empty);
+        this.list = list;
+        return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
-    private string GetJsonMessage(string additionMessage)
+    public TerminalNode ExecuteConfirmation(string[] args, List<string> list)
+    {
+        string[] _args = Utils.GetArrayToLower(args);
+        this.list = list;
+
+        if (_args[1] == string.Empty)
+        {
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
+        }
+
+        if (_args[0] == "add")
+        {
+            return Add(args);
+        }
+
+        if (_args[0] == "remove")
+        {
+            return Remove(args);
+        }
+
+        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
+    }
+
+    private TerminalNode Add(string[] args)
+    {
+        string item = string.Join(" ", args).Replace(args[0], "").Replace("\"", "").Trim();
+
+        list.Add(item);
+        SetValue(list.ToArray());
+
+        return TerminalPatch.CreateTerminalNode(GetMessage($"Added \"{item}\"\n\n"));
+    }
+
+    private TerminalNode Remove(string[] args)
+    {
+        string item = string.Join(" ", args).Replace(args[0], "").Replace("\"", "").Trim();
+        string _item = Utils.GetItemFromList(list, item);
+
+        if (_item == string.Empty)
+        {
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: item was not found.\n\n"));
+        }
+
+        list.Remove(_item);
+        SetValue(list.ToArray());
+
+        return TerminalPatch.CreateTerminalNode(GetMessage($"Removed \"{_item}\"\n\n"));
+    }
+
+    private string GetMessage()
+    {
+        return GetMessage(string.Empty);
+    }
+
+    private string GetMessage(string additionalMessage)
     {
         string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += $"dontSellListJson editor\n\n";
-        message += $"{JsonConvert.SerializeObject(SellMyScrapBase.Instance.ConfigManager.DontSellListJson)}\n\n";
-        message += "The following commands are available:\n\n";
-        message += "add <item>\n";
-        message += "remove <item>\n";
-        message += "exit\n\n";
-        message += additionMessage;
+        message += $"{key} config editor\n\n";
+        message += $"{JsonConvert.SerializeObject(list)}\n\n";
+        message += $"The following commands are available:\n\n";
+        message += $"add <value>\n";
+        message += $"remove <value>\n";
+        message += $"exit\n\n";
+        message += additionalMessage;
 
         return message;
     }

@@ -6,6 +6,8 @@ internal class ViewScrapCommand : Command
 {
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "view" && args[1] == "scrap") return true;
         if (args[0] == "view-scrap") return true;
 

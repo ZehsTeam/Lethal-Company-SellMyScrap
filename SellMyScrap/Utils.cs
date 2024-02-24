@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -6,7 +6,7 @@ internal class Utils
 {
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {
-        return $"{a}{new String(' ', maxLength - a.Length)} {b}";
+        return $"{a}{new string(' ', maxLength - a.Length)} {b}";
     }
 
     public static string GetLongestStringFromArray(string[] array)
@@ -21,17 +21,26 @@ internal class Utils
         return longest;
     }
 
-    public static bool IsInt(string text)
+    public static string[] GetArrayToLower(string[] list)
     {
-        float result;
-
-        if (float.TryParse(text, out result))
+        for (int i = 0; i < list.Length; i++)
         {
-            if (result == Math.Floor(result)) return true;
-
-            return false;
+            list[i] = list[i].ToLower();
         }
 
-        return false;
+        return list;
+    }
+
+    public static string GetItemFromList(List<string> list, string item)
+    {
+        foreach (var _item in list)
+        {
+            if (_item.ToLower() == item.ToLower())
+            {
+                return _item;
+            }
+        }
+
+        return string.Empty;
     }
 }

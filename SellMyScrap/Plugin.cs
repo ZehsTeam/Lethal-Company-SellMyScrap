@@ -42,6 +42,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         ConfigManager = new SyncedConfig();
 
         CommandManager.Initialize();
+        ConfigHelper.Initialize();
 
         NetcodePatcherAwake();
     }

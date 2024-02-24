@@ -6,6 +6,8 @@ internal class SellAmountCommand : SellCommand
 {
     public override bool IsCommand(string[] args)
     {
+        args = Utils.GetArrayToLower(args);
+
         if (args[0] == "sell" && args[1] != string.Empty) return true;
 
         return false;
