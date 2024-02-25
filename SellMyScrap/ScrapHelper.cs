@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,157 +7,92 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapHelper
 {
-    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int amount)
+    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int totalValue)
     {
-        int target = GetSellValue(amount);
-        int remaining = target;
-        List<GrabbableObject> foundScrap = new List<GrabbableObject>();
-
-        // Get highest value items
-        while (true)
-        {
-            GrabbableObject item = GetHighestItem(scrap, remaining);
-            if (item == null) break;
-
-            foundScrap.Add(item);
-            scrap.Remove(item);
-            remaining -= item.scrapValue;
-        }
-
-        // Needs one more scrap, get lowest value item to match
-        if (remaining > 0)
-        {
-            GrabbableObject item = GetLowestItem(scrap, remaining);
-
-            if (item != null)
-            {
-                foundScrap.Add(item);
-                scrap.Remove(item);
-                remaining -= item.scrapValue;
-            }
-        }
-
-        if (remaining == 0 || scrap.Count == 0) return new ScrapToSell(foundScrap); // Found exact value or no scrap left
-
-        int difference = Mathf.Abs(remaining);
-        GrabbableObject replacement = null;
-        GrabbableObject previous = null;
-
-        foundScrap.ForEach(item =>
-        {
-            if (replacement != null) return;
-
-            GrabbableObject found = GetExactItem(scrap, item.scrapValue - difference);
-
-            if (found != null)
-            {
-                previous = item;
-                replacement = found;
-            }
-        });
-
-        if (replacement != null)
-        {
-            foundScrap.Add(replacement);
-            foundScrap.Remove(previous);
-            scrap.Remove(replacement);
-
-            return new ScrapToSell(foundScrap);
-        }
-
-        return new ScrapToSell(foundScrap);
+        return new ScrapToSell(FindBestMatch(scrap, GetSellValue(totalValue)));
     }
 
-    public static GrabbableObject GetExactItem(List<GrabbableObject> scrap, int target)
+    private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int target)
     {
-        GrabbableObject selected = null;
+        int totalValue = scrap.Sum(item => item.scrapValue);
 
-        scrap.ForEach(item =>
+        if (totalValue <= target)
         {
-            if (selected != null) return;
+            // If total value is under or equal to the quota, return all items
+            return scrap;
+        }
 
-            if (item.scrapValue == target)
-            {
-                selected = item;
-                return;
-            }
-        });
+        int n = scrap.Count;
+        int[,] dp = new int[n + 1, target + 1];
 
-        return selected;
-    }
-
-    public static GrabbableObject GetHighestItem(List<GrabbableObject> scrap, int target)
-    {
-        GrabbableObject selected = null;
-
-        scrap.ForEach(item =>
+        // Fill the dp array
+        for (int i = 0; i <= n; i++)
         {
-            // First item
-            if (selected == null)
+            for (int j = 0; j <= target; j++)
             {
-                if (item.scrapValue > target) return;
-
-                selected = item;
-                return;
+                if (i == 0 || j == 0)
+                    dp[i, j] = 0;
+                else if (scrap[i - 1].scrapValue <= j)
+                    dp[i, j] = Math.Max(dp[i - 1, j], scrap[i - 1].scrapValue + dp[i - 1, j - scrap[i - 1].scrapValue]);
+                else
+                    dp[i, j] = dp[i - 1, j];
             }
+        }
 
-            // Found exact match
-            if (item.scrapValue == target)
-            {
-                selected = item;
-                return;
-            }
-
-            // Find better item
-            if (item.scrapValue < target && item.scrapValue > selected.scrapValue)
-            {
-                selected = item;
-                return;
-            }
-        });
-
-        return selected;
-    }
-
-    public static GrabbableObject GetLowestItem(List<GrabbableObject> scrap, int target)
-    {
-        GrabbableObject selected = null;
-
-        scrap.ForEach(item =>
+        // Reconstruct the solution
+        List<GrabbableObject> bestMatch = new List<GrabbableObject>();
+        int total = target;
+        for (int i = n; i > 0; i--)
         {
-            // First item
-            if (selected == null)
+            if (dp[i, total] != dp[i - 1, total])
             {
-                selected = item;
-                return;
+                bestMatch.Add(scrap[i - 1]);
+                total -= scrap[i - 1].scrapValue;
+            }
+        }
+
+        // If an exact match is not found, find the best match that is the smallest amount over the quota
+        if (total != 0)
+        {
+            int smallestOverAmount = int.MaxValue;
+            List<GrabbableObject> smallestOverMatch = null;
+
+            for (int i = n; i >= 0; i--)
+            {
+                if (dp[i, total] == total)
+                {
+                    int overAmount = dp[i, target] - target;
+                    if (overAmount < smallestOverAmount)
+                    {
+                        smallestOverAmount = overAmount;
+                        smallestOverMatch = new List<GrabbableObject>();
+                        for (int j = i; j > 0; j--)
+                        {
+                            if (dp[j, total] != dp[j - 1, total])
+                            {
+                                smallestOverMatch.Add(scrap[j - 1]);
+                                total -= scrap[j - 1].scrapValue;
+                            }
+                        }
+                    }
+                }
             }
 
-            // Found exact match
-            if (item.scrapValue == target)
-            {
-                selected = item;
-                return;
-            }
+            if (smallestOverMatch != null)
+                bestMatch = smallestOverMatch;
+        }
 
-            // Find better item.
-            if (item.scrapValue > target && item.scrapValue < selected.scrapValue)
-            {
-                selected = item;
-                return;
-            }
-        });
-
-        return selected;
+        return bestMatch;
     }
 
     private static int GetSellValue(int value)
     {
-        return (int)Mathf.Floor(value / StartOfRound.Instance.companyBuyingRate);
+        return (int)Mathf.Ceil(value / StartOfRound.Instance.companyBuyingRate);
     }
 
     public static int GetRealValue(int value)
     {
-        return (int)Mathf.Floor(value * StartOfRound.Instance.companyBuyingRate);
+        return (int)(value * StartOfRound.Instance.companyBuyingRate);
     }
 
     public static string GetScrapMessage(List<GrabbableObject> scrap)
