@@ -98,7 +98,7 @@ public class SellMyScrapBase : BaseUnityPlugin
     #region Get ScrapToSell
     public ScrapToSell GetAllowedScrapToSell(int amount)
     {
-        scrapToSell = ScrapCalculator.GetScrapToSell(GetAllowedScrapFromShip(), amount, StartOfRound.Instance.companyBuyingRate);
+        scrapToSell = ScrapHelper.GetScrapToSell(GetAllowedScrapFromShip(), amount);
 
         return scrapToSell;
     }
@@ -112,7 +112,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public ScrapToSell GetScrapToSell(int amount)
     {
-        scrapToSell = ScrapCalculator.GetScrapToSell(GetScrapFromShip(), amount, StartOfRound.Instance.companyBuyingRate);
+        scrapToSell = ScrapHelper.GetScrapToSell(GetScrapFromShip(), amount);
 
         return scrapToSell;
     }

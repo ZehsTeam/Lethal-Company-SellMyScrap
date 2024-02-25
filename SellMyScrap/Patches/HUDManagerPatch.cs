@@ -16,15 +16,15 @@ internal class HUDManagerPatch
     {
         SellMyScrapBase.mls.LogInfo($"Earned {creditsEarned}; sold {objectsSold.Length} items; new credits amount: {newGroupCredits}");
 
-        ScrapToSell scrapToSell = new ScrapToSell(objectsSold.ToList());
-        string message = scrapToSell.GetListAsString();
+        string message = ScrapHelper.GetScrapMessage(objectsSold.ToList());
+        int lines = message.Split('\n').Length;
 
         __instance.moneyRewardsListText.text = message;
         __instance.moneyRewardsTotalText.text = $"TOTAL: ${creditsEarned}";
         __instance.moneyRewardsAnimator.SetTrigger("showRewards");
         __instance.rewardsScrollbar.value = 1f;
 
-        if (message.Split('\n').Length > 8)
+        if (lines > 8)
         {
             if (___scrollRewardTextCoroutine != null)
             {

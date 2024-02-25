@@ -43,16 +43,16 @@ internal class EditConfigCommand : Command
     {
         string[] _args = Utils.GetArrayToLower(args);
 
-        string[] exitStrings = ["exit", "quit", "close", "leave", "back"];
+        string[] exitStrings = ["exit", "quit", "q", "close", "leave", "back"];
         
-        if (exitStrings.Contains(_args[0]) && editingDontSellListJson)
-        {
-            editingDontSellListJson = false;
-            return TerminalPatch.CreateTerminalNode(GetMessage());
-        }
-
         if (exitStrings.Contains(_args[0]))
         {
+            if (editingDontSellListJson)
+            {
+                editingDontSellListJson = false;
+                return TerminalPatch.CreateTerminalNode(GetMessage());
+            }
+
             awaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }

@@ -38,7 +38,7 @@ internal class SellAmountCommand : SellCommand
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {
-            message += $"{scrapToSell.GetListAsString()}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

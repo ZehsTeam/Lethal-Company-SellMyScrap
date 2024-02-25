@@ -19,7 +19,7 @@ public class SellRequest
 {
     public SellType sellType;
     public int value;
-    public int realValue => ScrapCalculator.GetRealValue(value);
+    public int realValue => ScrapHelper.GetRealValue(value);
     public int requestedValue;
     public ConfirmationType confirmationType;
 

@@ -16,7 +16,7 @@ internal class ViewScrapCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllScrapToSell();
+        ScrapToSell scrapToSell = new ScrapToSell(SellMyScrapBase.Instance.GetScrapFromShip());
 
         // No items found
         if (scrapToSell.amount == 0)
@@ -25,7 +25,7 @@ internal class ViewScrapCommand : Command
         }
 
         string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.value}\n\n";
-        message += $"{scrapToSell.GetListAsString()}\n\n";
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }
