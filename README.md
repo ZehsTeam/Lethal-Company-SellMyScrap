@@ -35,9 +35,6 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `edit config` | Edit config settings in the terminal. |
 
 ## Config Settings
-If you are experiencing any issues with config settings not working, try deleting the config file and regenerating it by launching the game.<br>
-*Reason: Config files from previous versions might have different categories and keys.*
-
 **Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a lobby.
 
 | Sell Settings | Setting type | Default value | Description |
