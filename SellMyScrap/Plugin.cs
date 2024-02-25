@@ -21,6 +21,8 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     internal SyncedConfig ConfigManager;
 
+    public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
+
     public SellRequest sellRequest;
     public ScrapToSell scrapToSell;
 
@@ -190,7 +192,7 @@ public class SellMyScrapBase : BaseUnityPlugin
     {
         sellRequest = new SellRequest(sellType, value, requestedValue, confirmationType);
 
-        mls.LogInfo($"Created sell request. {scrapToSell.scrap.Count} items for ${value}.");
+        mls.LogInfo($"Created sell request. {scrapToSell.amount} items for ${value}.");
     }
 
     public void ConfirmSellRequest()
@@ -200,11 +202,9 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
-        mls.LogInfo($"Attempting to sell {scrapToSell.scrap.Count} items for ${scrapToSell.value}.");
+        mls.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-
-        if (isHostOrServer)
+        if (IsHostOrServer)
         {
             ConfirmSellRequestOnServer();
         }
@@ -227,7 +227,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
         string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap);
 
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.value, scrapToSell.scrap.Count);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.realValue, scrapToSell.amount);
     }
 
     public void CancelSellRequest()

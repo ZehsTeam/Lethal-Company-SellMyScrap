@@ -5,7 +5,7 @@ namespace com.github.zehsteam.SellMyScrap;
 public class ScrapToSell
 {
     public List<GrabbableObject> scrap;
-    public int count => scrap.Count;
+    public int amount => scrap.Count;
     public int value;
     public int realValue => ScrapCalculator.GetRealValue(value);
 

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -35,8 +34,7 @@ internal class ConfigHelper
 
         if (configItem == null) return false;
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-        if (!isHostOrServer && configItem.isHostOnly) return false;
+        if (configItem.isHostOnly && !SellMyScrapBase.IsHostOrServer) return false;
 
         if (configItem.type == typeof(bool))
         {
@@ -73,8 +71,7 @@ internal class ConfigHelper
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-        string syncedMessage = isHostOrServer ? string.Empty : " (Synced with host)";
+        string syncedMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Synced with host)";
 
         string message = $"[Sell Settings]{syncedMessage}\n";
         message += $"sellGifts:    {configManager.SellGifts}\n";

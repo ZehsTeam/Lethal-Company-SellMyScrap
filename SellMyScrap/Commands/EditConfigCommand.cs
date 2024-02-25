@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -102,8 +101,6 @@ internal class EditConfigCommand : Command
         string key = args[0];
         string value = args[1];
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-
         if (ConfigHelper.TrySetConfigValue(key, value, out ConfigItem configItem, out string parsedValue))
         {
             return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.key} to {parsedValue}\n\n"));
@@ -114,7 +111,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
 
-        if (configItem.isHostOnly && !isHostOrServer)
+        if (configItem.isHostOnly && !SellMyScrapBase.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can change this setting.\n\n"));
         }
@@ -149,9 +146,7 @@ class JsonListEditor
         string[] _args = Utils.GetArrayToLower(args);
         this.list = list;
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-
-        if (!isHostOrServer && isHostOnly)
+        if (isHostOnly && !SellMyScrapBase.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can change this setting.\n\n"));
         }

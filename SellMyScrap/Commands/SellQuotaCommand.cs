@@ -32,12 +32,12 @@ internal class SellQuotaCommand : SellCommand
 
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(requestedValue);
 
-        if (scrapToSell.count == 0)
+        if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        string message = $"Found {scrapToSell.count} items with a total value of {GetValueString(scrapToSell)}\n";
+        string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
         message += $"Profit quota: ${quotaFulfilled} / ${profitQuota} (${requestedValue})\n";
         message += $"The Company is buying at %{companyBuyingRate}\n\n";
 

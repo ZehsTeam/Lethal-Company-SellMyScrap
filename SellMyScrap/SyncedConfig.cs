@@ -1,6 +1,5 @@
 ﻿using BepInEx.Configuration;
 using Newtonsoft.Json;
-using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -38,7 +37,7 @@ public class SyncedConfig
         set
         {
             SellGiftsCfg.Value = value;
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
     
@@ -51,7 +50,7 @@ public class SyncedConfig
         set
         {
             SellShotgunsCfg.Value = value;
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
     
@@ -64,7 +63,7 @@ public class SyncedConfig
         set
         {
             SellAmmoCfg.Value = value;
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
     
@@ -77,7 +76,7 @@ public class SyncedConfig
         set
         {
             SellPicklesCfg.Value = value;
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
 
@@ -91,7 +90,7 @@ public class SyncedConfig
         set
         {
             SellScrapWorthZeroCfg.Value = value;
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
 
@@ -104,7 +103,7 @@ public class SyncedConfig
         set
         {
             DontSellListJsonCfg.Value = JsonConvert.SerializeObject(value);
-            ConfigsChanged();
+            SyncedConfigsChanged();
         }
     }
 
@@ -211,10 +210,9 @@ public class SyncedConfig
         SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
     }
 
-    private void ConfigsChanged()
+    private void SyncedConfigsChanged()
     {
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-        if (!isHostOrServer) return;
+        if (!SellMyScrapBase.IsHostOrServer) return;
 
         SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));

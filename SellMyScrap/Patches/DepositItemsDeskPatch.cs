@@ -57,9 +57,7 @@ internal class DepositItemsDeskPatch
         NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
         if (DepositItemsDesk.itemsOnCounter.Contains(grabbableObject)) return;
 
-        bool isHostOrServer = NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-
-        if (isHostOrServer)
+        if (SellMyScrapBase.IsHostOrServer)
         {
             DepositItemsDesk.itemsOnCounterNetworkObjects.Add(networkObject);
             DepositItemsDesk.itemsOnCounter.Add(grabbableObject);

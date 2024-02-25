@@ -11,7 +11,7 @@ internal class StartOfRoundPatch
     [HarmonyPostfix]
     static void AwakePatch()
     {
-        if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+        if (SellMyScrapBase.IsHostOrServer)
         {
             var networkHandlerHost = Object.Instantiate(NetworkObjectManagerPatch.networkPrefab, Vector3.zero, Quaternion.identity);
             networkHandlerHost.GetComponent<NetworkObject>().Spawn();
@@ -22,7 +22,7 @@ internal class StartOfRoundPatch
     [HarmonyPrefix]
     static void OnClientConnectPatch(ref ulong clientId)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
+        if (!SellMyScrapBase.IsHostOrServer) return;
 
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {

@@ -19,12 +19,12 @@ internal class ViewScrapCommand : Command
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllScrapToSell();
 
         // No items found
-        if (scrapToSell.scrap.Count == 0)
+        if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found.\n\n");
         }
 
-        string message = $"Found {scrapToSell.scrap.Count} items with a total value of ${scrapToSell.value}\n\n";
+        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.value}\n\n";
         message += $"{scrapToSell.GetListAsString()}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);

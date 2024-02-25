@@ -18,18 +18,18 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void SendConfigToPlayerClientRpc(SyncedConfigData syncedConfigData, ClientRpcParams clientRpcParams = default)
     {
-        if (NetworkManager.Singleton.IsServer) return;
+        if (SellMyScrapBase.IsHostOrServer) return;
 
         SellMyScrapBase.mls.LogInfo("Syncing config with host.");
         SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(syncedConfigData);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int totalValue, int itemsAmount)
+    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int value, int amount)
     {
         PlayerControllerB fromPlayerScript = StartOfRound.Instance.allPlayerScripts[fromPlayerId];
         List<GrabbableObject> grabbableObjects = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
-        string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {itemsAmount} items for ${totalValue}";
+        string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
 
         SellMyScrapBase.mls.LogInfo(message);
         SellMyScrapBase.Instance.DisplayGlobalNotification(message);
