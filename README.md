@@ -10,6 +10,8 @@ Adds a few terminal commands to sell your scrap from the ship. Highly Configurab
 <br><br>
 * This mod has support for excluding custom / modded scrap items from the sell algorithm.
     * See **Advanced Sell Settings** for more info.
+<br><br>
+* This mod will show how much overtime bonus you will receive on the sell confirmation screen.
 
 ## <img src="https://i.imgur.com/TpnrFSH.png" width="20px"> Download
 
@@ -18,7 +20,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 ## Terminal Commands
 | Command | Description |
 | ----------- | ----------- |
-| `sell <amount>` | Will sell scrap for a total of the amount specified. Amount is a positive integer. |
+| `sell <amount>` | Will sell scrap for a total of the amount requested. |
 | `sell quota` | Will sell scrap to reach the profit quota. |
 | `sell all` | Will sell all of your scrap. |
 
@@ -80,7 +82,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/NICcl7M.png" width="273px">
+    <img src="https://i.imgur.com/2g3JVFq.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -104,10 +106,10 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/SUDsFt2.png" width="100%">
+    <img src="https://i.imgur.com/jSZYPJR.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/FauX3bR.png" width="412px">
-    <img src="https://i.imgur.com/vIFu60m.png" width="412px">
+    <img src="https://i.imgur.com/jbBhbDw.png" width="412px">
+    <img src="https://i.imgur.com/PYeXzMF.png" width="412px">
 </div>

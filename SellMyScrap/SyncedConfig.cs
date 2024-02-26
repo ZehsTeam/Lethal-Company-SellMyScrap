@@ -99,7 +99,7 @@ public class SyncedConfig
     {
         get
         {
-            return hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.sellScrapWorthZero;
+            return hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.onlySellScrapOnFloor;
         }
         set
         {
