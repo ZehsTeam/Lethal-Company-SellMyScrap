@@ -23,10 +23,8 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
-    public SellRequest sellRequest;
     public ScrapToSell scrapToSell;
-
-    private string[] cachedDontSellList;
+    public SellRequest sellRequest;
 
     void Awake()
     {
@@ -90,102 +88,11 @@ public class SellMyScrapBase : BaseUnityPlugin
         HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
     }
 
-    public void UpdateCachedDontSellList(string[] dontSellList)
+    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true)
     {
-        this.cachedDontSellList = dontSellList;
-    }
-
-    #region Get ScrapToSell
-    public ScrapToSell GetAllowedScrapToSell(int amount)
-    {
-        scrapToSell = ScrapHelper.GetScrapToSell(GetAllowedScrapFromShip(), amount);
-
+        scrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap);
         return scrapToSell;
     }
-
-    public ScrapToSell GetAllAllowedScrapToSell()
-    {
-        scrapToSell = new ScrapToSell(GetAllowedScrapFromShip());
-
-        return scrapToSell;
-    }
-
-    public ScrapToSell GetScrapToSell(int amount)
-    {
-        scrapToSell = ScrapHelper.GetScrapToSell(GetScrapFromShip(), amount);
-
-        return scrapToSell;
-    }
-
-    public ScrapToSell GetAllScrapToSell()
-    {
-        scrapToSell = new ScrapToSell(GetScrapFromShip());
-
-        return scrapToSell;
-    }
-    #endregion
-
-    #region Getting Scrap
-    public List<GrabbableObject> GetScrapFromShip()
-    {
-        GameObject ship = GameObject.Find("/Environment/HangarShip");
-        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
-        List<GrabbableObject> scrap = new List<GrabbableObject>();
-
-        foreach (var item in itemsInShip)
-        {
-            if (!IsScrapItem(item)) continue;
-            scrap.Add(item);
-        }
-
-        return scrap;
-    }
-
-    public List<GrabbableObject> GetAllowedScrapFromShip()
-    {
-        GameObject ship = GameObject.Find("/Environment/HangarShip");
-        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
-        List<GrabbableObject> scrap = new List<GrabbableObject>();
-
-        foreach (var item in itemsInShip)
-        {
-            if (!IsAllowedScrapItem(item)) continue;
-            scrap.Add(item);
-        }
-
-        return scrap;
-    }
-
-    public bool IsScrapItem(GrabbableObject item)
-    {
-        if (!item.itemProperties.isScrap) return false;
-        if (item.isPocketed) return false;
-        if (item.isHeld) return false;
-
-        return true;
-    }
-
-    public bool IsAllowedScrapItem(GrabbableObject item)
-    {
-        if (!IsScrapItem(item)) return false;
-        if (!ConfigManager.SellScrapWorthZero && item.scrapValue <= 0) return false;
-
-        string itemName = item.itemProperties.itemName;
-
-        if (itemName == "Gift" && !Instance.ConfigManager.SellGifts) return false;
-        if (itemName == "Shotgun" && !Instance.ConfigManager.SellShotguns) return false;
-        if (itemName == "Ammo" && !Instance.ConfigManager.SellAmmo) return false;
-        if (itemName == "Jar of pickles" && !Instance.ConfigManager.SellPickles) return false;
-
-        // Dont sell list
-        foreach (var dontSellItem in cachedDontSellList)
-        {
-            if (itemName.ToLower() == dontSellItem.ToLower()) return false;
-        }
-
-        return true;
-    }
-    #endregion
 
     #region SellRequest Methods
     public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType)
@@ -197,8 +104,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public void ConfirmSellRequest()
     {
-        if (scrapToSell == null) return;
-        if (sellRequest == null) return;
+        if (scrapToSell == null || sellRequest == null) return;
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 

@@ -21,7 +21,7 @@ internal class SellAllCommand : SellCommand
             return terminalNode;
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllAllowedScrapToSell();
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(int.MaxValue);
 
         if (scrapToSell.amount == 0)
         {

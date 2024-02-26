@@ -25,7 +25,7 @@ internal class SellAmountCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("Error: sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n");
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(requestedValue);
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue);
 
         if (scrapToSell.amount == 0)
         {

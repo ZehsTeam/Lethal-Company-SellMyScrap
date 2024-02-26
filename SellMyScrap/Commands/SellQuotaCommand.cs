@@ -30,7 +30,7 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("Quota has already been fulfilled.\n\n");
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetAllowedScrapToSell(requestedValue);
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue);
 
         if (scrapToSell.amount == 0)
         {

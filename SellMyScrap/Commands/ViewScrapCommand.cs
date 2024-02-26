@@ -16,7 +16,7 @@ internal class ViewScrapCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        ScrapToSell scrapToSell = new ScrapToSell(SellMyScrapBase.Instance.GetScrapFromShip());
+        ScrapToSell scrapToSell = new ScrapToSell(ScrapHelper.GetScrapFromShip(false));
 
         // No items found
         if (scrapToSell.amount == 0)

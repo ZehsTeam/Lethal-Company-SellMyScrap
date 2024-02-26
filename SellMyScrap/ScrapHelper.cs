@@ -7,28 +7,94 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapHelper
 {
-    public static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int totalValue)
+    #region Get Scrap
+    public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        return new ScrapToSell(FindBestMatch(scrap, GetSellValue(totalValue)));
+        GameObject ship = GameObject.Find("/Environment/HangarShip");
+        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
+        List<GrabbableObject> scrap = new List<GrabbableObject>();
+
+        string[] dontSellList = SellMyScrapBase.Instance.ConfigManager.DontSellListJson;
+
+        foreach (var item in itemsInShip)
+        {
+            if (!IsScrapItem(item)) continue;
+            if (onlyAllowedScrap && !IsAllowedScrapItem(item, dontSellList)) continue;
+
+            scrap.Add(item);
+        }
+
+        return scrap;
     }
 
-    private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int target)
+    private static bool IsScrapItem(GrabbableObject item)
     {
+        if (!item.itemProperties.isScrap) return false;
+        if (item.isPocketed) return false;
+        if (item.isHeld) return false;
+
+        return true;
+    }
+
+    private static bool IsAllowedScrapItem(GrabbableObject item, string[] dontSellList)
+    {
+        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+
+        if (item.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
+
+        string itemName = item.itemProperties.itemName;
+
+        if (itemName == "Gift" && !configManager.SellGifts) return false;
+        if (itemName == "Shotgun" && !configManager.SellShotguns) return false;
+        if (itemName == "Ammo" && !configManager.SellAmmo) return false;
+        if (itemName == "Jar of pickles" && !configManager.SellPickles) return false;
+
+        // Dont sell list
+        foreach (var dontSellItem in dontSellList)
+        {
+            if (dontSellItem.ToLower() == itemName.ToLower()) return false;
+        }
+
+        return true;
+    }
+    #endregion
+
+    #region Get Scrap to Sell
+    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true)
+    {
+        return GetScrapToSell(GetScrapFromShip(onlyAllowedScrap), value);
+    }
+
+    private static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int value)
+    {
+        return new ScrapToSell(FindBestMatch(scrap, GetSellValue(value)));
+    }
+
+    private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int targetValue)
+    {
+        if (targetValue < scrap.Min(item => item.scrapValue))
+        {
+            // If quota is less than the value of the lowest value item,
+            // return a list containing only the lowest value item
+            var lowestValueItem = scrap.OrderBy(item => item.scrapValue).First();
+            return [lowestValueItem];
+        }
+
         int totalValue = scrap.Sum(item => item.scrapValue);
 
-        if (totalValue <= target)
+        if (totalValue <= targetValue)
         {
             // If total value is under or equal to the quota, return all items
             return scrap;
         }
 
         int n = scrap.Count;
-        int[,] dp = new int[n + 1, target + 1];
+        int[,] dp = new int[n + 1, targetValue + 1];
 
         // Fill the dp array
         for (int i = 0; i <= n; i++)
         {
-            for (int j = 0; j <= target; j++)
+            for (int j = 0; j <= targetValue; j++)
             {
                 if (i == 0 || j == 0)
                     dp[i, j] = 0;
@@ -41,7 +107,7 @@ internal class ScrapHelper
 
         // Reconstruct the solution
         List<GrabbableObject> bestMatch = new List<GrabbableObject>();
-        int total = target;
+        int total = targetValue;
         for (int i = n; i > 0; i--)
         {
             if (dp[i, total] != dp[i - 1, total])
@@ -61,7 +127,7 @@ internal class ScrapHelper
             {
                 if (dp[i, total] == total)
                 {
-                    int overAmount = dp[i, target] - target;
+                    int overAmount = dp[i, targetValue] - targetValue;
                     if (overAmount < smallestOverAmount)
                     {
                         smallestOverAmount = overAmount;
@@ -87,6 +153,7 @@ internal class ScrapHelper
 
     private static int GetSellValue(int value)
     {
+        if (value == int.MaxValue) return value;
         return (int)Mathf.Ceil(value / StartOfRound.Instance.companyBuyingRate);
     }
 
@@ -94,7 +161,9 @@ internal class ScrapHelper
     {
         return (int)(value * StartOfRound.Instance.companyBuyingRate);
     }
+    #endregion
 
+    #region Get Scrap Message
     public static string GetScrapMessage(List<GrabbableObject> scrap)
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
@@ -152,4 +221,5 @@ internal class ScrapHelper
 
         return message.Trim();
     }
+    #endregion
 }

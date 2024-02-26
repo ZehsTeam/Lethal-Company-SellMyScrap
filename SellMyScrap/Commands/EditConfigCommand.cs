@@ -78,12 +78,7 @@ internal class EditConfigCommand : Command
         return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
     }
 
-    private string GetMessage()
-    {
-        return GetMessage(string.Empty);
-    }
-
-    private string GetMessage(string additionMessage)
+    private string GetMessage(string additionMessage = "")
     {
         string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
         message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
@@ -211,12 +206,7 @@ class JsonListEditor
         return string.Join(" ", args).Substring(args[0].Length).Replace("\"", "").Replace("\\", "").Trim();
     }
 
-    private string GetMessage()
-    {
-        return GetMessage(string.Empty);
-    }
-
-    private string GetMessage(string additionalMessage)
+    private string GetMessage(string additionalMessage = "")
     {
         string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
         message += $"{key} config editor\n\n";

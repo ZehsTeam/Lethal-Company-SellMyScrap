@@ -166,8 +166,6 @@ public class SyncedConfig
             new ConfigDescription(dontSellListJsonCfgDescription)
         );
 
-        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
-
         // Terminal Settings
         OverrideWelcomeMessageCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
@@ -206,15 +204,12 @@ public class SyncedConfig
     public void SetHostConfigData(SyncedConfigData syncedConfigData)
     {
         hostConfigData = syncedConfigData;
-
-        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
     }
 
     private void SyncedConfigsChanged()
     {
         if (!SellMyScrapBase.IsHostOrServer) return;
 
-        SellMyScrapBase.Instance.UpdateCachedDontSellList(DontSellListJson);
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));
     }
 }
