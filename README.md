@@ -1,7 +1,7 @@
 # SellMyScrap
 Adds a few terminal commands to sell your scrap from the ship. Highly Configurable.
 
-This mod aims to sell scrap as close to the target amount as possible. In rare cases, it may exceed the target amount due to performance reasons, even if a suitable match is possible.
+<ins><b>This mod will sell scrap as close to the requested value as possible.</b></ins>
 
 * You must be landed at The Company building to use sell commands.
 <br><br>
@@ -29,13 +29,15 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 | Command |Description |
 | ----------- | ----------- |
-| `sell` |Will show a help message. |
+| `sell` | Shows a help message for this mod. |
 | `view scrap` | Shows a detailed list of all the scrap in the ship. |
 | `view config` | Shows your config settings. |
-| `edit config` | Edit config settings in the terminal. |
+| `edit config` | Edit config settings from the terminal. |
 
 ## Config Settings
-**Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a lobby.
+Use the `edit config` command to edit config settings from the terminal.
+
+**Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a game.
 
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -47,10 +49,11 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Advanced Sell Settings | Setting type |Default value | Example value | Description |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | `sellScrapWorthZero` | `Boolean` | `false` |  | Do you want to sell scrap worth zero? |
-| `dontSellListJson` | `String` | `[]` | `["Gift", "Shotgun", "Ammo"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+| `dontSellListJson` | `String` | `[]` | `["Maxwell", ""]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
-* Use the `view-scrap` command or scan in-world to see the correct item names to use.
-* Item names are not case-sensitive. Spaces do matter for item names.
+* Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
+* Use the `view scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
+* Item names are not case-sensitive and spaces do matter for item names.
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
