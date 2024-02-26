@@ -122,9 +122,9 @@ internal class EditConfigCommand : Command
 
 class JsonListEditor
 {
-    private string key;
+    public string key;
     public bool isHostOnly = false;
-    public List<string> list;
+    private List<string> list;
     private Action<string[]> SetValue;
 
     public JsonListEditor(string key, bool isHostOnly, List<string> list, Action<string[]> SetValue)

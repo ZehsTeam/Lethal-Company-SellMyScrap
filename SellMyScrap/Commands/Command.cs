@@ -44,17 +44,17 @@ public class Command
         return OnInvalidInput(args);
     }
 
-    public virtual TerminalNode OnConfirm(string[] args)
+    protected virtual TerminalNode OnConfirm(string[] args)
     {
         return TerminalPatch.CreateTerminalNode("OnConfirm override was not found.\n\n");
     }
 
-    public virtual TerminalNode OnDeny(string[] args)
+    protected virtual TerminalNode OnDeny(string[] args)
     {
         return TerminalPatch.CreateTerminalNode("OnDeny override was not found.\n\n");
     }
 
-    public virtual TerminalNode OnInvalidInput(string[] args)
+    protected virtual TerminalNode OnInvalidInput(string[] args)
     {
         return previousTerminalNode;
     }

@@ -39,7 +39,8 @@ internal class SellQuotaCommand : SellCommand
 
         string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
         message += $"Profit quota: ${quotaFulfilled} / ${profitQuota} (${requestedValue})\n";
-        message += $"The Company is buying at %{companyBuyingRate}\n\n";
+        message += $"The Company is buying at %{companyBuyingRate}\n";
+        message += GetOvertimeBonusString(scrapToSell.realValue);
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {

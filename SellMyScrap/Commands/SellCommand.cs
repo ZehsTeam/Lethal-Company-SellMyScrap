@@ -4,9 +4,9 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellCommand : Command
 {
-    public static int companyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
+    protected static int companyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
 
-    public override TerminalNode OnConfirm(string[] args)
+    protected override TerminalNode OnConfirm(string[] args)
     {
         string message = $"Sell confirmed. Processing {GetValueString(SellMyScrapBase.Instance.sellRequest)}...\n\n";
 
@@ -16,7 +16,7 @@ internal class SellCommand : Command
         return TerminalPatch.CreateTerminalNode(message);
     }
 
-    public override TerminalNode OnDeny(string[] args)
+    protected override TerminalNode OnDeny(string[] args)
     {
         SellMyScrapBase.Instance.CancelSellRequest();
 
@@ -25,7 +25,7 @@ internal class SellCommand : Command
         return TerminalPatch.CreateTerminalNode($"Sell aborted.\n\n");
     }
 
-    public static bool CanUseCommand(out TerminalNode terminalNode)
+    protected static bool CanUseCommand(out TerminalNode terminalNode)
     {
         terminalNode = null;
 
@@ -42,23 +42,35 @@ internal class SellCommand : Command
         return true;
     }
 
-    public static string GetValueString(ScrapToSell scrapToSell)
+    protected static string GetValueString(ScrapToSell scrapToSell)
     {
         return GetValueString(scrapToSell.realValue, scrapToSell.value);
     }
 
-    public static string GetValueString(SellRequest sellRequest)
+    protected static string GetValueString(SellRequest sellRequest)
     {
         return GetValueString(sellRequest.realValue, sellRequest.value);
     }
 
-    private static string GetValueString(int realValue, int value)
+    protected static string GetValueString(int realValue, int value)
     {
-        if (companyBuyingRate == 100)
-        {
-            return $"${value}";
-        }
+        return companyBuyingRate == 100 ? $"${value}" : $"${realValue} (${value})";
+    }
 
-        return $"${realValue} (${value})";
+    protected static string GetOvertimeBonusString(int value)
+    {
+        int overtimeBonus = GetOvertimeBonus(value);
+        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus}\n\n";
+    }
+
+    protected static int GetOvertimeBonus(int value)
+    {
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
+        if (quotaFulfilled <= profitQuota) return 0;
+
+        int num = quotaFulfilled - profitQuota;
+
+        return num / 5 + 15 * TimeOfDay.Instance.daysUntilDeadline;
     }
 }
