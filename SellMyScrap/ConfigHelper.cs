@@ -18,6 +18,7 @@ internal class ConfigHelper
             new ConfigItem("sellAmmo",               typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =               bool.Parse(value); }),
             new ConfigItem("sellPickles",            typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =            bool.Parse(value); }),
             new ConfigItem("sellScrapWorthZero",     typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =     bool.Parse(value); }),
+            new ConfigItem("onlySellScrapOnFloor",   typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =   bool.Parse(value); }),
             new ConfigItem("overrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }),
             new ConfigItem("overrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }),
             new ConfigItem("showFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }),
@@ -79,7 +80,8 @@ internal class ConfigHelper
         message += $"sellAmmo:     {configManager.SellAmmo}\n";
         message += $"sellPickles:  {configManager.SellPickles}\n\n";
         message += $"[Advanced Sell Settings]{syncedMessage}\n";
-        message += $"sellScrapWorthZero: {configManager.SellScrapWorthZero}\n";
+        message += $"sellScrapWorthZero:   {configManager.SellScrapWorthZero}\n";
+        message += $"onlySellScrapOnFloor: {configManager.OnlySellScrapOnFloor}\n";
         message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
         message += "[Terminal Settings]\n";
         message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";

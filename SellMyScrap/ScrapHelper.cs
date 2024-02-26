@@ -7,11 +7,24 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapHelper
 {
+    private static GameObject hangarShip;
+    public static GameObject HangarShip
+    {
+        get
+        {
+            if (hangarShip == null)
+            {
+                hangarShip = GameObject.Find("/Environment/HangarShip");
+            }
+
+            return hangarShip;
+        }
+    }
+
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        GameObject ship = GameObject.Find("/Environment/HangarShip");
-        GrabbableObject[] itemsInShip = ship.GetComponentsInChildren<GrabbableObject>();
+        GrabbableObject[] itemsInShip = HangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
         string[] dontSellList = SellMyScrapBase.Instance.ConfigManager.DontSellListJson;
@@ -41,6 +54,7 @@ internal class ScrapHelper
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
         if (item.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
+        if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(item)) return false;
 
         string itemName = item.itemProperties.itemName;
 
@@ -57,6 +71,19 @@ internal class ScrapHelper
 
         return true;
     }
+    
+    private static bool IsScrapOnFloor(GrabbableObject item)
+    {
+        BoxCollider boxCollider = item.GetComponent<BoxCollider>();
+        if (boxCollider == null) return true;
+
+        Bounds bounds = boxCollider.bounds;
+        float shipY = HangarShip.transform.position.y;
+        float bottomY = bounds.center.y - bounds.extents.y;
+        float yOffset = bottomY - shipY;
+
+        return yOffset <= 0.1f;
+    }
     #endregion
 
     #region Get Scrap to Sell
@@ -72,6 +99,8 @@ internal class ScrapHelper
 
     private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int targetValue)
     {
+        if (scrap.Count == 0) return scrap;
+
         if (targetValue < scrap.Min(item => item.scrapValue))
         {
             // If quota is less than the value of the lowest value item,
@@ -82,11 +111,8 @@ internal class ScrapHelper
 
         int totalValue = scrap.Sum(item => item.scrapValue);
 
-        if (totalValue <= targetValue)
-        {
-            // If total value is under or equal to the quota, return all items
-            return scrap;
-        }
+        // If total value is under or equal to the quota, return all items
+        if (totalValue <= targetValue) return scrap;
 
         int n = scrap.Count;
         int[,] dp = new int[n + 1, targetValue + 1];

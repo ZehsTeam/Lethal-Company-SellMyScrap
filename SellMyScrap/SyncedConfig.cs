@@ -15,6 +15,7 @@ public class SyncedConfig
 
     // Advanced Sell Settings (Synced)
     private ConfigEntry<bool> SellScrapWorthZeroCfg;
+    private ConfigEntry<bool> OnlySellScrapOnFloorCfg;
     private ConfigEntry<string> DontSellListJsonCfg;
 
     // Terminal Settings
@@ -94,6 +95,19 @@ public class SyncedConfig
         }
     }
 
+    internal bool OnlySellScrapOnFloor
+    {
+        get
+        {
+            return hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.sellScrapWorthZero;
+        }
+        set
+        {
+            OnlySellScrapOnFloorCfg.Value = value;
+            SyncedConfigsChanged();
+        }
+    }
+
     internal string[] DontSellListJson
     { 
         get
@@ -154,12 +168,16 @@ public class SyncedConfig
             false,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
+        OnlySellScrapOnFloorCfg = config.Bind(
+            new ConfigDefinition("Sell Settings", "onlySellScrapOnFloor"),
+            false,
+            new ConfigDescription("Do you want to only sell scrap that is on the floor?")
+        );
 
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
-        dontSellListJsonCfgDescription += "Item names are not case-sensitive.\n";
-        dontSellListJsonCfgDescription += "Spaces do matter for item names.\n";
+        dontSellListJsonCfgDescription += "Item names are not case-sensitive and spaces do matter for item names.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n\n";
-        dontSellListJsonCfgDescription += "Example: [\"Gift\", \"Shotgun\", \"Ammo\"]\n";
+        dontSellListJsonCfgDescription += "Example: [\"Maxwell\", \"Other Scrap Item\"]\n";
         DontSellListJsonCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             "[]",

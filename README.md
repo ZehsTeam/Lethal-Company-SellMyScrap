@@ -49,11 +49,12 @@ Use the `edit config` command to edit config settings from the terminal.
 | Advanced Sell Settings | Setting type |Default value | Example value | Description |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | `sellScrapWorthZero` | `Boolean` | `false` |  | Do you want to sell scrap worth zero? |
-| `dontSellListJson` | `String` | `[]` | `["Maxwell", ""]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+| `onlySellScrapOnFloor` | `Boolean` | `false` |  | Do you want to only sell scrap that is on the floor? |
+| `dontSellListJson` | `String` | `[]` | `["Maxwell", "Other Item"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
 * Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
 * Use the `view scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
-* Item names are not case-sensitive and spaces do matter for item names.
+* Item names are not case-sensitive and spaces do matter.
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
