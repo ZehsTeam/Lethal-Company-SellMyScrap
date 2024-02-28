@@ -87,17 +87,17 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/2g3JVFq.png" width="273px">
+    <img src="https://i.imgur.com/fzewHLU.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/wW6VGUI.png" width="412px">
-    <img src="https://i.imgur.com/YvBuyAT.png" width="412px">
+    <img src="https://i.imgur.com/W62VoLV.png" width="412px">
+    <img src="https://i.imgur.com/sBWwG3v.png" width="412px">
 </div>
 <h4><code>sell quota</code></h4>
 <div>
-    <img src="https://i.imgur.com/3aE4I8J.png" width="412px">
-    <img src="https://i.imgur.com/9rty096.png" width="412px">
+    <img src="https://i.imgur.com/KzCHE6X.png" width="412px">
+    <img src="https://i.imgur.com/6BTUSBX.png" width="412px">
 </div>
 <h4><code>sell all</code></h4>
 <div>
@@ -111,10 +111,10 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/jSZYPJR.png" width="100%">
+    <img src="https://i.imgur.com/UBalPcm.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/jbBhbDw.png" width="412px">
-    <img src="https://i.imgur.com/PYeXzMF.png" width="412px">
+    <img src="https://i.imgur.com/lHh2s2u.png" width="412px">
+    <img src="https://i.imgur.com/e3Z3ODJ.png" width="412px">
 </div>
