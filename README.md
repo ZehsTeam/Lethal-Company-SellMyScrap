@@ -26,13 +26,10 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Command | Description |
 | ----------- | ----------- |
 | `sell <amount>` | Will sell scrap for a total of the requested amount. |
-
-* The `sell <amount>` command supports math expressions.
-
-| Command | Description |
-| ----------- | ----------- |
 | `sell quota` | Will sell scrap to reach the profit quota. |
 | `sell all` | Will sell all of your scrap. |
+
+* The `sell <amount>` command supports math expressions.
 
 | Command |Description |
 | ----------- | ----------- |
@@ -42,9 +39,9 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `edit config` | Edit config settings from the terminal. |
 
 ## Config Settings
-Use the `edit config` command to edit config settings from the terminal.
-
-**Sell Settings** and **Advanced Sell Settings** will be synced with the host when joining a game.
+* Use the `edit config` command to edit config settings from the terminal.
+* Only the host can edit **Sell Settings** and **Advanced Sell Settings** using the config editor.
+* **Sell Settings** and **Advanced Sell Settings** will be synced with the host.
 
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -60,8 +57,8 @@ Use the `edit config` command to edit config settings from the terminal.
 | `dontSellListJson` | `String` | `[]` | `["Maxwell", "Other Item"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
 * Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
-* Use the `view scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
-* Item names are not case-sensitive and spaces do matter.
+    * Use the `view scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
+    * Item names are not case-sensitive and spaces do matter.
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -118,3 +115,5 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
     <img src="https://i.imgur.com/lHh2s2u.png" width="412px">
     <img src="https://i.imgur.com/e3Z3ODJ.png" width="412px">
 </div>
+<br>
+You have reached the bottom of the README. Thank you for reading <3
