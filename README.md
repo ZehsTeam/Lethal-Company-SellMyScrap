@@ -101,7 +101,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>sell all</code></h4>
 <div>
-    <img src="https://i.imgur.com/XZAcZYO.png" width="412px">
+    <img src="https://i.imgur.com/HByklOA.png" width="412px">
     <img src="https://i.imgur.com/5tcgCKR.png" width="412px">
 </div>
 <div>
