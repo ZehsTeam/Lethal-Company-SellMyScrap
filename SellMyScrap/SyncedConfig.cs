@@ -188,12 +188,12 @@ public class SyncedConfig
         OverrideWelcomeMessageCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
             true,
-            new ConfigDescription("Overrides the terminal welcome message to add some additional info.")
+            new ConfigDescription("Overrides the terminal welcome message to add additional info.")
         );
         OverrideHelpMessageCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
             true,
-            new ConfigDescription("Overrides the terminal help message to add some additional info.")
+            new ConfigDescription("Overrides the terminal help message to add additional info.")
         );
         ShowFoundItemsCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "showFoundItems"),

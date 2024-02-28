@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Data;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -20,7 +21,20 @@ internal class SellAmountCommand : SellCommand
             return terminalNode;
         }
 
-        if (!int.TryParse(args[1], out int requestedValue) || requestedValue <= 0)
+        string expression = string.Join(' ', args).Substring(args[0].Length).Trim();
+        string evaluatedExpression = expression;
+
+        try
+        {
+            DataTable dataTable = new DataTable();
+            evaluatedExpression = dataTable.Compute(expression, "").ToString();
+        }
+        catch
+        {
+            SellMyScrapBase.mls.LogError($"Error: failed to evalute expression for sell <amount>");
+        }
+
+        if (!int.TryParse(evaluatedExpression, out int requestedValue) || requestedValue <= 0)
         {
             return TerminalPatch.CreateTerminalNode("Error: sell amount is invalid.\n\nUsage: sell <amount>\nWhere <amount> is a positive integer.\nExample: sell 500\n\n");
         }

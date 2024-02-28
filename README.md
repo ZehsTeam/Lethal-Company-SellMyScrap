@@ -8,7 +8,7 @@ Adds a few terminal commands to sell your scrap from the ship. Highly Configurab
 * This mod will NOT sell Gifts, Shotguns, or Ammo by default.
     * See **Sell Settings** for more info.
 <br><br>
-* This mod has support for excluding custom / modded scrap items from the sell algorithm.
+* This mod supports excluding custom / modded scrap items from the sell algorithm.
     * See **Advanced Sell Settings** for more info.
 <br><br>
 * This mod will show how much overtime bonus you will receive on the sell confirmation screen.
@@ -18,16 +18,21 @@ Adds a few terminal commands to sell your scrap from the ship. Highly Configurab
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
+* You must be landed at The Company building to use sell commands.
+* Each sell command will sell items based on your config settings.
+* Each sell command requires confirmation before selling your scrap.
+    * Additional information is given on the confirmation screen.
+
 | Command | Description |
 | ----------- | ----------- |
-| `sell <amount>` | Will sell scrap for a total of the amount requested. |
+| `sell <amount>` | Will sell scrap for a total of the requested amount. |
+
+* The `sell <amount>` command supports math expressions.
+
+| Command | Description |
+| ----------- | ----------- |
 | `sell quota` | Will sell scrap to reach the profit quota. |
 | `sell all` | Will sell all of your scrap. |
-
-* You must be landed at The Company building to use these commands.
-* Each command will sell items based on your config settings.
-* Each command requires confirmation before selling your scrap.
-    * Additional information is given on the confirmation screen.
 
 | Command |Description |
 | ----------- | ----------- |
@@ -60,8 +65,8 @@ Use the `edit config` command to edit config settings from the terminal.
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add some additional info. |
-| `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add some additional info. |
+| `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add additional info. |
+| `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add additional info. |
 | `showFoundItems` | `Boolean` | `true` | Show found items on the confirmation screen. |
 | `sortFoundItems` | `Boolean` | `true` | Sorts found items from most to least expensive. |
 | `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items. |
