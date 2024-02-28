@@ -33,7 +33,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Trim();
-        message += $"\n\n[SellMyScrap]\nType \"Sell\" for a list of commands.\n\n\n\n";
+        message += $"\n\n[{MyPluginInfo.PLUGIN_NAME}]\nType \"Sell\" for a list of commands.\n\n\n\n";
 
         terminalNodes.specialNodes[index].displayText = message;
     }
@@ -44,7 +44,7 @@ internal class TerminalPatch
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
         
         string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();
-        message += "\n\n>SELL\nTo see the list of SellMyScrap commands.\n\n\n[numberOfItemsOnRoute]";
+        message += $"\n\n>SELL\nTo see the list of {MyPluginInfo.PLUGIN_NAME} commands.\n\n\n[numberOfItemsOnRoute]";
 
         terminalNodes.specialNodes[index].displayText = message;
     }

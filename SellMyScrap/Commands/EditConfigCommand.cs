@@ -80,7 +80,7 @@ internal class EditConfigCommand : Command
 
     private string GetMessage(string additionMessage = "")
     {
-        string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
+        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
         message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
         message += $"The following commands are available:\n\n";
         message += $"<key> <value>\n";
@@ -208,7 +208,7 @@ class JsonListEditor
 
     private string GetMessage(string additionalMessage = "")
     {
-        string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
+        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
         message += $"{key} config editor\n\n";
         message += $"{JsonConvert.SerializeObject(list)}\n\n";
         message += $"The following commands are available:\n\n";

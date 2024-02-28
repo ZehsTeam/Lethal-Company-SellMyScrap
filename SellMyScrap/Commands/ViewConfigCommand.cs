@@ -16,7 +16,7 @@ internal class ViewConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        string message = $"SellMyScrap v{MyPluginInfo.PLUGIN_VERSION} config\n\n";
+        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config\n\n";
         message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
