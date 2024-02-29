@@ -28,6 +28,15 @@ internal class SellAllCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
+        awaitingConfirmation = true;
+
+        string message = GetMessage(scrapToSell);
+        return TerminalPatch.CreateTerminalNode(message);
+    }
+
+    private string GetMessage(ScrapToSell scrapToSell)
+    {
         string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
         message += $"The Company is buying at %{companyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
@@ -39,9 +48,6 @@ internal class SellAllCommand : SellCommand
 
         message += "Please CONFIRM or DENY.\n\n";
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
-        awaitingConfirmation = true;
-
-        return TerminalPatch.CreateTerminalNode(message);
+        return message;
     }
 }

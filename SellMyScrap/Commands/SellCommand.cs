@@ -70,7 +70,15 @@ internal class SellCommand : Command
         if (quotaFulfilled <= profitQuota) return 0;
 
         int num = quotaFulfilled - profitQuota;
+        int overtimeBonus = num / 5 + 15 * TimeOfDay.Instance.daysUntilDeadline;
 
-        return num / 5 + 15 * TimeOfDay.Instance.daysUntilDeadline;
+        // If local player is Thorlar, remove 15 from the overtime bonus.
+        ulong steamId = 76561197964616102;
+        if (StartOfRound.Instance.localPlayerController.playerSteamId == steamId)
+        {
+            overtimeBonus -= 15;
+        }
+
+        return overtimeBonus;
     }
 }
