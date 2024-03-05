@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -60,7 +61,7 @@ internal class SellCommand : Command
     protected static string GetOvertimeBonusString(int value)
     {
         int overtimeBonus = GetOvertimeBonus(value);
-        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus}\n\n";
+        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\n\n";
     }
 
     protected static int GetOvertimeBonus(int value)
@@ -78,6 +79,8 @@ internal class SellCommand : Command
         {
             overtimeBonus -= 15;
         }
+
+        overtimeBonus = Mathf.Max(overtimeBonus, 0);
 
         return overtimeBonus;
     }

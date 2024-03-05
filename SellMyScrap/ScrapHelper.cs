@@ -94,7 +94,17 @@ internal class ScrapHelper
 
     private static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int value)
     {
-        return new ScrapToSell(FindBestMatch(scrap, GetSellValue(value)));
+        if (value == int.MaxValue)
+        {
+            return new ScrapToSell(scrap);
+        }
+
+        int targetValue = GetSellValue(value);
+
+        List<GrabbableObject> bestMatch = FindBestMatch(scrap, targetValue);
+        bestMatch ??= [];
+
+        return new ScrapToSell(bestMatch);
     }
 
     private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int targetValue)
@@ -132,7 +142,7 @@ internal class ScrapHelper
         }
 
         // Reconstruct the solution
-        List<GrabbableObject> bestMatch = new List<GrabbableObject>();
+        List<GrabbableObject> bestMatch = [];
         int total = targetValue;
         for (int i = n; i > 0; i--)
         {
@@ -157,7 +167,7 @@ internal class ScrapHelper
                     if (overAmount < smallestOverAmount)
                     {
                         smallestOverAmount = overAmount;
-                        smallestOverMatch = new List<GrabbableObject>();
+                        smallestOverMatch = [];
                         for (int j = i; j > 0; j--)
                         {
                             if (dp[j, total] != dp[j - 1, total])
@@ -224,7 +234,7 @@ internal class ScrapHelper
         }
 
         string[] combinedScrapKeys = combinedScrap.Keys.ToArray();
-        string[] combinedScrapValues = combinedScrap.Values.Select(value => $"${value}").ToArray();
+        string[] combinedscrapValues = combinedScrap.Values.Select(value => $"${value}").ToArray();
 
         string message = string.Empty;
 
@@ -234,7 +244,7 @@ internal class ScrapHelper
 
             for (int i = 0; i < combinedScrap.Count; i++)
             {
-                message += Utils.GetStringWithSpacingInBetween(combinedScrapKeys[i], combinedScrapValues[i], maxLength) + "\n";
+                message += Utils.GetStringWithSpacingInBetween(combinedScrapKeys[i], combinedscrapValues[i], maxLength) + "\n";
             }
 
             return message.Trim();
@@ -242,7 +252,7 @@ internal class ScrapHelper
 
         for (int i = 0; i < combinedScrap.Count; i++)
         {
-            message += $"{combinedScrapKeys[i]} {combinedScrapValues[i]}\n";
+            message += $"{combinedScrapKeys[i]} {combinedscrapValues[i]}\n";
         }
 
         return message.Trim();

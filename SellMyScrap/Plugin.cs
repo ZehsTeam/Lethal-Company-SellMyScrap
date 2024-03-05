@@ -152,8 +152,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public IEnumerator PerformSellOnServer()
     {
-        if (scrapToSell == null) yield return null;
-        if (sellRequest == null) yield return null;
+        if (scrapToSell == null || sellRequest == null) yield return null;
         if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
         if (DepositItemsDeskPatch.DepositItemsDesk == null)
