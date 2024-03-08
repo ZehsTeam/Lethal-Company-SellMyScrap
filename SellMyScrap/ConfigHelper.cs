@@ -22,7 +22,7 @@ internal class ConfigHelper
             new ConfigItem("overrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }),
             new ConfigItem("overrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }),
             new ConfigItem("showFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }),
-            new ConfigItem("sortFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.SortFoundItems =         bool.Parse(value); }),
+            new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }),
             new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }),
             new ConfigItem("speakInShip",            typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =            bool.Parse(value); }),
         ];
@@ -87,7 +87,7 @@ internal class ConfigHelper
         message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
         message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
         message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
-        message += $"sortFoundItems:         {configManager.SortFoundItems}\n";
+        message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
         message += $"speakInShip: {configManager.SpeakInShip}";

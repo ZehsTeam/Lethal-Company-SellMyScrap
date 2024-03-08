@@ -203,10 +203,10 @@ internal class ScrapHelper
     public static string GetScrapMessage(List<GrabbableObject> scrap)
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
-        return GetScrapMessage(scrap, configManager.SortFoundItems, configManager.AlignFoundItemsPrice);
+        return GetScrapMessage(scrap, configManager.SortFoundItemsPrice, configManager.AlignFoundItemsPrice);
     }
 
-    public static string GetScrapMessage(List<GrabbableObject> scrap, bool sortFoundItems, bool alignFoundItemsPrice)
+    public static string GetScrapMessage(List<GrabbableObject> scrap, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
     {
         List<string> distinctScrap = scrap.Select(item => item.itemProperties.itemName).Distinct().ToList();
         Dictionary<string, int> combinedScrap = new Dictionary<string, int>();
@@ -227,7 +227,7 @@ internal class ScrapHelper
             combinedScrap.Add($"{distinctItem} (x{amount}) :", value);
         });
 
-        if (sortFoundItems)
+        if (sortFoundItemsPrice)
         {
             var sortedCombinedScrap = from entry in combinedScrap orderby entry.Value descending select entry;
             combinedScrap = sortedCombinedScrap.ToDictionary(pair => pair.Key, pair => pair.Value);

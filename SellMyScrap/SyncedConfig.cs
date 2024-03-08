@@ -22,7 +22,7 @@ public class SyncedConfig
     private ConfigEntry<bool> OverrideWelcomeMessageCfg;
     private ConfigEntry<bool> OverrideHelpMessageCfg;
     private ConfigEntry<bool> ShowFoundItemsCfg;
-    private ConfigEntry<bool> SortFoundItemsCfg;
+    private ConfigEntry<bool> SortFoundItemsPricePriceCfg;
     private ConfigEntry<bool> AlignFoundItemsPriceCfg;
 
     // Misc Settings
@@ -125,7 +125,7 @@ public class SyncedConfig
     internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
     internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
     internal bool ShowFoundItems { get { return ShowFoundItemsCfg.Value; } set => ShowFoundItemsCfg.Value = value; }
-    internal bool SortFoundItems { get { return SortFoundItemsCfg.Value; } set => SortFoundItemsCfg.Value = value; }
+    internal bool SortFoundItemsPrice { get { return SortFoundItemsPricePriceCfg.Value; } set => SortFoundItemsPricePriceCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
     // Misc Settings
@@ -200,8 +200,8 @@ public class SyncedConfig
             true,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
-        SortFoundItemsCfg = config.Bind(
-            new ConfigDefinition("Terminal Settings", "sortFoundItems"),
+        SortFoundItemsPricePriceCfg = config.Bind(
+            new ConfigDefinition("Terminal Settings", "sortFoundItemsPrice"),
             true,
             new ConfigDescription("Sorts found items from most to least expensive.")
         );
