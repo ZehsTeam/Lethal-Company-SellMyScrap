@@ -176,8 +176,8 @@ public class SyncedConfig
 
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
         dontSellListJsonCfgDescription += "Item names are not case-sensitive and spaces do matter for item names.\n";
-        dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n\n";
-        dontSellListJsonCfgDescription += "Example: [\"Maxwell\", \"Other Scrap Item\"]\n";
+        dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n";
+        dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Other Scrap Item\"]";
         DontSellListJsonCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             "[]",
