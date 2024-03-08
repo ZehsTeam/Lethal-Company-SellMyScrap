@@ -65,8 +65,8 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add additional info. |
 | `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add additional info. |
 | `showFoundItems` | `Boolean` | `true` | Show found items on the confirmation screen. |
-| `sortFoundItems` | `Boolean` | `true` | Sorts found items from most to least expensive. |
-| `alignFoundItemsPrice` | `Boolean` | `true` | Align all prices of found items. |
+| `sortFoundItemsPrice` | `Boolean` | `true` | Sorts found items from most to least expensive. |
+| `alignFoundItemsPrice` | `Boolean` | `true` | Aligns all prices of found items. |
 
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
