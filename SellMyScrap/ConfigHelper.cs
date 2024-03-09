@@ -25,6 +25,7 @@ internal class ConfigHelper
             new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }),
             new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }),
             new ConfigItem("speakInShip",            typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =            bool.Parse(value); }),
+            new ConfigItem("octolarSpawnChance",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnChance =     int.Parse(value);  }),
         ];
     }
 
@@ -43,6 +44,21 @@ internal class ConfigHelper
             {
                 configItem.SetValue(value);
                 parsedValue = parsedBool.ToString();
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        if (configItem.type == typeof(int))
+        {
+            if (int.TryParse(value, out int parsedInteger))
+            {
+                configItem.SetValue(value);
+                parsedValue = parsedInteger.ToString();
 
                 return true;
             }
@@ -90,7 +106,8 @@ internal class ConfigHelper
         message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
-        message += $"speakInShip: {configManager.SpeakInShip}";
+        message += $"speakInShip:        {configManager.SpeakInShip}\n";
+        message += $"octolarSpawnChance: {configManager.OctolarSpawnChance}";
 
         return message;
     }

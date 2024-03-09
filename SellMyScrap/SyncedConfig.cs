@@ -27,6 +27,7 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
+    private ConfigEntry<int> OctolarSpawnChanceCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -130,6 +131,7 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
+    internal int OctolarSpawnChance { get { return OctolarSpawnChanceCfg.Value; } set => OctolarSpawnChanceCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -216,6 +218,12 @@ public class SyncedConfig
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
+        );
+        OctolarSpawnChanceCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "octolarSpawnChance"),
+            20,
+            new ConfigDescription("The percent chance Octolar will spawn?!",
+            new AcceptableValueRange<int>(0, 100))
         );
     }
 

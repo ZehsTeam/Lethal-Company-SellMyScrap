@@ -11,16 +11,25 @@ internal class StartOfRoundPatch
     [HarmonyPostfix]
     static void AwakePatch()
     {
-        if (SellMyScrapBase.IsHostOrServer)
-        {
-            var networkHandlerHost = Object.Instantiate(NetworkObjectManagerPatch.networkPrefab, Vector3.zero, Quaternion.identity);
-            networkHandlerHost.GetComponent<NetworkObject>().Spawn();
-        }
+        SpawnNetworkHandler();
+    }
+
+    private static void SpawnNetworkHandler()
+    {
+        if (!SellMyScrapBase.IsHostOrServer) return;
+
+        var networkHandlerHost = Object.Instantiate(Assets.networkHandlerPrefab, Vector3.zero, Quaternion.identity);
+        networkHandlerHost.GetComponent<NetworkObject>().Spawn();
     }
 
     [HarmonyPatch("OnClientConnect")]
     [HarmonyPrefix]
     static void OnClientConnectPatch(ref ulong clientId)
+    {
+        SendConfigToNewConnectedPlayer(clientId);
+    }
+
+    private static void SendConfigToNewConnectedPlayer(ulong clientId)
     {
         if (!SellMyScrapBase.IsHostOrServer) return;
 
@@ -28,7 +37,7 @@ internal class StartOfRoundPatch
         {
             Send = new ClientRpcSendParams
             {
-                TargetClientIds = new ulong[] { clientId }
+                TargetClientIds = [clientId]
             }
         };
 

@@ -12,7 +12,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
     void Awake()
     {
-        Instance = this;
+        if (Instance == null) Instance = this;
     }
 
     [ClientRpc]
@@ -34,6 +34,18 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         SellMyScrapBase.mls.LogInfo(message);
         SellMyScrapBase.Instance.DisplayGlobalNotification(message);
         SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType);
+    }
+
+    [ClientRpc]
+    public void SetScrapToSuckClientRpc(string networkObjectIdsString)
+    {
+        Octolar.SetScrapToSuck(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
+    }
+
+    [ClientRpc]
+    public void ShowOctolarClientRpc()
+    {
+        Octolar.Show();
     }
 
     [ClientRpc]

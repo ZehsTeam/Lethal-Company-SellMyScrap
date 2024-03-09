@@ -71,6 +71,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `octolarSpawnChance` | `Int32` | `20` | The percent chance Octolar will spawn?! |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -84,7 +85,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/347ogGm.png" width="273px">
+    <img src="https://i.imgur.com/9oNeAUh.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -108,12 +109,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/WzSwuyx.png" width="100%">
+    <img src="https://i.imgur.com/CsvFPdK.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/IRzCGZt.png" width="412px">
-    <img src="https://i.imgur.com/0kbAe1d.png" width="412px">
+    <img src="https://i.imgur.com/lmINm9p.png" width="412px">
+    <img src="https://i.imgur.com/0EwEcDU.png" width="412px">
 </div>
 <br>
 You have reached the bottom of the README. Thank you for reading <3
