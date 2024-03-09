@@ -79,12 +79,7 @@ internal class TerminalPatch
         return true;
     }
 
-    public static TerminalNode CreateTerminalNode(string message)
-    {
-        return CreateTerminalNode(message, true);
-    }
-
-    public static TerminalNode CreateTerminalNode(string message, bool clearPreviousText)
+    public static TerminalNode CreateTerminalNode(string message, bool clearPreviousText = true)
     {
         TerminalNode terminalNode = ScriptableObject.CreateInstance<TerminalNode>();
 

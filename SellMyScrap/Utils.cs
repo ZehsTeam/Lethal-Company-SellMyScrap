@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -44,5 +45,13 @@ internal class Utils
         }
 
         return string.Empty;
+    }
+
+    public static bool IsLocalPlayerThorlar()
+    {
+        ulong steamId = 76561197964616102; // Thorlar's Steam ID
+        ulong localPlayerSteamId = StartOfRound.Instance.localPlayerController.playerSteamId;
+
+        return steamId == localPlayerSteamId;
     }
 }

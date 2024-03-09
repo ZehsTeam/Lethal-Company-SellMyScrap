@@ -5,7 +5,7 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellCommand : Command
 {
-    protected static int companyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
+    protected static int CompanyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
 
     protected override TerminalNode OnConfirm(string[] args)
     {
@@ -55,7 +55,7 @@ internal class SellCommand : Command
 
     protected static string GetValueString(int realValue, int value)
     {
-        return companyBuyingRate == 100 ? $"${value}" : $"${realValue} (${value})";
+        return CompanyBuyingRate == 100 ? $"${value}" : $"${realValue} (${value})";
     }
 
     protected static string GetOvertimeBonusString(int value)
@@ -71,17 +71,14 @@ internal class SellCommand : Command
         if (quotaFulfilled <= profitQuota) return 0;
 
         int num = quotaFulfilled - profitQuota;
-        int overtimeBonus = num / 5 + 15 * TimeOfDay.Instance.daysUntilDeadline;
+        int overtimeBonus = (num / 5) + (15 * TimeOfDay.Instance.daysUntilDeadline);
 
         // If local player is Thorlar, remove 15 from the overtime bonus.
-        ulong steamId = 76561197964616102;
-        if (StartOfRound.Instance.localPlayerController.playerSteamId == steamId)
+        if (Utils.IsLocalPlayerThorlar())
         {
             overtimeBonus -= 15;
         }
 
-        overtimeBonus = Mathf.Max(overtimeBonus, 0);
-
-        return overtimeBonus;
+        return Mathf.Max(overtimeBonus, 0);
     }
 }

@@ -38,7 +38,7 @@ internal class SellAllCommand : SellCommand
     private string GetMessage(ScrapToSell scrapToSell)
     {
         string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
-        message += $"The Company is buying at %{companyBuyingRate}\n";
+        message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
