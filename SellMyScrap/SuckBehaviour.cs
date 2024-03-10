@@ -30,7 +30,7 @@ public class SuckBehaviour : MonoBehaviour
         bool isTimerComplete = timer > duration;
         if (isTimerComplete) timer = duration;
 
-        bool isWithinDistance = Vector3.Distance(transform.position, endPosition) < 0.1;
+        bool isWithinDistance = Vector3.Distance(transform.position, endPosition) < 0.1f;
 
         if (isTimerComplete || isWithinDistance)
         {

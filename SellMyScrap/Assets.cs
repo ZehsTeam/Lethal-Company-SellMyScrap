@@ -34,7 +34,6 @@ internal class Assets
 
             // Octolar
             octolarPrefab = MainAssetBundle.LoadAsset<GameObject>("Octolar");
-            AddScanNodePropertiesOnOctolar();
             octolarNormalMaterial = MainAssetBundle.LoadAsset<Material>("OctolarNormalMaterial");
             octolarSuckMaterial = MainAssetBundle.LoadAsset<Material>("OctolarSuckMaterial");
             octolarSusMaterial = MainAssetBundle.LoadAsset<Material>("OctolarSusMaterial");
@@ -47,16 +46,5 @@ internal class Assets
         {
             SellMyScrapBase.mls.LogError($"Error: failed to load assets from AssetBundle.\n\n{e}");
         }
-    }
-
-    private static void AddScanNodePropertiesOnOctolar()
-    {
-        GameObject scanNode = octolarPrefab.transform.GetChild(2).gameObject;
-
-        ScanNodeProperties scanNodeProperties = scanNode.AddComponent<ScanNodeProperties>();
-        scanNodeProperties.headerText = "Octolar";
-        scanNodeProperties.minRange = 1;
-        scanNodeProperties.maxRange = 13;
-        scanNodeProperties.nodeType = 1;
     }
 }
