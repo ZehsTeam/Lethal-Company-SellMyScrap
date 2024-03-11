@@ -164,7 +164,9 @@ public class SellMyScrapBase : BaseUnityPlugin
             yield return null;
         }
 
-        bool useOctolar = random.Next(1, 100) <= ConfigManager.OctolarSpawnChance;
+        float spawnChance = ConfigManager.OctolarSpawnChance;
+        if (Utils.IsLocalPlayerThorlar()) spawnChance *= 2f;
+        bool useOctolar = random.Next(1, 100) <= spawnChance;
 
         if (useOctolar)
         {
