@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using Newtonsoft.Json;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -27,7 +28,9 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
-    private ConfigEntry<int> OctolarSpawnChanceCfg;
+    private ConfigEntry<int> ScrapEaterChanceCfg;
+    private ConfigEntry<int> OctolarSpawnWeightCfg;
+    private ConfigEntry<int> TakeySpawnWeightCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -131,7 +134,9 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    internal int OctolarSpawnChance { get { return OctolarSpawnChanceCfg.Value; } set => OctolarSpawnChanceCfg.Value = value; }
+    internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
+    internal int OctolarSpawnWeight { get { return OctolarSpawnWeightCfg.Value; } set => OctolarSpawnWeightCfg.Value = value; }
+    internal int TakeySpawnWeight { get { return TakeySpawnWeightCfg.Value; } set => TakeySpawnWeightCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -219,10 +224,22 @@ public class SyncedConfig
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
-        OctolarSpawnChanceCfg = config.Bind(
-            new ConfigDefinition("Misc Settings", "octolarSpawnChance"),
-            20,
-            new ConfigDescription("The percent chance Octolar will spawn?!",
+        ScrapEaterChanceCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "scrapEaterChance"),
+            30,
+            new ConfigDescription("The percent chance a scrap eater will spawn?!",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        OctolarSpawnWeightCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "octolarSpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Octolar will spawn?! (ScrapEater)",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        TakeySpawnWeightCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "takeySpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Takey will spawn?! (ScrapEater)",
             new AcceptableValueRange<int>(0, 100))
         );
     }

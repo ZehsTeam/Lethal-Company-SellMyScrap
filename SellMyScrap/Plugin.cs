@@ -1,7 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using com.github.zehsteam.SellMyScrap.Commands;
+using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
+using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,8 +28,6 @@ public class SellMyScrapBase : BaseUnityPlugin
     public ScrapToSell scrapToSell;
     public SellRequest sellRequest;
 
-    private System.Random random;
-
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -42,11 +42,11 @@ public class SellMyScrapBase : BaseUnityPlugin
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
         ConfigManager = new SyncedConfig();
-        random = new System.Random();
 
-        Assets.Initialize();
+        Content.Load();
         CommandManager.Initialize();
         ConfigHelper.Initialize();
+        ScrapEaterManager.Initialize();
 
         NetcodePatcherAwake();
     }
@@ -161,30 +161,23 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (DepositItemsDeskPatch.DepositItemsDesk == null)
         {
             mls.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
-            yield return null;
+            yield break;
         }
 
-        float spawnChance = ConfigManager.OctolarSpawnChance;
-        if (Utils.IsLocalPlayerThorlar()) spawnChance *= 2f;
-        bool useOctolar = random.Next(1, 100) <= spawnChance;
-
-        if (useOctolar)
+        if (ScrapEaterManager.CanUseScrapEater())
         {
-            PluginNetworkBehaviour.Instance.SetScrapToSuckClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
-            PluginNetworkBehaviour.Instance.ShowOctolarClientRpc();
-
-            yield return null;
+            ScrapEaterManager.SetScrapToSuckOnServer(scrapToSell.scrap);
+            ScrapEaterManager.StartRandomScrapEaterOnServer();
+            yield break;
         }
-        else
-        {
-            DepositItemsDeskPatch.PlaceItemsOnCounter(scrapToSell.scrap);
-            PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
-            PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
 
-            yield return new WaitForSeconds(0.2f);
+        DepositItemsDeskPatch.PlaceItemsOnCounter(scrapToSell.scrap);
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
+        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
 
-            DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
-        }
+        yield return new WaitForSeconds(0.2f);
+
+        DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
 
         scrapToSell = null;
     }

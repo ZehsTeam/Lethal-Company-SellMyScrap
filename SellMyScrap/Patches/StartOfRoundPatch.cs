@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ internal class StartOfRoundPatch
     {
         if (!SellMyScrapBase.IsHostOrServer) return;
 
-        var networkHandlerHost = Object.Instantiate(Assets.networkHandlerPrefab, Vector3.zero, Quaternion.identity);
+        var networkHandlerHost = Object.Instantiate(Content.networkHandlerPrefab, Vector3.zero, Quaternion.identity);
         networkHandlerHost.GetComponent<NetworkObject>().Spawn();
     }
 

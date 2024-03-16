@@ -1,21 +1,29 @@
-﻿using UnityEngine;
+﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class Assets
+internal class Content
 {
     // NetworkHandler
     public static GameObject networkHandlerPrefab;
+
+    // SFX
+    public static AudioClip squidwardWalkSFX;
+    public static AudioClip stoneSlideSFX;
+    public static AudioClip minecraftEatSFX;
 
     // Octolar
     public static GameObject octolarPrefab;
     public static Material octolarNormalMaterial;
     public static Material octolarSuckMaterial;
     public static Material octolarSusMaterial;
-    public static AudioClip squidwardWalkSound;
-    public static AudioClip minecraftEatSound;
 
-    public static void Initialize()
+    // Takey
+    public static GameObject takeyPrefab;
+    public static Material takeyNormalMaterial;
+
+    public static void Load()
     {
         LoadAssetsFromAssetBundle();
     }
@@ -32,13 +40,20 @@ internal class Assets
             networkHandlerPrefab = MainAssetBundle.LoadAsset<GameObject>("NetworkHandler");
             networkHandlerPrefab.AddComponent<PluginNetworkBehaviour>();
 
+            // SFX
+            squidwardWalkSFX = MainAssetBundle.LoadAsset<AudioClip>("SquidwardWalkSFX");
+            stoneSlideSFX = MainAssetBundle.LoadAsset<AudioClip>("StoneSlideSFX");
+            minecraftEatSFX = MainAssetBundle.LoadAsset<AudioClip>("MinecraftEatSFX");
+
             // Octolar
             octolarPrefab = MainAssetBundle.LoadAsset<GameObject>("Octolar");
             octolarNormalMaterial = MainAssetBundle.LoadAsset<Material>("OctolarNormalMaterial");
             octolarSuckMaterial = MainAssetBundle.LoadAsset<Material>("OctolarSuckMaterial");
             octolarSusMaterial = MainAssetBundle.LoadAsset<Material>("OctolarSusMaterial");
-            squidwardWalkSound = MainAssetBundle.LoadAsset<AudioClip>("SquidwardWalkSound");
-            minecraftEatSound = MainAssetBundle.LoadAsset<AudioClip>("MinecraftEatSound");
+
+            // Takey
+            takeyPrefab = MainAssetBundle.LoadAsset<GameObject>("Takey");
+            takeyNormalMaterial = MainAssetBundle.LoadAsset<Material>("TakeyNormalMaterial");
 
             SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }

@@ -71,7 +71,9 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
-| `octolarSpawnChance` | `Int32` | `20` | The percent chance Octolar will spawn?! |
+| `scrapEaterChance` | `Int32` | `30` | The percent chance a scrap eater will spawn?! |
+| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight Octolar will spawn?! (ScrapEater) |
+| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight Takey will spawn?! (ScrapEater) |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -85,7 +87,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/9oNeAUh.png" width="273px">
+    <img src="https://i.imgur.com/5T5n6UU.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -109,12 +111,29 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/CsvFPdK.png" width="100%">
+    <img src="https://i.imgur.com/mgqombr.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/lmINm9p.png" width="412px">
-    <img src="https://i.imgur.com/0EwEcDU.png" width="412px">
+    <img src="https://i.imgur.com/YM94z92.png" width="412px">
+    <img src="https://i.imgur.com/qLmu82J.png" width="412px">
 </div>
-<br>
+
+## My Other Mods
+| Name | Description |
+| ----------- | ----------- |
+| [OnlyPresents](https://thunderstore.io/c/lethal-company/p/Zehs/OnlyPresents/) | Moons will only spawn gift boxes. (Server-side) |
+| [Hitmarker](https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/) | Shows a hitmarker when you successfully hit an enemy. With additional features. (Client-side) |
+| [ToilHead](https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/) | CoilHeads can sometimes spawn with a turret on their head. |
+| [CoilHeadSettings](https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/) | This mod lets you configure the CoilHead. |
+| [OctolarPlush](https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/) | Adds a customizable Octolar Plushie scrap item. |
+| [TakeyPlush](https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/) | Adds a customizable Takey Plushie scrap item with some functionalities. 😈 |
+
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OnlyPresents/"><img src="https://i.imgur.com/pesSqHI.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/"><img src="https://i.imgur.com/29IA990.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/"><img src="https://i.imgur.com/ZNcffJ7.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/"><img src="https://i.imgur.com/QmIID55.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/"><img src="https://i.imgur.com/3nVYwpO.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/"><img src="https://i.imgur.com/ENIZdU0.png" width="80px"></a>
+
 You have reached the bottom of the README. Thank you for reading <3

@@ -15,6 +15,6 @@ internal class GameNetworkManagerPatch
 
     private static void AddNetworkPrefabs()
     {
-        NetworkManager.Singleton.AddNetworkPrefab(Assets.networkHandlerPrefab);
+        NetworkManager.Singleton.AddNetworkPrefab(Content.networkHandlerPrefab);
     }
 }

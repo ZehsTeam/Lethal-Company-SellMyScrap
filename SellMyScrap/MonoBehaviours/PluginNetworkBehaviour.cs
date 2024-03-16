@@ -1,10 +1,11 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 internal class PluginNetworkBehaviour : NetworkBehaviour
 {
@@ -39,13 +40,13 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void SetScrapToSuckClientRpc(string networkObjectIdsString)
     {
-        Octolar.SetScrapToSuck(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
+        ScrapEaterManager.SetScrapToSuckOnClient(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
     }
 
     [ClientRpc]
-    public void ShowOctolarClientRpc()
+    public void StartScrapEaterClientRpc(int index, int slideMaterialIndex)
     {
-        Octolar.Show();
+        ScrapEaterManager.StartScrapEaterOnClient(index, slideMaterialIndex);
     }
 
     [ClientRpc]
@@ -57,8 +58,14 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
+    public void SetDepositItemsDeskAudioClipClientRpc(int index)
+    {
+        DepositItemsDeskPatch.SetAudioClip(index);
+    }
+
+    [ClientRpc]
     public void EnableSpeakInShipClientRpc()
     {
-        DepositItemsDeskPatch.enableSpeakInShip = true;
+        DepositItemsDeskPatch.EnableSpeakInShip();
     }
 }
