@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -60,25 +59,7 @@ internal class SellCommand : Command
 
     protected static string GetOvertimeBonusString(int value)
     {
-        int overtimeBonus = GetOvertimeBonus(value);
+        int overtimeBonus = Utils.GetOvertimeBonus(value);
         return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\n\n";
-    }
-
-    protected static int GetOvertimeBonus(int value)
-    {
-        int profitQuota = TimeOfDay.Instance.profitQuota;
-        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
-        if (quotaFulfilled <= profitQuota) return 0;
-
-        int num = quotaFulfilled - profitQuota;
-        int overtimeBonus = (num / 5) + (15 * TimeOfDay.Instance.daysUntilDeadline);
-
-        // If local player is Thorlar, remove 15 from the overtime bonus.
-        if (Utils.IsLocalPlayerThorlar())
-        {
-            overtimeBonus -= 15;
-        }
-
-        return Mathf.Max(overtimeBonus, 0);
     }
 }

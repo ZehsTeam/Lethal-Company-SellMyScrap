@@ -22,7 +22,7 @@ internal class HelpCommand : Command
     {
         string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}\n\n";
         message += "The following commands are available:\n\n";
-        message += "sell <amount>\n";
+        message += "sell <amount>     sell-amount <amount>\n";
         message += "sell quota        sell-quota\n";
         message += "sell all          sell-all\n";
         message += "view scrap        view-scrap\n";

@@ -43,8 +43,7 @@ internal class ScrapHelper
     private static bool IsScrapItem(GrabbableObject item)
     {
         if (!item.itemProperties.isScrap) return false;
-        if (item.isPocketed) return false;
-        if (item.isHeld) return false;
+        if (item.isHeld || item.isPocketed) return false;
 
         return true;
     }
@@ -87,19 +86,19 @@ internal class ScrapHelper
     #endregion
 
     #region Get Scrap to Sell
-    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true)
+    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
     {
-        return GetScrapToSell(GetScrapFromShip(onlyAllowedScrap), value);
+        return GetScrapToSell(GetScrapFromShip(onlyAllowedScrap), value, withOvertimeBonus);
     }
 
-    private static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int value)
+    private static ScrapToSell GetScrapToSell(List<GrabbableObject> scrap, int value, bool withOvertimeBonus = false)
     {
         if (value == int.MaxValue)
         {
             return new ScrapToSell(scrap);
         }
 
-        int targetValue = GetSellValue(value);
+        int targetValue = withOvertimeBonus ? GetSellValueWithOvertime(value) : GetSellValue(value);
 
         List<GrabbableObject> bestMatch = FindBestMatch(scrap, targetValue);
         bestMatch ??= [];
@@ -191,6 +190,23 @@ internal class ScrapHelper
     {
         if (value == int.MaxValue) return value;
         return (int)Mathf.Ceil(value / StartOfRound.Instance.companyBuyingRate);
+    }
+
+    private static int GetSellValueWithOvertime(int value)
+    {
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
+        int valueOver = quotaFulfilled - profitQuota;
+        if (valueOver <= 0) return GetSellValue(value);
+
+        int newValue = value - valueOver / 6;
+
+        if (Utils.IsLocalPlayerThorlar())
+        {
+            newValue -= 15;
+        }
+
+        return GetSellValue(newValue);
     }
 
     public static int GetRealValue(int value)

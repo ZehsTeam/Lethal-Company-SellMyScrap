@@ -92,9 +92,9 @@ public class SellMyScrapBase : BaseUnityPlugin
         HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
     }
 
-    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true)
+    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
     {
-        scrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap);
+        scrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus);
         return scrapToSell;
     }
 

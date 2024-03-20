@@ -23,13 +23,16 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Each sell command requires confirmation before selling your scrap.
     * Additional information is given on the confirmation screen.
 
-| Command | Description |
-| ----------- | ----------- |
-| `sell <amount>` | Will sell scrap for a total of the requested amount. |
-| `sell quota` | Will sell scrap to reach the profit quota. |
-| `sell all` | Will sell all of your scrap. |
+| Command | Flags| Description |
+| ----------- | ----------- | ----------- |
+| `sell <amount>` | `-o` | Will sell scrap for a total of the requested amount. |
+| `sell quota` |  | Will sell scrap to reach the profit quota. |
+| `sell all` |  | Will sell all of your scrap. |
 
 * The `sell <amount>` command supports math expressions.
+    * Usage example: `sell 110 * 5 - 50`
+* The `-o` flag will sell for an amount where (value + overtimeBonus) = requestedValue.
+   * Usage example: `sell 550 -o`
 
 | Command |Description |
 | ----------- | ----------- |
@@ -53,7 +56,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Advanced Sell Settings | Setting type |Default value | Example value | Description |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | `sellScrapWorthZero` | `Boolean` | `false` |  | Do you want to sell scrap worth zero? |
-| `onlySellScrapOnFloor` | `Boolean` | `false` |  | Do you want to only sell scrap that is on the floor? |
+| `onlySellScrapOnFloor` | `Boolean` | `false` |  | Do you want to sell scrap that is only on the floor? |
 | `dontSellListJson` | `String` | `[]` | `["Maxwell", "Other Item"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
 
 * Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
@@ -87,7 +90,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/5T5n6UU.png" width="273px">
+    <img src="https://i.imgur.com/oP7Ldf6.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -111,12 +114,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/mgqombr.png" width="100%">
+    <img src="https://i.imgur.com/UYaZ6lC.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
     <img src="https://i.imgur.com/YM94z92.png" width="412px">
-    <img src="https://i.imgur.com/qLmu82J.png" width="412px">
+    <img src="https://i.imgur.com/IswJXCt.png" width="412px">
 </div>
 
 ## My Other Mods

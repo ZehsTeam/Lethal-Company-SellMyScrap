@@ -178,7 +178,7 @@ public class SyncedConfig
         OnlySellScrapOnFloorCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "onlySellScrapOnFloor"),
             false,
-            new ConfigDescription("Do you want to only sell scrap that is on the floor?")
+            new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
 
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";

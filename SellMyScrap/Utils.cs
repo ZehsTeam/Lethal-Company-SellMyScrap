@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -44,6 +45,24 @@ internal class Utils
         }
 
         return string.Empty;
+    }
+
+    public static int GetOvertimeBonus(int value)
+    {
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
+        if (quotaFulfilled <= profitQuota) return 0;
+
+        int valueOver = quotaFulfilled - profitQuota;
+        int daysUntilDeadline = Mathf.Max(TimeOfDay.Instance.daysUntilDeadline, 0);
+        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
+
+        if (IsLocalPlayerThorlar())
+        {
+            overtimeBonus -= 15;
+        }
+
+        return Mathf.Max(overtimeBonus, 0);
     }
 
     public static bool IsLocalPlayerThorlar()

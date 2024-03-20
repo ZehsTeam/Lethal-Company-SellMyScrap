@@ -10,6 +10,8 @@ internal class SellAllCommand : SellCommand
 
         if (args[0] == "sell" && args[1] == "all") return true;
         if (args[0] == "sell-all") return true;
+        if (args[0] == "sell" && args[1] == "everything") return true;
+        if (args[0] == "sell-everything") return true;
 
         return false;
     }
