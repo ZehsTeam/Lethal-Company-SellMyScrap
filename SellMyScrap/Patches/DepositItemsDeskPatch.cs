@@ -31,6 +31,18 @@ internal class DepositItemsDeskPatch
     private static int clipIndex = -1;
     private static bool speakInShip = false;
 
+    [HarmonyPatch("SellItemsOnServer")]
+    [HarmonyPrefix]
+    static bool SellItemsOnServerPatch(ref DepositItemsDesk __instance)
+    {
+        if (__instance.itemsOnCounter.Count == 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     [HarmonyPatch("MicrophoneSpeak")]
     [HarmonyPrefix]
     static void MicrophoneSpeakPatch(ref DepositItemsDesk __instance, ref System.Random ___CompanyLevelRandom)

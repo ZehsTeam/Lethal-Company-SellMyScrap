@@ -37,6 +37,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         harmony.PatchAll(typeof(GameNetworkManagerPatch));
         harmony.PatchAll(typeof(StartOfRoundPatch));
+        harmony.PatchAll(typeof(TimeOfDayPatch));
         harmony.PatchAll(typeof(HUDManagerPatch));
         harmony.PatchAll(typeof(TerminalPatch));
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
@@ -167,7 +168,9 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (ScrapEaterManager.CanUseScrapEater())
         {
             ScrapEaterManager.SetScrapToSuckOnServer(scrapToSell.scrap);
+            yield return new WaitForSeconds(0.1f);
             ScrapEaterManager.StartRandomScrapEaterOnServer();
+
             yield break;
         }
 

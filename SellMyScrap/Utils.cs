@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.CommandStateObserver;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -54,7 +55,7 @@ internal class Utils
         if (quotaFulfilled <= profitQuota) return 0;
 
         int valueOver = quotaFulfilled - profitQuota;
-        int daysUntilDeadline = Mathf.Max(TimeOfDay.Instance.daysUntilDeadline, 0);
+        int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
         int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
 
         if (IsLocalPlayerThorlar())
@@ -62,7 +63,28 @@ internal class Utils
             overtimeBonus -= 15;
         }
 
+        LogOvertimeBonusInfo(value, "GetOvertimeBonus(); from Sell Commands.");
+
         return Mathf.Max(overtimeBonus, 0);
+    }
+
+    public static void LogOvertimeBonusInfo(int value, string title)
+    {
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
+        if (quotaFulfilled <= profitQuota) return;
+
+        int valueOver = quotaFulfilled - profitQuota;
+        int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
+        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
+
+        string message = $"{title}\n\n";
+        message += "If you are having problems with the overtime bonus being calculated incorrectly, please send this data to the mod developer. See README.md for developer contact info.\n\n";
+        message += $"profitQuota: ${profitQuota}, quotaFulfilled: ${quotaFulfilled}, valueOver: ${valueOver}\n";
+        message += $"daysUntilDeadline: {daysUntilDeadline}\n";
+        message += $"overtimeBonus: ${overtimeBonus}";
+
+        SellMyScrapBase.mls.LogWarning($"\n\n{message.Trim()}\n");
     }
 
     public static bool IsLocalPlayerThorlar()

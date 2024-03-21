@@ -75,8 +75,8 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 | `scrapEaterChance` | `Int32` | `30` | The percent chance a scrap eater will spawn?! |
-| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight Octolar will spawn?! (ScrapEater) |
-| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight Takey will spawn?! (ScrapEater) |
+| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (ScrapEater) |
+| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (ScrapEater) |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -90,7 +90,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/ieTZCez.png" width="273px">
     <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/oP7Ldf6.png" width="273px">
+    <img src="https://i.imgur.com/RHmiaqr.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -114,12 +114,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/UYaZ6lC.png" width="100%">
+    <img src="https://i.imgur.com/S7KyFi1.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
     <img src="https://i.imgur.com/YM94z92.png" width="412px">
-    <img src="https://i.imgur.com/IswJXCt.png" width="412px">
+    <img src="https://i.imgur.com/t0PzQuV.png" width="412px">
 </div>
 
 ## My Other Mods

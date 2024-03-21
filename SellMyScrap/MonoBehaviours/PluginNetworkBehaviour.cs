@@ -44,9 +44,9 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void StartScrapEaterClientRpc(int index, int slideMaterialIndex)
+    public void StartScrapEaterClientRpc(int index, int slideMaterialVariant)
     {
-        ScrapEaterManager.StartScrapEaterOnClient(index, slideMaterialIndex);
+        ScrapEaterManager.StartScrapEaterOnClient(index, slideMaterialVariant);
     }
 
     [ClientRpc]

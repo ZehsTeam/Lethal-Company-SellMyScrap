@@ -60,6 +60,6 @@ internal class SellCommand : Command
     protected static string GetOvertimeBonusString(int value)
     {
         int overtimeBonus = Utils.GetOvertimeBonus(value);
-        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\n\n";
+        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\nWarning: Overtime bonus might be inaccurate by $15\n\n";
     }
 }

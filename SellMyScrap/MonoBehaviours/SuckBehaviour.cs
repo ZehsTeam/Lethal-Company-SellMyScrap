@@ -1,5 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
-using com.github.zehsteam.SellMyScrap.ScrapEaters;
+using System.Collections;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -8,54 +8,37 @@ public class SuckBehaviour : MonoBehaviour
 {
     private GrabbableObject grabbableObject;
 
-    private Vector3 startPosition;
-    private Vector3 endPosition
-    {
-        get
-        {
-            if (ScrapEaterManager.mouthTransform == null)
-            {
-                return Vector3.zero;
-            }
-
-            return ScrapEaterManager.mouthTransform.position;
-        }
-    }
-
-    private float duration = 3f;
-    private float timer = 0f;
-
-    private bool isOnCounter = false;
-
     void Start()
     {
         grabbableObject = GetComponent<GrabbableObject>();
         grabbableObject.grabbable = false;
-
-        startPosition = transform.position;
+        grabbableObject.EnablePhysics(false);
     }
 
-    void Update()
+    public IEnumerator StartAnimation(Transform mouthTransform, float duration)
     {
-        if (isOnCounter) return;
+        Vector3 startPosition = transform.position;
 
-        bool isTimerComplete = timer > duration;
-        if (isTimerComplete) timer = duration;
+        yield return StartCoroutine(MoveToPosition(startPosition, mouthTransform, duration));
 
-        bool isWithinDistance = Vector3.Distance(transform.position, endPosition) < 0.1f;
+        DepositItemsDeskPatch.PlaceItemOnCounter(grabbableObject);
+    }
 
-        if (isTimerComplete || isWithinDistance)
+    private IEnumerator MoveToPosition(Vector3 from, Transform to, float duration)
+    {
+        float timer = 0f;
+
+        while (timer <= duration)
         {
-            if (grabbableObject.isHeld || grabbableObject.isPocketed) return;
+            float percent = (1f / duration) * timer;
 
-            DepositItemsDeskPatch.PlaceItemOnCounter(grabbableObject);
-            isOnCounter = true;
-            return;
+            Vector3 endPosition = to == null ? new Vector3(0f, 0f, 0f) : to.position;
+            transform.position = from + (endPosition - from) * percent;
+
+            yield return null;
+            timer += Time.deltaTime;
         }
 
-        float percent = 1f / duration * timer;
-        transform.position = startPosition + (endPosition - startPosition) * percent;
-
-        timer += Time.deltaTime;
+        transform.localPosition = to.position;
     }
 }

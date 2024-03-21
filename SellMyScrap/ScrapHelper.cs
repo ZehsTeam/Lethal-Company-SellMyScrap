@@ -43,7 +43,7 @@ internal class ScrapHelper
     private static bool IsScrapItem(GrabbableObject item)
     {
         if (!item.itemProperties.isScrap) return false;
-        if (item.isHeld || item.isPocketed) return false;
+        if (item.isHeld || item.isPocketed || !item.grabbable) return false;
 
         return true;
     }

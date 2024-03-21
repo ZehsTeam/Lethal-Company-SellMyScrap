@@ -6,17 +6,14 @@ namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
 internal class ScrapEaterManager
 {
-    private static List<ScrapEater> scrapEaters = new List<ScrapEater>();
+    public static List<ScrapEater> scrapEaters = new List<ScrapEater>();
     public static List<GrabbableObject> scrapToSuck = new List<GrabbableObject>();
-
-    public static ScrapEater activeScrapEater;
-    public static Transform mouthTransform => activeScrapEater == null ? null : activeScrapEater.mouthTransform;
 
     public static void Initialize()
     {
         scrapEaters = [
-            new OctolarScrapEater(),
-            new TakeyScrapEater()
+            new ScrapEater(Content.octolarScrapEaterPrefab, SellMyScrapBase.Instance.ConfigManager.OctolarSpawnWeight),
+            new ScrapEater(Content.takeyScrapEaterPrefab, SellMyScrapBase.Instance.ConfigManager.TakeySpawnWeight),
         ];
     }
 
@@ -34,21 +31,31 @@ internal class ScrapEaterManager
     public static void SetScrapToSuckOnClient(List<GrabbableObject> scrap)
     {
         scrapToSuck = scrap;
+
+        scrap.ForEach(item =>
+        {
+            item.grabbable = false;
+        });
     }
 
     public static void StartRandomScrapEaterOnServer()
     {
         int index = GetRandomScrapEaterIndex();
-        int slideMaterialIndex = scrapEaters[index].GetRandomSlideMaterialIndex();
+        if (index == -1) return;
 
-        PluginNetworkBehaviour.Instance.StartScrapEaterClientRpc(index, slideMaterialIndex);
+        ScrapEaterBehaviour scrapEaterBehaviour = scrapEaters[index].spawnPrefab.GetComponent<ScrapEaterBehaviour>();
+        int slideMaterialVariant = Random.Range(0, scrapEaterBehaviour.slideMaterialVariants.Length);
+
+        PluginNetworkBehaviour.Instance.StartScrapEaterClientRpc(index, slideMaterialVariant);
     }
 
     public static void StartScrapEaterOnClient(int index, int slideMaterialIndex)
     {
-        ScrapEater scrapEater = scrapEaters[index];
-        activeScrapEater = scrapEater;
-        scrapEater.startCoroutine = StartOfRound.Instance.StartCoroutine(scrapEater.Start(slideMaterialIndex));
+        GameObject gameObject = Object.Instantiate(scrapEaters[index].spawnPrefab);
+        gameObject.transform.SetParent(ScrapHelper.HangarShip.transform);
+
+        ScrapEaterBehaviour scrapEaterBehaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
+        scrapEaterBehaviour.StartCoroutine(scrapEaterBehaviour.StartAnimation(slideMaterialIndex));
     }
 
     private static int GetRandomScrapEaterIndex()
@@ -57,7 +64,7 @@ internal class ScrapEaterManager
 
         for (int i = 0; i < scrapEaters.Count; i++)
         {
-            weightedItems.Add((i, scrapEaters[i].GetSpawnWeight()));
+            weightedItems.Add((i, scrapEaters[i].spawnWeight));
         }
 
         int totalWeight = 0;
@@ -65,6 +72,8 @@ internal class ScrapEaterManager
         {
             totalWeight += weight;
         }
+
+        if (totalWeight == 0) return -1;
 
         int randomNumber = Random.Range(0, totalWeight);
 
