@@ -40,6 +40,48 @@ internal class ScrapHelper
         return scrap;
     }
 
+    public static List<GrabbableObject> GetScrapByItemName(string itemName, bool onlyAllowedScrap = true)
+    {
+        List<GrabbableObject> scrap = GetScrapFromShip(onlyAllowedScrap);
+        List<GrabbableObject> foundScrap = new List<GrabbableObject>();
+
+        scrap.ForEach(item =>
+        {
+            string _itemName = item.itemProperties.itemName;
+
+            if (_itemName.Contains(itemName, StringComparison.OrdinalIgnoreCase))
+            {
+                foundScrap.Add(item);
+            }
+        });
+
+        return foundScrap;
+    }
+
+    public static List<Item> GetAllScrapItems()
+    {
+        List<SelectableLevel> levels = StartOfRound.Instance.levels.ToList();
+        List<Item> scrap = new List<Item>();
+
+        levels.ForEach(level =>
+        {
+            level.spawnableScrap.ForEach(item =>
+            {
+                if (!item.spawnableItem.isScrap) return;
+                if (item.spawnableItem.lockedInDemo) return;
+
+                if (scrap.Find(a => a.itemName == item.spawnableItem.itemName))
+                {
+                    return;
+                }
+
+                scrap.Add(item.spawnableItem);
+            });
+        });
+
+        return scrap;
+    }
+
     private static bool IsScrapItem(GrabbableObject item)
     {
         if (!item.itemProperties.isScrap) return false;
@@ -272,6 +314,31 @@ internal class ScrapHelper
         }
 
         return message.Trim();
+    }
+    
+    public static string GetScrapItemMessage(List<Item> scrapItems, int columns = 1, int padding = 25)
+    {
+        int itemsPerColumn = (int)Mathf.Ceil(scrapItems.Count / columns);
+        string[] rows = new string[itemsPerColumn];
+
+        for (int i = 0; i < columns; i++)
+        {
+            for (int j = 0; j < itemsPerColumn; j++)
+            {
+                int index = itemsPerColumn * i + j;
+                if (index > scrapItems.Count - 1) continue;
+
+                string itemName = scrapItems[index].itemName;
+                rows[j] += itemName.PadRight(padding);
+
+                if (i == columns - 1)
+                {
+                    rows[j] = rows[j].Trim();
+                }
+            }
+        }
+
+        return string.Join('\n', rows).Trim();
     }
     #endregion
 }

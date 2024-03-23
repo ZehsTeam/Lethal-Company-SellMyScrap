@@ -14,8 +14,10 @@ internal class CommandManager
             new HelpCommand(),
             new SellQuotaCommand(),
             new SellAllCommand(),
+            new SellItemCommand(),
             new SellAmountCommand(),
             new ViewScrapCommand(),
+            new ViewAllScrapCommand(),
             new ViewConfigCommand(),
             new EditConfigCommand(),
         ];

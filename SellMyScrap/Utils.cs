@@ -68,7 +68,7 @@ internal class Utils
         return Mathf.Max(overtimeBonus, 0);
     }
 
-    public static void LogOvertimeBonusInfo(int value, string title)
+    public static void LogOvertimeBonusInfo(int value, string title, int overtimeBonusBypass = -1)
     {
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
@@ -77,6 +77,11 @@ internal class Utils
         int valueOver = quotaFulfilled - profitQuota;
         int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
         int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
+
+        if (overtimeBonusBypass != -1)
+        {
+            overtimeBonus = overtimeBonusBypass;
+        }
 
         string message = $"{title}\n\n";
         message += "If you are having problems with the overtime bonus being calculated incorrectly, please send this data to the mod developer. See README.md for developer contact info.\n\n";

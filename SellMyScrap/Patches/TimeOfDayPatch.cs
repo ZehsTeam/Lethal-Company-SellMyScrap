@@ -5,10 +5,10 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(TimeOfDay))]
 internal class TimeOfDayPatch
 {
-    [HarmonyPatch("SetNewProfitQuota")]
+    [HarmonyPatch("SyncNewProfitQuotaClientRpc")]
     [HarmonyPrefix]
-    static void SetNewProfitQuotaPatch()
+    static void SyncNewProfitQuotaClientRpcPatch(ref int overtimeBonus)
     {
-        Utils.LogOvertimeBonusInfo(0, "SetNewProfitQuota(); TimeOfDay.cs");
+        Utils.LogOvertimeBonusInfo(0, "SyncNewProfitQuotaClientRpc(); TimeOfDay.cs", overtimeBonus);
     }
 }

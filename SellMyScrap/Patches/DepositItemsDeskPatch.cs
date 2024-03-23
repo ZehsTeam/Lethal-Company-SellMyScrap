@@ -1,10 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
-using JetBrains.Annotations;
-using Newtonsoft.Json.Bson;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.CommandStateObserver;
 using Unity.Netcode;
 using UnityEngine;
 

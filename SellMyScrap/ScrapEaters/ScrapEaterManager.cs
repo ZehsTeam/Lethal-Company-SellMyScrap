@@ -12,8 +12,12 @@ internal class ScrapEaterManager
     public static void Initialize()
     {
         scrapEaters = [
-            new ScrapEater(Content.octolarScrapEaterPrefab, SellMyScrapBase.Instance.ConfigManager.OctolarSpawnWeight),
-            new ScrapEater(Content.takeyScrapEaterPrefab, SellMyScrapBase.Instance.ConfigManager.TakeySpawnWeight),
+            new ScrapEater(Content.octolarScrapEaterPrefab, () => {
+                return SellMyScrapBase.Instance.ConfigManager.OctolarSpawnWeight;
+            }),
+            new ScrapEater(Content.takeyScrapEaterPrefab, () => {
+                return SellMyScrapBase.Instance.ConfigManager.TakeySpawnWeight;
+            }),
         ];
     }
 
@@ -64,7 +68,7 @@ internal class ScrapEaterManager
 
         for (int i = 0; i < scrapEaters.Count; i++)
         {
-            weightedItems.Add((i, scrapEaters[i].spawnWeight));
+            weightedItems.Add((i, scrapEaters[i].GetSpawnWeight()));
         }
 
         int totalWeight = 0;

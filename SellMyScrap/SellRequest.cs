@@ -6,6 +6,7 @@ public enum SellType
     SellAmount,
     SellQuota,
     SellAll,
+    SellItem,
 }
 
 public enum ConfirmationType

@@ -81,7 +81,7 @@ internal class SellAmountCommand : SellCommand
         message += "Usage:\n";
         message += "    sell <amount>\n";
         message += "    sell <amount> -o\n\n";
-        message += "Where: <amount> is a positive integer or math expression.\n\n";
+        message += "Where <amount> is a positive integer or math expression.\n\n";
         message += "Flags:\n";
         message += "    -o    Will sell for an amount where (value + overtimeBonus) = requestedValue.\n\n";
         message += "Usage examples:\n";

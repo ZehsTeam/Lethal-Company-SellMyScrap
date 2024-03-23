@@ -1,15 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
 public class ScrapEater
 {
     public GameObject spawnPrefab;
-    public int spawnWeight = 1;
+    public Func<int> GetSpawnWeight;
 
-    public ScrapEater(GameObject spawnPrefab, int spawnWeight)
+    public ScrapEater(GameObject spawnPrefab, Func<int> GetSpawnWeight)
     {
         this.spawnPrefab = spawnPrefab;
-        this.spawnWeight = spawnWeight;
+        this.GetSpawnWeight = GetSpawnWeight;
     }
 }

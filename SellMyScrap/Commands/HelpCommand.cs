@@ -22,12 +22,14 @@ internal class HelpCommand : Command
     {
         string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}\n\n";
         message += "The following commands are available:\n\n";
-        message += "sell <amount>     sell-amount <amount>\n";
-        message += "sell quota        sell-quota\n";
-        message += "sell all          sell-all\n";
-        message += "view scrap        view-scrap\n";
-        message += "view config       view-config\n";
-        message += "edit config       edit-config\n\n";
+        message += "sell <amount>      sell-amount <amount>\n";
+        message += "sell quota         sell-quota\n";
+        message += "sell all           sell-all\n";
+        message += "sell item <name>   sell-item <name>\n";
+        message += "view scrap         view-scrap\n";
+        message += "view all scrap     view-all-scrap\n";
+        message += "view config        view-config\n";
+        message += "edit config        edit-config\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

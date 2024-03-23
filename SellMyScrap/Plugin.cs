@@ -99,6 +99,12 @@ public class SellMyScrapBase : BaseUnityPlugin
         return scrapToSell;
     }
 
+    public ScrapToSell SetScrapToSell(List<GrabbableObject> scrap)
+    {
+        scrapToSell = new ScrapToSell(scrap);
+        return scrapToSell;
+    }
+
     #region SellRequest Methods
     public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType)
     {
