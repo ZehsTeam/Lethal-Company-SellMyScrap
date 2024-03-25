@@ -177,12 +177,12 @@ public class SyncedConfig
 
         // Advanced Sell Settings
         SellScrapWorthZeroCfg = config.Bind(
-            new ConfigDefinition("Sell Settings", "sellScrapWorthZero"),
+            new ConfigDefinition("Advanced Sell Settings", "sellScrapWorthZero"),
             false,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
         OnlySellScrapOnFloorCfg = config.Bind(
-            new ConfigDefinition("Sell Settings", "onlySellScrapOnFloor"),
+            new ConfigDefinition("Advanced Sell Settings", "onlySellScrapOnFloor"),
             false,
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
