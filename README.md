@@ -28,16 +28,34 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell <amount>` | `-o` | Will sell scrap for a total of the requested amount. |
 | `sell quota` |  | Will sell scrap to reach the profit quota. |
 | `sell all` |  | Will sell all of your scrap. |
+| `sell item <name>` |  | Will sell scrap by their item name. |
 
-* The `sell <amount>` command supports math expressions.
-    * Usage example: `sell 110 * 5 - 50`
-* The `-o` flag will sell for an amount where (value + overtimeBonus) = requestedValue.
-   * Usage example: `sell 550 -o`
+<h4>sell &lt;amount&gt;</h4>
+
+* This command supports math expressions.
+    * Usage examples:
+        * `sell 110 * 5 - 50`
+        * `sell 21 / 3 * 100`
+        * `sell 750 - 50`
+* The `-o` flag will sell for a less amount so (less amount + overtime bonus) = initial amount.
+    * Usage examples:
+        * `sell 550 -o`
+        * `sell 700 -o`
+        * `sell 110 * 5 - 50 -o`
+
+<h4>sell item &lt;name&gt;</h4>
+
+* Item names are not case-sensitive but, spaces do matter.
+* Usage examples:
+    * `sell item Whoopie cushion`
+    * `sell item Whoopie`
+    * `sell item Whoo`
 
 | Command |Description |
 | ----------- | ----------- |
 | `sell` | Shows a help message for this mod. |
-| `view scrap` | Shows a detailed list of all the scrap in the ship. |
+| `view scrap` | Shows a list of all the scrap in the ship. |
+| `view all scrap` | Shows a list of all the registered scrap. |
 | `view config` | Shows your config settings. |
 | `edit config` | Edit config settings from the terminal. |
 
@@ -53,15 +71,18 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
 | `sellPickles` | `Boolean` | `true` | Do you want to sell Jar of pickles? |
 
-| Advanced Sell Settings | Setting type |Default value | Example value | Description |
-| ----------- | ----------- | ----------- | ----------- | ----------- |
-| `sellScrapWorthZero` | `Boolean` | `false` |  | Do you want to sell scrap worth zero? |
-| `onlySellScrapOnFloor` | `Boolean` | `false` |  | Do you want to sell scrap that is only on the floor? |
-| `dontSellListJson` | `String` | `[]` | `["Maxwell", "Other Item"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+| Advanced Sell Settings | Setting type | Default value | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| `sellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
+| `onlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
+| `dontSellListJson` | `String` | `[]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+
+<h4>dontSellListJson</h4>
 
 * Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
-    * Use the `view scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
-    * Item names are not case-sensitive and spaces do matter.
+* Use the `view all scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
+* Item names are not case-sensitive but, spaces do matter.
+* Example value: `["Maxwell", "Cookie Fumo", "Octolar Plush", "Smol Takey"]`
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -74,52 +95,65 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `overtimeBonusOffset` | `Int32` | `0` | The overtime bonus offset for the sell confirmation screen. |
+
+| Scrap Eater Settings | Setting type | Default value | Description |
+| ----------- | ----------- | ----------- | ----------- |
 | `scrapEaterChance` | `Int32` | `30` | The percent chance a scrap eater will spawn?! |
-| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (ScrapEater) |
-| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (ScrapEater) |
+| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! |
+| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 
-| Discord server | Channel | Post |
+| Discord server | Forum | Post |
 | ----------- | ----------- | ----------- |
 | [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
 | [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
 
 ## Screenshots
 <div>
-    <img src="https://i.imgur.com/ieTZCez.png" width="273px">
-    <img src="https://i.imgur.com/atzmgX8.png" width="273px">
-    <img src="https://i.imgur.com/RHmiaqr.png" width="273px">
+    <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
+    <img src="https://i.imgur.com/lzsWM28.png" width="273px">
+    <img src="https://i.imgur.com/ywJA8Bm.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/Lx5zrtc.png" width="412px">
-    <img src="https://i.imgur.com/O9AJjN4.png" width="412px">
+    <img src="https://i.imgur.com/apMRYyB.png" width="412px">
+    <img src="https://i.imgur.com/UxIFUuj.png" width="412px">
 </div>
 <h4><code>sell quota</code></h4>
 <div>
-    <img src="https://i.imgur.com/YWwSjM2.png" width="412px">
-    <img src="https://i.imgur.com/ENDSSbs.png" width="412px">
+    <img src="https://i.imgur.com/br7QaA9.png" width="412px">
+    <img src="https://i.imgur.com/NJZWJdW.png" width="412px">
 </div>
 <h4><code>sell all</code></h4>
 <div>
-    <img src="https://i.imgur.com/hcYwwMW.png" width="412px">
-    <img src="https://i.imgur.com/sJma9cM.png" width="412px">
+    <img src="https://i.imgur.com/oTMQGGt.png" width="412px">
+    <img src="https://i.imgur.com/8OsUOZ3.png" width="412px">
 </div>
+<h4><code>sell item &lt;name&gt;</code></h4>
 <div>
+    <img src="https://i.imgur.com/8kMD86S.png" width="412px">
+    <img src="https://i.imgur.com/ZjSk6sn.png" width="412px">
+</div>
 <h4><code>view scrap</code></h4>
 <div>
-    <img src="https://i.imgur.com/bsfeVpk.png" width="100%">
+    <img src="https://imgur.com/3NL1zPF.png" width="100%">
+</div>
+<h4><code>view all scrap</code></h4>
+<div>
+    <img src="https://imgur.com/ZMT7cQE.png" width="412px">
+    <img src="https://imgur.com/pyzjL1X.png" width="412px">
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/S7KyFi1.png" width="100%">
+    <img src="https://imgur.com/YVRzkNm.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/YM94z92.png" width="412px">
-    <img src="https://i.imgur.com/t0PzQuV.png" width="412px">
+    <img src="https://imgur.com/dXQ7SAP.png" width="412px">
+    <img src="https://imgur.com/vsOXDdw.png" width="412px">
 </div>
 
 ## My Other Mods

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
-using Unity.CommandStateObserver;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 internal class Utils
 {
+    public static bool checkOvertimeBonus = false;
+
+    private static int calculatedOvertimeBonus = 0;
+
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {
         return $"{a}{new string(' ', maxLength - a.Length)} {b}";
@@ -56,47 +58,68 @@ internal class Utils
 
         int valueOver = quotaFulfilled - profitQuota;
         int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
-        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
+        if (daysUntilDeadline < 0) daysUntilDeadline = 0;
+        int overtimeBonus = valueOver / 5 + 15 * daysUntilDeadline + SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset;
 
-        if (IsLocalPlayerThorlar())
-        {
-            overtimeBonus -= 15;
-        }
+        calculatedOvertimeBonus = overtimeBonus;
+        checkOvertimeBonus = true;
 
-        LogOvertimeBonusInfo(value, "GetOvertimeBonus(); from Sell Commands.");
+        SellMyScrapBase.mls.LogInfo($"\n\nGetOvertimeBonus();\ndaysUntilDeadline: {daysUntilDeadline}\novertimeBonus: {overtimeBonus}\n");
 
-        return Mathf.Max(overtimeBonus, 0);
+        return overtimeBonus;
     }
 
-    public static void LogOvertimeBonusInfo(int value, string title, int overtimeBonusBypass = -1)
+    public static void CheckOvertimeBonus(int realOvertimeBonus)
     {
-        int profitQuota = TimeOfDay.Instance.profitQuota;
-        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
-        if (quotaFulfilled <= profitQuota) return;
+        if (!checkOvertimeBonus) return;
+        checkOvertimeBonus = false;
 
-        int valueOver = quotaFulfilled - profitQuota;
-        int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
-        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
+        int overtimeBonusOffset = SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset;
 
-        if (overtimeBonusBypass != -1)
+        if (overtimeBonusOffset != 0 && calculatedOvertimeBonus - overtimeBonusOffset == realOvertimeBonus)
         {
-            overtimeBonus = overtimeBonusBypass;
+            SetOvertimeBonusOffset(0);
+            return;
         }
 
-        string message = $"{title}\n\n";
-        message += "If you are having problems with the overtime bonus being calculated incorrectly, please send this data to the mod developer. See README.md for developer contact info.\n\n";
-        message += $"profitQuota: ${profitQuota}, quotaFulfilled: ${quotaFulfilled}, valueOver: ${valueOver}\n";
-        message += $"daysUntilDeadline: {daysUntilDeadline}\n";
-        message += $"overtimeBonus: ${overtimeBonus}";
+        int offset = (calculatedOvertimeBonus - overtimeBonusOffset - realOvertimeBonus) * -1;
+        if (offset == 0) return;
 
-        SellMyScrapBase.mls.LogWarning($"\n\n{message.Trim()}\n");
+        SetOvertimeBonusOffset(offset);
     }
 
-    public static bool IsLocalPlayerThorlar()
+    private static void SetOvertimeBonusOffset(int overtimeBonusOffset)
     {
-        ulong steamId = 76561197964616102; // Thorlar's Steam ID
-        ulong localPlayerSteamId = StartOfRound.Instance.localPlayerController.playerSteamId;
+        string headerText = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}";
+        string bodyText = $"Adjusted the overtimeBonusOffset for the sell confirmation screen.\n\novertimeBonusOffset: {overtimeBonusOffset}";
 
-        return steamId == localPlayerSteamId;
+        DisplayTip(headerText, bodyText);
+        SellMyScrapBase.mls.LogInfo($"\n\n{bodyText}\n");
+
+        SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset = overtimeBonusOffset;
+    }
+
+    public static void DisplayNotification(string displayText)
+    {
+        HUDManager.Instance.globalNotificationAnimator.SetTrigger("TriggerNotif");
+        HUDManager.Instance.globalNotificationText.text = displayText;
+        HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
+    }
+
+    public static void DisplayTip(string headerText, string bodyText, bool isWarning = false)
+    {
+        HUDManager.Instance.tipsPanelHeader.text = headerText;
+        HUDManager.Instance.tipsPanelBody.text = bodyText;
+
+        if (isWarning)
+        {
+            HUDManager.Instance.tipsPanelAnimator.SetTrigger("TriggerWarning");
+            RoundManager.PlayRandomClip(HUDManager.Instance.UIAudio, HUDManager.Instance.warningSFX, randomize: false);
+        }
+        else
+        {
+            HUDManager.Instance.tipsPanelAnimator.SetTrigger("TriggerHint");
+            RoundManager.PlayRandomClip(HUDManager.Instance.UIAudio, HUDManager.Instance.tipsSFX, randomize: false);
+        }
     }
 }

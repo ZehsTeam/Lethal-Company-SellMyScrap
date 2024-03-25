@@ -11,7 +11,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 {
     public static PluginNetworkBehaviour Instance;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
     }
@@ -33,7 +33,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
 
         SellMyScrapBase.mls.LogInfo(message);
-        SellMyScrapBase.Instance.DisplayGlobalNotification(message);
+        Utils.DisplayNotification(message);
         SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType);
     }
 

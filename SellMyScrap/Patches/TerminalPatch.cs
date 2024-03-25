@@ -10,8 +10,8 @@ internal class TerminalPatch
     private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch("Start")]
-    [HarmonyPrefix]
-    [HarmonyPriority(int.MaxValue)]
+    [HarmonyPostfix]
+    [HarmonyPriority(-500)]
     static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
         OverrideTerminalNodes(___terminalNodes);
@@ -23,17 +23,24 @@ internal class TerminalPatch
         if (hasOverrideTerminalNodes) return;
         hasOverrideTerminalNodes = true;
 
-        if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage) OverrideWelcomeTerminalNode(terminalNodes);
-        if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage) OverrideHelpTerminalNode(terminalNodes);
+        if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage)
+        {
+            OverrideWelcomeTerminalNode(terminalNodes);
+        }
+
+        if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage)
+        {
+            OverrideHelpTerminalNode(terminalNodes);
+        }
     }
 
     private static void OverrideWelcomeTerminalNode(TerminalNodesList terminalNodes)
     {
         int index = 1;
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
-        
-        string message = defaultMessage.Trim();
-        message += $"\n\n[{MyPluginInfo.PLUGIN_NAME}]\nType \"Sell\" for a list of commands.\n\n\n\n";
+
+        string messageToReplace = "Type \"Help\" for a list of commands.";
+        string message = defaultMessage.Replace(messageToReplace, $"{messageToReplace}\n\n[{MyPluginInfo.PLUGIN_NAME}]\nType \"Sell\" for a list of commands.");
 
         terminalNodes.specialNodes[index].displayText = message;
     }
@@ -42,9 +49,9 @@ internal class TerminalPatch
     {
         int index = 13;
         string defaultMessage = terminalNodes.specialNodes[index].displayText;
-        
-        string message = defaultMessage.Replace("[numberOfItemsOnRoute]", "").Trim();
-        message += $"\n\n>SELL\nTo see the list of {MyPluginInfo.PLUGIN_NAME} commands.\n\n\n[numberOfItemsOnRoute]";
+
+        string messageToReplace = ">OTHER\nTo see the list of other commands";
+        string message = defaultMessage.Replace(messageToReplace, $"{messageToReplace}.\n\n>SELL\nTo see the list of {MyPluginInfo.PLUGIN_NAME} commands.");
 
         terminalNodes.specialNodes[index].displayText = message;
     }

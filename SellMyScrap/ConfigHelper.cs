@@ -1,12 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 internal class ConfigHelper
 {
     private static List<ConfigItem> configItems = new List<ConfigItem>();
+    private static List<ConfigItem> scrapEaterConfigItems = new List<ConfigItem>();
 
     public static void Initialize()
     {
@@ -25,9 +27,13 @@ internal class ConfigHelper
             new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }),
             new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }),
             new ConfigItem("speakInShip",            typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =            bool.Parse(value); }),
-            new ConfigItem("scrapEaterChance",       typeof(int),  isHostOnly: false, value => { configManager.ScrapEaterChance =       int.Parse(value);  }),
-            new ConfigItem("octolarSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnWeight =     int.Parse(value);  }),
-            new ConfigItem("takeySpawnWeight",       typeof(int),  isHostOnly: false, value => { configManager.TakeySpawnWeight =       int.Parse(value);  }),
+            new ConfigItem("overtimeBonusOffset",    typeof(int),  isHostOnly: false, value => { configManager.OvertimeBonusOffset =    int.Parse(value);  }),
+        ];
+
+        scrapEaterConfigItems = [
+            new ConfigItem("scrapEaterChance",       typeof(int),  isHostOnly: false, value => { configManager.ScrapEaterChance =       int.Parse(value);  }, () => { return configManager.ScrapEaterChance.ToString();   }),
+            new ConfigItem("octolarSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnWeight =     int.Parse(value);  }, () => { return configManager.OctolarSpawnWeight.ToString(); }),
+            new ConfigItem("takeySpawnWeight",       typeof(int),  isHostOnly: false, value => { configManager.TakeySpawnWeight =       int.Parse(value);  }, () => { return configManager.TakeySpawnWeight.ToString();   }),
         ];
     }
 
@@ -73,9 +79,17 @@ internal class ConfigHelper
         return false;
     }
 
+    public static void AddScrapEaterConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue)
+    {
+        scrapEaterConfigItems.Add(new ConfigItem(key, type, isHostOnly, SetValue, GetValue));
+    }
+
     private static ConfigItem GetConfigItem(string key)
     {
-        foreach (ConfigItem item in configItems)
+        List<ConfigItem> _configItems = configItems;
+        configItems.AddRange(scrapEaterConfigItems);
+
+        foreach (ConfigItem item in _configItems)
         {
             if (item.key.ToLower() == key.ToLower())
             {
@@ -108,12 +122,32 @@ internal class ConfigHelper
         message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
-        message += $"speakInShip:        {configManager.SpeakInShip}\n";
-        message += $"scrapEaterChance:   {configManager.ScrapEaterChance}\n";
-        message += $"octolarSpawnWeight: {configManager.OctolarSpawnWeight}\n";
-        message += $"takeySpawnWeight:   {configManager.TakeySpawnWeight}";
+        message += $"speakInShip:         {configManager.SpeakInShip}\n";
+        message += $"overtimeBonusOffset: {configManager.OvertimeBonusOffset}\n\n";
+        message += GetScrapEaterConfigSettingsMessage();
 
         return message;
+    }
+
+    private static string GetScrapEaterConfigSettingsMessage()
+    {
+        string[] keys = scrapEaterConfigItems.Select(item => item.key).ToArray();
+        int maxLength = Utils.GetLongestStringFromArray(keys).Length + 1;
+
+        string message = "[Scrap Eater Settings]\n";
+        
+        scrapEaterConfigItems.ForEach(configItem =>
+        {
+            if (configItem.GetValue == null)
+            {
+                SellMyScrapBase.mls.LogError($"Error: GetValue() for \"{configItem.key}\" could not be found!");
+                return;
+            }
+
+            message += $"{Utils.GetStringWithSpacingInBetween($"{configItem.key}:", configItem.GetValue(), maxLength)}\n";
+        });
+
+        return message.Trim();
     }
 }
 
@@ -123,12 +157,14 @@ public class ConfigItem
     public Type type;
     public bool isHostOnly;
     public Action<string> SetValue;
+    public Func<string> GetValue;
 
-    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue)
+    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue = null)
     {
         this.key = key;
         this.type = type;
         this.isHostOnly = isHostOnly;
         this.SetValue = SetValue;
+        this.GetValue = GetValue;
     }
 }

@@ -86,13 +86,6 @@ public class SellMyScrapBase : BaseUnityPlugin
         CancelSellRequest();
     }
 
-    public void DisplayGlobalNotification(string displayText)
-    {
-        HUDManager.Instance.globalNotificationAnimator.SetTrigger("TriggerNotif");
-        HUDManager.Instance.globalNotificationText.text = displayText;
-        HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
-    }
-
     public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
     {
         scrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus);
@@ -120,6 +113,8 @@ public class SellMyScrapBase : BaseUnityPlugin
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
         mls.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
+
+        Utils.checkOvertimeBonus = true;
 
         if (IsHostOrServer)
         {
@@ -184,7 +179,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
         PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
 
         DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
 

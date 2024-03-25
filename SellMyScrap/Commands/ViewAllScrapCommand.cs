@@ -86,7 +86,7 @@ internal class ViewAllScrapCommand : Command
         int amount = Mathf.Min(scrapItems.Count - index, itemsPerPage);
         List<Item> scrapItemsForPage = scrapItems.GetRange(index, amount);
 
-        string message = $"Found {scrapItems.Count} items from all moons. (Page {pageIndex + 1} / {pages})\n\n";
+        string message = $"Found {scrapItems.Count} total items from all moons. (Page {pageIndex + 1} / {pages})\n\n";
         message += $"{ScrapHelper.GetScrapItemMessage(scrapItemsForPage, columns, 26)}\n\n";
         message += "The following commands are available:\n\n";
         message += "page <number>\n";

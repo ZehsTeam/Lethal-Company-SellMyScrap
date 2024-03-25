@@ -11,7 +11,7 @@ internal class HUDManagerPatch
 {
     [HarmonyPatch("DisplayCreditsEarning")]
     [HarmonyPrefix]
-    [HarmonyPriority(int.MaxValue)]
+    [HarmonyPriority(500)]
     static bool DisplayCreditsEarningPatch(ref HUDManager __instance, int creditsEarned, GrabbableObject[] objectsSold, int newGroupCredits, ref Coroutine ___scrollRewardTextCoroutine)
     {
         SellMyScrapBase.mls.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");
@@ -37,30 +37,25 @@ internal class HUDManagerPatch
         return false;
     }
 
-    private static IEnumerator ScrollRewardsListText(Scrollbar rewardsScrollbar)
+    private static IEnumerator ScrollRewardsListText(Scrollbar rewardsScrollbar, float duration = 3f)
     {
         yield return new WaitForSeconds(1.5f);
 
-        float duration = 3f;
         float timer = 0f;
 
         rewardsScrollbar.value = 1f;
 
         while (timer < duration)
         {
-            rewardsScrollbar.value = MapValueToNewRange(timer, 0f, duration, 1f, 0f);
-
-            timer += Time.deltaTime;
             if (timer > duration) timer = duration;
 
-            yield return new WaitForEndOfFrame();
+            float percent = (1f / duration) * timer;
+            rewardsScrollbar.value = 1f - percent;
+
+            yield return null;
+            timer += Time.deltaTime;
         }
 
         rewardsScrollbar.value = 0f;
-    }
-
-    private static float MapValueToNewRange(float value, float oldMin, float oldMax, float newMin, float newMax)
-    {
-        return (value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
     }
 }

@@ -231,7 +231,7 @@ internal class ScrapHelper
     private static int GetSellValue(int value)
     {
         if (value == int.MaxValue) return value;
-        return (int)Mathf.Ceil(value / StartOfRound.Instance.companyBuyingRate);
+        return Mathf.CeilToInt((float)value / (float)StartOfRound.Instance.companyBuyingRate);
     }
 
     private static int GetSellValueWithOvertime(int value)
@@ -242,11 +242,6 @@ internal class ScrapHelper
         if (valueOver <= 0) return GetSellValue(value);
 
         int newValue = value - valueOver / 6;
-
-        if (Utils.IsLocalPlayerThorlar())
-        {
-            newValue -= 15;
-        }
 
         return GetSellValue(newValue);
     }
@@ -318,7 +313,7 @@ internal class ScrapHelper
     
     public static string GetScrapItemMessage(List<Item> scrapItems, int columns = 1, int padding = 25)
     {
-        int itemsPerColumn = (int)Mathf.Ceil(scrapItems.Count / columns);
+        int itemsPerColumn = Mathf.CeilToInt((float)scrapItems.Count / (float)columns);
         string[] rows = new string[itemsPerColumn];
 
         for (int i = 0; i < columns; i++)
@@ -329,6 +324,8 @@ internal class ScrapHelper
                 if (index > scrapItems.Count - 1) continue;
 
                 string itemName = scrapItems[index].itemName;
+                if (itemName == string.Empty) continue;
+
                 rows[j] += itemName.PadRight(padding);
 
                 if (i == columns - 1)

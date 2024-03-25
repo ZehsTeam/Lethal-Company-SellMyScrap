@@ -8,7 +8,7 @@ public class SuckBehaviour : MonoBehaviour
 {
     private GrabbableObject grabbableObject;
 
-    void Start()
+    private void Start()
     {
         grabbableObject = GetComponent<GrabbableObject>();
         grabbableObject.grabbable = false;

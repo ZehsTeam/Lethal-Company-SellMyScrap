@@ -80,18 +80,14 @@ internal class CommandManager
 
     private static Command GetCommand(string[] args)
     {
-        Command result = null;
-
-        commands.ForEach(command =>
+        foreach (var command in commands)
         {
-            if (result != null) return;
-
             if (command.IsCommand(args))
             {
-                result = command;
+                return command;
             }
-        });
+        }
 
-        return result;
+        return null;
     }
 }
