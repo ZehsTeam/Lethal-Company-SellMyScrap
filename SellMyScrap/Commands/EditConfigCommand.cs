@@ -161,6 +161,11 @@ class JsonListEditor
             return Remove(args);
         }
 
+        if (_args[0] == "clear" && _args[1] == "all")
+        {
+            return ClearAll(args);
+        }
+
         return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
     }
 
@@ -201,6 +206,14 @@ class JsonListEditor
         return TerminalPatch.CreateTerminalNode(GetMessage($"Removed \"{_item}\"\n\n"));
     }
 
+    private TerminalNode ClearAll(string[] args)
+    {
+        list = [];
+        SetValue(list.ToArray());
+
+        return TerminalPatch.CreateTerminalNode(GetMessage($"Removed all items.\n\n"));
+    }
+
     private string GetItemName(string[] args)
     {
         return string.Join(" ", args).Substring(args[0].Length).Replace("\"", "").Replace("\\", "").Trim();
@@ -214,6 +227,7 @@ class JsonListEditor
         message += $"The following commands are available:\n\n";
         message += $"add <value>\n";
         message += $"remove <value>\n";
+        message += $"clear all\n";
         message += $"exit\n\n";
         message += additionalMessage;
 

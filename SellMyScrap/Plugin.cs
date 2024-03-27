@@ -99,11 +99,18 @@ public class SellMyScrapBase : BaseUnityPlugin
     }
 
     #region SellRequest Methods
-    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType)
+    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType, int scrapEaterIndex = -1)
     {
-        sellRequest = new SellRequest(sellType, value, requestedValue, confirmationType);
+        sellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex);
 
-        mls.LogInfo($"Created sell request. {scrapToSell.amount} items for ${value}.");
+        string message = $"Created sell request. {scrapToSell.amount} items for ${value}.";
+
+        if (scrapEaterIndex >= 0)
+        {
+            message += $" (scrapEaterIndex: {scrapEaterIndex})";
+        }
+
+        mls.LogInfo(message);
     }
 
     public void ConfirmSellRequest()
@@ -138,7 +145,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
         string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap);
 
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.realValue, scrapToSell.amount);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.realValue, scrapToSell.amount, sellRequest.scrapEaterIndex);
     }
 
     public void CancelSellRequest()
@@ -148,10 +155,10 @@ public class SellMyScrapBase : BaseUnityPlugin
     }
     #endregion
 
-    public void PerformSellOnServerFromClient(List<GrabbableObject> scrap, SellType sellType)
+    public void PerformSellOnServerFromClient(List<GrabbableObject> scrap, SellType sellType, int scrapEaterIndex = -1)
     {
         scrapToSell = new ScrapToSell(scrap);
-        CreateSellRequest(sellType, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
+        CreateSellRequest(sellType, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         ConfirmSellRequest();
     }
 
@@ -166,12 +173,23 @@ public class SellMyScrapBase : BaseUnityPlugin
             yield break;
         }
 
+        int scrapEaterIndex = sellRequest.scrapEaterIndex;
+
+        if (scrapEaterIndex == 0)
+        {
+            ScrapEaterManager.StartRandomScrapEaterOnServer(scrapToSell.scrap);
+            yield break;
+        }
+
+        if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
+        {
+            ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, scrapToSell.scrap);
+            yield break;
+        }
+
         if (ScrapEaterManager.CanUseScrapEater())
         {
-            ScrapEaterManager.SetScrapToSuckOnServer(scrapToSell.scrap);
-            yield return new WaitForSeconds(0.1f);
-            ScrapEaterManager.StartRandomScrapEaterOnServer();
-
+            ScrapEaterManager.StartRandomScrapEaterOnServer(scrapToSell.scrap);
             yield break;
         }
 

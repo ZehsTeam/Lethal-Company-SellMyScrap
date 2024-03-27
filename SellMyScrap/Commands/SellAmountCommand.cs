@@ -1,11 +1,16 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellAmountCommand : SellCommand
 {
+    public SellAmountCommand()
+    {
+        flags.Add(new CommandFlag("-o"));
+    }
+
     public override bool IsCommand(string[] args)
     {
         args = Utils.GetArrayToLower(args);
@@ -25,7 +30,10 @@ internal class SellAmountCommand : SellCommand
 
         string extra = string.Join(' ', args).Substring(args[0].Length).Trim();
         string expression = GetExpression(extra);
-        string[] flags = GetFlags(extra);
+
+        List<CommandFlag> foundFlags = GetFlagsFromString(extra.Substring(expression.Length));
+        bool withOvertimeBonus = GetWithOvertimeBonus(foundFlags);
+        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
 
         string evaluatedExpression = expression;
 
@@ -44,14 +52,14 @@ internal class SellAmountCommand : SellCommand
             return TerminalPatch.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: flags.Contains("-o"));
+        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
 
         if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(requestedValue, scrapToSell);
@@ -95,7 +103,7 @@ internal class SellAmountCommand : SellCommand
     private string GetExpression(string extra)
     {
         string expression = extra;
-        int flagsStartIndex = GetFlagsStartIndex(extra);
+        int flagsStartIndex = GetFlagsStartIndexInString(extra);
 
         if (flagsStartIndex != -1)
         {
@@ -105,28 +113,11 @@ internal class SellAmountCommand : SellCommand
         return expression.Trim();
     }
 
-    private string[] GetFlags(string extra)
+    private bool GetWithOvertimeBonus(List<CommandFlag> foundFlags)
     {
-        int startIndex = GetFlagsStartIndex(extra);
-        if (startIndex == -1) return [];
+        CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-o");
+        if (flag == null) return false;
 
-        return extra.Substring(startIndex).ToLower().Split(' ');
-    }
-
-    private static int GetFlagsStartIndex(string extra)
-    {
-        string[] flags = ["-o"];
-        int startIndex = -1;
-
-        foreach (string flag in flags)
-        {
-            if (extra.Contains($"{flag}", System.StringComparison.OrdinalIgnoreCase))
-            {
-                int index = extra.IndexOf($"{flag}", System.StringComparison.OrdinalIgnoreCase);
-                if (index > startIndex) startIndex = index;
-            }
-        }
-
-        return startIndex;
+        return flag.canUse;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
-using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
@@ -26,27 +25,16 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int value, int amount)
+    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int value, int amount, int scrapEaterIndex = -1)
     {
         PlayerControllerB fromPlayerScript = StartOfRound.Instance.allPlayerScripts[fromPlayerId];
         List<GrabbableObject> grabbableObjects = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+
         string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
 
         SellMyScrapBase.mls.LogInfo(message);
         Utils.DisplayNotification(message);
-        SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType);
-    }
-
-    [ClientRpc]
-    public void SetScrapToSuckClientRpc(string networkObjectIdsString)
-    {
-        ScrapEaterManager.SetScrapToSuckOnClient(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
-    }
-
-    [ClientRpc]
-    public void StartScrapEaterClientRpc(int index, int slideMaterialVariant)
-    {
-        ScrapEaterManager.StartScrapEaterOnClient(index, slideMaterialVariant);
+        SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType, scrapEaterIndex);
     }
 
     [ClientRpc]

@@ -1,13 +1,13 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
-internal class ScrapEaterManager
+public class ScrapEaterManager
 {
     public static List<ScrapEater> scrapEaters = new List<ScrapEater>();
-    public static List<GrabbableObject> scrapToSuck = new List<GrabbableObject>();
 
     public static void Initialize()
     {
@@ -18,6 +18,9 @@ internal class ScrapEaterManager
             new ScrapEater(Content.takeyScrapEaterPrefab, () => {
                 return SellMyScrapBase.Instance.ConfigManager.TakeySpawnWeight;
             }),
+            new ScrapEater(Content.maxwellScrapEaterPrefab, () => {
+                return SellMyScrapBase.Instance.ConfigManager.MaxwellSpawnWeight;
+            }),
         ];
     }
 
@@ -27,39 +30,40 @@ internal class ScrapEaterManager
         return Random.Range(1, 100) <= spawnChance;
     }
 
-    public static void SetScrapToSuckOnServer(List<GrabbableObject> scrap)
+    public static bool HasScrapEater(int index)
     {
-        PluginNetworkBehaviour.Instance.SetScrapToSuckClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrap));
+        if (scrapEaters.Count == 0) return false;
+        if (index < 0 || index > scrapEaters.Count - 1) return false;
+
+        return true;
     }
 
-    public static void SetScrapToSuckOnClient(List<GrabbableObject> scrap)
+    public static void AddScrapEater(GameObject spawnPrefab, System.Func<int> GetSpawnWeight)
     {
-        scrapToSuck = scrap;
-
-        scrap.ForEach(item =>
-        {
-            item.grabbable = false;
-        });
+        scrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
     }
 
-    public static void StartRandomScrapEaterOnServer()
+    public static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
     {
+        if (!SellMyScrapBase.IsHostOrServer) return;
+
         int index = GetRandomScrapEaterIndex();
         if (index == -1) return;
 
-        ScrapEaterBehaviour scrapEaterBehaviour = scrapEaters[index].spawnPrefab.GetComponent<ScrapEaterBehaviour>();
-        int slideMaterialVariant = Random.Range(0, scrapEaterBehaviour.slideMaterialVariants.Length);
-
-        PluginNetworkBehaviour.Instance.StartScrapEaterClientRpc(index, slideMaterialVariant);
+        StartScrapEaterOnServer(index, scrap);
     }
 
-    public static void StartScrapEaterOnClient(int index, int slideMaterialIndex)
+    public static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
     {
-        GameObject gameObject = Object.Instantiate(scrapEaters[index].spawnPrefab);
-        gameObject.transform.SetParent(ScrapHelper.HangarShip.transform);
+        if (!SellMyScrapBase.IsHostOrServer) return;
 
-        ScrapEaterBehaviour scrapEaterBehaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
-        scrapEaterBehaviour.StartCoroutine(scrapEaterBehaviour.StartAnimation(slideMaterialIndex));
+        GameObject prefab = scrapEaters[index].spawnPrefab;
+        GameObject gameObject = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+        networkObject.Spawn(destroyWithScene: true);
+
+        ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
+        behaviour.SetScrapToSuckClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrap));
     }
 
     private static int GetRandomScrapEaterIndex()
@@ -68,7 +72,10 @@ internal class ScrapEaterManager
 
         for (int i = 0; i < scrapEaters.Count; i++)
         {
-            weightedItems.Add((i, scrapEaters[i].GetSpawnWeight()));
+            int spawnWeight = scrapEaters[i].GetSpawnWeight();
+            if (spawnWeight <= 0) continue;
+
+            weightedItems.Add((i, spawnWeight));
         }
 
         int totalWeight = 0;

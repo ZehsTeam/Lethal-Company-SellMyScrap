@@ -1,9 +1,15 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellCommand : Command
 {
+    public SellCommand()
+    {
+        flags.Add(new CommandFlag("-se", canHaveExtraData: true));
+    }
+
     protected static int CompanyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
 
     protected override TerminalNode OnConfirm(string[] args)
@@ -61,5 +67,23 @@ internal class SellCommand : Command
     {
         int overtimeBonus = Utils.GetOvertimeBonus(value);
         return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\n\n";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="foundFlags"></param>
+    /// <returns>-1 = no scrap eater, 0 = random scrap eater, 1+ = scrap eater index.</returns>
+    protected static int GetScrapEaterIndex(List<CommandFlag> foundFlags)
+    {
+        CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-se");
+        if (flag == null || !flag.canUse) return -1;
+
+        if (int.TryParse(flag.data, out int index))
+        {
+            return index;
+        }
+
+        return 0;
     }
 }

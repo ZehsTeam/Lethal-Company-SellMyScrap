@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -21,6 +22,10 @@ internal class SellQuotaCommand : SellCommand
             return terminalNode;
         }
 
+        string extra = string.Join(' ', args).Trim();
+        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
+        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
+
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
         int requestedValue = profitQuota - quotaFulfilled;
@@ -37,7 +42,7 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(profitQuota, quotaFulfilled, requestedValue, scrapToSell);

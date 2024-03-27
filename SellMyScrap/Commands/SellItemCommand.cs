@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -16,21 +17,24 @@ internal class SellItemCommand : SellCommand
 
     public override TerminalNode Execute(string[] args)
     {
-        string[] _args = Utils.GetArrayToLower(args);
-
         if (!CanUseCommand(out TerminalNode terminalNode))
         {
             return terminalNode;
         }
 
+        string[] _args = Utils.GetArrayToLower(args);
+
+        int length = args[0].Length;
+        if (_args[1] == "item") length += args[1].Length + 1;
+        string extra = string.Join(' ', args).Substring(length).Trim();
+        string itemName = GetItemName(extra);
+        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
+        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
+
         if (_args[1] == "item" && _args[2] == string.Empty || _args[1] == string.Empty)
         {
             return TerminalPatch.CreateTerminalNode(GetSellItemInvalidMessage());
         }
-
-        int length = args[0].Length;
-        if (_args[1] == "item") length += args[1].Length + 1;
-        string itemName = string.Join(' ', _args).Substring(length).Trim();
 
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.SetScrapToSell(ScrapHelper.GetScrapByItemName(itemName, false));
 
@@ -39,7 +43,7 @@ internal class SellItemCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
@@ -74,5 +78,18 @@ internal class SellItemCommand : SellCommand
         message += "    sell item Whoo\n\n";
 
         return message;
+    }
+
+    private string GetItemName(string extra)
+    {
+        string itemName = extra;
+        int flagsStartIndex = GetFlagsStartIndexInString(extra);
+
+        if (flagsStartIndex != -1)
+        {
+            itemName = itemName.Substring(0, flagsStartIndex);
+        }
+
+        return itemName.Trim();
     }
 }

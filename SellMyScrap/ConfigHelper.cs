@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class ConfigHelper
+public class ConfigHelper
 {
     private static List<ConfigItem> configItems = new List<ConfigItem>();
     private static List<ConfigItem> scrapEaterConfigItems = new List<ConfigItem>();
@@ -34,6 +34,7 @@ internal class ConfigHelper
             new ConfigItem("scrapEaterChance",       typeof(int),  isHostOnly: false, value => { configManager.ScrapEaterChance =       int.Parse(value);  }, () => { return configManager.ScrapEaterChance.ToString();   }),
             new ConfigItem("octolarSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnWeight =     int.Parse(value);  }, () => { return configManager.OctolarSpawnWeight.ToString(); }),
             new ConfigItem("takeySpawnWeight",       typeof(int),  isHostOnly: false, value => { configManager.TakeySpawnWeight =       int.Parse(value);  }, () => { return configManager.TakeySpawnWeight.ToString();   }),
+            new ConfigItem("maxwellSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.MaxwellSpawnWeight =     int.Parse(value);  }, () => { return configManager.MaxwellSpawnWeight.ToString(); }),
         ];
     }
 

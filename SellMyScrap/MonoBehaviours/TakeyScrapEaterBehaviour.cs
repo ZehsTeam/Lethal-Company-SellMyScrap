@@ -20,7 +20,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
 
     private float flySpeed;
 
-    protected override void Start()
+    public override void Start()
     {
         base.Start();
 
@@ -28,10 +28,8 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
         flameEffectsObject.SetActive(false);
     }
 
-    public override IEnumerator StartAnimation(int slideMaterialVariant)
+    public override IEnumerator StartAnimation()
     {
-        SetSlideMaterialVariant(slideMaterialVariant);
-
         Vector3 skyStartPosition = startPosition;
         skyStartPosition.y += 150f;
 
@@ -44,11 +42,9 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
         StopSFX();
         yield return new WaitForSeconds(pauseDuration);
 
-        SetMaterial(suckMaterial);
         SuckScrapToSell();
         yield return new WaitForSeconds(suckDuration);
 
-        SetMaterial(normalMaterial);
         PlaySFX(eatSFX);
         yield return new WaitForSeconds(pauseDuration);
 
@@ -62,7 +58,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
         yield return StartCoroutine(JetpackFly(7.5f));
         SellItemsOnServer();
 
-        Destroy(gameObject);
+        meshRenderer.gameObject.SetActive(false);
     }
 
     private IEnumerator JetpackFly(float duration)

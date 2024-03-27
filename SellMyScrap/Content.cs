@@ -11,6 +11,7 @@ internal class Content
     // Scrap Eaters
     public static GameObject octolarScrapEaterPrefab;
     public static GameObject takeyScrapEaterPrefab;
+    public static GameObject maxwellScrapEaterPrefab;
 
     public static void Load()
     {
@@ -32,6 +33,7 @@ internal class Content
             // Scrap Eaters
             octolarScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("OctolarScrapEater");
             takeyScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("TakeyScrapEater");
+            maxwellScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
 
             SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }

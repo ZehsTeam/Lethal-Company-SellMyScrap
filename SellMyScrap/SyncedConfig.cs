@@ -34,6 +34,7 @@ public class SyncedConfig
     private ConfigEntry<int> ScrapEaterChanceCfg;
     private ConfigEntry<int> OctolarSpawnWeightCfg;
     private ConfigEntry<int> TakeySpawnWeightCfg;
+    private ConfigEntry<int> MaxwellSpawnWeightCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -119,11 +120,40 @@ public class SyncedConfig
     { 
         get
         {
-            return hostConfigData == null ? JsonConvert.DeserializeObject<string[]>(DontSellListJsonCfg.Value) : JsonConvert.DeserializeObject<string[]>(hostConfigData.dontSellListJson);
+            string text = DontSellListJsonCfg.Value;
+
+            if (hostConfigData != null)
+            {
+                text = hostConfigData.dontSellListJson;
+            }
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return [];
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<string[]>(text);
+            }
+            catch (System.Exception e)
+            {
+                SellMyScrapBase.mls.LogError($"Error: failed to deserialize dontSellListJson config setting.\n\n{e}");
+                return [];
+            }
         }
         set
         {
-            DontSellListJsonCfg.Value = JsonConvert.SerializeObject(value);
+            try
+            {
+                DontSellListJsonCfg.Value = JsonConvert.SerializeObject(value);
+            }
+            catch (System.Exception e)
+            {
+                SellMyScrapBase.mls.LogError($"Error: failed to serialize dontSellListJson config setting.\n\n{e}");
+                DontSellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
+            }
+            
             SyncedConfigsChanged();
         }
     }
@@ -143,6 +173,7 @@ public class SyncedConfig
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
     internal int OctolarSpawnWeight { get { return OctolarSpawnWeightCfg.Value; } set => OctolarSpawnWeightCfg.Value = value; }
     internal int TakeySpawnWeight { get { return TakeySpawnWeightCfg.Value; } set => TakeySpawnWeightCfg.Value = value; }
+    internal int MaxwellSpawnWeight { get { return MaxwellSpawnWeightCfg.Value; } set => MaxwellSpawnWeightCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -188,9 +219,11 @@ public class SyncedConfig
         );
 
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
-        dontSellListJsonCfgDescription += "Item names are not case-sensitive and spaces do matter for item names.\n";
+        dontSellListJsonCfgDescription += "Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.\n";
+        dontSellListJsonCfgDescription += "Use the `view all scrap` command or Echo Scanner to see the correct item names to use.\n";
+        dontSellListJsonCfgDescription += "Item names are not case-sensitive but, spaces do matter.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n";
-        dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Other Scrap Item\"]";
+        dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Octolar Plush\", \"Smol Takey\"]";
         DontSellListJsonCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             "[]",
@@ -239,7 +272,7 @@ public class SyncedConfig
         // Scrap Eaters
         ScrapEaterChanceCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
-            30,
+            40,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
@@ -253,6 +286,12 @@ public class SyncedConfig
             new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Takey will spawn?!",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        MaxwellSpawnWeightCfg = config.Bind(
+            new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Maxwell will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
     }

@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -23,6 +24,10 @@ internal class SellAllCommand : SellCommand
             return terminalNode;
         }
 
+        string extra = string.Join(' ', args).Trim();
+        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
+        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
+
         ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(int.MaxValue);
 
         if (scrapToSell.amount == 0)
@@ -30,7 +35,7 @@ internal class SellAllCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation);
+        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);

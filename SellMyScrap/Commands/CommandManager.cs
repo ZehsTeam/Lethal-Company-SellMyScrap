@@ -80,9 +80,11 @@ internal class CommandManager
 
     private static Command GetCommand(string[] args)
     {
+        string[] _args = args;
+
         foreach (var command in commands)
         {
-            if (command.IsCommand(args))
+            if (command.IsCommand(_args))
             {
                 return command;
             }
