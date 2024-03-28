@@ -80,7 +80,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 <h4>Additional info for the <code>dontSellListJson</code> config setting.</h4>
 
 * Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
-* Use the `view all scrap` command or [Echo Scanner](https://lethal-company.fandom.com/wiki/Scanner) to see the correct item names to use.
+* Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 * Item names are not case-sensitive but, spaces do matter.
 * Example value: `["Maxwell", "Cookie Fumo", "Octolar Plush", "Smol Takey"]`
 
@@ -95,7 +95,6 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
-| `overtimeBonusOffset` | `Int32` | `0` | The overtime bonus offset for the sell confirmation screen. |
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -116,7 +115,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/aWVozkp.png" width="273px">
+    <img src="https://i.imgur.com/erkQiFV.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -149,12 +148,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/n8vArOP.png" width="100%">
+    <img src="https://i.imgur.com/JxXocM0.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/ZHAjFWm.png" width="412px">
-    <img src="https://i.imgur.com/UVLPLMZ.png" width="412px">
+    <img src="https://i.imgur.com/lbfoMoI.png" width="412px">
+    <img src="https://i.imgur.com/c0Ahbbk.png" width="412px">
 </div>
 
 ## My Other Mods

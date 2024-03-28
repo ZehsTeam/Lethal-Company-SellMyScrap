@@ -121,8 +121,6 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         mls.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
 
-        Utils.checkOvertimeBonus = true;
-
         if (IsHostOrServer)
         {
             ConfirmSellRequestOnServer();

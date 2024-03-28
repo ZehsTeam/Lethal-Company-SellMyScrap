@@ -23,7 +23,7 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
 
         if (SellMyScrapBase.IsHostOrServer)
         {
-            SetIsEvilClientRpc(Random.Range(1f, 100f) <= 40f);
+            SetIsEvilClientRpc(Random.Range(1f, 100f) <= 50f);
         }
     }
 
@@ -65,23 +65,16 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
         if (isEvil)
         {
             yield return StartCoroutine(StartEvilMaxwell());
-            yield return new WaitForSeconds(2f);
-            EnableSpeakInShipOnServer();
-            yield return new WaitForSeconds(0.5f);
-            SellItemsOnServer();
+            yield return new WaitForSeconds(3f);
             yield break;
         }
 
         PlaySFX(slideSFX);
         yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
         StopSFX();
-
-        EnableSpeakInShipOnServer();
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
-
-        SellItemsOnServer();
 
         bodyObject.SetActive(false);
     }
@@ -95,7 +88,9 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
         PlaySFX(evilNoise);
         yield return new WaitForSeconds(1.5f);
 
-        Utils.CreateExplosion(transform.position, true, damage: 100, maxDamageRange: 6.4f);
+        Vector3 position = transform.position;
+        position.y += 0.31f;
+        Utils.CreateExplosion(position, true, damage: 100, maxDamageRange: 6.4f);
 
         foreach (var rb in evilObject.GetComponentsInChildren<Rigidbody>())
         {

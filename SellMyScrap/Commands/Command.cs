@@ -98,19 +98,19 @@ public class Command
         if (foundFlag == null) return null;
 
         bool validLength = text.Length == foundFlag.key.Length;
-        bool hasExtraData = foundFlag.canHaveExtraData && text.Contains(":");
-        if (hasExtraData) validLength = true;
+        bool hasData = foundFlag.canHaveData && text.Contains(":");
+        if (hasData) validLength = true;
 
         if (!validLength) return null;
 
         string flagData = string.Empty;
 
-        if (hasExtraData)
+        if (hasData)
         {
             flagData = text.Split(":")[1];
         }
 
-        return new CommandFlag(foundFlag.key, foundFlag.isHostOnly, foundFlag.canHaveExtraData, flagData);
+        return new CommandFlag(foundFlag.key, foundFlag.isHostOnly, foundFlag.canHaveData, flagData);
     }
 
     protected int GetFlagsStartIndexInString(string extra)
@@ -142,7 +142,7 @@ public class CommandFlag
 {
     public string key;
     public bool isHostOnly;
-    public bool canHaveExtraData;
+    public bool canHaveData;
     public string data;
 
     public bool canUse => isHostOnly ? SellMyScrapBase.IsHostOrServer : true;
@@ -151,7 +151,7 @@ public class CommandFlag
     {
         this.key = key;
         this.isHostOnly = isHostOnly;
-        this.canHaveExtraData = canHaveExtraData;
+        this.canHaveData = canHaveExtraData;
         this.data = data;
     }
 }

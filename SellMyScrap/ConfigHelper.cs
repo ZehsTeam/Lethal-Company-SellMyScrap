@@ -27,7 +27,6 @@ public class ConfigHelper
             new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }),
             new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }),
             new ConfigItem("speakInShip",            typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =            bool.Parse(value); }),
-            new ConfigItem("overtimeBonusOffset",    typeof(int),  isHostOnly: false, value => { configManager.OvertimeBonusOffset =    int.Parse(value);  }),
         ];
 
         scrapEaterConfigItems = [
@@ -123,8 +122,7 @@ public class ConfigHelper
         message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
-        message += $"speakInShip:         {configManager.SpeakInShip}\n";
-        message += $"overtimeBonusOffset: {configManager.OvertimeBonusOffset}\n\n";
+        message += $"speakInShip:         {configManager.SpeakInShip}\n\n";
         message += GetScrapEaterConfigSettingsMessage();
 
         return message;

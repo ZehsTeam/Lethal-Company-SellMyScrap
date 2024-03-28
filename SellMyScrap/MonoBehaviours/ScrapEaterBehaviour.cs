@@ -43,7 +43,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         transform.localRotation = Quaternion.identity;
         transform.Rotate(rotationOffset, Space.Self);
 
-        if (SellMyScrapBase.IsHostOrServer)
+        if (SellMyScrapBase.IsHostOrServer && slideMaterialVariants.Length > 0)
         {
             SetSlideMaterialVariantClientRpc(Random.Range(0, slideMaterialVariants.Length));
         }
@@ -61,6 +61,11 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     public void SetScrapToSuckClientRpc(string networkObjectIdsString)
     {
         scrapToSuck = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+
+        scrapToSuck.ForEach(item =>
+        {
+            item.grabbable = false;
+        });
     }
 
     [ClientRpc]
@@ -79,7 +84,10 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     {
         yield return StartCoroutine(StartAnimation());
 
+        EnableSpeakInShipOnServer();
         yield return new WaitForSeconds(0.5f);
+
+        SellItemsOnServer();
 
         if (SellMyScrapBase.IsHostOrServer)
         {
@@ -113,12 +121,9 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         PlaySFX(slideSFX);
         yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
         StopSFX();
-
-        EnableSpeakInShipOnServer();
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
-        SellItemsOnServer();
 
         meshRenderer.gameObject.SetActive(false);
     }

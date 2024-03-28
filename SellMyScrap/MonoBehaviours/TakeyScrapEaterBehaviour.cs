@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -19,6 +20,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
     public float flySpeedMultiplier = 5f;
 
     private float flySpeed;
+    private bool explode = false;
 
     public override void Start()
     {
@@ -26,6 +28,17 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
 
         jetpackObject.SetActive(false);
         flameEffectsObject.SetActive(false);
+
+        if (SellMyScrapBase.IsHostOrServer)
+        {
+            SetExplodeClientRpc(Random.Range(1f, 100f) <= 50f);
+        }
+    }
+
+    [ClientRpc]
+    private void SetExplodeClientRpc(bool explode)
+    {
+        this.explode = explode;
     }
 
     public override IEnumerator StartAnimation()
@@ -52,13 +65,17 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
         yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
         StopSFX();
 
-        EnableSpeakInShipOnServer();
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(JetpackFly(7.5f));
-        SellItemsOnServer();
+        yield return StartCoroutine(JetpackFly(6f));
+
+        if (explode)
+        {
+            Utils.CreateExplosion(transform.position, true, damage: 100, maxDamageRange: 6.4f);
+        }
 
         meshRenderer.gameObject.SetActive(false);
+        jetpackObject.SetActive(false);
     }
 
     private IEnumerator JetpackFly(float duration)

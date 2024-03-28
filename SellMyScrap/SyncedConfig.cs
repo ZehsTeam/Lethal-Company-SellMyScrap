@@ -28,7 +28,6 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
-    private ConfigEntry<int> OvertimeBonusOffsetCfg;
 
     // Scrap Eaters
     private ConfigEntry<int> ScrapEaterChanceCfg;
@@ -167,7 +166,6 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    internal int OvertimeBonusOffset { get { return OvertimeBonusOffsetCfg.Value; } set { OvertimeBonusOffsetCfg.Value = value; } }
 
     // Scrap Eaters
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
@@ -220,7 +218,7 @@ public class SyncedConfig
 
         string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
         dontSellListJsonCfgDescription += "Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.\n";
-        dontSellListJsonCfgDescription += "Use the `view all scrap` command or Echo Scanner to see the correct item names to use.\n";
+        dontSellListJsonCfgDescription += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
         dontSellListJsonCfgDescription += "Item names are not case-sensitive but, spaces do matter.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n";
         dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Octolar Plush\", \"Smol Takey\"]";
@@ -262,11 +260,6 @@ public class SyncedConfig
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
-        );
-        OvertimeBonusOffsetCfg = config.Bind(
-            new ConfigDefinition("Misc Settings", "overtimeBonusOffset"),
-            0,
-            new ConfigDescription("The overtime bonus offset for the sell confirmation screen.")
         );
 
         // Scrap Eaters

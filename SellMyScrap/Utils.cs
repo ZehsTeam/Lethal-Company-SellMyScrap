@@ -7,9 +7,6 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class Utils
 {
-    public static bool checkOvertimeBonus = false;
-    private static int calculatedOvertimeBonus = 0;
-
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {
         return $"{a}{new string(' ', maxLength - a.Length)} {b}";
@@ -61,44 +58,11 @@ internal class Utils
         int valueOver = quotaFulfilled - profitQuota;
         int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
         if (daysUntilDeadline < 0) daysUntilDeadline = 0;
-        int overtimeBonus = valueOver / 5 + 15 * daysUntilDeadline + SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset;
-
-        calculatedOvertimeBonus = overtimeBonus;
-        checkOvertimeBonus = true;
+        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
 
         SellMyScrapBase.mls.LogInfo($"\n\nGetOvertimeBonus();\ndaysUntilDeadline: {daysUntilDeadline}\novertimeBonus: {overtimeBonus}\n");
 
         return overtimeBonus;
-    }
-
-    public static void CheckOvertimeBonus(int realOvertimeBonus)
-    {
-        if (!checkOvertimeBonus) return;
-        checkOvertimeBonus = false;
-
-        int overtimeBonusOffset = SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset;
-
-        if (overtimeBonusOffset != 0 && calculatedOvertimeBonus - overtimeBonusOffset == realOvertimeBonus)
-        {
-            SetOvertimeBonusOffset(0);
-            return;
-        }
-
-        int offset = (calculatedOvertimeBonus - overtimeBonusOffset - realOvertimeBonus) * -1;
-        if (offset == 0) return;
-
-        SetOvertimeBonusOffset(offset);
-    }
-
-    private static void SetOvertimeBonusOffset(int overtimeBonusOffset)
-    {
-        string headerText = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}";
-        string bodyText = $"Adjusted the overtimeBonusOffset for the sell confirmation screen.\n\novertimeBonusOffset: {overtimeBonusOffset}";
-
-        DisplayTip(headerText, bodyText);
-        SellMyScrapBase.mls.LogInfo($"\n\n{bodyText}\n");
-
-        SellMyScrapBase.Instance.ConfigManager.OvertimeBonusOffset = overtimeBonusOffset;
     }
 
     public static void DisplayNotification(string displayText)
