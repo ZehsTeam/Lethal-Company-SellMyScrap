@@ -13,6 +13,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     public Vector3 rotationOffset = new Vector3(0f, 90f, 0f);
 
     public Transform mouthTransform;
+    public GameObject modelObject;
     public MeshRenderer meshRenderer;
     public AudioSource audioSource;
 
@@ -125,7 +126,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
         yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
 
-        meshRenderer.gameObject.SetActive(false);
+        DisableModelObject();
     }
 
     protected virtual void SuckScrapToSell()
@@ -159,7 +160,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
     }
 
-    protected IEnumerator MoveToPosition(Vector3 from, Vector3 to, float duration)
+    protected virtual IEnumerator MoveToPosition(Vector3 from, Vector3 to, float duration)
     {
         float timer = 0f;
 
@@ -203,5 +204,12 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         if (index < 0 || index > slideMaterialVariants.Length - 1) return;
 
         SetMaterial(slideMaterialVariants[index]);
+    }
+
+    protected void DisableModelObject()
+    {
+        if (modelObject == null) return;
+
+        modelObject.SetActive(false);
     }
 }

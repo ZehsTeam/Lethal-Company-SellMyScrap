@@ -102,6 +102,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (scrap eater) |
 | `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
 | `maxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
+| `yippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -115,7 +116,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/erkQiFV.png" width="273px">
+    <img src="https://i.imgur.com/IQPnu83.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -148,12 +149,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/JxXocM0.png" width="100%">
+    <img src="https://i.imgur.com/pCt662C.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/lbfoMoI.png" width="412px">
-    <img src="https://i.imgur.com/c0Ahbbk.png" width="412px">
+    <img src="https://i.imgur.com/PznedMD.png" width="412px">
+    <img src="https://i.imgur.com/XPkIVrU.png" width="412px">
 </div>
 
 ## My Other Mods

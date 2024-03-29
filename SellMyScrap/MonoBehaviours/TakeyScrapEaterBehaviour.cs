@@ -74,8 +74,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
             Utils.CreateExplosion(transform.position, true, damage: 100, maxDamageRange: 6.4f);
         }
 
-        meshRenderer.gameObject.SetActive(false);
-        jetpackObject.SetActive(false);
+        DisableModelObject();
     }
 
     private IEnumerator JetpackFly(float duration)

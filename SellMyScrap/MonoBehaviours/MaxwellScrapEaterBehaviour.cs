@@ -76,7 +76,7 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
 
         yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
 
-        bodyObject.SetActive(false);
+        DisableModelObject();
     }
 
     private IEnumerator StartEvilMaxwell()
@@ -90,7 +90,7 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
 
         Vector3 position = transform.position;
         position.y += 0.31f;
-        Utils.CreateExplosion(position, true, damage: 100, maxDamageRange: 6.4f);
+        Utils.CreateExplosion(position, true, damage: 150, maxDamageRange: 6.4f);
 
         foreach (var rb in evilObject.GetComponentsInChildren<Rigidbody>())
         {

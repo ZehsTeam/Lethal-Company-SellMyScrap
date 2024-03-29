@@ -34,6 +34,7 @@ public class SyncedConfig
     private ConfigEntry<int> OctolarSpawnWeightCfg;
     private ConfigEntry<int> TakeySpawnWeightCfg;
     private ConfigEntry<int> MaxwellSpawnWeightCfg;
+    private ConfigEntry<int> YippeeSpawnWeightCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -172,6 +173,7 @@ public class SyncedConfig
     internal int OctolarSpawnWeight { get { return OctolarSpawnWeightCfg.Value; } set => OctolarSpawnWeightCfg.Value = value; }
     internal int TakeySpawnWeight { get { return TakeySpawnWeightCfg.Value; } set => TakeySpawnWeightCfg.Value = value; }
     internal int MaxwellSpawnWeight { get { return MaxwellSpawnWeightCfg.Value; } set => MaxwellSpawnWeightCfg.Value = value; }
+    internal int YippeeSpawnWeight { get { return YippeeSpawnWeightCfg.Value; } set => YippeeSpawnWeightCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -285,6 +287,12 @@ public class SyncedConfig
             new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Maxwell will spawn?!",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        YippeeSpawnWeightCfg = config.Bind(
+            new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Yippee will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
     }

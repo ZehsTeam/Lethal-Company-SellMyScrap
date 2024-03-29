@@ -12,6 +12,7 @@ internal class Content
     public static GameObject octolarScrapEaterPrefab;
     public static GameObject takeyScrapEaterPrefab;
     public static GameObject maxwellScrapEaterPrefab;
+    public static GameObject yippeeScrapEaterPrefab;
 
     public static void Load()
     {
@@ -34,6 +35,7 @@ internal class Content
             octolarScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("OctolarScrapEater");
             takeyScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("TakeyScrapEater");
             maxwellScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
+            yippeeScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("YippeeScrapEater");
 
             SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }

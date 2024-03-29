@@ -21,6 +21,9 @@ public class ScrapEaterManager
             new ScrapEater(Content.maxwellScrapEaterPrefab, () => {
                 return SellMyScrapBase.Instance.ConfigManager.MaxwellSpawnWeight;
             }),
+            new ScrapEater(Content.yippeeScrapEaterPrefab, () => {
+                return SellMyScrapBase.Instance.ConfigManager.YippeeSpawnWeight;
+            }),
         ];
     }
 

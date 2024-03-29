@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class Utils
+public class Utils
 {
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {

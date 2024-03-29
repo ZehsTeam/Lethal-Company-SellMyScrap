@@ -34,6 +34,7 @@ public class ConfigHelper
             new ConfigItem("octolarSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnWeight =     int.Parse(value);  }, () => { return configManager.OctolarSpawnWeight.ToString(); }),
             new ConfigItem("takeySpawnWeight",       typeof(int),  isHostOnly: false, value => { configManager.TakeySpawnWeight =       int.Parse(value);  }, () => { return configManager.TakeySpawnWeight.ToString();   }),
             new ConfigItem("maxwellSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.MaxwellSpawnWeight =     int.Parse(value);  }, () => { return configManager.MaxwellSpawnWeight.ToString(); }),
+            new ConfigItem("yippeeSpawnWeight",      typeof(int),  isHostOnly: false, value => { configManager.YippeeSpawnWeight =      int.Parse(value);  }, () => { return configManager.YippeeSpawnWeight.ToString();  }),
         ];
     }
 
