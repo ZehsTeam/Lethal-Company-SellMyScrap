@@ -64,14 +64,10 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SetDepositItemsDeskAudioClipClientRpc(int index)
+    public void SetMicrophoneSpeakDataClientRpc(bool speakInShip, int clipIndex)
     {
-        DepositItemsDeskPatch.SetAudioClip(index);
-    }
+        if (SellMyScrapBase.IsHostOrServer) return;
 
-    [ClientRpc]
-    public void EnableSpeakInShipClientRpc()
-    {
-        DepositItemsDeskPatch.EnableSpeakInShip();
+        DepositItemsDeskPatch.SetMicrophoneSpeakDataOnClient(speakInShip, clipIndex);
     }
 }

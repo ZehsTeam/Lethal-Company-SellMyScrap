@@ -8,8 +8,8 @@
 
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.5.0</Version>                                               <!-- PLUGIN_VERSION -->
-    <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable.</Description>
+    <Version>1.5.1</Version>                                               <!-- PLUGIN_VERSION -->
+    <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +</Description>
 
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
 

@@ -12,8 +12,16 @@ internal class DepositItemsDeskPatch
 {
     public static DepositItemsDesk depositItemsDesk => Object.FindAnyObjectByType<DepositItemsDesk>();
 
+    private static System.Random companyLevelRandom = new System.Random();
     private static int clipIndex = -1;
     private static bool speakInShip = false;
+
+    [HarmonyPatch("Start")]
+    [HarmonyPostfix]
+    static void StartPatch(ref System.Random ___CompanyLevelRandom)
+    {
+        companyLevelRandom = ___CompanyLevelRandom;
+    }
 
     [HarmonyPatch("SellItemsOnServer")]
     [HarmonyPrefix]
@@ -24,24 +32,24 @@ internal class DepositItemsDeskPatch
             return false;
         }
 
+        if (SellMyScrapBase.IsHostOrServer)
+        {
+            SetMicrophoneSpeakDataOnServer(speakInShip);
+        }
+
         return true;
     }
 
     [HarmonyPatch("MicrophoneSpeak")]
     [HarmonyPrefix]
-    static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance, ref System.Random ___CompanyLevelRandom)
+    static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance)
     {
         List<AudioClip> audioClips = __instance.microphoneAudios.ToList();
         audioClips.AddRange(__instance.rareMicrophoneAudios);
 
         if (clipIndex == -1)
         {
-            clipIndex = GetRandomAudioClipIndex(__instance, ___CompanyLevelRandom);
-        }
-
-        if (SellMyScrapBase.IsHostOrServer)
-        {
-            PluginNetworkBehaviour.Instance.SetDepositItemsDeskAudioClipClientRpc(clipIndex);
+            clipIndex = GetRandomAudioClipIndex();
         }
 
         AudioClip audioClip = audioClips[clipIndex];
@@ -52,44 +60,42 @@ internal class DepositItemsDeskPatch
         // Play audio clip in the ship
         if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip && speakInShip)
         {
-            speakInShip = false;
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(audioClip, 1f);
         }
 
+        speakInShip = false;
         clipIndex = -1;
 
         return false;
     }
 
-    private static int GetRandomAudioClipIndex(DepositItemsDesk __instance, System.Random ___CompanyLevelRandom)
+    private static int GetRandomAudioClipIndex()
     {
-        int index = 0;
-
-        if (___CompanyLevelRandom.NextDouble() < 0.029999999329447746)
+        if (companyLevelRandom.NextDouble() < 0.029999999329447746)
         {
-            index = ___CompanyLevelRandom.Next(0, __instance.microphoneAudios.Length);
-        }
-        else
-        {
-            index = ___CompanyLevelRandom.Next(0, __instance.rareMicrophoneAudios.Length);
+            return companyLevelRandom.Next(0, depositItemsDesk.microphoneAudios.Length);
         }
 
-        return index;
+        return companyLevelRandom.Next(0, depositItemsDesk.rareMicrophoneAudios.Length);
     }
 
-    public static void SetAudioClip(int index)
+    public static void SetMicrophoneSpeakDataOnClient(bool _speakInShip, int _clipIndex)
     {
-        clipIndex = index;
+        speakInShip = _speakInShip;
+        clipIndex = _clipIndex;
     }
 
-    public static void EnableSpeakInShip()
+    private static void SetMicrophoneSpeakDataOnServer(bool _speakInShip)
     {
-        speakInShip = true;
+        speakInShip = _speakInShip;
+        clipIndex = GetRandomAudioClipIndex();
+
+        PluginNetworkBehaviour.Instance.SetMicrophoneSpeakDataClientRpc(speakInShip, clipIndex);
     }
 
     public static void SellItemsOnServer()
     {
-        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
+        speakInShip = true;
         depositItemsDesk.SellItemsOnServer();
     }
 
