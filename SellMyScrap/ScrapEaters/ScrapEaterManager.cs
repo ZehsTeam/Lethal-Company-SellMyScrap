@@ -24,6 +24,9 @@ public class ScrapEaterManager
             new ScrapEater(Content.yippeeScrapEaterPrefab, () => {
                 return SellMyScrapBase.Instance.ConfigManager.YippeeSpawnWeight;
             }),
+            new ScrapEater(Content.cookieFumoScrapEaterPrefab, () => {
+                return SellMyScrapBase.Instance.ConfigManager.CookieFumoSpawnWeight;
+            }),
         ];
     }
 
@@ -41,6 +44,11 @@ public class ScrapEaterManager
         return true;
     }
 
+    /// <summary>
+    /// Register your scrap eater.
+    /// </summary>
+    /// <param name="spawnPrefab">Your scrap eater spawn prefab.</param>
+    /// <param name="GetSpawnWeight">Func for getting your spawnWeight config setting value.</param>
     public static void AddScrapEater(GameObject spawnPrefab, System.Func<int> GetSpawnWeight)
     {
         scrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
@@ -66,7 +74,7 @@ public class ScrapEaterManager
         networkObject.Spawn(destroyWithScene: true);
 
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
-        behaviour.SetScrapToSuckClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrap));
+        behaviour.SetTargetScrapNetworkObjectIdsString(NetworkUtils.GetNetworkObjectIdsString(scrap));
     }
 
     private static int GetRandomScrapEaterIndex()

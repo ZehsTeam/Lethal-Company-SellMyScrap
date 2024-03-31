@@ -8,7 +8,7 @@
 
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.4.2</Version>                                               <!-- PLUGIN_VERSION -->
+    <Version>1.5.0</Version>                                               <!-- PLUGIN_VERSION -->
     <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable.</Description>
 
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\Lethal Company Modding\Unity Projects\LethalCompanyUnityTemplate\AssetBundles\StandaloneWindows\sellmyscrap_assets" Link="sellmyscrap_assets">
+    <None Include="..\..\..\..\Lethal Company Modding\Unity Projects\LethalCompanyAssetBundles\AssetBundles\sellmyscrap_assets" Link="sellmyscrap_assets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

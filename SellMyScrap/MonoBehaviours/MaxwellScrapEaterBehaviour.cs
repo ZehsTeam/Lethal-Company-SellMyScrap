@@ -4,79 +4,88 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
+internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Header("Maxwell")]
     [Space(3f)]
-    public GameObject bodyObject;
-    public GameObject evilObject;
-    public Animator danceAnimator;
-    public AudioSource purrAudio;
-    public AudioSource danceAudio;
-    public AudioClip evilNoise;
+    public GameObject bodyObject = null;
+    public GameObject evilObject = null;
+    public Animator danceAnimator = null;
+    public AudioSource purrAudio = null;
+    public AudioSource danceAudio = null;
+    public AudioClip[] meowSFX = new AudioClip[0];
+    public AudioClip evilNoise = null;
 
     private bool isEvil = false;
+    private int meowIndex = 0;
 
-    public override void Start()
+    protected override void Start()
     {
-        base.Start();
-
-        if (SellMyScrapBase.IsHostOrServer)
+        if (IsHostOrServer)
         {
-            SetIsEvilClientRpc(Random.Range(1f, 100f) <= 50f);
+            isEvil = Random.Range(1f, 100f) <= 50f;
+            meowIndex = Random.Range(0, meowSFX.Length);
+
+            SetDataClientRpc(isEvil, meowIndex);
         }
+
+        base.Start();
     }
 
     [ClientRpc]
-    private void SetIsEvilClientRpc(bool isEvil)
+    private void SetDataClientRpc(bool isEvil, int meowIndex)
     {
         this.isEvil = isEvil;
+        this.meowIndex = meowIndex;
     }
 
-    public override IEnumerator StartAnimation()
+    protected override IEnumerator StartAnimation()
     {
-        MaxwellIdle();
+        SetAnimationIdle();
 
-        Vector3 skyStartPosition = startPosition;
-        skyStartPosition.y += 150f;
-        transform.localPosition = skyStartPosition;
-
-        yield return StartCoroutine(MoveToPosition(skyStartPosition, startPosition, 2f));
+        // Move ScrapEater to startPosition
+        yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
+        PlayOneShotSFX(landSFX);
+        PlayOneShotSFX(meowSFX, meowIndex);
 
         yield return new WaitForSeconds(1f);
 
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(startPosition, endPosition, slideDuration));
-        StopSFX();
+        // Move ScrapEater to endPosition
+        PlayAudioSource(movementAudio);
+        yield return StartCoroutine(MoveToPosition(startPosition, endPosition, movementDuration));
+        StopAudioSource(movementAudio);
         yield return new WaitForSeconds(pauseDuration / 3f);
 
-        MaxwellDance();
+        SetAnimationDance();
         yield return new WaitForSeconds(pauseDuration / 3f * 2f);
 
-        SuckScrapToSell();
+        // Move targetScrap to mouthTransform over time.
+        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
         yield return new WaitForSeconds(suckDuration);
 
-        PlaySFX(eatSFX);
+        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         yield return new WaitForSeconds(pauseDuration / 3f * 2f);
 
-        MaxwellIdle();
+        SetAnimationIdle();
         yield return new WaitForSeconds(pauseDuration / 3f);
 
         if (isEvil)
         {
             yield return StartCoroutine(StartEvilMaxwell());
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(5f);
             yield break;
         }
 
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
-        StopSFX();
+        // Move ScrapEater to startPosition
+        PlayAudioSource(movementAudio);
+        yield return StartCoroutine(MoveToPosition(endPosition, startPosition, movementDuration));
+        StopAudioSource(movementAudio);
+
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
-
-        DisableModelObject();
+        // Move ScrapEater to spawnPosition
+        PlayOneShotSFX(takeOffSFX);
+        yield return StartCoroutine(MoveToPosition(startPosition, spawnPosition, 2f));
     }
 
     private IEnumerator StartEvilMaxwell()
@@ -85,12 +94,12 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
         evilObject.SetActive(true);
 
         purrAudio.Stop();
-        PlaySFX(evilNoise);
+        PlayOneShotSFX(evilNoise);
         yield return new WaitForSeconds(1.5f);
 
         Vector3 position = transform.position;
         position.y += 0.31f;
-        Utils.CreateExplosion(position, true, damage: 150, maxDamageRange: 6.4f);
+        Utils.CreateExplosion(position, damage: 150);
 
         foreach (var rb in evilObject.GetComponentsInChildren<Rigidbody>())
         {
@@ -99,21 +108,21 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterBehaviour
             // apply force outwards from center
             rb.AddExplosionForce(1000f, evilObject.transform.position, 100f);
         }
-
-        yield return new WaitForSeconds(2f);
     }
 
-    private void MaxwellDance()
+    private void SetAnimationDance()
     {
+        danceAnimator.Play("dingusDance");
+
         purrAudio.Stop();
         danceAudio.Play();
-        danceAnimator.Play("dingusDance");
     }
 
-    private void MaxwellIdle()
+    private void SetAnimationIdle()
     {
+        danceAnimator.Play("dingusIdle");
+
         purrAudio.Play();
         danceAudio.Stop();
-        danceAnimator.Play("dingusIdle");
     }
 }

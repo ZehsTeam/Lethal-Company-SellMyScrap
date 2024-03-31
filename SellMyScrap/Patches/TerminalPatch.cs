@@ -11,7 +11,7 @@ internal class TerminalPatch
 
     [HarmonyPatch("Start")]
     [HarmonyPostfix]
-    [HarmonyPriority(-500)]
+    [HarmonyPriority(Priority.Last)]
     static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
         OverrideTerminalNodes(___terminalNodes);
@@ -66,7 +66,7 @@ internal class TerminalPatch
 
     [HarmonyPatch("ParsePlayerSentence")]
     [HarmonyPrefix]
-    [HarmonyPriority(int.MaxValue)]
+    [HarmonyPriority(Priority.First)]
     static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
         string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');

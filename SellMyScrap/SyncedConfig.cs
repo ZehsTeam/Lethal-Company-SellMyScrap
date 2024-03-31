@@ -28,6 +28,7 @@ public class SyncedConfig
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
+    private ConfigEntry<bool> OverrideSetNewProfitQuotaCfg;
 
     // Scrap Eaters
     private ConfigEntry<int> ScrapEaterChanceCfg;
@@ -35,6 +36,7 @@ public class SyncedConfig
     private ConfigEntry<int> TakeySpawnWeightCfg;
     private ConfigEntry<int> MaxwellSpawnWeightCfg;
     private ConfigEntry<int> YippeeSpawnWeightCfg;
+    private ConfigEntry<int> CookieFumoSpawnWeightCfg;
 
     // Sell Settings (Synced)
     internal bool SellGifts
@@ -167,6 +169,7 @@ public class SyncedConfig
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
+    internal bool OverrideSetNewProfitQuota { get { return OverrideSetNewProfitQuotaCfg.Value; } set => OverrideSetNewProfitQuotaCfg.Value = value; }
 
     // Scrap Eaters
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
@@ -174,6 +177,7 @@ public class SyncedConfig
     internal int TakeySpawnWeight { get { return TakeySpawnWeightCfg.Value; } set => TakeySpawnWeightCfg.Value = value; }
     internal int MaxwellSpawnWeight { get { return MaxwellSpawnWeightCfg.Value; } set => MaxwellSpawnWeightCfg.Value = value; }
     internal int YippeeSpawnWeight { get { return YippeeSpawnWeightCfg.Value; } set => YippeeSpawnWeightCfg.Value = value; }
+    internal int CookieFumoSpawnWeight { get { return CookieFumoSpawnWeightCfg.Value; } set => CookieFumoSpawnWeightCfg.Value = value; }
 
     public SyncedConfig()
     {
@@ -263,6 +267,11 @@ public class SyncedConfig
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
+        OverrideSetNewProfitQuotaCfg = config.Bind(
+            new ConfigDefinition("Misc Settings", "overrideSetNewProfitQuota"),
+            true,
+            new ConfigDescription("Will override the SetNewProfitQuota function in TimeOfDay.")
+        );
 
         // Scrap Eaters
         ScrapEaterChanceCfg = config.Bind(
@@ -274,25 +283,31 @@ public class SyncedConfig
         OctolarSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "octolarSpawnWeight"),
             1,
-            new ConfigDescription("The spawn chance weight Octolar will spawn?!",
+            new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         TakeySpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
             1,
-            new ConfigDescription("The spawn chance weight Takey will spawn?!",
+            new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         MaxwellSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
             1,
-            new ConfigDescription("The spawn chance weight Maxwell will spawn?!",
+            new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         YippeeSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
             1,
-            new ConfigDescription("The spawn chance weight Yippee will spawn?!",
+            new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        CookieFumoSpawnWeightCfg = config.Bind(
+            new ConfigDefinition("Scrap Eater Settings", "cookieFumoSpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
     }

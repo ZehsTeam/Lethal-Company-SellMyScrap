@@ -4,85 +4,99 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
+internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Header("Takey")]
     [Space(3f)]
-    public GameObject jetpackObject;
-    public GameObject flameEffectsObject;
-    public AudioSource jetpackAudio;
-    public AudioSource jetpackThrustAudio;
-    public AudioSource jetpackBeepAudio;
-    public AudioClip jetpackThrustStartSFX;
-    public AudioClip liftOffSFX;
+    public AudioClip helloSFX = null;
+    public AudioClip[] voiceLineSFX = new AudioClip[0];
+    public GameObject jetpackObject = null;
+    public GameObject flameEffectsObject = null;
+    public AudioSource jetpackAudio = null;
+    public AudioSource jetpackThrustAudio = null;
+    public AudioSource jetpackBeepAudio = null;
+    public AudioClip jetpackThrustStartSFX = null;
     public float startFlySpeed = 0.5f;
     public float maxFlySpeed = 100f;
     public float flySpeedMultiplier = 5f;
 
-    private float flySpeed;
+    private float flySpeed = 0f;
     private bool explode = false;
-
-    public override void Start()
+    private int voiceLineIndex = 0;
+    
+    protected override void Start()
     {
-        base.Start();
-
-        jetpackObject.SetActive(false);
         flameEffectsObject.SetActive(false);
+        jetpackObject.SetActive(false);
 
-        if (SellMyScrapBase.IsHostOrServer)
+        if (IsHostOrServer)
         {
-            SetExplodeClientRpc(Random.Range(1f, 100f) <= 50f);
+            explode = Random.Range(1f, 100f) <= 50f;
+            voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
+
+            SetDataClientRpc(explode, voiceLineIndex);
         }
+
+        base.Start();
     }
 
     [ClientRpc]
-    private void SetExplodeClientRpc(bool explode)
+    private void SetDataClientRpc(bool explode, int voiceLineIndex)
     {
         this.explode = explode;
+        this.voiceLineIndex = voiceLineIndex;
     }
 
-    public override IEnumerator StartAnimation()
+    protected override IEnumerator StartAnimation()
     {
-        Vector3 skyStartPosition = startPosition;
-        skyStartPosition.y += 150f;
-
-        yield return StartCoroutine(MoveToPosition(skyStartPosition, startPosition, 2f));
+        // Move ScrapEater to startPosition
+        yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
+        PlayOneShotSFX(landSFX);
 
         yield return new WaitForSeconds(1f);
 
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(startPosition, endPosition, slideDuration));
-        StopSFX();
-        yield return new WaitForSeconds(pauseDuration);
+        // Move ScrapEater to endPosition
+        PlayAudioSource(movementAudio);
+        yield return StartCoroutine(MoveToPosition(startPosition, endPosition, movementDuration));
+        StopAudioSource(movementAudio);
+        yield return new WaitForSeconds(pauseDuration / 3f);
 
-        SuckScrapToSell();
+        PlayOneShotSFX(helloSFX);
+        yield return new WaitForSeconds(pauseDuration / 3f * 2f);
+
+        // Move targetScrap to mouthTransform over time.
+        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
         yield return new WaitForSeconds(suckDuration);
 
-        PlaySFX(eatSFX);
+        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
+        PlayOneShotSFX(voiceLineSFX, voiceLineIndex);
         yield return new WaitForSeconds(pauseDuration);
 
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
-        StopSFX();
+        // Move ScrapEater to startPosition
+        PlayAudioSource(movementAudio);
+        yield return StartCoroutine(MoveToPosition(endPosition, startPosition, movementDuration));
+        StopAudioSource(movementAudio);
 
         yield return new WaitForSeconds(1f);
 
+        // Takey FLY!!!
         yield return StartCoroutine(JetpackFly(6f));
 
         if (explode)
         {
-            Utils.CreateExplosion(transform.position, true, damage: 100, maxDamageRange: 6.4f);
+            Utils.CreateExplosion(transform.position);
         }
 
-        DisableModelObject();
+        flameEffectsObject.SetActive(false);
+        jetpackObject.SetActive(false);
     }
 
     private IEnumerator JetpackFly(float duration)
     {
         jetpackObject.SetActive(true);
 
-        PlaySFX(liftOffSFX);
-        jetpackAudio.PlayOneShot(jetpackThrustStartSFX);
+        PlayOneShotSFX(takeOffSFX);
+        PlayOneShotSFX(jetpackAudio, jetpackThrustStartSFX);
         jetpackBeepAudio.Play();
 
         yield return new WaitForSeconds(0.3f);
@@ -93,13 +107,12 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
         flySpeed = startFlySpeed;
         float timer = 0f;
 
-        while (timer <= duration)
+        while (timer < duration)
         {
-            Vector3 position = transform.localPosition;
-
             flySpeed += flySpeedMultiplier * Time.deltaTime;
             if (flySpeed > maxFlySpeed) flySpeed = maxFlySpeed;
 
+            Vector3 position = transform.localPosition;
             position.y += flySpeed * Time.deltaTime;
 
             transform.localPosition = position;
@@ -107,9 +120,5 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
-
-        StopSFX();
-        jetpackBeepAudio.Stop();
-        jetpackThrustAudio.Stop();
     }
 }

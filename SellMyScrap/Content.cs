@@ -13,6 +13,7 @@ internal class Content
     public static GameObject takeyScrapEaterPrefab;
     public static GameObject maxwellScrapEaterPrefab;
     public static GameObject yippeeScrapEaterPrefab;
+    public static GameObject cookieFumoScrapEaterPrefab;
 
     public static void Load()
     {
@@ -25,17 +26,18 @@ internal class Content
         {
             var dllFolderPath = System.IO.Path.GetDirectoryName(SellMyScrapBase.Instance.Info.Location);
             var assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "sellmyscrap_assets");
-            AssetBundle MainAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
+            AssetBundle AssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
             // NetworkHandler
-            networkHandlerPrefab = MainAssetBundle.LoadAsset<GameObject>("NetworkHandler");
+            networkHandlerPrefab = AssetBundle.LoadAsset<GameObject>("NetworkHandler");
             networkHandlerPrefab.AddComponent<PluginNetworkBehaviour>();
 
             // Scrap Eaters
-            octolarScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("OctolarScrapEater");
-            takeyScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("TakeyScrapEater");
-            maxwellScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
-            yippeeScrapEaterPrefab = MainAssetBundle.LoadAsset<GameObject>("YippeeScrapEater");
+            octolarScrapEaterPrefab = AssetBundle.LoadAsset<GameObject>("OctolarScrapEater");
+            takeyScrapEaterPrefab = AssetBundle.LoadAsset<GameObject>("TakeyScrapEater");
+            maxwellScrapEaterPrefab = AssetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
+            yippeeScrapEaterPrefab = AssetBundle.LoadAsset<GameObject>("YippeeScrapEater");
+            cookieFumoScrapEaterPrefab = AssetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
 
             SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
         }

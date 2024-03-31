@@ -11,7 +11,7 @@ internal class HUDManagerPatch
 {
     [HarmonyPatch("DisplayCreditsEarning")]
     [HarmonyPrefix]
-    [HarmonyPriority(500)]
+    [HarmonyPriority(Priority.First)]
     static bool DisplayCreditsEarningPatch(ref HUDManager __instance, int creditsEarned, GrabbableObject[] objectsSold, int newGroupCredits, ref Coroutine ___scrollRewardTextCoroutine)
     {
         SellMyScrapBase.mls.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");

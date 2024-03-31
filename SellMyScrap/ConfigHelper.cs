@@ -15,26 +15,28 @@ public class ConfigHelper
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
         configItems = [
-            new ConfigItem("sellGifts",              typeof(bool), isHostOnly: true,  value => { configManager.SellGifts =              bool.Parse(value); }),
-            new ConfigItem("sellShotguns",           typeof(bool), isHostOnly: true,  value => { configManager.SellShotguns =           bool.Parse(value); }),
-            new ConfigItem("sellAmmo",               typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =               bool.Parse(value); }),
-            new ConfigItem("sellPickles",            typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =            bool.Parse(value); }),
-            new ConfigItem("sellScrapWorthZero",     typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =     bool.Parse(value); }),
-            new ConfigItem("onlySellScrapOnFloor",   typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =   bool.Parse(value); }),
-            new ConfigItem("overrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }),
-            new ConfigItem("overrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }),
-            new ConfigItem("showFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }),
-            new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }),
-            new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }),
-            new ConfigItem("speakInShip",            typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =            bool.Parse(value); }),
+            new ConfigItem("sellGifts",                 typeof(bool), isHostOnly: true,  value => { configManager.SellGifts =                 bool.Parse(value); }),
+            new ConfigItem("sellShotguns",              typeof(bool), isHostOnly: true,  value => { configManager.SellShotguns =              bool.Parse(value); }),
+            new ConfigItem("sellAmmo",                  typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =                  bool.Parse(value); }),
+            new ConfigItem("sellPickles",               typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =               bool.Parse(value); }),
+            new ConfigItem("sellScrapWorthZero",        typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =        bool.Parse(value); }),
+            new ConfigItem("onlySellScrapOnFloor",      typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =      bool.Parse(value); }),
+            new ConfigItem("overrideWelcomeMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage =    bool.Parse(value); }),
+            new ConfigItem("overrideHelpMessage",       typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =       bool.Parse(value); }),
+            new ConfigItem("showFoundItems",            typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =            bool.Parse(value); }),
+            new ConfigItem("sortFoundItemsPrice",       typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =       bool.Parse(value); }),
+            new ConfigItem("alignFoundItemsPrice",      typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =      bool.Parse(value); }),
+            new ConfigItem("speakInShip",               typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =               bool.Parse(value); }),
+            new ConfigItem("overrideSetNewProfitQuota", typeof(bool), isHostOnly: false, value => { configManager.OverrideSetNewProfitQuota = bool.Parse(value); }),
         ];
 
         scrapEaterConfigItems = [
-            new ConfigItem("scrapEaterChance",       typeof(int),  isHostOnly: false, value => { configManager.ScrapEaterChance =       int.Parse(value);  }, () => { return configManager.ScrapEaterChance.ToString();   }),
-            new ConfigItem("octolarSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.OctolarSpawnWeight =     int.Parse(value);  }, () => { return configManager.OctolarSpawnWeight.ToString(); }),
-            new ConfigItem("takeySpawnWeight",       typeof(int),  isHostOnly: false, value => { configManager.TakeySpawnWeight =       int.Parse(value);  }, () => { return configManager.TakeySpawnWeight.ToString();   }),
-            new ConfigItem("maxwellSpawnWeight",     typeof(int),  isHostOnly: false, value => { configManager.MaxwellSpawnWeight =     int.Parse(value);  }, () => { return configManager.MaxwellSpawnWeight.ToString(); }),
-            new ConfigItem("yippeeSpawnWeight",      typeof(int),  isHostOnly: false, value => { configManager.YippeeSpawnWeight =      int.Parse(value);  }, () => { return configManager.YippeeSpawnWeight.ToString();  }),
+            new ConfigItem("scrapEaterChance",      typeof(int), isHostOnly: true, value => { configManager.ScrapEaterChance =      int.Parse(value); }, () => { return configManager.ScrapEaterChance.ToString();      }),
+            new ConfigItem("octolarSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.OctolarSpawnWeight =    int.Parse(value); }, () => { return configManager.OctolarSpawnWeight.ToString();    }),
+            new ConfigItem("takeySpawnWeight",      typeof(int), isHostOnly: true, value => { configManager.TakeySpawnWeight =      int.Parse(value); }, () => { return configManager.TakeySpawnWeight.ToString();      }),
+            new ConfigItem("maxwellSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.MaxwellSpawnWeight =    int.Parse(value); }, () => { return configManager.MaxwellSpawnWeight.ToString();    }),
+            new ConfigItem("yippeeSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.YippeeSpawnWeight =     int.Parse(value); }, () => { return configManager.YippeeSpawnWeight.ToString();     }),
+            new ConfigItem("cookieFumoSpawnWeight", typeof(int), isHostOnly: true, value => { configManager.CookieFumoSpawnWeight = int.Parse(value); }, () => { return configManager.CookieFumoSpawnWeight.ToString(); }),
         ];
     }
 
@@ -80,9 +82,15 @@ public class ConfigHelper
         return false;
     }
 
-    public static void AddScrapEaterConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue)
+    /// <summary>
+    /// Link your scrap eater spawnWeight config setting to the SellMyScrap config editor.
+    /// </summary>
+    /// <param name="key">spawnWeight config setting key.</param>
+    /// <param name="SetValue">Action for setting your spawnWeight config setting value.</param>
+    /// <param name="GetValue">Func for getting your spawnWeight config setting value.</param>
+    public static void AddScrapEaterConfigItem(string key, Action<string> SetValue, Func<string> GetValue)
     {
-        scrapEaterConfigItems.Add(new ConfigItem(key, type, isHostOnly, SetValue, GetValue));
+        scrapEaterConfigItems.Add(new ConfigItem(key, typeof(int), true, SetValue, GetValue));
     }
 
     private static ConfigItem GetConfigItem(string key)
@@ -123,7 +131,8 @@ public class ConfigHelper
         message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
         message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
         message += "[Misc Settings]\n";
-        message += $"speakInShip:         {configManager.SpeakInShip}\n\n";
+        message += $"speakInShip:               {configManager.SpeakInShip}\n";
+        message += $"overrideSetNewProfitQuota: {configManager.OverrideSetNewProfitQuota}\n\n";
         message += GetScrapEaterConfigSettingsMessage();
 
         return message;

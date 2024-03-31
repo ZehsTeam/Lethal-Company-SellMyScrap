@@ -8,208 +8,124 @@ namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 public class ScrapEaterBehaviour : NetworkBehaviour
 {
-    public Vector3 startPosition = new Vector3(-8.9f, 0f, -3.2f);
-    public Vector3 endPosition = new Vector3(-8.9f, 0f, -6.8f);
-    public Vector3 rotationOffset = new Vector3(0f, 90f, 0f);
+    public bool IsHostOrServer => IsHost || IsServer;
 
-    public Transform mouthTransform;
-    public GameObject modelObject;
-    public MeshRenderer meshRenderer;
-    public AudioSource audioSource;
+    public GameObject modelObject = null;
 
-    [Header("Durations")]
-    [Space(3f)]
-    public float slideDuration = 4f;
-    public float suckDuration = 3.5f;
-    public float pauseDuration = 2f;
+    [HideInInspector]
+    public List<GrabbableObject> targetScrap = new List<GrabbableObject>();
 
-    [Header("Materials")]
-    [Space(3f)]
-    public Material normalMaterial;
-    public Material suckMaterial;
-    public Material[] slideMaterialVariants;
+    private string targetScrapNetworkObjectIdsString;
+    private int clientsReceivedTargetScrap = 0;
+    private int clientsFinishedAnimation = 0;
 
-    [Header("SFX")]
-    [Space(3f)]
-    public AudioClip slideSFX;
-    public AudioClip eatSFX;
-
-    private List<GrabbableObject> scrapToSuck;
-
-    public virtual void Start()
+    protected virtual void Start()
     {
-        transform.SetParent(ScrapHelper.HangarShip.transform);
+        modelObject.SetActive(false);
 
-        transform.localPosition = startPosition;
-        transform.localRotation = Quaternion.identity;
-        transform.Rotate(rotationOffset, Space.Self);
-
-        if (SellMyScrapBase.IsHostOrServer && slideMaterialVariants.Length > 0)
+        if (IsHostOrServer)
         {
-            SetSlideMaterialVariantClientRpc(Random.Range(0, slideMaterialVariants.Length));
+            SetTargetScrapClientRpc(targetScrapNetworkObjectIdsString);
         }
     }
 
-    public override void OnNetworkSpawn()
+    public void SetTargetScrapNetworkObjectIdsString(string networkObjectIdsString)
     {
-        if (SellMyScrapBase.IsHostOrServer)
-        {
-            StartEventClientRpc();
-        }
+        targetScrapNetworkObjectIdsString = networkObjectIdsString;
     }
 
     [ClientRpc]
-    public void SetScrapToSuckClientRpc(string networkObjectIdsString)
+    public void SetTargetScrapClientRpc(string networkObjectIdsString)
     {
-        scrapToSuck = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+        targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
 
-        scrapToSuck.ForEach(item =>
+        targetScrap.ForEach(item =>
         {
             item.grabbable = false;
         });
+
+        ReceivedTargetScrapServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void ReceivedTargetScrapServerRpc()
+    {
+        clientsReceivedTargetScrap++;
+
+        if (clientsReceivedTargetScrap >= GameNetworkManager.Instance.connectedPlayers)
+        {
+            clientsReceivedTargetScrap = 0;
+            OnAllClientsReceivedTargetScrap();
+        }
+    }
+
+    /// <summary>
+    /// Only gets called on the Host/Server
+    /// </summary>
+    protected virtual void OnAllClientsReceivedTargetScrap()
+    {
+        StartEventClientRpc();
     }
 
     [ClientRpc]
-    public void SetSlideMaterialVariantClientRpc(int index)
+    protected virtual void StartEventClientRpc()
     {
-        SetSlideMaterialVariant(index);
+        StartCoroutine(StartEventOnLocalClient());
     }
 
-    [ClientRpc]
-    public void StartEventClientRpc()
+    protected virtual IEnumerator StartEventOnLocalClient()
     {
-        StartCoroutine(StartEvent());
-    }
-
-    public virtual IEnumerator StartEvent()
-    {
+        modelObject.SetActive(true);
         yield return StartCoroutine(StartAnimation());
-
-        EnableSpeakInShipOnServer();
-        yield return new WaitForSeconds(0.5f);
-
-        SellItemsOnServer();
-
-        if (SellMyScrapBase.IsHostOrServer)
-        {
-            gameObject.GetComponent<NetworkObject>().Despawn();
-        }
-    }
-
-    public virtual IEnumerator StartAnimation()
-    {
-        Vector3 skyStartPosition = startPosition;
-        skyStartPosition.y += 150f;
-        transform.localPosition = skyStartPosition;
-
-        yield return StartCoroutine(MoveToPosition(skyStartPosition, startPosition, 2f));
-
-        yield return new WaitForSeconds(1f);
-
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(startPosition, endPosition, slideDuration));
-        StopSFX();
-        yield return new WaitForSeconds(pauseDuration);
-
-        SetMaterial(suckMaterial);
-        SuckScrapToSell();
-        yield return new WaitForSeconds(suckDuration);
-
-        SetMaterial(normalMaterial);
-        PlaySFX(eatSFX);
-        yield return new WaitForSeconds(pauseDuration);
-
-        PlaySFX(slideSFX);
-        yield return StartCoroutine(MoveToPosition(endPosition, startPosition, slideDuration));
-        StopSFX();
-        yield return new WaitForSeconds(1f);
-
-        yield return StartCoroutine(MoveToPosition(startPosition, skyStartPosition, 2f));
-
-        DisableModelObject();
-    }
-
-    protected virtual void SuckScrapToSell()
-    {
-        if (scrapToSuck == null)
-        {
-            SellMyScrapBase.mls.LogWarning("Warning: no scrap found to suck :c");
-            return;
-        }
-
-        scrapToSuck.ForEach(item =>
-        {
-            if (item == null) return;
-
-            SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
-            suckBehaviour.StartCoroutine(suckBehaviour.StartAnimation(mouthTransform, suckDuration - 0.2f));
-        });
-    }
-
-    protected virtual void EnableSpeakInShipOnServer()
-    {
-        if (!SellMyScrapBase.IsHostOrServer) return;
-
-        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
-    }
-
-    protected virtual void SellItemsOnServer()
-    {
-        if (!SellMyScrapBase.IsHostOrServer) return;
-
-        DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
-    }
-
-    protected virtual IEnumerator MoveToPosition(Vector3 from, Vector3 to, float duration)
-    {
-        float timer = 0f;
-
-        while (timer <= duration)
-        {
-            float percent = (1f / duration) * timer;
-            Vector3 position = from + (to - from) * percent;
-
-            transform.localPosition = position;
-
-            yield return null;
-            timer += Time.deltaTime;
-        }
-
-        transform.localPosition = to;
-    }
-
-    protected void PlaySFX(AudioClip audioClip, float volumeScale = 1f)
-    {
-        if (audioSource == null || audioClip == null) return;
-
-        audioSource.PlayOneShot(audioClip, volumeScale);
-    }
-
-    protected void StopSFX()
-    {
-        if (audioSource == null) return;
-
-        audioSource.Stop();
-    }
-
-    protected void SetMaterial(Material material)
-    {
-        if (meshRenderer == null || material == null) return;
-
-        meshRenderer.material = material;
-    }
-
-    protected void SetSlideMaterialVariant(int index)
-    {
-        if (index < 0 || index > slideMaterialVariants.Length - 1) return;
-
-        SetMaterial(slideMaterialVariants[index]);
-    }
-
-    protected void DisableModelObject()
-    {
-        if (modelObject == null) return;
-
         modelObject.SetActive(false);
+
+        AddTargetScrapToDepositItemsDesk();
+        AnimationFinishedServerRpc();
+    }
+
+    protected virtual IEnumerator StartAnimation()
+    {
+        // Do your animation in here.
+
+        yield break;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void AnimationFinishedServerRpc()
+    {
+        clientsFinishedAnimation++;
+
+        if (clientsFinishedAnimation >= GameNetworkManager.Instance.connectedPlayers)
+        {
+            clientsFinishedAnimation = 0;
+            OnAllClientsFinishedAnimation();
+        }
+    }
+
+    /// <summary>
+    /// Only gets called on the Host/Server
+    /// </summary>
+    protected virtual void OnAllClientsFinishedAnimation()
+    {
+        SellTargetScrapOnServer();
+        GetComponent<NetworkObject>().Despawn();
+    }
+
+    protected void AddTargetScrapToDepositItemsDesk()
+    {
+        if (targetScrap.Count == 0) return;
+
+        DepositItemsDeskPatch.PlaceItemsOnCounter(targetScrap);
+        targetScrap.Clear();
+    }
+
+    protected void SellTargetScrapOnServer()
+    {
+        DepositItemsDeskPatch.SellItemsOnServer();
+    }
+
+    protected Transform GetHangarShipTransform()
+    {
+        return ScrapHelper.HangarShip.transform;
     }
 }

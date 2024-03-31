@@ -165,7 +165,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (scrapToSell == null || sellRequest == null) yield return null;
         if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
-        if (DepositItemsDeskPatch.DepositItemsDesk == null)
+        if (DepositItemsDeskPatch.depositItemsDesk == null)
         {
             mls.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;
@@ -191,13 +191,10 @@ public class SellMyScrapBase : BaseUnityPlugin
             yield break;
         }
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(scrapToSell.scrap);
         PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
-        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
+        yield return new WaitUntil(PluginNetworkBehaviour.Instance.AllClientsPlacedItemsOnCounter);
 
-        yield return new WaitForSeconds(0.5f);
-
-        DepositItemsDeskPatch.DepositItemsDesk.SellItemsOnServer();
+        DepositItemsDeskPatch.SellItemsOnServer();
 
         scrapToSell = null;
     }

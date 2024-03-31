@@ -8,9 +8,11 @@ internal class TimeOfDayPatch
 {
     [HarmonyPatch("SetNewProfitQuota")]
     [HarmonyPrefix]
+    [HarmonyPriority(Priority.LowerThanNormal)]
     static bool SetNewProfitQuotaPatch(ref TimeOfDay __instance)
     {
         if (!SellMyScrapBase.IsHostOrServer) return true;
+        if (!SellMyScrapBase.Instance.ConfigManager.OverrideSetNewProfitQuota) return true;
 
         if (__instance.daysUntilDeadline < 0)
         {
@@ -34,6 +36,6 @@ internal class TimeOfDayPatch
     [HarmonyPrefix]
     static void SyncNewProfitQuotaClientRpcPatch(ref TimeOfDay __instance, ref int overtimeBonus)
     {
-        SellMyScrapBase.mls.LogInfo($"\n\nSyncNewProfitQuotaClientRpc();\ndaysUntilDeadline: {__instance.daysUntilDeadline}\novertimeBonus: {overtimeBonus}\n");
+        SellMyScrapBase.mls.LogInfo($"\n\nSyncNewProfitQuotaClientRpc();\ndaysUntilDeadline: {__instance.daysUntilDeadline}\novertimeBonus: ${overtimeBonus}\n");
     }
 }

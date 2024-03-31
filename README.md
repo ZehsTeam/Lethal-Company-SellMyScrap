@@ -33,7 +33,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Using the `-se` flag will spawn a random scrap eater.
     * Usage: `<sell-command> -se`
 * Using the `-se:<number>` flag will spawn a scrap eater by their index (Starts at 1).
-    * 1 = Octolar, 2 = Takey, 3 = Maxwell
+    * 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo
     * Usage: `<sell-command> -se:<number>`
 
 <h4>Additional info for the <code>sell &lt;amount&gt;</code> command.</h4>
@@ -95,6 +95,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `overrideSetNewProfitQuota` | `Boolean` | `true` | Will override the SetNewProfitQuota function in TimeOfDay. |
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -103,6 +104,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
 | `maxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
 | `yippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
+| `cookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -116,7 +118,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/IQPnu83.png" width="273px">
+    <img src="https://i.imgur.com/HzIxC7E.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -149,12 +151,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/pCt662C.png" width="100%">
+    <img src="https://i.imgur.com/R29eliU.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/PznedMD.png" width="412px">
-    <img src="https://i.imgur.com/XPkIVrU.png" width="412px">
+    <img src="https://i.imgur.com/Q2sjBle.png" width="412px">
+    <img src="https://i.imgur.com/nzWxuDz.png" width="412px">
 </div>
 
 ## My Other Mods
@@ -171,7 +173,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/"><img src="https://i.imgur.com/29IA990.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/"><img src="https://i.imgur.com/ZNcffJ7.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/"><img src="https://i.imgur.com/QmIID55.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/"><img src="https://i.imgur.com/3nVYwpO.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/"><img src="https://i.imgur.com/Je0rHqE.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/"><img src="https://i.imgur.com/ENIZdU0.png" width="80px"></a>
 
 You have reached the bottom of the README. Thank you for reading <3

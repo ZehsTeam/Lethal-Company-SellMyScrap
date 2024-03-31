@@ -10,20 +10,7 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
-    private static DepositItemsDesk depositItemsDesk;
-
-    public static DepositItemsDesk DepositItemsDesk
-    {
-        get
-        {
-            if (depositItemsDesk == null)
-            {
-                depositItemsDesk = Object.FindAnyObjectByType<DepositItemsDesk>();
-            }
-
-            return depositItemsDesk;
-        }
-    }
+    public static DepositItemsDesk depositItemsDesk => Object.FindAnyObjectByType<DepositItemsDesk>();
 
     private static int clipIndex = -1;
     private static bool speakInShip = false;
@@ -42,7 +29,7 @@ internal class DepositItemsDeskPatch
 
     [HarmonyPatch("MicrophoneSpeak")]
     [HarmonyPrefix]
-    static void MicrophoneSpeakPatch(ref DepositItemsDesk __instance, ref System.Random ___CompanyLevelRandom)
+    static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance, ref System.Random ___CompanyLevelRandom)
     {
         List<AudioClip> audioClips = __instance.microphoneAudios.ToList();
         audioClips.AddRange(__instance.rareMicrophoneAudios);
@@ -70,6 +57,8 @@ internal class DepositItemsDeskPatch
         }
 
         clipIndex = -1;
+
+        return false;
     }
 
     private static int GetRandomAudioClipIndex(DepositItemsDesk __instance, System.Random ___CompanyLevelRandom)
@@ -98,27 +87,33 @@ internal class DepositItemsDeskPatch
         speakInShip = true;
     }
 
+    public static void SellItemsOnServer()
+    {
+        PluginNetworkBehaviour.Instance.EnableSpeakInShipClientRpc();
+        depositItemsDesk.SellItemsOnServer();
+    }
+
     public static void PlaceItemsOnCounter(List<GrabbableObject> grabbableObjects)
     {
-        if (DepositItemsDesk == null) return;
+        if (depositItemsDesk == null) return;
 
         grabbableObjects.ForEach(PlaceItemOnCounter);
     }
 
     public static void PlaceItemOnCounter(GrabbableObject grabbableObject)
     {
-        if (DepositItemsDesk == null) return;
+        if (grabbableObject == null || depositItemsDesk == null) return;
+        if (depositItemsDesk.itemsOnCounter.Contains(grabbableObject)) return;
+
+        depositItemsDesk.itemsOnCounter.Add(grabbableObject);
 
         NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
-        if (DepositItemsDesk.itemsOnCounter.Contains(grabbableObject)) return;
+        depositItemsDesk.itemsOnCounterNetworkObjects.Add(networkObject);
 
-        if (SellMyScrapBase.IsHostOrServer)
-        {
-            DepositItemsDesk.itemsOnCounterNetworkObjects.Add(networkObject);
-            DepositItemsDesk.itemsOnCounter.Add(grabbableObject);
-        }
+        grabbableObject.EnablePhysics(false);
+        grabbableObject.EnableItemMeshes(false);
 
-        Transform parent = DepositItemsDesk.deskObjectsContainer.transform;
-        grabbableObject.transform.SetParent(parent, true);
+        grabbableObject.transform.SetParent(depositItemsDesk.deskObjectsContainer.transform);
+        grabbableObject.transform.localPosition = Vector3.zero;
     }
 }

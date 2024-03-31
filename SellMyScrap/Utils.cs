@@ -89,7 +89,7 @@ public class Utils
         }
     }
 
-    public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = false, int damage = 20, float minDamageRange = 0f, float maxDamageRange = 1f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
+    public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
     {
         Debug.Log("Spawning explosion at pos: {explosionPosition}");
 
