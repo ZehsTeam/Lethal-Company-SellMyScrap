@@ -15,7 +15,6 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     [HideInInspector]
     public List<GrabbableObject> targetScrap = new List<GrabbableObject>();
 
-    private string targetScrapNetworkObjectIdsString;
     private int clientsReceivedTargetScrap = 0;
     private int clientsFinishedAnimation = 0;
 
@@ -25,25 +24,32 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
         if (IsHostOrServer)
         {
-            SetTargetScrapClientRpc(targetScrapNetworkObjectIdsString);
+            if (GameNetworkManager.Instance.connectedPlayers > 1)
+            {
+                SetTargetScrapClientRpc(NetworkUtils.GetNetworkObjectIdsString(targetScrap));
+            }
+            else
+            {
+                StartCoroutine(StartEventOnLocalClient());
+            }
         }
     }
 
-    public void SetTargetScrapNetworkObjectIdsString(string networkObjectIdsString)
+    public void SetTargetScrapOnServer(List<GrabbableObject> targetScrap)
     {
-        targetScrapNetworkObjectIdsString = networkObjectIdsString;
+        this.targetScrap = targetScrap;
+        this.targetScrap.ForEach(item => item.grabbable = false);
     }
 
     [ClientRpc]
     public void SetTargetScrapClientRpc(string networkObjectIdsString)
     {
-        targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
-
-        targetScrap.ForEach(item =>
+        if (!IsHostOrServer)
         {
-            item.grabbable = false;
-        });
-
+            targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+            targetScrap.ForEach(item => item.grabbable = false);
+        }
+        
         ReceivedTargetScrapServerRpc();
     }
 

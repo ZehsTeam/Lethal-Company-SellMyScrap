@@ -74,7 +74,9 @@ public class ScrapEaterManager
         networkObject.Spawn(destroyWithScene: true);
 
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
-        behaviour.SetTargetScrapNetworkObjectIdsString(NetworkUtils.GetNetworkObjectIdsString(scrap));
+        behaviour.SetTargetScrapOnServer(scrap);
+
+        SellMyScrapBase.mls.LogInfo($"Spawned scrap eater #{index + 1}");
     }
 
     private static int GetRandomScrapEaterIndex()

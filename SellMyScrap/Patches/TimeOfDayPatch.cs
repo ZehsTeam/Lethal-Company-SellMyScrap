@@ -36,6 +36,6 @@ internal class TimeOfDayPatch
     [HarmonyPrefix]
     static void SyncNewProfitQuotaClientRpcPatch(ref TimeOfDay __instance, ref int overtimeBonus)
     {
-        SellMyScrapBase.mls.LogInfo($"\n\nSyncNewProfitQuotaClientRpc();\ndaysUntilDeadline: {__instance.daysUntilDeadline}\novertimeBonus: ${overtimeBonus}\n");
+        SellMyScrapBase.mls.LogInfo($"SyncNewProfitQuotaClientRpc(); daysUntilDeadline: {__instance.daysUntilDeadline}, overtimeBonus: ${overtimeBonus}\n");
     }
 }

@@ -1,6 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
@@ -16,13 +17,20 @@ internal class GameNetworkManagerPatch
 
     private static void AddNetworkPrefabs()
     {
-        NetworkManager.Singleton.AddNetworkPrefab(Content.networkHandlerPrefab);
-        SellMyScrapBase.mls.LogInfo($"Registered \"{Content.networkHandlerPrefab.name}\" network prefab.");
+        AddNetworkPrefab(Content.networkHandlerPrefab);
 
         ScrapEaterManager.scrapEaters.ForEach(scrapEater =>
         {
-            NetworkManager.Singleton.AddNetworkPrefab(scrapEater.spawnPrefab);
-            SellMyScrapBase.mls.LogInfo($"Registered \"{scrapEater.spawnPrefab.name}\" network prefab.");
+            AddNetworkPrefab(scrapEater.spawnPrefab);
         });
+    }
+
+    private static void AddNetworkPrefab(GameObject prefab)
+    {
+        if (prefab == null) return;
+
+        NetworkManager.Singleton.AddNetworkPrefab(prefab);
+
+        SellMyScrapBase.mls.LogInfo($"Registered \"{prefab.name}\" network prefab.");
     }
 }

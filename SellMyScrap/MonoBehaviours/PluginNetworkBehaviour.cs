@@ -10,8 +10,6 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 {
     public static PluginNetworkBehaviour Instance;
 
-    private int clientsPlacedItemsOnCounter = 0;
-
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -42,25 +40,9 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void PlaceItemsOnCounterClientRpc(string networkObjectIdsString)
     {
+        if (SellMyScrapBase.IsHostOrServer) return;
+
         DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
-        PlacedItemsOnCounterServerRpc();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void PlacedItemsOnCounterServerRpc()
-    {
-        clientsPlacedItemsOnCounter++;
-    }
-
-    public bool AllClientsPlacedItemsOnCounter()
-    {
-        if (clientsPlacedItemsOnCounter >= GameNetworkManager.Instance.connectedPlayers)
-        {
-            clientsPlacedItemsOnCounter = 0;
-            return true;
-        }
-
-        return false;
     }
 
     [ClientRpc]

@@ -73,6 +73,7 @@ internal class NetworkUtils
 
     public static NetworkObject GetNetworkObject(int networkObjectId)
     {
-        return NetworkManager.Singleton.SpawnManager.SpawnedObjects[(ulong)networkObjectId];
+        NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue((ulong)networkObjectId, out NetworkObject networkObject);
+        return networkObject;
     }
 }
