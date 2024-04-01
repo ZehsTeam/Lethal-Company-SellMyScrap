@@ -33,6 +33,7 @@ public class ScrapEaterManager
     public static bool CanUseScrapEater()
     {
         int spawnChance = SellMyScrapBase.Instance.ConfigManager.ScrapEaterChance;
+        if (spawnChance <= 0) return false;
         return Random.Range(1, 100) <= spawnChance;
     }
 
