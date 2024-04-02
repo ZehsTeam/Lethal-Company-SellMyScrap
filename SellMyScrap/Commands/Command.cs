@@ -147,11 +147,11 @@ public class CommandFlag
 
     public bool canUse => isHostOnly ? SellMyScrapBase.IsHostOrServer : true;
 
-    public CommandFlag(string key, bool isHostOnly = false, bool canHaveExtraData = false, string data = "")
+    public CommandFlag(string key, bool isHostOnly = false, bool canHaveData = false, string data = "")
     {
         this.key = key;
         this.isHostOnly = isHostOnly;
-        this.canHaveData = canHaveExtraData;
+        this.canHaveData = canHaveData;
         this.data = data;
     }
 }

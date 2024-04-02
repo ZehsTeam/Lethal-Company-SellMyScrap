@@ -28,6 +28,7 @@ internal class HelpCommand : Command
         message += "sell item <name>   sell-item <name>\n";
         message += "view scrap         view-scrap\n";
         message += "view all scrap     view-all-scrap\n";
+        message += "view overtime      view-overtime\n";
         message += "view config        view-config\n";
         message += "edit config        edit-config\n\n";
 

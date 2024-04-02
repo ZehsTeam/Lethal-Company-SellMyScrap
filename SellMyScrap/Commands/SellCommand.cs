@@ -7,7 +7,7 @@ internal class SellCommand : Command
 {
     public SellCommand()
     {
-        flags.Add(new CommandFlag("-se", canHaveExtraData: true));
+        flags.Add(new CommandFlag("-se", canHaveData: true));
     }
 
     protected static int CompanyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
@@ -66,7 +66,7 @@ internal class SellCommand : Command
     protected static string GetOvertimeBonusString(int value)
     {
         int overtimeBonus = Utils.GetOvertimeBonus(value);
-        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${overtimeBonus + value})\n\n";
+        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${value + overtimeBonus})\n\n";
     }
 
     /// <summary>

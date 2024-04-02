@@ -12,6 +12,7 @@ public class SyncedConfig
     private ConfigEntry<bool> SellGiftsCfg;
     private ConfigEntry<bool> SellShotgunsCfg;
     private ConfigEntry<bool> SellAmmoCfg;
+    private ConfigEntry<bool> SellKnifeCfg;
     private ConfigEntry<bool> SellPicklesCfg;
 
     // Advanced Sell Settings (Synced)
@@ -77,7 +78,20 @@ public class SyncedConfig
             SyncedConfigsChanged();
         }
     }
-    
+
+    internal bool SellKnife
+    {
+        get
+        {
+            return hostConfigData == null ? SellKnifeCfg.Value : hostConfigData.sellKnife;
+        }
+        set
+        {
+            SellKnifeCfg.Value = value;
+            SyncedConfigsChanged();
+        }
+    }
+
     internal bool SellPickles
     { 
         get
@@ -203,6 +217,11 @@ public class SyncedConfig
             new ConfigDefinition("Sell Settings", "sellAmmo"),
             false,
             new ConfigDescription("Do you want to sell Ammo?")
+        );
+        SellKnifeCfg = config.Bind(
+            new ConfigDefinition("Sell Settings", "sellKnife"),
+            false,
+            new ConfigDescription("Do you want to sell Kitchen knifes?")
         );
         SellPicklesCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),

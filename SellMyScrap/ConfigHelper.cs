@@ -18,6 +18,7 @@ public class ConfigHelper
             new ConfigItem("sellGifts",                 typeof(bool), isHostOnly: true,  value => { configManager.SellGifts =                 bool.Parse(value); }),
             new ConfigItem("sellShotguns",              typeof(bool), isHostOnly: true,  value => { configManager.SellShotguns =              bool.Parse(value); }),
             new ConfigItem("sellAmmo",                  typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =                  bool.Parse(value); }),
+            new ConfigItem("sellKnife",                 typeof(bool), isHostOnly: true,  value => { configManager.SellKnife =                 bool.Parse(value); }),
             new ConfigItem("sellPickles",               typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =               bool.Parse(value); }),
             new ConfigItem("sellScrapWorthZero",        typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =        bool.Parse(value); }),
             new ConfigItem("onlySellScrapOnFloor",      typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =      bool.Parse(value); }),
@@ -83,7 +84,7 @@ public class ConfigHelper
     }
 
     /// <summary>
-    /// Link your scrap eater spawnWeight config setting to the SellMyScrap config editor.
+    /// Link your scrap eater spawnWeight config setting to the SellMyScrap terminal config editor.
     /// </summary>
     /// <param name="key">spawnWeight config setting key.</param>
     /// <param name="SetValue">Action for setting your spawnWeight config setting value.</param>
@@ -113,14 +114,15 @@ public class ConfigHelper
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
-        string syncedMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Synced with host)";
+        string syncedWithHostMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Synced with host)";
 
-        string message = $"[Sell Settings]{syncedMessage}\n";
+        string message = $"[Sell Settings]{syncedWithHostMessage}\n";
         message += $"sellGifts:    {configManager.SellGifts}\n";
         message += $"sellShotguns: {configManager.SellShotguns}\n";
         message += $"sellAmmo:     {configManager.SellAmmo}\n";
+        message += $"sellKnife:    {configManager.SellKnife}\n";
         message += $"sellPickles:  {configManager.SellPickles}\n\n";
-        message += $"[Advanced Sell Settings]{syncedMessage}\n";
+        message += $"[Advanced Sell Settings]{syncedWithHostMessage}\n";
         message += $"sellScrapWorthZero:   {configManager.SellScrapWorthZero}\n";
         message += $"onlySellScrapOnFloor: {configManager.OnlySellScrapOnFloor}\n";
         message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
@@ -143,7 +145,9 @@ public class ConfigHelper
         string[] keys = scrapEaterConfigItems.Select(item => item.key).ToArray();
         int maxLength = Utils.GetLongestStringFromArray(keys).Length + 1;
 
-        string message = "[Scrap Eater Settings]\n";
+        string hostOnlyMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Host only)";
+
+        string message = $"[Scrap Eater Settings]{hostOnlyMessage}\n";
         
         scrapEaterConfigItems.ForEach(configItem =>
         {

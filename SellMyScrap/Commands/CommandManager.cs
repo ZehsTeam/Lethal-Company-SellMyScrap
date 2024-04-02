@@ -18,6 +18,7 @@ internal class CommandManager
             new SellAmountCommand(),
             new ViewScrapCommand(),
             new ViewAllScrapCommand(),
+            new ViewOvertimeCommand(),
             new ViewConfigCommand(),
             new EditConfigCommand(),
         ];

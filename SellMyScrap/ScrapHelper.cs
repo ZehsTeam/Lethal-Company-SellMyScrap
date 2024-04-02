@@ -102,6 +102,7 @@ internal class ScrapHelper
         if (itemName == "Gift" && !configManager.SellGifts) return false;
         if (itemName == "Shotgun" && !configManager.SellShotguns) return false;
         if (itemName == "Ammo" && !configManager.SellAmmo) return false;
+        if (itemName == "Kitchen knife" && !configManager.SellKnife) return false;
         if (itemName == "Jar of pickles" && !configManager.SellPickles) return false;
 
         // Dont sell list
