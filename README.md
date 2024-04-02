@@ -56,6 +56,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell` | Shows a help message for this mod. |
 | `view scrap` | Shows a list of all the scrap in the ship. |
 | `view all scrap` | Shows a list of all the registered scrap. |
+| `view overtime` | Shows your current overtime bonus. |
 | `view config` | Shows your config settings. |
 | `edit config` | Edit config settings from the terminal. |
 
@@ -69,6 +70,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
 | `sellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
 | `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
+| `sellKnife` | `Boolean` | `false` | Do you want to sell Kitchen knifes? |
 | `sellPickles` | `Boolean` | `true` | Do you want to sell Jar of pickles? |
 
 | Advanced Sell Settings | Setting type | Default value | Description |
@@ -118,7 +120,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/HzIxC7E.png" width="273px">
+    <img src="https://i.imgur.com/Kb5qb79.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -149,14 +151,19 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
     <img src="https://imgur.com/ZMT7cQE.png" width="412px">
     <img src="https://imgur.com/pyzjL1X.png" width="412px">
 </div>
+<h4><code>view overtime</code></h4>
+<div>
+    <img src="https://i.imgur.com/BV3UNi3.png" width="412px">
+    <img src="https://i.imgur.com/Qq5RCwQ.png" width="412px">
+</div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/R29eliU.png" width="100%">
+    <img src="https://i.imgur.com/HbDBOlJ.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/Q2sjBle.png" width="412px">
-    <img src="https://i.imgur.com/nzWxuDz.png" width="412px">
+    <img src="https://i.imgur.com/W758nVd.png" width="412px">
+    <img src="https://i.imgur.com/3SnCC2R.png" width="412px">
 </div>
 
 ## My Other Mods
