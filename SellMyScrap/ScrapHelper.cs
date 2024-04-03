@@ -7,24 +7,24 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapHelper
 {
-    private static GameObject hangarShip;
-    public static GameObject HangarShip
+    private static GameObject _hangarShip;
+    public static GameObject hangarShip
     {
         get
         {
-            if (hangarShip == null)
+            if (_hangarShip == null)
             {
-                hangarShip = GameObject.Find("/Environment/HangarShip");
+                _hangarShip = GameObject.Find("/Environment/HangarShip");
             }
 
-            return hangarShip;
+            return _hangarShip;
         }
     }
 
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        GrabbableObject[] itemsInShip = HangarShip.GetComponentsInChildren<GrabbableObject>();
+        GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
         string[] dontSellList = SellMyScrapBase.Instance.ConfigManager.DontSellListJson;
@@ -60,49 +60,49 @@ internal class ScrapHelper
 
     public static List<Item> GetAllScrapItems()
     {
-        List<SelectableLevel> levels = StartOfRound.Instance.levels.ToList();
-        List<Item> scrap = new List<Item>();
+        List<Item> allScrapItems = new List<Item>();
 
-        levels.ForEach(level =>
+        StartOfRound.Instance.allItemsList.itemsList.ForEach(item =>
         {
-            level.spawnableScrap.ForEach(item =>
+            if (IsScrapItem(item))
             {
-                if (!item.spawnableItem.isScrap) return;
-                if (item.spawnableItem.lockedInDemo) return;
-
-                if (scrap.Find(a => a.itemName == item.spawnableItem.itemName))
-                {
-                    return;
-                }
-
-                scrap.Add(item.spawnableItem);
-            });
+                allScrapItems.Add(item);
+            }
         });
 
-        return scrap;
+        return allScrapItems;
     }
 
-    private static bool IsScrapItem(GrabbableObject item)
+    private static bool IsScrapItem(GrabbableObject grabbableObject)
     {
-        if (!item.itemProperties.isScrap) return false;
-        if (item.isHeld || item.isPocketed || !item.grabbable) return false;
+        if (grabbableObject == null) return false;
+        if (!grabbableObject.itemProperties.isScrap) return false;
+        if (grabbableObject.isHeld || grabbableObject.isPocketed || !grabbableObject.grabbable) return false;
 
         return true;
     }
 
-    private static bool IsAllowedScrapItem(GrabbableObject item, string[] dontSellList)
+    private static bool IsScrapItem(Item item)
+    {
+        if (item == null) return false;
+        if (!item.isScrap) return false;
+
+        return true;
+    }
+
+    private static bool IsAllowedScrapItem(GrabbableObject grabbableObject, string[] dontSellList)
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
-        if (item.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
-        if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(item)) return false;
+        if (grabbableObject.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
+        if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(grabbableObject)) return false;
 
-        string itemName = item.itemProperties.itemName;
+        string itemName = grabbableObject.itemProperties.itemName;
 
         if (itemName == "Gift" && !configManager.SellGifts) return false;
         if (itemName == "Shotgun" && !configManager.SellShotguns) return false;
         if (itemName == "Ammo" && !configManager.SellAmmo) return false;
-        if (itemName == "Kitchen knife" && !configManager.SellKnife) return false;
+        if (itemName == "Kitchen knife" && !configManager.SellKnives) return false;
         if (itemName == "Jar of pickles" && !configManager.SellPickles) return false;
 
         // Dont sell list
@@ -114,13 +114,13 @@ internal class ScrapHelper
         return true;
     }
     
-    private static bool IsScrapOnFloor(GrabbableObject item)
+    private static bool IsScrapOnFloor(GrabbableObject grabbableObject)
     {
-        BoxCollider boxCollider = item.GetComponent<BoxCollider>();
+        BoxCollider boxCollider = grabbableObject.GetComponent<BoxCollider>();
         if (boxCollider == null) return true;
 
         Bounds bounds = boxCollider.bounds;
-        float shipY = HangarShip.transform.position.y;
+        float shipY = hangarShip.transform.position.y;
         float bottomY = bounds.center.y - bounds.extents.y;
         float yOffset = bottomY - shipY;
 

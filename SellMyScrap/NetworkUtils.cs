@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class NetworkUtils
+public class NetworkUtils
 {
     public static string ConvertIntListToString(List<int> list)
     {

@@ -7,9 +7,9 @@ namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
 public class ScrapEaterManager
 {
-    public static List<ScrapEater> scrapEaters = new List<ScrapEater>();
+    internal static List<ScrapEater> scrapEaters = new List<ScrapEater>();
 
-    public static void Initialize()
+    internal static void Initialize()
     {
         scrapEaters = [
             new ScrapEater(Content.octolarScrapEaterPrefab, () => {
@@ -30,14 +30,14 @@ public class ScrapEaterManager
         ];
     }
 
-    public static bool CanUseScrapEater()
+    internal static bool CanUseScrapEater()
     {
         int spawnChance = SellMyScrapBase.Instance.ConfigManager.ScrapEaterChance;
         if (spawnChance <= 0) return false;
         return Random.Range(1, 100) <= spawnChance;
     }
 
-    public static bool HasScrapEater(int index)
+    internal static bool HasScrapEater(int index)
     {
         if (scrapEaters.Count == 0) return false;
         if (index < 0 || index > scrapEaters.Count - 1) return false;
@@ -55,7 +55,7 @@ public class ScrapEaterManager
         scrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
     }
 
-    public static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
+    internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
     {
         if (!SellMyScrapBase.IsHostOrServer) return;
 
@@ -65,7 +65,7 @@ public class ScrapEaterManager
         StartScrapEaterOnServer(index, scrap);
     }
 
-    public static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
+    internal static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
     {
         if (!SellMyScrapBase.IsHostOrServer) return;
 

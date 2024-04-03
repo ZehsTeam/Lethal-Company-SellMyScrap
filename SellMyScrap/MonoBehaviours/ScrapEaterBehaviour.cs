@@ -42,7 +42,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SetTargetScrapClientRpc(string networkObjectIdsString)
+    protected void SetTargetScrapClientRpc(string networkObjectIdsString)
     {
         if (!IsHostOrServer)
         {
@@ -132,6 +132,6 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
     protected Transform GetHangarShipTransform()
     {
-        return ScrapHelper.HangarShip.transform;
+        return ScrapHelper.hangarShip.transform;
     }
 }

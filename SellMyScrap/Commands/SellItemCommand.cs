@@ -52,9 +52,11 @@ internal class SellItemCommand : SellCommand
 
     private static string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
+        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.realValue}\n";
+        message += GetQuotaFulfilledString();
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
+        message += "\n";
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {

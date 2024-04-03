@@ -165,7 +165,7 @@ public class SellMyScrapBase : BaseUnityPlugin
         if (scrapToSell == null || sellRequest == null) yield return null;
         if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
-        if (DepositItemsDeskPatch.depositItemsDesk == null)
+        if (DepositItemsDeskPatch.Instance == null)
         {
             mls.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;

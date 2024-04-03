@@ -45,10 +45,9 @@ internal class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         PlayAudioSource(movementAudio);
         yield return StartCoroutine(MoveToPosition(startPosition, endPosition, movementDuration));
         StopAudioSource(movementAudio);
-        yield return new WaitForSeconds(pauseDuration / 3f);
-
-        PlayOneShotSFX(beforeEatSFX);
-        yield return new WaitForSeconds(pauseDuration / 3f * 2f);
+        yield return new WaitForSeconds(pauseDuration);
+        yield return new WaitForSeconds(PlayOneShotSFX(beforeEatSFX));
+        yield return new WaitForSeconds(pauseDuration);
 
         // Move targetScrap to mouthTransform over time.
         MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
@@ -56,8 +55,8 @@ internal class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
 
-        float length = PlayOneShotSFX(voiceLineSFX, voiceLineIndex);
-        yield return new WaitForSeconds(length + 1f);
+        yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, voiceLineIndex));
+        yield return new WaitForSeconds(pauseDuration);
 
         // Move ScrapEater to startPosition
         PlayAudioSource(movementAudio);

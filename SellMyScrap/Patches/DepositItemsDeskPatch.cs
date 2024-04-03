@@ -10,7 +10,19 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
-    public static DepositItemsDesk depositItemsDesk => Object.FindAnyObjectByType<DepositItemsDesk>();
+    private static DepositItemsDesk instance;
+    public static DepositItemsDesk Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = Object.FindFirstObjectByType<DepositItemsDesk>();
+            }
+
+            return instance;
+        }
+    }
 
     private static System.Random companyLevelRandom = new System.Random();
     private static int clipIndex = -1;
@@ -73,10 +85,10 @@ internal class DepositItemsDeskPatch
     {
         if (companyLevelRandom.NextDouble() < 0.029999999329447746)
         {
-            return companyLevelRandom.Next(0, depositItemsDesk.microphoneAudios.Length);
+            return companyLevelRandom.Next(0, Instance.microphoneAudios.Length);
         }
 
-        return companyLevelRandom.Next(0, depositItemsDesk.rareMicrophoneAudios.Length);
+        return companyLevelRandom.Next(0, Instance.rareMicrophoneAudios.Length);
     }
 
     public static void SetMicrophoneSpeakDataOnClient(bool _speakInShip, int _clipIndex)
@@ -96,30 +108,30 @@ internal class DepositItemsDeskPatch
     public static void SellItemsOnServer()
     {
         speakInShip = true;
-        depositItemsDesk.SellItemsOnServer();
+        Instance.SellItemsOnServer();
     }
 
     public static void PlaceItemsOnCounter(List<GrabbableObject> grabbableObjects)
     {
-        if (depositItemsDesk == null) return;
+        if (Instance == null) return;
 
         grabbableObjects.ForEach(PlaceItemOnCounter);
     }
 
     public static void PlaceItemOnCounter(GrabbableObject grabbableObject)
     {
-        if (grabbableObject == null || depositItemsDesk == null) return;
-        if (depositItemsDesk.itemsOnCounter.Contains(grabbableObject)) return;
+        if (grabbableObject == null || Instance == null) return;
+        if (Instance.itemsOnCounter.Contains(grabbableObject)) return;
 
-        depositItemsDesk.itemsOnCounter.Add(grabbableObject);
+        Instance.itemsOnCounter.Add(grabbableObject);
 
         NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
-        depositItemsDesk.itemsOnCounterNetworkObjects.Add(networkObject);
+        Instance.itemsOnCounterNetworkObjects.Add(networkObject);
 
         grabbableObject.EnablePhysics(false);
         grabbableObject.EnableItemMeshes(false);
 
-        grabbableObject.transform.SetParent(depositItemsDesk.deskObjectsContainer.transform);
+        grabbableObject.transform.SetParent(Instance.deskObjectsContainer.transform);
         grabbableObject.transform.localPosition = Vector3.zero;
     }
 }

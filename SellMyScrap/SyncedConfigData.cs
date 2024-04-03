@@ -11,7 +11,7 @@ public class SyncedConfigData : INetworkSerializable
     public bool sellGifts;
     public bool sellShotguns;
     public bool sellAmmo;
-    public bool sellKnife;
+    public bool sellKnives;
     public bool sellPickles;
 
     // Advanced Sell Settings
@@ -27,7 +27,7 @@ public class SyncedConfigData : INetworkSerializable
         sellGifts = config.SellGifts;
         sellShotguns = config.SellShotguns;
         sellAmmo = config.SellAmmo;
-        sellKnife = config.SellKnife;
+        sellKnives = config.SellKnives;
         sellPickles = config.SellPickles;
 
         // Advanced Sell Settings
@@ -42,7 +42,7 @@ public class SyncedConfigData : INetworkSerializable
         serializer.SerializeValue(ref sellGifts);
         serializer.SerializeValue(ref sellShotguns);
         serializer.SerializeValue(ref sellAmmo);
-        serializer.SerializeValue(ref sellKnife);
+        serializer.SerializeValue(ref sellKnives);
         serializer.SerializeValue(ref sellPickles);
 
         // Advanced Sell Settings

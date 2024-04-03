@@ -10,7 +10,7 @@ public class ConfigHelper
     private static List<ConfigItem> configItems = new List<ConfigItem>();
     private static List<ConfigItem> scrapEaterConfigItems = new List<ConfigItem>();
 
-    public static void Initialize()
+    internal static void Initialize()
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
@@ -18,7 +18,7 @@ public class ConfigHelper
             new ConfigItem("sellGifts",                 typeof(bool), isHostOnly: true,  value => { configManager.SellGifts =                 bool.Parse(value); }),
             new ConfigItem("sellShotguns",              typeof(bool), isHostOnly: true,  value => { configManager.SellShotguns =              bool.Parse(value); }),
             new ConfigItem("sellAmmo",                  typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =                  bool.Parse(value); }),
-            new ConfigItem("sellKnife",                 typeof(bool), isHostOnly: true,  value => { configManager.SellKnife =                 bool.Parse(value); }),
+            new ConfigItem("sellKnives",                typeof(bool), isHostOnly: true,  value => { configManager.SellKnives =                bool.Parse(value); }),
             new ConfigItem("sellPickles",               typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =               bool.Parse(value); }),
             new ConfigItem("sellScrapWorthZero",        typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =        bool.Parse(value); }),
             new ConfigItem("onlySellScrapOnFloor",      typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =      bool.Parse(value); }),
@@ -41,7 +41,7 @@ public class ConfigHelper
         ];
     }
 
-    public static bool TrySetConfigValue(string key, string value, out ConfigItem configItem, out string parsedValue)
+    internal static bool TrySetConfigValue(string key, string value, out ConfigItem configItem, out string parsedValue)
     {
         configItem = GetConfigItem(key);
         parsedValue = string.Empty;
@@ -110,7 +110,7 @@ public class ConfigHelper
         return null;
     }
 
-    public static string GetConfigSettingsMessage()
+    internal static string GetConfigSettingsMessage()
     {
         SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
 
@@ -120,7 +120,7 @@ public class ConfigHelper
         message += $"sellGifts:    {configManager.SellGifts}\n";
         message += $"sellShotguns: {configManager.SellShotguns}\n";
         message += $"sellAmmo:     {configManager.SellAmmo}\n";
-        message += $"sellKnife:    {configManager.SellKnife}\n";
+        message += $"sellKnives:   {configManager.SellKnives}\n";
         message += $"sellPickles:  {configManager.SellPickles}\n\n";
         message += $"[Advanced Sell Settings]{syncedWithHostMessage}\n";
         message += $"sellScrapWorthZero:   {configManager.SellScrapWorthZero}\n";

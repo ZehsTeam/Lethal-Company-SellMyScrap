@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -14,7 +15,7 @@ internal class SellCommand : Command
 
     protected override TerminalNode OnConfirm(string[] args)
     {
-        string message = $"Sell confirmed. Processing {GetValueString(SellMyScrapBase.Instance.sellRequest)}...\n\n";
+        string message = $"Sell confirmed. Processing {SellMyScrapBase.Instance.sellRequest.realValue}...\n\n";
 
         SellMyScrapBase.Instance.ConfirmSellRequest();
         awaitingConfirmation = false;
@@ -48,25 +49,30 @@ internal class SellCommand : Command
         return true;
     }
 
-    protected static string GetValueString(ScrapToSell scrapToSell)
+    protected static string GetQuotaFulfilledString()
     {
-        return GetValueString(scrapToSell.realValue, scrapToSell.value);
-    }
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int valueNeeded = Mathf.Max(profitQuota - quotaFulfilled, 0);
 
-    protected static string GetValueString(SellRequest sellRequest)
-    {
-        return GetValueString(sellRequest.realValue, sellRequest.value);
-    }
+        if (valueNeeded == 0)
+        {
+            return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
+        }
 
-    protected static string GetValueString(int realValue, int value)
-    {
-        return CompanyBuyingRate == 100 ? $"${value}" : $"${realValue} (${value})";
+        return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} (Need: ${valueNeeded})\n";
     }
 
     protected static string GetOvertimeBonusString(int value)
     {
         int overtimeBonus = Utils.GetOvertimeBonus(value);
-        return overtimeBonus == 0 ? "\n" : $"Overtime bonus: ${overtimeBonus} (${value + overtimeBonus})\n\n";
+
+        if (overtimeBonus == 0)
+        {
+            return string.Empty;
+        }
+
+        return $"Overtime bonus: ${overtimeBonus} (With value: ${value + overtimeBonus})\n";
     }
 
     /// <summary>

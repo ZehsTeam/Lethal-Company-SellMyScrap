@@ -8,7 +8,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Header("Takey")]
     [Space(3f)]
-    public AudioClip helloSFX = null;
+    public AudioClip[] beforeEatSFX = new AudioClip[0];
     public AudioClip[] voiceLineSFX = new AudioClip[0];
     public GameObject jetpackObject = null;
     public GameObject flameEffectsObject = null;
@@ -21,7 +21,9 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public float flySpeedMultiplier = 5f;
 
     private float flySpeed = 0f;
+
     private bool explode = false;
+    private int beforeEatIndex = 0;
     private int voiceLineIndex = 0;
     
     protected override void Start()
@@ -33,18 +35,20 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             explode = Random.Range(1f, 100f) <= 50f;
             voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
+            beforeEatIndex = Random.Range(0, beforeEatSFX.Length);
 
-            SetDataClientRpc(explode, voiceLineIndex);
+            SetDataClientRpc(explode, voiceLineIndex, beforeEatIndex);
         }
 
         base.Start();
     }
 
     [ClientRpc]
-    private void SetDataClientRpc(bool explode, int voiceLineIndex)
+    private void SetDataClientRpc(bool explode, int voiceLineIndex, int beforeEatIndex)
     {
         this.explode = explode;
         this.voiceLineIndex = voiceLineIndex;
+        this.beforeEatIndex = beforeEatIndex;
     }
 
     protected override IEnumerator StartAnimation()
@@ -59,17 +63,16 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         PlayAudioSource(movementAudio);
         yield return StartCoroutine(MoveToPosition(startPosition, endPosition, movementDuration));
         StopAudioSource(movementAudio);
-        yield return new WaitForSeconds(pauseDuration / 3f);
-
-        PlayOneShotSFX(helloSFX);
-        yield return new WaitForSeconds(pauseDuration / 3f * 2f);
+        yield return new WaitForSeconds(pauseDuration);
+        yield return new WaitForSeconds(PlayOneShotSFX(beforeEatSFX, beforeEatIndex));
+        yield return new WaitForSeconds(pauseDuration);
 
         // Move targetScrap to mouthTransform over time.
         MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
         yield return new WaitForSeconds(suckDuration);
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
-        PlayOneShotSFX(voiceLineSFX, voiceLineIndex);
+        yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, voiceLineIndex));
         yield return new WaitForSeconds(pauseDuration);
 
         // Move ScrapEater to startPosition

@@ -1,6 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Data;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -68,10 +69,12 @@ internal class SellAmountCommand : SellCommand
 
     private string GetMessage(int requestedValue, ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
+        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.realValue}\n";
         message += $"Requested value: ${requestedValue}\n";
+        message += GetQuotaFulfilledString();
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
+        message += "\n";
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {

@@ -22,9 +22,12 @@ internal class ViewOvertimeCommand : Command
     {
         int overtimeBonus = Utils.GetOvertimeBonus(0);
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
+        int profitQuota = TimeOfDay.Instance.profitQuota;
+        int newTotalCredits = TerminalPatch.Instance.groupCredits + overtimeBonus;
 
         string message = $"Your current overtime bonus is ${overtimeBonus}\n";
-        message += $"Quota fulfilled: ${quotaFulfilled} (${quotaFulfilled + overtimeBonus})\n\n";
+        message += $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
+        message += $"Your new total credits will be: ${newTotalCredits}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

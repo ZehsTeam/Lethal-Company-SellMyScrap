@@ -45,16 +45,17 @@ internal class SellQuotaCommand : SellCommand
         SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
-        string message = GetMessage(profitQuota, quotaFulfilled, requestedValue, scrapToSell);
+        string message = GetMessage(scrapToSell);
         return TerminalPatch.CreateTerminalNode(message);
     }
 
-    private string GetMessage(int profitQuota, int quotaFulfilled, int requestedValue, ScrapToSell scrapToSell)
+    private string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.amount} items with a total value of {GetValueString(scrapToSell)}\n";
-        message += $"Profit quota: ${quotaFulfilled} / ${profitQuota} (${requestedValue})\n";
+        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.realValue}\n";
+        message += GetQuotaFulfilledString();
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
+        message += "\n";
 
         if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
         {
