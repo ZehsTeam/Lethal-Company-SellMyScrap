@@ -55,7 +55,8 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
-        PlayOneShotSFX(landSFX);
+        PlayOneShotSFX(landSFX, landIndex);
+        ShakeCamera();
 
         yield return new WaitForSeconds(1f);
 

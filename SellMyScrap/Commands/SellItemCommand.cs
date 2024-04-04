@@ -57,12 +57,7 @@ internal class SellItemCommand : SellCommand
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += GetOvertimeBonusString(scrapToSell.realValue);
         message += "\n";
-
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
-        {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
-        }
-
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         message += "Please CONFIRM or DENY.\n\n";
 
         return message;

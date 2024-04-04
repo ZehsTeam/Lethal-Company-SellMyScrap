@@ -45,8 +45,9 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
-        PlayOneShotSFX(landSFX);
+        PlayOneShotSFX(landSFX, landIndex);
         PlayOneShotSFX(meowSFX, meowIndex);
+        ShakeCamera();
 
         yield return new WaitForSeconds(1f);
 

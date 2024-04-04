@@ -22,7 +22,7 @@ internal class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
         SetAnimationFlying(true);
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
         SetAnimationFlying(false);
-        PlayOneShotSFX(landSFX);
+        PlayOneShotSFX(landSFX, landIndex);
 
         yield return new WaitForSeconds(1f);
 

@@ -8,7 +8,7 @@ namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 public class ScrapEaterBehaviour : NetworkBehaviour
 {
-    public bool IsHostOrServer => IsHost || IsServer;
+    protected bool IsHostOrServer => IsHost || IsServer;
 
     public GameObject modelObject = null;
 

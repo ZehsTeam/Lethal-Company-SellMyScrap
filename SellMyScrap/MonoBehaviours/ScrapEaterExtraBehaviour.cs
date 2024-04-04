@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -23,9 +24,11 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
     public float pauseDuration = 2f;
 
     [Space(3f)]
-    public AudioClip landSFX = null;
+    public AudioClip[] landSFX = new AudioClip[0];
     public AudioClip eatSFX = null;
     public AudioClip takeOffSFX = null;
+
+    protected int landIndex = 0;
 
     protected override void Start()
     {
@@ -34,14 +37,28 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
         transform.localRotation = Quaternion.identity;
         transform.Rotate(spawnRotationOffset, Space.Self);
 
+        if (IsHostOrServer)
+        {
+            landIndex = Random.Range(0, landSFX.Length);
+
+            SetExtraDataClientRpc(landIndex);
+        }
+
         base.Start();
+    }
+
+    [ClientRpc]
+    protected void SetExtraDataClientRpc(int landIndex)
+    {
+        this.landIndex = landIndex;
     }
 
     protected override IEnumerator StartAnimation()
     {
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
-        PlayOneShotSFX(landSFX);
+        PlayOneShotSFX(landSFX, landIndex);
+        ShakeCamera();
 
         yield return new WaitForSeconds(1f);
 
@@ -133,5 +150,19 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
         if (audioSource == null) return;
 
         audioSource.Stop();
+    }
+
+    protected void ShakeCamera(float bigShakeDistance = 8f, float smallShakeDistance = 18f)
+    {
+        float distance = Vector3.Distance(GameNetworkManager.Instance.localPlayerController.transform.position, transform.position);
+
+        if (distance <= bigShakeDistance)
+        {
+            HUDManager.Instance.ShakeCamera(ScreenShakeType.Big);
+        }
+        else if (distance <= smallShakeDistance)
+        {
+            HUDManager.Instance.ShakeCamera(ScreenShakeType.Small);
+        }
     }
 }
