@@ -35,14 +35,14 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("Quota has already been fulfilled.\n\n");
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue);
 
         if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
@@ -57,7 +57,7 @@ internal class SellQuotaCommand : SellCommand
         message += GetOvertimeBonusString(scrapToSell.realValue);
         message += "\n";
 
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
+        if (Plugin.Instance.ConfigManager.ShowFoundItems)
         {
             message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         }

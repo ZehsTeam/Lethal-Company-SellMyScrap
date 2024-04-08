@@ -31,6 +31,6 @@ internal class GameNetworkManagerPatch
 
         NetworkManager.Singleton.AddNetworkPrefab(prefab);
 
-        SellMyScrapBase.mls.LogInfo($"Registered \"{prefab.name}\" network prefab.");
+        Plugin.logger.LogInfo($"Registered \"{prefab.name}\" network prefab.");
     }
 }

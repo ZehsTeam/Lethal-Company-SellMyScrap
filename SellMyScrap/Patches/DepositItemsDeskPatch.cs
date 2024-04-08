@@ -44,7 +44,7 @@ internal class DepositItemsDeskPatch
             return false;
         }
 
-        if (SellMyScrapBase.IsHostOrServer)
+        if (Plugin.IsHostOrServer)
         {
             SetMicrophoneSpeakDataOnServer(speakInShip);
         }
@@ -70,7 +70,7 @@ internal class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(audioClip, 1f);
 
         // Play audio clip in the ship
-        if (SellMyScrapBase.Instance.ConfigManager.SpeakInShip && speakInShip)
+        if (Plugin.Instance.ConfigManager.SpeakInShip && speakInShip)
         {
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(audioClip, 1f);
         }

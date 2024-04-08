@@ -24,7 +24,7 @@ internal class Content
     {
         try
         {
-            var dllFolderPath = System.IO.Path.GetDirectoryName(SellMyScrapBase.Instance.Info.Location);
+            var dllFolderPath = System.IO.Path.GetDirectoryName(Plugin.Instance.Info.Location);
             var assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "sellmyscrap_assets");
             AssetBundle assetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
@@ -39,11 +39,11 @@ internal class Content
             yippeeScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("YippeeScrapEater");
             cookieFumoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
 
-            SellMyScrapBase.mls.LogInfo("Successfully loaded assets from AssetBundle!");
+            Plugin.logger.LogInfo("Successfully loaded assets from AssetBundle!");
         }
         catch (System.Exception e)
         {
-            SellMyScrapBase.mls.LogError($"Error: failed to load assets from AssetBundle.\n\n{e}");
+            Plugin.logger.LogError($"Error: failed to load assets from AssetBundle.\n\n{e}");
         }
     }
 }

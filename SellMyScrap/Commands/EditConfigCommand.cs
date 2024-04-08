@@ -13,7 +13,7 @@ internal class EditConfigCommand : Command
 
     public EditConfigCommand()
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        SyncedConfig configManager = Plugin.Instance.ConfigManager;
 
         dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, configManager.DontSellListJson.ToList(), value =>
         {
@@ -57,7 +57,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        SyncedConfig configManager = Plugin.Instance.ConfigManager;
 
         if (editingDontSellListJson)
         {
@@ -106,7 +106,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
 
-        if (configItem.isHostOnly && !SellMyScrapBase.IsHostOrServer)
+        if (configItem.isHostOnly && !Plugin.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can change this setting.\n\n"));
         }
@@ -141,7 +141,7 @@ class JsonListEditor
         string[] _args = Utils.GetArrayToLower(args);
         this.list = list;
 
-        if (isHostOnly && !SellMyScrapBase.IsHostOrServer)
+        if (isHostOnly && !Plugin.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can change this setting.\n\n"));
         }

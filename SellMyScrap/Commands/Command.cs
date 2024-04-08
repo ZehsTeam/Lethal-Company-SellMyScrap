@@ -145,7 +145,7 @@ public class CommandFlag
     public bool canHaveData;
     public string data;
 
-    public bool canUse => isHostOnly ? SellMyScrapBase.IsHostOrServer : true;
+    public bool canUse => isHostOnly ? Plugin.IsHostOrServer : true;
 
     public CommandFlag(string key, bool isHostOnly = false, bool canHaveData = false, string data = "")
     {

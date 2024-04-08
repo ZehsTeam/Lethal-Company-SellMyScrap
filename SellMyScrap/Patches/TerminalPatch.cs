@@ -37,12 +37,12 @@ internal class TerminalPatch
         if (hasOverrideTerminalNodes) return;
         hasOverrideTerminalNodes = true;
 
-        if (SellMyScrapBase.Instance.ConfigManager.OverrideWelcomeMessage)
+        if (Plugin.Instance.ConfigManager.OverrideWelcomeMessage)
         {
             OverrideWelcomeTerminalNode(terminalNodes);
         }
 
-        if (SellMyScrapBase.Instance.ConfigManager.OverrideHelpMessage)
+        if (Plugin.Instance.ConfigManager.OverrideHelpMessage)
         {
             OverrideHelpTerminalNode(terminalNodes);
         }
@@ -75,7 +75,7 @@ internal class TerminalPatch
     [HarmonyPostfix]
     static void QuitTerminalPatch()
     {
-        SellMyScrapBase.Instance.OnTerminalQuit();
+        Plugin.Instance.OnTerminalQuit();
     }
 
     [HarmonyPatch("ParsePlayerSentence")]

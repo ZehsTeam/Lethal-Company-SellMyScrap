@@ -45,7 +45,7 @@ internal class SellAmountCommand : SellCommand
         }
         catch
         {
-            SellMyScrapBase.mls.LogError($"Error: failed to evalute expression for sell <amount>");
+            Plugin.logger.LogError($"Error: failed to evalute expression for sell <amount>");
         }
 
         if (!int.TryParse(evaluatedExpression, out int requestedValue) || requestedValue <= 0)
@@ -53,14 +53,14 @@ internal class SellAmountCommand : SellCommand
             return TerminalPatch.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
 
         if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(requestedValue, scrapToSell);
@@ -76,7 +76,7 @@ internal class SellAmountCommand : SellCommand
         message += GetOvertimeBonusString(scrapToSell.realValue);
         message += "\n";
 
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
+        if (Plugin.Instance.ConfigManager.ShowFoundItems)
         {
             message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         }

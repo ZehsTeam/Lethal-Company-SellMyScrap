@@ -14,12 +14,12 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class SellMyScrapBase : BaseUnityPlugin
+public class Plugin : BaseUnityPlugin
 {
     private readonly Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-    internal static SellMyScrapBase Instance;
-    internal static ManualLogSource mls;
+    internal static Plugin Instance;
+    internal static ManualLogSource logger;
 
     internal SyncedConfig ConfigManager;
 
@@ -32,8 +32,8 @@ public class SellMyScrapBase : BaseUnityPlugin
     {
         if (Instance == null) Instance = this;
 
-        mls = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
-        mls.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
+        logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
+        logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
         harmony.PatchAll(typeof(GameNetworkManagerPatch));
         harmony.PatchAll(typeof(StartOfRoundPatch));
@@ -73,7 +73,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
     public void OnLocalDisconnect()
     {
-        mls.LogInfo($"Local player disconnected. Removing hostConfigData.");
+        logger.LogInfo($"Local player disconnected. Removing hostConfigData.");
         ConfigManager.SetHostConfigData(null);
 
         CommandManager.OnLocalDisconnect();
@@ -110,7 +110,7 @@ public class SellMyScrapBase : BaseUnityPlugin
             message += $" (scrapEaterIndex: {scrapEaterIndex})";
         }
 
-        mls.LogInfo(message);
+        logger.LogInfo(message);
     }
 
     public void ConfirmSellRequest()
@@ -119,7 +119,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
-        mls.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
+        logger.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
 
         if (IsHostOrServer)
         {
@@ -167,7 +167,7 @@ public class SellMyScrapBase : BaseUnityPlugin
 
         if (DepositItemsDeskPatch.Instance == null)
         {
-            mls.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
+            logger.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;
         }
 

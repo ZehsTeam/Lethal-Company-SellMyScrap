@@ -60,7 +60,7 @@ public class Utils
         if (daysUntilDeadline < 0) daysUntilDeadline = 0;
         int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
 
-        SellMyScrapBase.mls.LogInfo($"GetOvertimeBonus(); daysUntilDeadline: {daysUntilDeadline}, overtimeBonus: {overtimeBonus}");
+        Plugin.logger.LogInfo($"GetOvertimeBonus(); daysUntilDeadline: {daysUntilDeadline}, overtimeBonus: {overtimeBonus}");
 
         return overtimeBonus;
     }

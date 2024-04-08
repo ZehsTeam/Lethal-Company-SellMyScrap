@@ -13,26 +13,26 @@ public class ScrapEaterManager
     {
         scrapEaters = [
             new ScrapEater(Content.octolarScrapEaterPrefab, () => {
-                return SellMyScrapBase.Instance.ConfigManager.OctolarSpawnWeight;
+                return Plugin.Instance.ConfigManager.OctolarSpawnWeight;
             }),
             new ScrapEater(Content.takeyScrapEaterPrefab, () => {
-                return SellMyScrapBase.Instance.ConfigManager.TakeySpawnWeight;
+                return Plugin.Instance.ConfigManager.TakeySpawnWeight;
             }),
             new ScrapEater(Content.maxwellScrapEaterPrefab, () => {
-                return SellMyScrapBase.Instance.ConfigManager.MaxwellSpawnWeight;
+                return Plugin.Instance.ConfigManager.MaxwellSpawnWeight;
             }),
             new ScrapEater(Content.yippeeScrapEaterPrefab, () => {
-                return SellMyScrapBase.Instance.ConfigManager.YippeeSpawnWeight;
+                return Plugin.Instance.ConfigManager.YippeeSpawnWeight;
             }),
             new ScrapEater(Content.cookieFumoScrapEaterPrefab, () => {
-                return SellMyScrapBase.Instance.ConfigManager.CookieFumoSpawnWeight;
+                return Plugin.Instance.ConfigManager.CookieFumoSpawnWeight;
             }),
         ];
     }
 
     internal static bool CanUseScrapEater()
     {
-        int spawnChance = SellMyScrapBase.Instance.ConfigManager.ScrapEaterChance;
+        int spawnChance = Plugin.Instance.ConfigManager.ScrapEaterChance;
         if (spawnChance <= 0) return false;
         return Random.Range(1, 100) <= spawnChance;
     }
@@ -57,7 +57,7 @@ public class ScrapEaterManager
 
     internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
     {
-        if (!SellMyScrapBase.IsHostOrServer) return;
+        if (!Plugin.IsHostOrServer) return;
 
         int index = GetRandomScrapEaterIndex();
         if (index == -1) return;
@@ -67,7 +67,7 @@ public class ScrapEaterManager
 
     internal static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
     {
-        if (!SellMyScrapBase.IsHostOrServer) return;
+        if (!Plugin.IsHostOrServer) return;
 
         GameObject prefab = scrapEaters[index].spawnPrefab;
         GameObject gameObject = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
@@ -77,7 +77,7 @@ public class ScrapEaterManager
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
         behaviour.SetTargetScrapOnServer(scrap);
 
-        SellMyScrapBase.mls.LogInfo($"Spawned scrap eater #{index + 1}");
+        Plugin.logger.LogInfo($"Spawned scrap eater #{index + 1}");
     }
 
     private static int GetRandomScrapEaterIndex()

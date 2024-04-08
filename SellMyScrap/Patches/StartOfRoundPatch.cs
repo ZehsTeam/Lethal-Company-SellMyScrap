@@ -17,7 +17,7 @@ internal class StartOfRoundPatch
 
     private static void SpawnNetworkHandler()
     {
-        if (!SellMyScrapBase.IsHostOrServer) return;
+        if (!Plugin.IsHostOrServer) return;
 
         var networkHandlerHost = Object.Instantiate(Content.networkHandlerPrefab, Vector3.zero, Quaternion.identity);
         networkHandlerHost.GetComponent<NetworkObject>().Spawn();
@@ -32,7 +32,7 @@ internal class StartOfRoundPatch
 
     private static void SendConfigToNewConnectedPlayer(ulong clientId)
     {
-        if (!SellMyScrapBase.IsHostOrServer) return;
+        if (!Plugin.IsHostOrServer) return;
 
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
@@ -42,15 +42,15 @@ internal class StartOfRoundPatch
             }
         };
 
-        SellMyScrapBase.mls.LogInfo($"Sending config to client: {clientId}");
+        Plugin.logger.LogInfo($"Sending config to client: {clientId}");
 
-        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(SellMyScrapBase.Instance.ConfigManager), clientRpcParams);
+        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.Instance.ConfigManager), clientRpcParams);
     }
 
     [HarmonyPatch("OnLocalDisconnect")]
     [HarmonyPrefix]
     static void OnLocalDisconnectPatch()
     {
-        SellMyScrapBase.Instance.OnLocalDisconnect();
+        Plugin.Instance.OnLocalDisconnect();
     }
 }

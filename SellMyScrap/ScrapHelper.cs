@@ -27,7 +27,7 @@ internal class ScrapHelper
         GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
-        string[] dontSellList = SellMyScrapBase.Instance.ConfigManager.DontSellListJson;
+        string[] dontSellList = Plugin.Instance.ConfigManager.DontSellListJson;
 
         foreach (var item in itemsInShip)
         {
@@ -92,7 +92,7 @@ internal class ScrapHelper
 
     private static bool IsAllowedScrapItem(GrabbableObject grabbableObject, string[] dontSellList)
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        SyncedConfig configManager = Plugin.Instance.ConfigManager;
 
         if (grabbableObject.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
         if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(grabbableObject)) return false;
@@ -256,7 +256,7 @@ internal class ScrapHelper
     #region Get Scrap Message
     public static string GetScrapMessage(List<GrabbableObject> scrap)
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        SyncedConfig configManager = Plugin.Instance.ConfigManager;
         return GetScrapMessage(scrap, configManager.SortFoundItemsPrice, configManager.AlignFoundItemsPrice);
     }
 

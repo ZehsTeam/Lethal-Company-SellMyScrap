@@ -28,14 +28,14 @@ internal class SellAllCommand : SellCommand
         List<CommandFlag> foundFlags = GetFlagsFromString(extra);
         int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.GetScrapToSell(int.MaxValue);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(int.MaxValue);
 
         if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
@@ -50,7 +50,7 @@ internal class SellAllCommand : SellCommand
         message += GetOvertimeBonusString(scrapToSell.realValue);
         message += "\n";
 
-        if (SellMyScrapBase.Instance.ConfigManager.ShowFoundItems)
+        if (Plugin.Instance.ConfigManager.ShowFoundItems)
         {
             message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         }

@@ -36,14 +36,14 @@ internal class SellItemCommand : SellCommand
             return TerminalPatch.CreateTerminalNode(GetSellItemInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = SellMyScrapBase.Instance.SetScrapToSell(ScrapHelper.GetScrapByItemName(itemName, false));
+        ScrapToSell scrapToSell = Plugin.Instance.SetScrapToSell(ScrapHelper.GetScrapByItemName(itemName, false));
 
         if (scrapToSell.amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        SellMyScrapBase.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         awaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);

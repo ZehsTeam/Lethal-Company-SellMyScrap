@@ -18,10 +18,10 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void SendConfigToPlayerClientRpc(SyncedConfigData syncedConfigData, ClientRpcParams clientRpcParams = default)
     {
-        if (SellMyScrapBase.IsHostOrServer) return;
+        if (Plugin.IsHostOrServer) return;
 
-        SellMyScrapBase.mls.LogInfo("Syncing config with host.");
-        SellMyScrapBase.Instance.ConfigManager.SetHostConfigData(syncedConfigData);
+        Plugin.logger.LogInfo("Syncing config with host.");
+        Plugin.Instance.ConfigManager.SetHostConfigData(syncedConfigData);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -32,15 +32,15 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
         string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
 
-        SellMyScrapBase.mls.LogInfo(message);
+        Plugin.logger.LogInfo(message);
         Utils.DisplayNotification(message);
-        SellMyScrapBase.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType, scrapEaterIndex);
+        Plugin.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType, scrapEaterIndex);
     }
 
     [ClientRpc]
     public void PlaceItemsOnCounterClientRpc(string networkObjectIdsString)
     {
-        if (SellMyScrapBase.IsHostOrServer) return;
+        if (Plugin.IsHostOrServer) return;
 
         DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
     }
@@ -48,7 +48,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void SetMicrophoneSpeakDataClientRpc(bool speakInShip, int clipIndex)
     {
-        if (SellMyScrapBase.IsHostOrServer) return;
+        if (Plugin.IsHostOrServer) return;
 
         DepositItemsDeskPatch.SetMicrophoneSpeakDataOnClient(speakInShip, clipIndex);
     }

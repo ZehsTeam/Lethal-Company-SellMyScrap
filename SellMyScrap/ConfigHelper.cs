@@ -7,28 +7,55 @@ namespace com.github.zehsteam.SellMyScrap;
 
 public class ConfigHelper
 {
-    private static List<ConfigItem> configItems = new List<ConfigItem>();
+    private static List<ConfigItem> sellConfigItems = new List<ConfigItem>();
+    private static List<ConfigItem> advancedSellConfigItems = new List<ConfigItem>();
+    private static List<ConfigItem> terminalConfigItems = new List<ConfigItem>();
+    private static List<ConfigItem> miscConfigItems = new List<ConfigItem>();
     private static List<ConfigItem> scrapEaterConfigItems = new List<ConfigItem>();
+
+    private static List<ConfigItem> allConfigItems
+    {
+        get
+        {
+            return [
+                .. sellConfigItems,
+                .. advancedSellConfigItems,
+                .. terminalConfigItems,
+                .. miscConfigItems,
+                .. scrapEaterConfigItems,
+            ];
+        }
+    }
 
     internal static void Initialize()
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        SyncedConfig configManager = Plugin.Instance.ConfigManager;
 
-        configItems = [
-            new ConfigItem("sellGifts",                 typeof(bool), isHostOnly: true,  value => { configManager.SellGifts =                 bool.Parse(value); }),
-            new ConfigItem("sellShotguns",              typeof(bool), isHostOnly: true,  value => { configManager.SellShotguns =              bool.Parse(value); }),
-            new ConfigItem("sellAmmo",                  typeof(bool), isHostOnly: true,  value => { configManager.SellAmmo =                  bool.Parse(value); }),
-            new ConfigItem("sellKnives",                typeof(bool), isHostOnly: true,  value => { configManager.SellKnives =                bool.Parse(value); }),
-            new ConfigItem("sellPickles",               typeof(bool), isHostOnly: true,  value => { configManager.SellPickles =               bool.Parse(value); }),
-            new ConfigItem("sellScrapWorthZero",        typeof(bool), isHostOnly: true,  value => { configManager.SellScrapWorthZero =        bool.Parse(value); }),
-            new ConfigItem("onlySellScrapOnFloor",      typeof(bool), isHostOnly: true,  value => { configManager.OnlySellScrapOnFloor =      bool.Parse(value); }),
-            new ConfigItem("overrideWelcomeMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage =    bool.Parse(value); }),
-            new ConfigItem("overrideHelpMessage",       typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =       bool.Parse(value); }),
-            new ConfigItem("showFoundItems",            typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =            bool.Parse(value); }),
-            new ConfigItem("sortFoundItemsPrice",       typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =       bool.Parse(value); }),
-            new ConfigItem("alignFoundItemsPrice",      typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =      bool.Parse(value); }),
-            new ConfigItem("speakInShip",               typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =               bool.Parse(value); }),
-            new ConfigItem("overrideSetNewProfitQuota", typeof(bool), isHostOnly: false, value => { configManager.OverrideSetNewProfitQuota = bool.Parse(value); }),
+        sellConfigItems = [
+            new ConfigItem("sellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
+            new ConfigItem("sellShotguns", typeof(bool), isHostOnly: true, value => { configManager.SellShotguns = bool.Parse(value); }, () => { return configManager.SellShotguns.ToString(); }),
+            new ConfigItem("sellAmmo",     typeof(bool), isHostOnly: true, value => { configManager.SellAmmo =     bool.Parse(value); }, () => { return configManager.SellAmmo.ToString();     }),
+            new ConfigItem("sellKnives",   typeof(bool), isHostOnly: true, value => { configManager.SellKnives =   bool.Parse(value); }, () => { return configManager.SellKnives.ToString();   }),
+            new ConfigItem("sellPickles",  typeof(bool), isHostOnly: true, value => { configManager.SellPickles =  bool.Parse(value); }, () => { return configManager.SellPickles.ToString();  }),
+        ];
+
+        advancedSellConfigItems = [
+            new ConfigItem("sellScrapWorthZero",   typeof(bool),   isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
+            new ConfigItem("onlySellScrapOnFloor", typeof(bool),   isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
+            new ConfigItem("dontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson =   JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
+        ];
+
+        terminalConfigItems = [
+            new ConfigItem("overrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }, () => { return configManager.OverrideWelcomeMessage.ToString(); }),
+            new ConfigItem("overrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }, () => { return configManager.OverrideHelpMessage.ToString();    }),
+            new ConfigItem("showFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }, () => { return configManager.ShowFoundItems.ToString();         }),
+            new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }, () => { return configManager.SortFoundItemsPrice.ToString();    }),
+            new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }, () => { return configManager.AlignFoundItemsPrice.ToString();   }),
+        ];
+
+        miscConfigItems = [
+            new ConfigItem("speakInShip",               typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =               bool.Parse(value); }, () => { return configManager.SpeakInShip.ToString();               }),
+            new ConfigItem("overrideSetNewProfitQuota", typeof(bool), isHostOnly: false, value => { configManager.OverrideSetNewProfitQuota = bool.Parse(value); }, () => { return configManager.OverrideSetNewProfitQuota.ToString(); }),
         ];
 
         scrapEaterConfigItems = [
@@ -43,41 +70,51 @@ public class ConfigHelper
 
     internal static bool TrySetConfigValue(string key, string value, out ConfigItem configItem, out string parsedValue)
     {
-        configItem = GetConfigItem(key);
         parsedValue = string.Empty;
 
+        configItem = GetConfigItem(key);
         if (configItem == null) return false;
 
-        if (configItem.isHostOnly && !SellMyScrapBase.IsHostOrServer) return false;
+        if (configItem.isHostOnly && !Plugin.IsHostOrServer) return false;
 
         if (configItem.type == typeof(bool))
         {
-            if (bool.TryParse(value, out bool parsedBool))
-            {
-                configItem.SetValue(value);
-                parsedValue = parsedBool.ToString();
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return TrySetBoolConfigValue(configItem, value, out parsedValue);
         }
 
         if (configItem.type == typeof(int))
         {
-            if (int.TryParse(value, out int parsedInteger))
-            {
-                configItem.SetValue(value);
-                parsedValue = parsedInteger.ToString();
+            return TrySetIntConfigValue(configItem, value, out parsedValue);
+        }
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        return false;
+    }
+
+    private static bool TrySetBoolConfigValue(ConfigItem configItem, string value, out string parsedValue)
+    {
+        parsedValue = string.Empty;
+
+        if (bool.TryParse(value, out bool parsedBool))
+        {
+            configItem.SetValue(value);
+            parsedValue = parsedBool.ToString();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TrySetIntConfigValue(ConfigItem configItem, string value, out string parsedValue)
+    {
+        parsedValue = string.Empty;
+
+        if (int.TryParse(value, out int parsedInteger))
+        {
+            configItem.SetValue(value);
+            parsedValue = parsedInteger.ToString();
+
+            return true;
         }
 
         return false;
@@ -91,19 +128,16 @@ public class ConfigHelper
     /// <param name="GetValue">Func for getting your spawnWeight config setting value.</param>
     public static void AddScrapEaterConfigItem(string key, Action<string> SetValue, Func<string> GetValue)
     {
-        scrapEaterConfigItems.Add(new ConfigItem(key, typeof(int), true, SetValue, GetValue));
+        scrapEaterConfigItems.Add(new ConfigItem(key, typeof(int), isHostOnly: true, SetValue, GetValue));
     }
 
     private static ConfigItem GetConfigItem(string key)
     {
-        List<ConfigItem> _configItems = configItems;
-        configItems.AddRange(scrapEaterConfigItems);
-
-        foreach (ConfigItem item in _configItems)
+        foreach (ConfigItem configItem in allConfigItems)
         {
-            if (item.key.ToLower() == key.ToLower())
+            if (configItem.key.ToLower() == key.ToLower())
             {
-                return item;
+                return configItem;
             }
         }
 
@@ -112,55 +146,37 @@ public class ConfigHelper
 
     internal static string GetConfigSettingsMessage()
     {
-        SyncedConfig configManager = SellMyScrapBase.Instance.ConfigManager;
+        string message = string.Empty;
+        message += GetConfigItemListMessage("[Sell Settings]", sellConfigItems, syncedWithHost: true);
+        message += GetConfigItemListMessage("[Advanced Sell Settings]", advancedSellConfigItems, syncedWithHost: true);
+        message += GetConfigItemListMessage("[Terminal Settings]", terminalConfigItems);
+        message += GetConfigItemListMessage("[Misc Settings]", miscConfigItems);
+        message += GetConfigItemListMessage("[Scrap Eater Settings]", scrapEaterConfigItems);
 
-        string syncedWithHostMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Synced with host)";
-
-        string message = $"[Sell Settings]{syncedWithHostMessage}\n";
-        message += $"sellGifts:    {configManager.SellGifts}\n";
-        message += $"sellShotguns: {configManager.SellShotguns}\n";
-        message += $"sellAmmo:     {configManager.SellAmmo}\n";
-        message += $"sellKnives:   {configManager.SellKnives}\n";
-        message += $"sellPickles:  {configManager.SellPickles}\n\n";
-        message += $"[Advanced Sell Settings]{syncedWithHostMessage}\n";
-        message += $"sellScrapWorthZero:   {configManager.SellScrapWorthZero}\n";
-        message += $"onlySellScrapOnFloor: {configManager.OnlySellScrapOnFloor}\n";
-        message += $"dontSellListJson: {JsonConvert.SerializeObject(configManager.DontSellListJson)}\n\n";
-        message += "[Terminal Settings]\n";
-        message += $"overrideWelcomeMessage: {configManager.OverrideWelcomeMessage}\n";
-        message += $"overrideHelpMessage:    {configManager.OverrideHelpMessage}\n";
-        message += $"showFoundItems:         {configManager.ShowFoundItems}\n";
-        message += $"sortFoundItemsPrice:    {configManager.SortFoundItemsPrice}\n";
-        message += $"alignFoundItemsPrice:   {configManager.AlignFoundItemsPrice}\n\n";
-        message += "[Misc Settings]\n";
-        message += $"speakInShip:               {configManager.SpeakInShip}\n";
-        message += $"overrideSetNewProfitQuota: {configManager.OverrideSetNewProfitQuota}\n\n";
-        message += GetScrapEaterConfigSettingsMessage();
-
-        return message;
+        return message.Trim();
     }
 
-    private static string GetScrapEaterConfigSettingsMessage()
+    private static string GetConfigItemListMessage(string header, List<ConfigItem> list, bool syncedWithHost = false)
     {
-        string[] keys = scrapEaterConfigItems.Select(item => item.key).ToArray();
+        string[] keys = list.Select(item => item.key).ToArray();
         int maxLength = Utils.GetLongestStringFromArray(keys).Length + 1;
 
-        string hostOnlyMessage = SellMyScrapBase.IsHostOrServer ? string.Empty : " (Host only)";
+        string syncedWithHostMessage = (!Plugin.IsHostOrServer && syncedWithHost) ? " (Synced with host)" : string.Empty;
 
-        string message = $"[Scrap Eater Settings]{hostOnlyMessage}\n";
-        
-        scrapEaterConfigItems.ForEach(configItem =>
+        string message = $"{header}{syncedWithHostMessage}\n";
+
+        list.ForEach(configItem =>
         {
             if (configItem.GetValue == null)
             {
-                SellMyScrapBase.mls.LogError($"Error: GetValue() for \"{configItem.key}\" could not be found!");
+                Plugin.logger.LogError($"Error: Func<string> GetValue() for ConfigItem key: \"{configItem.key}\" could not be found!");
                 return;
             }
 
             message += $"{Utils.GetStringWithSpacingInBetween($"{configItem.key}:", configItem.GetValue(), maxLength)}\n";
         });
 
-        return message.Trim();
+        return $"{message.Trim()}\n\n";
     }
 }
 
@@ -172,7 +188,7 @@ public class ConfigItem
     public Action<string> SetValue;
     public Func<string> GetValue;
 
-    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue = null)
+    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue)
     {
         this.key = key;
         this.type = type;

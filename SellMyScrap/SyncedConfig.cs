@@ -154,7 +154,7 @@ public class SyncedConfig
             }
             catch (System.Exception e)
             {
-                SellMyScrapBase.mls.LogError($"Error: failed to deserialize dontSellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Error: failed to deserialize dontSellListJson config setting.\n\n{e}");
                 return [];
             }
         }
@@ -166,7 +166,7 @@ public class SyncedConfig
             }
             catch (System.Exception e)
             {
-                SellMyScrapBase.mls.LogError($"Error: failed to serialize dontSellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Error: failed to serialize dontSellListJson config setting.\n\n{e}");
                 DontSellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
             }
             
@@ -200,7 +200,7 @@ public class SyncedConfig
 
     private void BindConfigs()
     {
-        ConfigFile config = SellMyScrapBase.Instance.Config;
+        ConfigFile config = Plugin.Instance.Config;
 
         // Sell Settings
         SellGiftsCfg = config.Bind(
@@ -338,7 +338,7 @@ public class SyncedConfig
 
     private void SyncedConfigsChanged()
     {
-        if (!SellMyScrapBase.IsHostOrServer) return;
+        if (!Plugin.IsHostOrServer) return;
 
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));
     }
