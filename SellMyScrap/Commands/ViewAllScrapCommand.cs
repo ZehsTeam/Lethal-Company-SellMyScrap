@@ -47,7 +47,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalPatch.CreateTerminalNode("Closed view all scrap.\n\n");
         }
 
-        if (_args[0] == "next")
+        if (_args[0] == "next" || _args[0] == "n")
         {
             pageIndex++;
             pageIndex = Mathf.Clamp(pageIndex, 0, pages - 1);
@@ -55,7 +55,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
-        if (_args[0] == "prev")
+        if (_args[0] == "prev" || _args[0] == "p")
         {
             pageIndex--;
             pageIndex = Mathf.Clamp(pageIndex, 0, pages - 1);

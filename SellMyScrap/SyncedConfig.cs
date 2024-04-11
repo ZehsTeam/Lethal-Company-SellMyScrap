@@ -6,8 +6,42 @@ namespace com.github.zehsteam.SellMyScrap;
 
 public class SyncedConfig
 {
+    #region Config Setting Default Values
+    // Sell Settings Defaults
+    internal static bool sellGiftsDefault = false;
+    internal static bool sellShotgunsDefault = false;
+    internal static bool sellAmmoDefault = false;
+    internal static bool sellKnivesDefault = false;
+    internal static bool sellPicklesDefault = true;
+
+    // Advanced Sell Settings Defaults
+    internal static bool sellScrapWorthZeroDefault = false;
+    internal static bool onlySellScrapOnFloorDefault = false;
+    internal static string[] dontSellListJsonDefault = [];
+
+    // Terminal Settings Defaults
+    internal static bool overrideWelcomeMessageDefault = true;
+    internal static bool overrideHelpMessageDefault = true;
+    internal static bool showFoundItemsDefault = true;
+    internal static bool sortFoundItemsPriceDefault = true;
+    internal static bool alignFoundItemsPriceDefault = true;
+
+    // Misc Settings Defaults
+    internal static bool speakInShipDefault = true;
+    internal static bool overrideSetNewProfitQuotaDefault = true;
+
+    // Scrap Eater Settings Defaults
+    internal static int ScrapEaterChanceDefault = 40;
+    internal static int OctolarSpawnWeightDefault = 1;
+    internal static int TakeySpawnWeightDefault = 1;
+    internal static int MaxwellSpawnWeightDefault = 1;
+    internal static int YippeeSpawnWeightDefault = 1;
+    internal static int CookieFumoSpawnWeightDefault = 1;
+    #endregion
+
     private SyncedConfigData hostConfigData;
 
+    #region ConfigEntries
     // Sell Settings (Synced)
     private ConfigEntry<bool> SellGiftsCfg;
     private ConfigEntry<bool> SellShotgunsCfg;
@@ -24,21 +58,23 @@ public class SyncedConfig
     private ConfigEntry<bool> OverrideWelcomeMessageCfg;
     private ConfigEntry<bool> OverrideHelpMessageCfg;
     private ConfigEntry<bool> ShowFoundItemsCfg;
-    private ConfigEntry<bool> SortFoundItemsPricePriceCfg;
+    private ConfigEntry<bool> SortFoundItemsPriceCfg;
     private ConfigEntry<bool> AlignFoundItemsPriceCfg;
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
     private ConfigEntry<bool> OverrideSetNewProfitQuotaCfg;
 
-    // Scrap Eaters
+    // Scrap Eater Settings
     private ConfigEntry<int> ScrapEaterChanceCfg;
     private ConfigEntry<int> OctolarSpawnWeightCfg;
     private ConfigEntry<int> TakeySpawnWeightCfg;
     private ConfigEntry<int> MaxwellSpawnWeightCfg;
     private ConfigEntry<int> YippeeSpawnWeightCfg;
     private ConfigEntry<int> CookieFumoSpawnWeightCfg;
+    #endregion
 
+    #region Config Setting Get/Set Properties
     // Sell Settings (Synced)
     internal bool SellGifts
     { 
@@ -178,7 +214,7 @@ public class SyncedConfig
     internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
     internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
     internal bool ShowFoundItems { get { return ShowFoundItemsCfg.Value; } set => ShowFoundItemsCfg.Value = value; }
-    internal bool SortFoundItemsPrice { get { return SortFoundItemsPricePriceCfg.Value; } set => SortFoundItemsPricePriceCfg.Value = value; }
+    internal bool SortFoundItemsPrice { get { return SortFoundItemsPriceCfg.Value; } set => SortFoundItemsPriceCfg.Value = value; }
     internal bool AlignFoundItemsPrice { get { return AlignFoundItemsPriceCfg.Value; } set => AlignFoundItemsPriceCfg.Value = value; }
 
     // Misc Settings
@@ -192,6 +228,7 @@ public class SyncedConfig
     internal int MaxwellSpawnWeight { get { return MaxwellSpawnWeightCfg.Value; } set => MaxwellSpawnWeightCfg.Value = value; }
     internal int YippeeSpawnWeight { get { return YippeeSpawnWeightCfg.Value; } set => YippeeSpawnWeightCfg.Value = value; }
     internal int CookieFumoSpawnWeight { get { return CookieFumoSpawnWeightCfg.Value; } set => CookieFumoSpawnWeightCfg.Value = value; }
+    #endregion
 
     public SyncedConfig()
     {
@@ -205,39 +242,39 @@ public class SyncedConfig
         // Sell Settings
         SellGiftsCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
-            false,
+            sellGiftsDefault,
             new ConfigDescription("Do you want to sell Gifts?")
         );
         SellShotgunsCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
-            false,
+            sellShotgunsDefault,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
         SellAmmoCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
-            false,
+            sellAmmoDefault,
             new ConfigDescription("Do you want to sell Ammo?")
         );
         SellKnivesCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellKnives"),
-            false,
+            sellKnivesDefault,
             new ConfigDescription("Do you want to sell Kitchen knives?")
         );
         SellPicklesCfg = config.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
-            true,
+            sellPicklesDefault,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
         // Advanced Sell Settings
         SellScrapWorthZeroCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "sellScrapWorthZero"),
-            false,
+            sellScrapWorthZeroDefault,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
         OnlySellScrapOnFloorCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "onlySellScrapOnFloor"),
-            false,
+            onlySellScrapOnFloorDefault,
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
 
@@ -249,89 +286,127 @@ public class SyncedConfig
         dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Octolar Plush\", \"Smol Takey\"]";
         DontSellListJsonCfg = config.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
-            "[]",
+            JsonConvert.SerializeObject(dontSellListJsonDefault),
             new ConfigDescription(dontSellListJsonCfgDescription)
         );
 
         // Terminal Settings
         OverrideWelcomeMessageCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
-            true,
+            overrideWelcomeMessageDefault,
             new ConfigDescription("Overrides the terminal welcome message to add additional info.")
         );
         OverrideHelpMessageCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
-            true,
+            overrideHelpMessageDefault,
             new ConfigDescription("Overrides the terminal help message to add additional info.")
         );
         ShowFoundItemsCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "showFoundItems"),
-            true,
+            showFoundItemsDefault,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
-        SortFoundItemsPricePriceCfg = config.Bind(
+        SortFoundItemsPriceCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "sortFoundItemsPrice"),
-            true,
+            sortFoundItemsPriceDefault,
             new ConfigDescription("Sorts found items from most to least expensive.")
         );
         AlignFoundItemsPriceCfg = config.Bind(
             new ConfigDefinition("Terminal Settings", "alignFoundItemsPrice"),
-            true,
+            alignFoundItemsPriceDefault,
             new ConfigDescription("Align all prices of found items.")
         );
 
         // Misc Settings
         SpeakInShipCfg = config.Bind(
             new ConfigDefinition("Misc Settings", "speakInShip"),
-            true,
+            speakInShipDefault,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
         OverrideSetNewProfitQuotaCfg = config.Bind(
             new ConfigDefinition("Misc Settings", "overrideSetNewProfitQuota"),
-            true,
+            overrideSetNewProfitQuotaDefault,
             new ConfigDescription("Will override the SetNewProfitQuota function in TimeOfDay.")
         );
 
-        // Scrap Eaters
+        // Scrap Eater Settings
         ScrapEaterChanceCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
-            40,
+            ScrapEaterChanceDefault,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
         OctolarSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "octolarSpawnWeight"),
-            1,
+            OctolarSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         TakeySpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
-            1,
+            TakeySpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         MaxwellSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
-            1,
+            MaxwellSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         YippeeSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
-            1,
+            YippeeSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         CookieFumoSpawnWeightCfg = config.Bind(
             new ConfigDefinition("Scrap Eater Settings", "cookieFumoSpawnWeight"),
-            1,
+            CookieFumoSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
     }
 
-    public void SetHostConfigData(SyncedConfigData syncedConfigData)
+    internal void ResetToDefault()
+    {
+        // Sell Settings
+        SellGiftsCfg.Value = sellGiftsDefault; 
+        SellShotgunsCfg.Value = sellShotgunsDefault; 
+        SellAmmoCfg.Value = sellAmmoDefault; 
+        SellKnivesCfg.Value = sellKnivesDefault; 
+        SellPicklesCfg.Value = sellPicklesDefault;
+
+        // Advanced Sell Settings
+        SellScrapWorthZeroCfg.Value = sellScrapWorthZeroDefault;
+        OnlySellScrapOnFloorCfg.Value = onlySellScrapOnFloorDefault;
+        DontSellListJsonCfg.Value = JsonConvert.SerializeObject(dontSellListJsonDefault);
+
+        // Terminal Settings
+        OverrideWelcomeMessageCfg.Value = overrideWelcomeMessageDefault;
+        OverrideHelpMessageCfg.Value = overrideHelpMessageDefault;
+        ShowFoundItemsCfg.Value = showFoundItemsDefault;
+        SortFoundItemsPriceCfg.Value = sortFoundItemsPriceDefault;
+        AlignFoundItemsPriceCfg.Value = alignFoundItemsPriceDefault;
+
+        // Misc Settings
+        SpeakInShipCfg.Value = speakInShipDefault;
+        OverrideSetNewProfitQuotaCfg.Value = overrideSetNewProfitQuotaDefault;
+
+        // Scrap Eater Settings
+        ScrapEaterChanceCfg.Value = ScrapEaterChanceDefault;
+        OctolarSpawnWeightCfg.Value = OctolarSpawnWeightDefault;
+        TakeySpawnWeightCfg.Value = TakeySpawnWeightDefault;
+        MaxwellSpawnWeightCfg.Value = MaxwellSpawnWeightDefault;
+        YippeeSpawnWeightCfg.Value = YippeeSpawnWeightDefault;
+        CookieFumoSpawnWeightCfg.Value = CookieFumoSpawnWeightDefault;
+
+        Plugin.logger.LogInfo("Reset all config settings to their default value.");
+
+        SyncedConfigsChanged();
+    }
+
+    internal void SetHostConfigData(SyncedConfigData syncedConfigData)
     {
         hostConfigData = syncedConfigData;
     }

@@ -56,8 +56,10 @@ internal class DepositItemsDeskPatch
     [HarmonyPrefix]
     static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance)
     {
-        List<AudioClip> audioClips = __instance.microphoneAudios.ToList();
-        audioClips.AddRange(__instance.rareMicrophoneAudios);
+        List<AudioClip> audioClips = [
+            .. __instance.microphoneAudios,
+            .. __instance.rareMicrophoneAudios
+        ];
 
         if (clipIndex == -1)
         {

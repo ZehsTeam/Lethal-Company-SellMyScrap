@@ -89,6 +89,10 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         AnimationFinishedServerRpc();
     }
 
+    /// <summary>
+    /// Do your animation in here.
+    /// </summary>
+    /// <returns></returns>
     protected virtual IEnumerator StartAnimation()
     {
         // Do your animation in here.
@@ -127,6 +131,8 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
     protected void SellTargetScrapOnServer()
     {
+        if (!IsHostOrServer) return;
+
         DepositItemsDeskPatch.SellItemsOnServer();
     }
 

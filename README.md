@@ -116,11 +116,16 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 | [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
 | [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
 
+## Credits
+* Maxwell from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
+* Cookie Fumo from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
+    * Model made by Antlers.
+
 ## Screenshots
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/X636pS0.png" width="273px">
+    <img src="https://i.imgur.com/ERBkhCa.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -158,12 +163,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/bZv5O6B.png" width="100%">
+    <img src="https://i.imgur.com/PPBPUcH.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/pts0fp8.png" width="412px">
-    <img src="https://i.imgur.com/25Ws29Y.png" width="412px">
+    <img src="https://i.imgur.com/Aw3bOo1.png" width="412px">
+    <img src="https://i.imgur.com/Dfn92qA.png" width="412px">
 </div>
 
 ## My Other Mods
@@ -178,7 +183,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/OnlyPresents/"><img src="https://i.imgur.com/pesSqHI.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/"><img src="https://i.imgur.com/29IA990.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/"><img src="https://i.imgur.com/ZNcffJ7.png" width="80px"></a>
+<a href="https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/"><img src="https://i.imgur.com/uSxSYVK.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/"><img src="https://i.imgur.com/QmIID55.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/"><img src="https://i.imgur.com/Je0rHqE.png" width="80px"></a>
 <a href="https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/"><img src="https://i.imgur.com/ENIZdU0.png" width="80px"></a>

@@ -7,6 +7,13 @@ namespace com.github.zehsteam.SellMyScrap;
 
 public class Utils
 {
+    public static bool RandomPercent(int percent)
+    {
+        if (percent <= 0) return false;
+        if (percent >= 100) return true;
+        return UnityEngine.Random.Range(1f, 100f) <= percent;
+    }
+
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
     {
         return $"{a}{new string(' ', maxLength - a.Length)} {b}";
@@ -175,11 +182,22 @@ public class Utils
     {
         if (mine.hasExploded) yield break;
 
-        mine.mineAudio.pitch = Random.Range(0.75f, 1.07f);
+        mine.mineAudio.pitch = UnityEngine.Random.Range(0.75f, 1.07f);
         mine.hasExploded = true;
 
         yield return new WaitForSeconds(0.2f);
 
         mine.SetOffMineAnimation();
+    }
+
+    public static bool IsLocalPlayerPsychoHypnotic()
+    {
+        ulong steamId = 76561197970440803;
+        return steamId == GetLocalPlayerSteamId();
+    }
+
+    public static ulong GetLocalPlayerSteamId()
+    {
+        return StartOfRound.Instance.localPlayerController.playerSteamId;
     }
 }

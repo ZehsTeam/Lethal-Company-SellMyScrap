@@ -7,6 +7,7 @@ namespace com.github.zehsteam.SellMyScrap;
 
 public class ConfigHelper
 {
+    // Config Items
     private static List<ConfigItem> sellConfigItems = new List<ConfigItem>();
     private static List<ConfigItem> advancedSellConfigItems = new List<ConfigItem>();
     private static List<ConfigItem> terminalConfigItems = new List<ConfigItem>();

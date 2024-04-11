@@ -11,6 +11,8 @@ internal class EditConfigCommand : Command
     private bool editingDontSellListJson = false;
     private JsonListEditor dontSellListJsonEditor;
 
+    private bool inResetToDefaultMenu = false;
+
     public EditConfigCommand()
     {
         SyncedConfig configManager = Plugin.Instance.ConfigManager;
@@ -34,6 +36,8 @@ internal class EditConfigCommand : Command
     public override TerminalNode Execute(string[] args)
     {
         editingDontSellListJson = false;
+        inResetToDefaultMenu = false;
+
         awaitingConfirmation = true;
 
         return TerminalPatch.CreateTerminalNode(GetMessage());
@@ -41,6 +45,11 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
+        if (inResetToDefaultMenu)
+        {
+            return ExecuteResetToDefaultConfirmation(args);
+        }
+
         string[] _args = Utils.GetArrayToLower(args);
 
         string[] exitStrings = ["exit", "quit", "q", "close", "leave", "back"];
@@ -70,6 +79,12 @@ internal class EditConfigCommand : Command
             return dontSellListJsonEditor.Execute(configManager.DontSellListJson.ToList());
         }
 
+        if (_args[0] == "reset")
+        {
+            inResetToDefaultMenu = true;
+            return ExecuteResetToDefault();
+        }
+
         if (_args[0] != string.Empty && _args[1] != string.Empty)
         {
             return EditConfigSettings(args);
@@ -85,6 +100,7 @@ internal class EditConfigCommand : Command
         message += $"The following commands are available:\n\n";
         message += $"<key> <value>\n";
         message += $"json\n";
+        message += $"reset\n";
         message += $"exit\n\n";
         message += additionMessage;
 
@@ -112,6 +128,40 @@ internal class EditConfigCommand : Command
         }
 
         return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid value.\n\n"));
+    }
+
+    private TerminalNode ExecuteResetToDefault()
+    {
+        return TerminalPatch.CreateTerminalNode(GetResetToDefaultMessage());
+    }
+
+    private TerminalNode ExecuteResetToDefaultConfirmation(string[] args)
+    {
+        string arg = args[0].ToLower();
+
+        if ("confirm".Contains(arg) && arg.Length > 0)
+        {
+            Plugin.Instance.ConfigManager.ResetToDefault();
+            inResetToDefaultMenu = false;
+            return TerminalPatch.CreateTerminalNode(GetMessage("Reset all config settings to their default value.\n\n"));
+        }
+
+        if ("deny".Contains(arg) && arg.Length > 0)
+        {
+            inResetToDefaultMenu = false;
+            return TerminalPatch.CreateTerminalNode(GetMessage());
+        }
+
+        return TerminalPatch.CreateTerminalNode(GetResetToDefaultMessage());
+    }
+
+    private string GetResetToDefaultMessage(string additionMessage = "")
+    {
+        string message = "Are you sure you want to reset all config settings to their default value?\n\n";
+        message += "Please CONFIRM or DENY.\n\n";
+        message += additionMessage;
+
+        return message;
     }
 }
 
