@@ -22,7 +22,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         if (IsHostOrServer)
         {
-            raid = Utils.RandomPercent(80);
+            raid = Utils.RandomPercent(75);
             SetDataClientRpc(raid);
         }
 

@@ -28,7 +28,7 @@ public class ScrapEaterManager
                 return Plugin.Instance.ConfigManager.CookieFumoSpawnWeight;
             }),
             new ScrapEater(Content.psychoScrapEaterPrefab, () => {
-                return 0;
+                return Plugin.Instance.ConfigManager.PsychoSpawnWeight;
             }),
         ];
     }
@@ -36,13 +36,6 @@ public class ScrapEaterManager
     internal static bool CanUseScrapEater()
     {
         int spawnChance = Plugin.Instance.ConfigManager.ScrapEaterChance;
-        if (spawnChance <= 0) return false;
-
-        if (Utils.IsLocalPlayerPsychoHypnotic())
-        {
-            spawnChance = 75;
-        }
-
         return Utils.RandomPercent(spawnChance);
     }
 
@@ -91,11 +84,6 @@ public class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        if (Utils.IsLocalPlayerPsychoHypnotic() && Utils.RandomPercent(75))
-        {
-            return 5;
-        }
-
         List<(int index, int weight)> weightedItems = new List<(int index, int weight)>();
 
         for (int i = 0; i < scrapEaters.Count; i++)

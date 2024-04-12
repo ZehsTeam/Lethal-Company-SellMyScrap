@@ -1,6 +1,8 @@
 ﻿using BepInEx.Configuration;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -37,6 +39,7 @@ public class SyncedConfig
     internal static int MaxwellSpawnWeightDefault = 1;
     internal static int YippeeSpawnWeightDefault = 1;
     internal static int CookieFumoSpawnWeightDefault = 1;
+    internal static int PsychoSpawnWeightDefault = 1;
     #endregion
 
     private SyncedConfigData hostConfigData;
@@ -72,6 +75,7 @@ public class SyncedConfig
     private ConfigEntry<int> MaxwellSpawnWeightCfg;
     private ConfigEntry<int> YippeeSpawnWeightCfg;
     private ConfigEntry<int> CookieFumoSpawnWeightCfg;
+    private ConfigEntry<int> PsychoSpawnWeightCfg;
     #endregion
 
     #region Config Setting Get/Set Properties
@@ -228,51 +232,53 @@ public class SyncedConfig
     internal int MaxwellSpawnWeight { get { return MaxwellSpawnWeightCfg.Value; } set => MaxwellSpawnWeightCfg.Value = value; }
     internal int YippeeSpawnWeight { get { return YippeeSpawnWeightCfg.Value; } set => YippeeSpawnWeightCfg.Value = value; }
     internal int CookieFumoSpawnWeight { get { return CookieFumoSpawnWeightCfg.Value; } set => CookieFumoSpawnWeightCfg.Value = value; }
+    internal int PsychoSpawnWeight { get { return PsychoSpawnWeightCfg.Value; } set => PsychoSpawnWeightCfg.Value = value; }
     #endregion
 
     public SyncedConfig()
     {
         BindConfigs();
+        ClearUnusedEntries();
     }
 
     private void BindConfigs()
     {
-        ConfigFile config = Plugin.Instance.Config;
+        ConfigFile configFile = Plugin.Instance.Config;
 
         // Sell Settings
-        SellGiftsCfg = config.Bind(
+        SellGiftsCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
             sellGiftsDefault,
             new ConfigDescription("Do you want to sell Gifts?")
         );
-        SellShotgunsCfg = config.Bind(
+        SellShotgunsCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
             sellShotgunsDefault,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
-        SellAmmoCfg = config.Bind(
+        SellAmmoCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
             sellAmmoDefault,
             new ConfigDescription("Do you want to sell Ammo?")
         );
-        SellKnivesCfg = config.Bind(
+        SellKnivesCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellKnives"),
             sellKnivesDefault,
             new ConfigDescription("Do you want to sell Kitchen knives?")
         );
-        SellPicklesCfg = config.Bind(
+        SellPicklesCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
             sellPicklesDefault,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
         // Advanced Sell Settings
-        SellScrapWorthZeroCfg = config.Bind(
+        SellScrapWorthZeroCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "sellScrapWorthZero"),
             sellScrapWorthZeroDefault,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
-        OnlySellScrapOnFloorCfg = config.Bind(
+        OnlySellScrapOnFloorCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "onlySellScrapOnFloor"),
             onlySellScrapOnFloorDefault,
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
@@ -284,86 +290,92 @@ public class SyncedConfig
         dontSellListJsonCfgDescription += "Item names are not case-sensitive but, spaces do matter.\n";
         dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n";
         dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Octolar Plush\", \"Smol Takey\"]";
-        DontSellListJsonCfg = config.Bind(
+        DontSellListJsonCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             JsonConvert.SerializeObject(dontSellListJsonDefault),
             new ConfigDescription(dontSellListJsonCfgDescription)
         );
 
         // Terminal Settings
-        OverrideWelcomeMessageCfg = config.Bind(
+        OverrideWelcomeMessageCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
             overrideWelcomeMessageDefault,
             new ConfigDescription("Overrides the terminal welcome message to add additional info.")
         );
-        OverrideHelpMessageCfg = config.Bind(
+        OverrideHelpMessageCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
             overrideHelpMessageDefault,
             new ConfigDescription("Overrides the terminal help message to add additional info.")
         );
-        ShowFoundItemsCfg = config.Bind(
+        ShowFoundItemsCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "showFoundItems"),
             showFoundItemsDefault,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
-        SortFoundItemsPriceCfg = config.Bind(
+        SortFoundItemsPriceCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "sortFoundItemsPrice"),
             sortFoundItemsPriceDefault,
             new ConfigDescription("Sorts found items from most to least expensive.")
         );
-        AlignFoundItemsPriceCfg = config.Bind(
+        AlignFoundItemsPriceCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "alignFoundItemsPrice"),
             alignFoundItemsPriceDefault,
             new ConfigDescription("Align all prices of found items.")
         );
 
         // Misc Settings
-        SpeakInShipCfg = config.Bind(
+        SpeakInShipCfg = configFile.Bind(
             new ConfigDefinition("Misc Settings", "speakInShip"),
             speakInShipDefault,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
-        OverrideSetNewProfitQuotaCfg = config.Bind(
+        OverrideSetNewProfitQuotaCfg = configFile.Bind(
             new ConfigDefinition("Misc Settings", "overrideSetNewProfitQuota"),
             overrideSetNewProfitQuotaDefault,
             new ConfigDescription("Will override the SetNewProfitQuota function in TimeOfDay.")
         );
 
         // Scrap Eater Settings
-        ScrapEaterChanceCfg = config.Bind(
+        ScrapEaterChanceCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
             ScrapEaterChanceDefault,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
-        OctolarSpawnWeightCfg = config.Bind(
+        OctolarSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "octolarSpawnWeight"),
             OctolarSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
-        TakeySpawnWeightCfg = config.Bind(
+        TakeySpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
             TakeySpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
-        MaxwellSpawnWeightCfg = config.Bind(
+        MaxwellSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
             MaxwellSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
-        YippeeSpawnWeightCfg = config.Bind(
+        YippeeSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
             YippeeSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
-        CookieFumoSpawnWeightCfg = config.Bind(
+        CookieFumoSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "cookieFumoSpawnWeight"),
             CookieFumoSpawnWeightDefault,
             new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        PsychoSpawnWeightCfg = configFile.Bind(
+            new ConfigDefinition("Scrap Eater Settings", "psychoSpawnWeight"),
+            PsychoSpawnWeightDefault,
+            new ConfigDescription("The spawn chance weight Psycho will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
     }
@@ -400,10 +412,22 @@ public class SyncedConfig
         MaxwellSpawnWeightCfg.Value = MaxwellSpawnWeightDefault;
         YippeeSpawnWeightCfg.Value = YippeeSpawnWeightDefault;
         CookieFumoSpawnWeightCfg.Value = CookieFumoSpawnWeightDefault;
+        PsychoSpawnWeightCfg.Value = PsychoSpawnWeightDefault;
 
         Plugin.logger.LogInfo("Reset all config settings to their default value.");
 
         SyncedConfigsChanged();
+    }
+
+    private void ClearUnusedEntries()
+    {
+        ConfigFile configFile = Plugin.Instance.Config;
+
+        // Normally, old unused config entries don't get removed, so we do it with this piece of code. Credit to Kittenji.
+        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
+        orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
+        configFile.Save(); // Save the config file to save these changes
     }
 
     internal void SetHostConfigData(SyncedConfigData syncedConfigData)

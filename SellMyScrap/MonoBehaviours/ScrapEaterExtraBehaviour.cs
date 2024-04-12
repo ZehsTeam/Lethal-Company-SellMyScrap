@@ -152,6 +152,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
         audioSource.Stop();
     }
 
+    // MAKE THIS BETTER - ScreenShakeType has more options
     protected void ShakeCamera(float bigShakeDistance = 8f, float smallShakeDistance = 18f)
     {
         float distance = Vector3.Distance(GameNetworkManager.Instance.localPlayerController.transform.position, transform.position);

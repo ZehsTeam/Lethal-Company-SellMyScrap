@@ -33,7 +33,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Using the `-se` flag will spawn a random scrap eater.
     * Usage: `<sell-command> -se`
 * Using the `-se:<number>` flag will spawn a scrap eater by their index (Starts at 1).
-    * 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo
+    * 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo, 6 = Psycho
     * Usage: `<sell-command> -se:<number>`
 
 <h4>Additional info for the <code>sell &lt;amount&gt;</code> command.</h4>
@@ -107,6 +107,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `maxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
 | `yippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
 | `cookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
+| `psychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -125,7 +126,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/ERBkhCa.png" width="273px">
+    <img src="https://i.imgur.com/hIHJQn7.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -163,12 +164,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/PPBPUcH.png" width="100%">
+    <img src="https://i.imgur.com/q67Sj6x.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/Aw3bOo1.png" width="412px">
-    <img src="https://i.imgur.com/Dfn92qA.png" width="412px">
+    <img src="https://i.imgur.com/BS73hgY.png" width="412px">
+    <img src="https://i.imgur.com/carvtWw.png" width="412px">
 </div>
 
 ## My Other Mods

@@ -66,6 +66,7 @@ public class ConfigHelper
             new ConfigItem("maxwellSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.MaxwellSpawnWeight =    int.Parse(value); }, () => { return configManager.MaxwellSpawnWeight.ToString();    }),
             new ConfigItem("yippeeSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.YippeeSpawnWeight =     int.Parse(value); }, () => { return configManager.YippeeSpawnWeight.ToString();     }),
             new ConfigItem("cookieFumoSpawnWeight", typeof(int), isHostOnly: true, value => { configManager.CookieFumoSpawnWeight = int.Parse(value); }, () => { return configManager.CookieFumoSpawnWeight.ToString(); }),
+            new ConfigItem("psychoSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.PsychoSpawnWeight =     int.Parse(value); }, () => { return configManager.PsychoSpawnWeight.ToString();     }),
         ];
     }
 
@@ -152,19 +153,29 @@ public class ConfigHelper
         message += GetConfigItemListMessage("[Advanced Sell Settings]", advancedSellConfigItems, syncedWithHost: true);
         message += GetConfigItemListMessage("[Terminal Settings]", terminalConfigItems);
         message += GetConfigItemListMessage("[Misc Settings]", miscConfigItems);
-        message += GetConfigItemListMessage("[Scrap Eater Settings]", scrapEaterConfigItems);
+        message += GetConfigItemListMessage("[Scrap Eater Settings]", scrapEaterConfigItems, hostOnly: true);
 
         return message.Trim();
     }
 
-    private static string GetConfigItemListMessage(string header, List<ConfigItem> list, bool syncedWithHost = false)
+    private static string GetConfigItemListMessage(string header, List<ConfigItem> list, bool syncedWithHost = false, bool hostOnly = false)
     {
         string[] keys = list.Select(item => item.key).ToArray();
         int maxLength = Utils.GetLongestStringFromArray(keys).Length + 1;
 
-        string syncedWithHostMessage = (!Plugin.IsHostOrServer && syncedWithHost) ? " (Synced with host)" : string.Empty;
+        string additionalHeaderMessage = string.Empty;
 
-        string message = $"{header}{syncedWithHostMessage}\n";
+        if (syncedWithHost && !Plugin.IsHostOrServer)
+        {
+            additionalHeaderMessage = " (Synced with host)";
+        }
+
+        if (hostOnly && !Plugin.IsHostOrServer)
+        {
+            additionalHeaderMessage = " (Host only)";
+        }
+
+        string message = $"{header}{additionalHeaderMessage}\n";
 
         list.ForEach(configItem =>
         {

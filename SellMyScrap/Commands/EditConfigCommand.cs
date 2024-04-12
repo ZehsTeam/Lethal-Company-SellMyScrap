@@ -124,7 +124,7 @@ internal class EditConfigCommand : Command
 
         if (configItem.isHostOnly && !Plugin.IsHostOrServer)
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can change this setting.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can edit this setting.\n\n"));
         }
 
         return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid value.\n\n"));
@@ -193,7 +193,7 @@ class JsonListEditor
 
         if (isHostOnly && !Plugin.IsHostOrServer)
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can change this setting.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can edit this setting.\n\n"));
         }
 
         if (_args[1] == string.Empty)
