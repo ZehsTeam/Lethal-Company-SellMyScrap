@@ -36,6 +36,13 @@ public class ScrapEaterManager
     internal static bool CanUseScrapEater()
     {
         int spawnChance = Plugin.Instance.ConfigManager.ScrapEaterChance;
+        if (spawnChance <= 0) return false;
+
+        if (Utils.IsLocalPlayerPsychoHypnotic())
+        {
+            spawnChance = 75;
+        }
+
         return Utils.RandomPercent(spawnChance);
     }
 

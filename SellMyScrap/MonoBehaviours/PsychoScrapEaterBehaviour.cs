@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -10,6 +11,29 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public Material normalMaterial = null;
     public Material suckMaterial = null;
     public AudioClip hohSFX = null;
+    public AudioClip raidSFX = null;
+    public ParticleSystem potatoesParticleSystem = null;
+
+    private bool raid = false;
+
+    protected override void Start()
+    {
+        SetMaterial(normalMaterial);
+
+        if (IsHostOrServer)
+        {
+            raid = Utils.RandomPercent(80);
+            SetDataClientRpc(raid);
+        }
+
+        base.Start();
+    }
+
+    [ClientRpc]
+    private void SetDataClientRpc(bool raid)
+    {
+        this.raid = raid;
+    }
 
     protected override IEnumerator StartAnimation()
     {
@@ -37,6 +61,11 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(PlayOneShotSFX(hohSFX));
         yield return new WaitForSeconds(pauseDuration / 2f);
 
+        if (raid)
+        {
+            yield return StartCoroutine(RaidAnimation());
+        }
+
         // Move ScrapEater to startPosition
         PlayAudioSource(movementAudio);
         yield return StartCoroutine(MoveToPosition(endPosition, startPosition, movementDuration));
@@ -47,6 +76,22 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Move ScrapEater to spawnPosition
         PlayOneShotSFX(takeOffSFX);
         yield return StartCoroutine(MoveToPosition(startPosition, spawnPosition, 2f));
+    }
+
+    private IEnumerator RaidAnimation()
+    {
+        float raidSFXLength = raidSFX.length;
+        float particleSystemStart = 3.36f;
+        float particleSystemLength = raidSFXLength - particleSystemStart - 0.5f;
+
+        PlayOneShotSFX(raidSFX);
+        yield return new WaitForSeconds(particleSystemStart);
+        SetMaterial(suckMaterial);
+        potatoesParticleSystem.Play();
+        yield return new WaitForSeconds(particleSystemLength);
+        potatoesParticleSystem.Stop();
+        SetMaterial(normalMaterial);
+        yield return new WaitForSeconds(pauseDuration);
     }
 
     private void SetMaterial(Material material)
