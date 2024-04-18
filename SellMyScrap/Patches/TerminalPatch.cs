@@ -7,17 +7,17 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
-    private static Terminal instance;
+    private static Terminal _instance;
     public static Terminal Instance
     {
         get
         {
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = Object.FindFirstObjectByType<Terminal>();
+                _instance = Object.FindFirstObjectByType<Terminal>();
             }
 
-            return instance;
+            return _instance;
         }
     }
 

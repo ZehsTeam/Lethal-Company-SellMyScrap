@@ -1,7 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,17 +9,17 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
-    private static DepositItemsDesk instance;
+    private static DepositItemsDesk _instance;
     public static DepositItemsDesk Instance
     {
         get
         {
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = Object.FindFirstObjectByType<DepositItemsDesk>();
+                _instance = Object.FindFirstObjectByType<DepositItemsDesk>();
             }
 
-            return instance;
+            return _instance;
         }
     }
 

@@ -24,14 +24,6 @@ internal class ScrapHelper
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        if (hangarShip == null)
-        {
-            string message = "Error: failed to get scrap from ship. Could not find HangarShip.";
-            Plugin.logger.LogError(message);
-            Utils.DisplayTip("SellMyScrap", message);
-            return [];
-        }
-
         GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
