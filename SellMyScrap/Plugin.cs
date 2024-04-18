@@ -30,7 +30,7 @@ public class Plugin : BaseUnityPlugin
 
     void Awake()
     {
-        if (Instance is null) Instance = this;
+        if (Instance == null) Instance = this;
 
         logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
         logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
@@ -115,7 +115,7 @@ public class Plugin : BaseUnityPlugin
 
     public void ConfirmSellRequest()
     {
-        if (scrapToSell is null || sellRequest is null) return;
+        if (scrapToSell == null || sellRequest == null) return;
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
@@ -162,10 +162,10 @@ public class Plugin : BaseUnityPlugin
 
     public IEnumerator PerformSellOnServer()
     {
-        if (scrapToSell is null || sellRequest is null) yield return null;
+        if (scrapToSell == null || sellRequest == null) yield return null;
         if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
-        if (DepositItemsDeskPatch.Instance is null)
+        if (DepositItemsDeskPatch.Instance == null)
         {
             logger.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;

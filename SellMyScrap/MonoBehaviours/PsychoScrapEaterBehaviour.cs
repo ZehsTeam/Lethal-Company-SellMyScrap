@@ -21,7 +21,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         SetMaterial(normalMaterial);
 
-        if (suckSFX is not null)
+        if (suckSFX != null)
         {
             suckDuration = suckSFX.length;
         }
@@ -104,7 +104,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private void SetMaterial(Material material)
     {
-        if (meshRenderer is null || material is null) return;
+        if (meshRenderer == null || material == null) return;
 
         meshRenderer.material = material;
     }

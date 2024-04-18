@@ -75,7 +75,7 @@ public class ConfigHelper
         parsedValue = string.Empty;
 
         configItem = GetConfigItem(key);
-        if (configItem is null) return false;
+        if (configItem == null) return false;
 
         if (configItem.isHostOnly && !Plugin.IsHostOrServer) return false;
 
@@ -179,7 +179,7 @@ public class ConfigHelper
 
         list.ForEach(configItem =>
         {
-            if (configItem.GetValue is null)
+            if (configItem.GetValue == null)
             {
                 Plugin.logger.LogError($"Error: Func<string> GetValue() for ConfigItem key: \"{configItem.key}\" could not be found!");
                 return;

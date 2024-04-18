@@ -12,7 +12,7 @@ internal class ScrapHelper
     {
         get
         {
-            if (_hangarShip is null)
+            if (_hangarShip == null)
             {
                 _hangarShip = GameObject.Find("/Environment/HangarShip");
             }
@@ -24,6 +24,14 @@ internal class ScrapHelper
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
+        if (hangarShip == null)
+        {
+            string message = "Error: failed to get scrap from ship. Could not find HangarShip.";
+            Plugin.logger.LogError(message);
+            Utils.DisplayTip("SellMyScrap", message);
+            return [];
+        }
+
         GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = new List<GrabbableObject>();
 
@@ -75,7 +83,7 @@ internal class ScrapHelper
 
     private static bool IsScrapItem(GrabbableObject grabbableObject)
     {
-        if (grabbableObject is null) return false;
+        if (grabbableObject == null) return false;
         if (!grabbableObject.itemProperties.isScrap) return false;
         if (grabbableObject.isHeld || grabbableObject.isPocketed || !grabbableObject.grabbable) return false;
 
@@ -84,7 +92,7 @@ internal class ScrapHelper
 
     private static bool IsScrapItem(Item item)
     {
-        if (item is null) return false;
+        if (item == null) return false;
         if (!item.isScrap) return false;
 
         return true;
@@ -117,7 +125,7 @@ internal class ScrapHelper
     private static bool IsScrapOnFloor(GrabbableObject grabbableObject)
     {
         BoxCollider boxCollider = grabbableObject.GetComponent<BoxCollider>();
-        if (boxCollider is null) return true;
+        if (boxCollider == null) return true;
 
         Bounds bounds = boxCollider.bounds;
         float shipY = hangarShip.transform.position.y;
@@ -222,7 +230,7 @@ internal class ScrapHelper
                 }
             }
 
-            if (smallestOverMatch is not null)
+            if (smallestOverMatch != null)
                 bestMatch = smallestOverMatch;
         }
 

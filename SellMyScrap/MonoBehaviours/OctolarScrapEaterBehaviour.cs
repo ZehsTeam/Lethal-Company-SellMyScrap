@@ -73,7 +73,7 @@ internal class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private void SetMaterial(Material material)
     {
-        if (meshRenderer is null || material is null) return;
+        if (meshRenderer == null || material == null) return;
 
         meshRenderer.material = material;
     }

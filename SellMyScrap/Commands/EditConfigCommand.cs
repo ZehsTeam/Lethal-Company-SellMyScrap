@@ -117,7 +117,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.key} to {parsedValue}\n\n"));
         }
 
-        if (configItem is null)
+        if (configItem == null)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }

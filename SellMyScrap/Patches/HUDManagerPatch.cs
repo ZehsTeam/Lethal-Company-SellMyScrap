@@ -33,7 +33,7 @@ internal class HUDManagerPatch
 
         if (lines >= 9)
         {
-            if (___scrollRewardTextCoroutine is not null)
+            if (___scrollRewardTextCoroutine != null)
             {
                 __instance.StopCoroutine(___scrollRewardTextCoroutine);
             }

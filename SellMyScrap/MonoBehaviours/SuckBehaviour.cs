@@ -33,7 +33,7 @@ public class SuckBehaviour : MonoBehaviour
 
         while (timer < duration)
         {
-            if (toTransform is null)
+            if (toTransform == null)
             {
                 yield return null;
                 timer += Time.deltaTime;
