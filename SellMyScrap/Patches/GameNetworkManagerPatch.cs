@@ -27,7 +27,7 @@ internal class GameNetworkManagerPatch
 
     private static void AddNetworkPrefab(GameObject prefab)
     {
-        if (prefab == null) return;
+        if (prefab is null) return;
 
         NetworkManager.Singleton.AddNetworkPrefab(prefab);
 

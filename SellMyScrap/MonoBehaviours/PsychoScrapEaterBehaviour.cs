@@ -11,6 +11,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public Material normalMaterial = null;
     public Material suckMaterial = null;
     public AudioClip hohSFX = null;
+    public AudioClip suckSFX = null;
     public AudioClip raidSFX = null;
     public ParticleSystem potatoesParticleSystem = null;
 
@@ -20,9 +21,14 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         SetMaterial(normalMaterial);
 
+        if (suckSFX is not null)
+        {
+            suckDuration = suckSFX.length;
+        }
+
         if (IsHostOrServer)
         {
-            raid = Utils.RandomPercent(75);
+            raid = Utils.RandomPercent(90);
             SetDataClientRpc(raid);
         }
 
@@ -54,9 +60,11 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Move targetScrap to mouthTransform over time.
         SetMaterial(suckMaterial);
         MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+        PlayOneShotSFX(suckSFX);
         yield return new WaitForSeconds(suckDuration);
 
         SetMaterial(normalMaterial);
+        yield return new WaitForSeconds(0.25f);
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         yield return new WaitForSeconds(PlayOneShotSFX(hohSFX));
         yield return new WaitForSeconds(pauseDuration / 2f);
@@ -96,7 +104,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private void SetMaterial(Material material)
     {
-        if (meshRenderer == null || material == null) return;
+        if (meshRenderer is null || material is null) return;
 
         meshRenderer.material = material;
     }

@@ -12,7 +12,7 @@ internal class ScrapHelper
     {
         get
         {
-            if (_hangarShip == null)
+            if (_hangarShip is null)
             {
                 _hangarShip = GameObject.Find("/Environment/HangarShip");
             }
@@ -75,7 +75,7 @@ internal class ScrapHelper
 
     private static bool IsScrapItem(GrabbableObject grabbableObject)
     {
-        if (grabbableObject == null) return false;
+        if (grabbableObject is null) return false;
         if (!grabbableObject.itemProperties.isScrap) return false;
         if (grabbableObject.isHeld || grabbableObject.isPocketed || !grabbableObject.grabbable) return false;
 
@@ -84,7 +84,7 @@ internal class ScrapHelper
 
     private static bool IsScrapItem(Item item)
     {
-        if (item == null) return false;
+        if (item is null) return false;
         if (!item.isScrap) return false;
 
         return true;
@@ -92,7 +92,7 @@ internal class ScrapHelper
 
     private static bool IsAllowedScrapItem(GrabbableObject grabbableObject, string[] dontSellList)
     {
-        SyncedConfig configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
 
         if (grabbableObject.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
         if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(grabbableObject)) return false;
@@ -117,7 +117,7 @@ internal class ScrapHelper
     private static bool IsScrapOnFloor(GrabbableObject grabbableObject)
     {
         BoxCollider boxCollider = grabbableObject.GetComponent<BoxCollider>();
-        if (boxCollider == null) return true;
+        if (boxCollider is null) return true;
 
         Bounds bounds = boxCollider.bounds;
         float shipY = hangarShip.transform.position.y;
@@ -222,7 +222,7 @@ internal class ScrapHelper
                 }
             }
 
-            if (smallestOverMatch != null)
+            if (smallestOverMatch is not null)
                 bestMatch = smallestOverMatch;
         }
 
@@ -256,7 +256,7 @@ internal class ScrapHelper
     #region Get Scrap Message
     public static string GetScrapMessage(List<GrabbableObject> scrap)
     {
-        SyncedConfig configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
         return GetScrapMessage(scrap, configManager.SortFoundItemsPrice, configManager.AlignFoundItemsPrice);
     }
 

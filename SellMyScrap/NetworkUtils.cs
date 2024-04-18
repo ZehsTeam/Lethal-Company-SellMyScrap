@@ -14,7 +14,7 @@ public class NetworkUtils
 
     public static List<int> CovertStringToIntList(string list)
     {
-        return list.Split(',').Select(Int32.Parse).ToList();
+        return list.Split(',').Select(int.Parse).ToList();
     }
 
     public static string GetNetworkObjectIdsString(List<GrabbableObject> grabbableObjects)
@@ -40,7 +40,7 @@ public class NetworkUtils
     public static int GetNetworkObjectId(GrabbableObject grabbableObject)
     {
         NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
-        return networkObject == null ? -1 : (int)networkObject.NetworkObjectId;
+        return networkObject is null ? -1 : (int)networkObject.NetworkObjectId;
     }
 
     public static List<GrabbableObject> GetGrabbableObjects(string networkObjectIds)
@@ -55,7 +55,7 @@ public class NetworkUtils
         networkObjectIds.ForEach(networkObjectId =>
         {
             GrabbableObject grabbableObject = GetGrabbableObject(networkObjectId);
-            if (grabbableObject == null) return;
+            if (grabbableObject is null) return;
 
             grabbableObjects.Add(grabbableObject);
         });
@@ -66,7 +66,7 @@ public class NetworkUtils
     public static GrabbableObject GetGrabbableObject(int networkObjectId)
     {
         NetworkObject networkObject = GetNetworkObject(networkObjectId);
-        if (networkObject == null) return null;
+        if (networkObject is null) return null;
 
         return networkObject.gameObject.GetComponent<GrabbableObject>();
     }

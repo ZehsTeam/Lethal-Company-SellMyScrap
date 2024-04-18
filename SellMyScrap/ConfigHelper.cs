@@ -30,7 +30,7 @@ public class ConfigHelper
 
     internal static void Initialize()
     {
-        SyncedConfig configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
 
         sellConfigItems = [
             new ConfigItem("sellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
@@ -75,7 +75,7 @@ public class ConfigHelper
         parsedValue = string.Empty;
 
         configItem = GetConfigItem(key);
-        if (configItem == null) return false;
+        if (configItem is null) return false;
 
         if (configItem.isHostOnly && !Plugin.IsHostOrServer) return false;
 
@@ -179,7 +179,7 @@ public class ConfigHelper
 
         list.ForEach(configItem =>
         {
-            if (configItem.GetValue == null)
+            if (configItem.GetValue is null)
             {
                 Plugin.logger.LogError($"Error: Func<string> GetValue() for ConfigItem key: \"{configItem.key}\" could not be found!");
                 return;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameNetcodeStuff;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -19,11 +20,21 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     private bool isEvil = false;
     private int meowIndex = 0;
 
+    private bool isTarget = false;
+
     protected override void Start()
     {
         if (IsHostOrServer)
         {
-            isEvil = Random.Range(1f, 100f) <= 50f;
+            if (PlayerUtils.HasPlayerMagoroku())
+            {
+                isEvil = Utils.RandomPercent(80);
+            }
+            else
+            {
+                isEvil = Utils.RandomPercent(50);
+            }
+            
             meowIndex = Random.Range(0, meowSFX.Length);
 
             SetDataClientRpc(isEvil, meowIndex);
@@ -37,6 +48,11 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         this.isEvil = isEvil;
         this.meowIndex = meowIndex;
+
+        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
+        {
+            isTarget = true;
+        }
     }
 
     protected override IEnumerator StartAnimation()
@@ -61,6 +77,7 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(pauseDuration / 3f * 2f);
 
         // Move targetScrap to mouthTransform over time.
+        if (isTarget) StartCoroutine(MoveLocalPlayerToMaxwell(suckDuration - 0.1f));
         MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
         yield return new WaitForSeconds(suckDuration);
 
@@ -70,12 +87,16 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         SetAnimationIdle();
         yield return new WaitForSeconds(pauseDuration / 3f);
 
+        if (isTarget) PlayerUtils.SetLocalPlayerAllowDeathEnabled(true);
+
         if (isEvil)
         {
             yield return StartCoroutine(StartEvilMaxwell());
             yield return new WaitForSeconds(5f);
             yield break;
         }
+
+        if (isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
 
         // Move ScrapEater to startPosition
         PlayAudioSource(movementAudio);
@@ -89,6 +110,32 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return StartCoroutine(MoveToPosition(startPosition, spawnPosition, 2f));
     }
 
+    private IEnumerator MoveLocalPlayerToMaxwell(float duration)
+    {
+        PlayerControllerB localPlayerScript = PlayerUtils.GetLocalPlayerScript();
+
+        isTarget = true;
+        PlayerUtils.SetLocalPlayerMovementEnabled(false);
+        PlayerUtils.SetLocalPlayerAllowDeathEnabled(false);
+
+        Vector3 startPosition = localPlayerScript.transform.position;
+
+        Vector3 endPosition = mouthTransform.position;
+        endPosition.x += 1f;
+        endPosition.y = transform.position.y;
+
+        float timer = 0f;
+        while (timer < duration)
+        {
+            float percent = (1f / duration) * timer;
+            Vector3 newPosition = startPosition + (endPosition - startPosition) * percent;
+            localPlayerScript.transform.position = newPosition;
+
+            yield return null;
+            timer += Time.deltaTime;
+        }
+    }
+
     private IEnumerator StartEvilMaxwell()
     {
         bodyObject.SetActive(false);
@@ -96,7 +143,10 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         purrAudio.Stop();
         PlayOneShotSFX(evilNoise);
-        yield return new WaitForSeconds(1.5f);
+
+        yield return new WaitForSeconds(1.25f);
+        if (isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
+        yield return new WaitForSeconds(0.25f);
 
         Vector3 position = transform.position;
         position.y += 0.31f;
@@ -109,6 +159,8 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
             // apply force outwards from center
             rb.AddExplosionForce(1000f, evilObject.transform.position, 100f);
         }
+
+        PlayerUtils.ReviveDeadPlayersAfterTime(5f);
     }
 
     private void SetAnimationDance()

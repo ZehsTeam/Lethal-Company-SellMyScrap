@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-public class SyncedConfig
+public class SyncedConfigManager
 {
     #region Config Setting Default Values
     // Sell Settings Defaults
@@ -84,7 +84,7 @@ public class SyncedConfig
     { 
         get
         {
-            return hostConfigData == null ? SellGiftsCfg.Value : hostConfigData.sellGifts;
+            return hostConfigData is null ? SellGiftsCfg.Value : hostConfigData.sellGifts;
         }
         set
         {
@@ -97,7 +97,7 @@ public class SyncedConfig
     { 
         get
         {
-            return hostConfigData == null ? SellShotgunsCfg.Value : hostConfigData.sellShotguns;
+            return hostConfigData is null ? SellShotgunsCfg.Value : hostConfigData.sellShotguns;
         }
         set
         {
@@ -110,7 +110,7 @@ public class SyncedConfig
     {
         get 
         {
-            return hostConfigData == null ? SellAmmoCfg.Value : hostConfigData.sellAmmo;
+            return hostConfigData is null ? SellAmmoCfg.Value : hostConfigData.sellAmmo;
         }
         set
         {
@@ -123,7 +123,7 @@ public class SyncedConfig
     {
         get
         {
-            return hostConfigData == null ? SellKnivesCfg.Value : hostConfigData.sellKnives;
+            return hostConfigData is null ? SellKnivesCfg.Value : hostConfigData.sellKnives;
         }
         set
         {
@@ -136,7 +136,7 @@ public class SyncedConfig
     { 
         get
         {
-            return hostConfigData == null ? SellPicklesCfg.Value : hostConfigData.sellPickles;
+            return hostConfigData is null ? SellPicklesCfg.Value : hostConfigData.sellPickles;
         }
         set
         {
@@ -150,7 +150,7 @@ public class SyncedConfig
     {
         get
         {
-            return hostConfigData == null ? SellScrapWorthZeroCfg.Value : hostConfigData.sellScrapWorthZero;
+            return hostConfigData is null ? SellScrapWorthZeroCfg.Value : hostConfigData.sellScrapWorthZero;
         }
         set
         {
@@ -163,7 +163,7 @@ public class SyncedConfig
     {
         get
         {
-            return hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.onlySellScrapOnFloor;
+            return hostConfigData is null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.onlySellScrapOnFloor;
         }
         set
         {
@@ -178,7 +178,7 @@ public class SyncedConfig
         {
             string text = DontSellListJsonCfg.Value;
 
-            if (hostConfigData != null)
+            if (hostConfigData is not null)
             {
                 text = hostConfigData.dontSellListJson;
             }
@@ -235,7 +235,7 @@ public class SyncedConfig
     internal int PsychoSpawnWeight { get { return PsychoSpawnWeightCfg.Value; } set => PsychoSpawnWeightCfg.Value = value; }
     #endregion
 
-    public SyncedConfig()
+    public SyncedConfigManager()
     {
         BindConfigs();
         ClearUnusedEntries();

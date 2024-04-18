@@ -12,7 +12,7 @@ internal class TerminalPatch
     {
         get
         {
-            if (instance == null)
+            if (instance is null)
             {
                 instance = Object.FindFirstObjectByType<Terminal>();
             }
@@ -87,7 +87,7 @@ internal class TerminalPatch
 
         if (CommandManager.TryExecuteCommand(array, out TerminalNode terminalNode))
         {
-            if (terminalNode == null)
+            if (terminalNode is null)
             {
                 __result = CreateTerminalNode("Error: terminalNode is null!\n\n");
                 return false;

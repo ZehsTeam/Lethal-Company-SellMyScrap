@@ -32,7 +32,7 @@ internal class CommandManager
 
         string[] args = GetArgs(array, 3);
 
-        if (awaitingConfirmationCommand != null)
+        if (awaitingConfirmationCommand is not null)
         {
             Command _command = awaitingConfirmationCommand;
             terminalNode = _command.ExecuteConfirmation(args);
@@ -41,7 +41,7 @@ internal class CommandManager
         }
 
         Command command = GetCommand(args);
-        if (command == null) return false;
+        if (command is null) return false;
         
         terminalNode = command.Execute(args);
         command.previousTerminalNode = terminalNode;

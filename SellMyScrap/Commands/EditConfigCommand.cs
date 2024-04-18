@@ -15,7 +15,7 @@ internal class EditConfigCommand : Command
 
     public EditConfigCommand()
     {
-        SyncedConfig configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
 
         dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, configManager.DontSellListJson.ToList(), value =>
         {
@@ -66,7 +66,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
-        SyncedConfig configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
 
         if (editingDontSellListJson)
         {
@@ -117,7 +117,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.key} to {parsedValue}\n\n"));
         }
 
-        if (configItem == null)
+        if (configItem is null)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
@@ -157,7 +157,8 @@ internal class EditConfigCommand : Command
 
     private string GetResetToDefaultMessage(string additionMessage = "")
     {
-        string message = "Are you sure you want to reset all config settings to their default value?\n\n";
+        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
+        message += "Are you sure you want to reset all config settings to their default value?\n\n";
         message += "Please CONFIRM or DENY.\n\n";
         message += additionMessage;
 

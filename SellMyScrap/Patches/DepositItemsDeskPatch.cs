@@ -15,7 +15,7 @@ internal class DepositItemsDeskPatch
     {
         get
         {
-            if (instance == null)
+            if (instance is null)
             {
                 instance = Object.FindFirstObjectByType<DepositItemsDesk>();
             }
@@ -115,14 +115,14 @@ internal class DepositItemsDeskPatch
 
     public static void PlaceItemsOnCounter(List<GrabbableObject> grabbableObjects)
     {
-        if (Instance == null) return;
+        if (Instance is null) return;
 
         grabbableObjects.ForEach(PlaceItemOnCounter);
     }
 
     public static void PlaceItemOnCounter(GrabbableObject grabbableObject)
     {
-        if (grabbableObject == null || Instance == null) return;
+        if (grabbableObject is null || Instance is null) return;
         if (Instance.itemsOnCounter.Contains(grabbableObject)) return;
 
         Instance.itemsOnCounter.Add(grabbableObject);

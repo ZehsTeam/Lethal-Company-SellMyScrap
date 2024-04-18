@@ -11,7 +11,7 @@ public class Utils
     {
         if (percent <= 0) return false;
         if (percent >= 100) return true;
-        return UnityEngine.Random.Range(1f, 100f) <= percent;
+        return Random.Range(1f, 100f) <= percent;
     }
 
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
@@ -102,7 +102,7 @@ public class Utils
 
         Transform holder = null;
 
-        if (RoundManager.Instance != null && RoundManager.Instance.mapPropsContainer != null && RoundManager.Instance.mapPropsContainer.transform != null)
+        if (RoundManager.Instance is not null && RoundManager.Instance.mapPropsContainer is not null && RoundManager.Instance.mapPropsContainer.transform is not null)
         {
             holder = RoundManager.Instance.mapPropsContainer.transform;
         }
@@ -136,7 +136,7 @@ public class Utils
             if (array[i].gameObject.layer == 3)
             {
                 playerControllerB = array[i].gameObject.GetComponent<PlayerControllerB>();
-                if (playerControllerB != null && playerControllerB.IsOwner)
+                if (playerControllerB is not null && playerControllerB.IsOwner)
                 {
                     // calculate damage based on distance, so if player is minDamageRange or closer, they take full damage
                     // if player is maxDamageRange or further, they take no damage
@@ -149,7 +149,7 @@ public class Utils
             else if (array[i].gameObject.layer == 21)
             {
                 Landmine componentInChildren = array[i].gameObject.GetComponentInChildren<Landmine>();
-                if (componentInChildren != null && !componentInChildren.hasExploded && num2 < 6f)
+                if (componentInChildren is not null && !componentInChildren.hasExploded && num2 < 6f)
                 {
                     Debug.Log("Setting off other mine");
                     StartOfRound.Instance.StartCoroutine(TriggerOtherMineDelayed(componentInChildren));
@@ -158,7 +158,7 @@ public class Utils
             else if (array[i].gameObject.layer == 19)
             {
                 EnemyAICollisionDetect componentInChildren2 = array[i].gameObject.GetComponentInChildren<EnemyAICollisionDetect>();
-                if (componentInChildren2 != null && componentInChildren2.mainScript.IsOwner && num2 < 4.5f)
+                if (componentInChildren2 is not null && componentInChildren2.mainScript.IsOwner && num2 < 4.5f)
                 {
                     componentInChildren2.mainScript.HitEnemyOnLocalClient(enemyHitForce, playerWhoHit: attacker);
                 }
@@ -171,7 +171,7 @@ public class Utils
         for (int j = 0; j < array.Length; j++)
         {
             Rigidbody component = array[j].GetComponent<Rigidbody>();
-            if (component != null)
+            if (component is not null)
             {
                 component.AddExplosionForce(70f, explosionPosition, 10f);
             }
@@ -188,16 +188,5 @@ public class Utils
         yield return new WaitForSeconds(0.2f);
 
         mine.SetOffMineAnimation();
-    }
-
-    public static bool IsLocalPlayerPsychoHypnotic()
-    {
-        ulong steamId = 76561197970440803;
-        return steamId == GetLocalPlayerSteamId();
-    }
-
-    public static ulong GetLocalPlayerSteamId()
-    {
-        return StartOfRound.Instance.localPlayerController.playerSteamId;
     }
 }

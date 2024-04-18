@@ -11,24 +11,26 @@ public class ScrapEaterManager
 
     internal static void Initialize()
     {
+        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
+
         scrapEaters = [
             new ScrapEater(Content.octolarScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.OctolarSpawnWeight;
+                return configManager.OctolarSpawnWeight;
             }),
             new ScrapEater(Content.takeyScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.TakeySpawnWeight;
+                return configManager.TakeySpawnWeight;
             }),
             new ScrapEater(Content.maxwellScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.MaxwellSpawnWeight;
+                return configManager.MaxwellSpawnWeight;
             }),
             new ScrapEater(Content.yippeeScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.YippeeSpawnWeight;
+                return configManager.YippeeSpawnWeight;
             }),
             new ScrapEater(Content.cookieFumoScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.CookieFumoSpawnWeight;
+                return configManager.CookieFumoSpawnWeight;
             }),
             new ScrapEater(Content.psychoScrapEaterPrefab, () => {
-                return Plugin.Instance.ConfigManager.PsychoSpawnWeight;
+                return configManager.PsychoSpawnWeight;
             }),
         ];
     }

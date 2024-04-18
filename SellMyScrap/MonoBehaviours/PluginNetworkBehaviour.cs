@@ -12,7 +12,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance is null) Instance = this;
     }
 
     [ClientRpc]

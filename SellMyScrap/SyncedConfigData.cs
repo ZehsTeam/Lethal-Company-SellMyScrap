@@ -21,19 +21,19 @@ public class SyncedConfigData : INetworkSerializable
 
     public SyncedConfigData() { }
 
-    public SyncedConfigData(SyncedConfig config)
+    public SyncedConfigData(SyncedConfigManager configManager)
     {
         // Sell Settings
-        sellGifts = config.SellGifts;
-        sellShotguns = config.SellShotguns;
-        sellAmmo = config.SellAmmo;
-        sellKnives = config.SellKnives;
-        sellPickles = config.SellPickles;
+        sellGifts = configManager.SellGifts;
+        sellShotguns = configManager.SellShotguns;
+        sellAmmo = configManager.SellAmmo;
+        sellKnives = configManager.SellKnives;
+        sellPickles = configManager.SellPickles;
 
         // Advanced Sell Settings
-        sellScrapWorthZero = config.SellScrapWorthZero;
-        onlySellScrapOnFloor = config.OnlySellScrapOnFloor;
-        dontSellListJson = JsonConvert.SerializeObject(config.DontSellListJson);
+        sellScrapWorthZero = configManager.SellScrapWorthZero;
+        onlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
+        dontSellListJson = JsonConvert.SerializeObject(configManager.DontSellListJson);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter

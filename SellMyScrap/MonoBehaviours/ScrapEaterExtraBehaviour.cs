@@ -91,7 +91,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
     {
         targetScrap.ForEach(item =>
         {
-            if (item == null) return;
+            if (item is null) return;
 
             SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
             suckBehaviour.StartEvent(targetTransform, duration);
@@ -132,7 +132,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     protected float PlayOneShotSFX(AudioSource audioSource, AudioClip audioClip, float volumeScale = 1f)
     {
-        if (audioSource == null || audioClip == null) return 0f;
+        if (audioSource is null || audioClip is null) return 0f;
 
         audioSource.PlayOneShot(audioClip, volumeScale);
         return audioClip.length;
@@ -140,14 +140,14 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     protected void PlayAudioSource(AudioSource audioSource)
     {
-        if (audioSource == null) return;
+        if (audioSource is null) return;
 
         audioSource.Play();
     }
 
     protected void StopAudioSource(AudioSource audioSource)
     {
-        if (audioSource == null) return;
+        if (audioSource is null) return;
 
         audioSource.Stop();
     }

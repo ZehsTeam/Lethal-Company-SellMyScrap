@@ -83,7 +83,7 @@ internal class SellCommand : Command
     protected static int GetScrapEaterIndex(List<CommandFlag> foundFlags)
     {
         CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-se");
-        if (flag == null || !flag.canUse) return -1;
+        if (flag is null || !flag.canUse) return -1;
 
         if (int.TryParse(flag.data, out int index))
         {

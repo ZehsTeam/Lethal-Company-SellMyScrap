@@ -119,7 +119,7 @@ internal class SellAmountCommand : SellCommand
     private bool GetWithOvertimeBonus(List<CommandFlag> foundFlags)
     {
         CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-o");
-        if (flag == null) return false;
+        if (flag is null) return false;
 
         return flag.canUse;
     }

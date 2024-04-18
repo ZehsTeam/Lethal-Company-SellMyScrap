@@ -21,7 +21,7 @@ public class Plugin : BaseUnityPlugin
     internal static Plugin Instance;
     internal static ManualLogSource logger;
 
-    internal SyncedConfig ConfigManager;
+    internal SyncedConfigManager ConfigManager;
 
     public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
@@ -30,7 +30,7 @@ public class Plugin : BaseUnityPlugin
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance is null) Instance = this;
 
         logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
         logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
@@ -42,7 +42,7 @@ public class Plugin : BaseUnityPlugin
         harmony.PatchAll(typeof(TerminalPatch));
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
-        ConfigManager = new SyncedConfig();
+        ConfigManager = new SyncedConfigManager();
 
         Content.Load();
         CommandManager.Initialize();
@@ -115,7 +115,7 @@ public class Plugin : BaseUnityPlugin
 
     public void ConfirmSellRequest()
     {
-        if (scrapToSell == null || sellRequest == null) return;
+        if (scrapToSell is null || sellRequest is null) return;
 
         sellRequest.confirmationType = ConfirmationType.Confirmed;
 
@@ -162,10 +162,10 @@ public class Plugin : BaseUnityPlugin
 
     public IEnumerator PerformSellOnServer()
     {
-        if (scrapToSell == null || sellRequest == null) yield return null;
+        if (scrapToSell is null || sellRequest is null) yield return null;
         if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
 
-        if (DepositItemsDeskPatch.Instance == null)
+        if (DepositItemsDeskPatch.Instance is null)
         {
             logger.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;

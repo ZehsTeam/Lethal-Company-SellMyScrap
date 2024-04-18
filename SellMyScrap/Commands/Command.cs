@@ -74,7 +74,7 @@ public class Command
         foreach (var item in items)
         {
             CommandFlag foundFlag = GetFlagFromString(item);
-            if (foundFlag == null) continue;
+            if (foundFlag is null) continue;
 
             foundFlags.Add(foundFlag);
         }
@@ -95,7 +95,7 @@ public class Command
             }
         }
 
-        if (foundFlag == null) return null;
+        if (foundFlag is null) return null;
 
         bool validLength = text.Length == foundFlag.key.Length;
         bool hasData = foundFlag.canHaveData && text.Contains(":");
