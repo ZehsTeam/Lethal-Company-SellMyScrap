@@ -11,7 +11,7 @@ public class Utils
     {
         if (percent <= 0) return false;
         if (percent >= 100) return true;
-        return Random.Range(1f, 100f) <= percent;
+        return Random.value <= percent * 0.01f;
     }
 
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)

@@ -15,7 +15,7 @@ internal class EditConfigCommand : Command
 
     public EditConfigCommand()
     {
-        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.ConfigManager;
 
         dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, configManager.DontSellListJson.ToList(), value =>
         {
@@ -66,7 +66,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
-        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.ConfigManager;
 
         if (editingDontSellListJson)
         {
@@ -141,7 +141,7 @@ internal class EditConfigCommand : Command
 
         if ("confirm".Contains(arg) && arg.Length > 0)
         {
-            Plugin.Instance.ConfigManager.ResetToDefault();
+            Plugin.ConfigManager.ResetToDefault();
             inResetToDefaultMenu = false;
             return TerminalPatch.CreateTerminalNode(GetMessage("Reset all config settings to their default value.\n\n"));
         }

@@ -76,7 +76,7 @@ internal class SellAmountCommand : SellCommand
         message += GetOvertimeBonusString(scrapToSell.realValue);
         message += "\n";
 
-        if (Plugin.Instance.ConfigManager.ShowFoundItems)
+        if (Plugin.ConfigManager.ShowFoundItems)
         {
             message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
         }

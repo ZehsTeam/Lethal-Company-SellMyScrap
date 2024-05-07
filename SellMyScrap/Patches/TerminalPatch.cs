@@ -37,12 +37,12 @@ internal class TerminalPatch
         if (hasOverrideTerminalNodes) return;
         hasOverrideTerminalNodes = true;
 
-        if (Plugin.Instance.ConfigManager.OverrideWelcomeMessage)
+        if (Plugin.ConfigManager.OverrideWelcomeMessage)
         {
             OverrideWelcomeTerminalNode(terminalNodes);
         }
 
-        if (Plugin.Instance.ConfigManager.OverrideHelpMessage)
+        if (Plugin.ConfigManager.OverrideHelpMessage)
         {
             OverrideHelpTerminalNode(terminalNodes);
         }

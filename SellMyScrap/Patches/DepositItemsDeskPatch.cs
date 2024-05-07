@@ -71,7 +71,7 @@ internal class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(audioClip, 1f);
 
         // Play audio clip in the ship
-        if (Plugin.Instance.ConfigManager.SpeakInShip && speakInShip)
+        if (Plugin.ConfigManager.SpeakInShip && speakInShip)
         {
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(audioClip, 1f);
         }

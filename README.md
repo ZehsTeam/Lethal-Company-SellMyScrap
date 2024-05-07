@@ -1,5 +1,5 @@
 # SellMyScrap
-Adds a few terminal commands to sell your scrap from the ship. Highly Configurable.
+**Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +**
 
 <ins><b>This mod will sell scrap as close to the requested value as possible.</b></ins>
 
@@ -18,6 +18,10 @@ Adds a few terminal commands to sell your scrap from the ship. Highly Configurab
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
+<details>
+  <summary>Expand</summary>
+<br>
+
 * You must be landed at The Company building to use sell commands.
 * Each sell command will sell items based on your config settings.
 * Each sell command requires confirmation before selling your scrap.
@@ -60,7 +64,13 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `view config` | Shows your config settings. |
 | `edit config` | Edit config settings from the terminal. |
 
+</details>
+
 ## Config Settings
+<details>
+  <summary>Expand</summary>
+<br>
+
 * Use the `edit config` command to edit config settings from the terminal.
 * Only the host can edit **Sell Settings** and **Advanced Sell Settings** using the config editor.
 * **Sell Settings** and **Advanced Sell Settings** will be synced with the host.
@@ -108,6 +118,8 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `yippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
 | `cookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
 | `psychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
+
+</details>
 
 ## Bug Reports, Help, or Suggestions
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -171,22 +183,3 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
     <img src="https://i.imgur.com/BS73hgY.png" width="412px">
     <img src="https://i.imgur.com/carvtWw.png" width="412px">
 </div>
-
-## My Other Mods
-| Name | Description |
-| ----------- | ----------- |
-| [OnlyPresents](https://thunderstore.io/c/lethal-company/p/Zehs/OnlyPresents/) | Moons will only spawn gift boxes. (Server-side) |
-| [Hitmarker](https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/) | Shows a hitmarker when you successfully hit an enemy. With additional features. (Client-side) |
-| [ToilHead](https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/) | CoilHeads can sometimes spawn with a turret on their head. |
-| [CoilHeadSettings](https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/) | This mod lets you configure the CoilHead. |
-| [OctolarPlush](https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/) | Adds a customizable Octolar Plushie scrap item. |
-| [TakeyPlush](https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/) | Adds a customizable Takey Plushie scrap item with some functionalities. 😈 |
-
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OnlyPresents/"><img src="https://i.imgur.com/pesSqHI.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/Hitmarker/"><img src="https://i.imgur.com/29IA990.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/ToilHead/"><img src="https://i.imgur.com/uSxSYVK.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/CoilHeadSettings/"><img src="https://i.imgur.com/QmIID55.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/OctolarPlush/"><img src="https://i.imgur.com/Je0rHqE.png" width="80px"></a>
-<a href="https://thunderstore.io/c/lethal-company/p/Zehs/TakeyPlush/"><img src="https://i.imgur.com/ENIZdU0.png" width="80px"></a>
-
-You have reached the bottom of the README. Thank you for reading <3

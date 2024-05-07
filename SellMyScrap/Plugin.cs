@@ -14,14 +14,14 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class Plugin : BaseUnityPlugin
+internal class Plugin : BaseUnityPlugin
 {
     private readonly Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 
     internal static Plugin Instance;
     internal static ManualLogSource logger;
 
-    internal SyncedConfigManager ConfigManager;
+    internal static SyncedConfigManager ConfigManager;
 
     public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 

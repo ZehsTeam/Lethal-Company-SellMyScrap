@@ -44,7 +44,7 @@ internal class StartOfRoundPatch
 
         Plugin.logger.LogInfo($"Sending config to client: {clientId}");
 
-        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.Instance.ConfigManager), clientRpcParams);
+        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.ConfigManager), clientRpcParams);
     }
 
     [HarmonyPatch("OnLocalDisconnect")]

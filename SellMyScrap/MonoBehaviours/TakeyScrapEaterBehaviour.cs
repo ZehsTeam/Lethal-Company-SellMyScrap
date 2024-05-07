@@ -8,6 +8,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Header("Takey")]
     [Space(3f)]
+    public AudioClip takeySitSFX = null;
     public AudioClip[] beforeEatSFX = new AudioClip[0];
     public AudioClip[] voiceLineSFX = new AudioClip[0];
     public GameObject jetpackObject = null;
@@ -56,6 +57,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
         PlayOneShotSFX(landSFX, landIndex);
+        PlayOneShotSFX(takeySitSFX);
         ShakeCamera();
 
         yield return new WaitForSeconds(1f);

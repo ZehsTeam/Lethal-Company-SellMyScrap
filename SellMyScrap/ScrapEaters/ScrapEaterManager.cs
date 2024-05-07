@@ -11,7 +11,7 @@ public class ScrapEaterManager
 
     internal static void Initialize()
     {
-        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.ConfigManager;
 
         scrapEaters = [
             new ScrapEater(Content.octolarScrapEaterPrefab, () => {
@@ -37,7 +37,7 @@ public class ScrapEaterManager
 
     internal static bool CanUseScrapEater()
     {
-        int spawnChance = Plugin.Instance.ConfigManager.ScrapEaterChance;
+        int spawnChance = Plugin.ConfigManager.ScrapEaterChance;
         return Utils.RandomPercent(spawnChance);
     }
 

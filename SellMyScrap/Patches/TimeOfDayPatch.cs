@@ -12,7 +12,7 @@ internal class TimeOfDayPatch
     static bool SetNewProfitQuotaPatch(ref TimeOfDay __instance)
     {
         if (!Plugin.IsHostOrServer) return true;
-        if (!Plugin.Instance.ConfigManager.OverrideSetNewProfitQuota) return true;
+        if (!Plugin.ConfigManager.OverrideSetNewProfitQuota) return true;
 
         if (__instance.daysUntilDeadline < 0)
         {

@@ -8,6 +8,7 @@ internal class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Header("Yippee")]
     [Space(3f)]
     public Animator animator = null;
+    public AudioSource voiceAudio = null;
     public AudioSource flyAudio = null;
     public AudioClip afterEatSFX = null;
     public float startFlySpeed = 1f;
@@ -37,7 +38,7 @@ internal class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(suckDuration);
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
-        PlayOneShotSFX(afterEatSFX);
+        PlayOneShotSFX(voiceAudio, afterEatSFX);
         yield return new WaitForSeconds(pauseDuration);
 
         // Move ScrapEater to startPosition

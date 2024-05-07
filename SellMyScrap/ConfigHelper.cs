@@ -30,7 +30,7 @@ public class ConfigHelper
 
     internal static void Initialize()
     {
-        SyncedConfigManager configManager = Plugin.Instance.ConfigManager;
+        SyncedConfigManager configManager = Plugin.ConfigManager;
 
         sellConfigItems = [
             new ConfigItem("sellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
@@ -41,9 +41,9 @@ public class ConfigHelper
         ];
 
         advancedSellConfigItems = [
-            new ConfigItem("sellScrapWorthZero",   typeof(bool),   isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
-            new ConfigItem("onlySellScrapOnFloor", typeof(bool),   isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
-            new ConfigItem("dontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson =   JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
+            new ConfigItem("sellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
+            new ConfigItem("onlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
+            new ConfigItem("dontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
         ];
 
         terminalConfigItems = [
