@@ -1,4 +1,5 @@
-﻿using GameNetcodeStuff;
+﻿using com.github.zehsteam.SellMyScrap.Patches;
+using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,11 +64,7 @@ public class Utils
         if (quotaFulfilled <= profitQuota) return 0;
 
         int valueOver = quotaFulfilled - profitQuota;
-        int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
-        if (daysUntilDeadline < 0) daysUntilDeadline = 0;
-        int overtimeBonus = (valueOver / 5) + (15 * daysUntilDeadline);
-
-        Plugin.logger.LogInfo($"GetOvertimeBonus(); daysUntilDeadline: {daysUntilDeadline}, overtimeBonus: {overtimeBonus}");
+        int overtimeBonus = valueOver / 5 + 15 * TimeOfDayPatch.GetDaysUntilDeadline();
 
         return overtimeBonus;
     }

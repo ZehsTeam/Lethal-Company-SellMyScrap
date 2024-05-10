@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -232,17 +233,19 @@ internal class ScrapHelper
     private static int GetSellValue(int value)
     {
         if (value == int.MaxValue) return value;
-        return Mathf.CeilToInt((float)value / (float)StartOfRound.Instance.companyBuyingRate);
+        return Mathf.CeilToInt(value / StartOfRound.Instance.companyBuyingRate);
     }
 
     private static int GetSellValueWithOvertime(int value)
     {
         int profitQuota = TimeOfDay.Instance.profitQuota;
-        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled + value;
-        int valueOver = quotaFulfilled - profitQuota;
+        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
+        int valueOver = (quotaFulfilled + value) - profitQuota;
         if (valueOver <= 0) return GetSellValue(value);
 
-        int newValue = value - valueOver / 6;
+        int profitQuotaLeft = Mathf.Max(profitQuota - quotaFulfilled, 0);
+        value -= (TimeOfDayPatch.GetDaysUntilDeadline() + 1) * 15;
+        int newValue = Mathf.CeilToInt((5 * value + profitQuotaLeft + 75) / 6f);
 
         return GetSellValue(newValue);
     }

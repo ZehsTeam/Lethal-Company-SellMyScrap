@@ -30,7 +30,6 @@ public class SyncedConfigManager
 
     // Misc Settings Defaults
     internal static bool speakInShipDefault = true;
-    internal static bool overrideSetNewProfitQuotaDefault = true;
 
     // Scrap Eater Settings Defaults
     internal static int ScrapEaterChanceDefault = 40;
@@ -66,7 +65,6 @@ public class SyncedConfigManager
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
-    private ConfigEntry<bool> OverrideSetNewProfitQuotaCfg;
 
     // Scrap Eater Settings
     private ConfigEntry<int> ScrapEaterChanceCfg;
@@ -223,7 +221,6 @@ public class SyncedConfigManager
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
-    internal bool OverrideSetNewProfitQuota { get { return OverrideSetNewProfitQuotaCfg.Value; } set => OverrideSetNewProfitQuotaCfg.Value = value; }
 
     // Scrap Eaters
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
@@ -329,11 +326,6 @@ public class SyncedConfigManager
             speakInShipDefault,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
-        OverrideSetNewProfitQuotaCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "overrideSetNewProfitQuota"),
-            overrideSetNewProfitQuotaDefault,
-            new ConfigDescription("Will override the SetNewProfitQuota function in TimeOfDay.")
-        );
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg = configFile.Bind(
@@ -403,7 +395,6 @@ public class SyncedConfigManager
 
         // Misc Settings
         SpeakInShipCfg.Value = speakInShipDefault;
-        OverrideSetNewProfitQuotaCfg.Value = overrideSetNewProfitQuotaDefault;
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg.Value = ScrapEaterChanceDefault;

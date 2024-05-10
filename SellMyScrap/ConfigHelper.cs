@@ -56,7 +56,6 @@ public class ConfigHelper
 
         miscConfigItems = [
             new ConfigItem("speakInShip",               typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =               bool.Parse(value); }, () => { return configManager.SpeakInShip.ToString();               }),
-            new ConfigItem("overrideSetNewProfitQuota", typeof(bool), isHostOnly: false, value => { configManager.OverrideSetNewProfitQuota = bool.Parse(value); }, () => { return configManager.OverrideSetNewProfitQuota.ToString(); }),
         ];
 
         scrapEaterConfigItems = [

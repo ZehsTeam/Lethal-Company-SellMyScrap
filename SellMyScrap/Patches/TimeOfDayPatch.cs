@@ -1,41 +1,49 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(TimeOfDay))]
 internal class TimeOfDayPatch
 {
-    [HarmonyPatch("SetNewProfitQuota")]
+    private static int daysUntilDeadline = 3;
+    private static int preDaysUntilDeadline = 3;
+    private static int postDaysUntilDeadline = 3;
+
+    [HarmonyPatch("SetBuyingRateForDay")]
     [HarmonyPrefix]
-    [HarmonyPriority(Priority.LowerThanNormal)]
-    static bool SetNewProfitQuotaPatch(ref TimeOfDay __instance)
+    static void SetBuyingRateForDayPatchPrefix()
     {
-        if (!Plugin.IsHostOrServer) return true;
-        if (!Plugin.ConfigManager.OverrideSetNewProfitQuota) return true;
-
-        if (__instance.daysUntilDeadline < 0)
-        {
-            __instance.daysUntilDeadline = 0;
-        }
-
-        int overtimeBonus = Utils.GetOvertimeBonus(0);
-
-        __instance.timesFulfilledQuota++;
-        float num2 = Mathf.Clamp(1f + (float)__instance.timesFulfilledQuota * ((float)__instance.timesFulfilledQuota / __instance.quotaVariables.increaseSteepness), 0f, 10000f);
-        num2 = __instance.quotaVariables.baseIncrease * num2 * (__instance.quotaVariables.randomizerCurve.Evaluate(Random.Range(0f, 1f)) * __instance.quotaVariables.randomizerMultiplier + 1f);
-        __instance.profitQuota = (int)Mathf.Clamp((float)__instance.profitQuota + num2, 0f, 1E+09f);
-        __instance.quotaFulfilled = 0;
-        __instance.timeUntilDeadline = __instance.totalTime * 4f;
-        __instance.SyncNewProfitQuotaClientRpc(__instance.profitQuota, overtimeBonus, __instance.timesFulfilledQuota);
-
-        return false;
+        preDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
     }
 
-    [HarmonyPatch("SyncNewProfitQuotaClientRpc")]
-    [HarmonyPrefix]
-    static void SyncNewProfitQuotaClientRpcPatch(ref TimeOfDay __instance, ref int overtimeBonus)
+    [HarmonyPatch("SetBuyingRateForDay")]
+    [HarmonyPostfix]
+    static void SetBuyingRateForDayPatchPostfix()
     {
-        Plugin.logger.LogInfo($"SyncNewProfitQuotaClientRpc(); daysUntilDeadline: {__instance.daysUntilDeadline}, overtimeBonus: ${overtimeBonus}\n");
+        postDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
+
+        SetDaysUntilDeadline();
+    }
+
+    private static void SetDaysUntilDeadline()
+    {
+        if (postDaysUntilDeadline == 0)
+        {
+            if (preDaysUntilDeadline == 0)
+            {
+                daysUntilDeadline = 0;
+                return;
+            }
+
+            daysUntilDeadline = -1;
+            return;
+        }
+
+        daysUntilDeadline = postDaysUntilDeadline;
+    }
+
+    public static int GetDaysUntilDeadline()
+    {
+        return daysUntilDeadline;
     }
 }
