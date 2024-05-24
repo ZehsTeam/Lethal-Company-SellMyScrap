@@ -92,6 +92,12 @@ internal class Plugin : BaseUnityPlugin
         return scrapToSell;
     }
 
+    public ScrapToSell GetScrapToSell(string[] sellListJson)
+    {
+        scrapToSell = ScrapHelper.GetScrapToSell(sellListJson);
+        return scrapToSell;
+    }
+
     public ScrapToSell SetScrapToSell(List<GrabbableObject> scrap)
     {
         scrapToSell = new ScrapToSell(scrap);

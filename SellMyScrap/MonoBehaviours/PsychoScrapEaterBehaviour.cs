@@ -28,7 +28,7 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         if (IsHostOrServer)
         {
-            raid = Utils.RandomPercent(90);
+            raid = Utils.RandomPercent(100);
             SetDataClientRpc(raid);
         }
 
@@ -98,6 +98,8 @@ internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         potatoesParticleSystem.Play();
         yield return new WaitForSeconds(particleSystemLength);
         potatoesParticleSystem.Stop();
+        potatoesParticleSystem.transform.SetParent(null);
+        potatoesParticleSystem.gameObject.AddComponent<DestroyAfterTimeBehaviour>().duration = 15f;
         SetMaterial(normalMaterial);
         yield return new WaitForSeconds(pauseDuration);
     }

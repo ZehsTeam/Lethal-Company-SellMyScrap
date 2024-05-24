@@ -11,6 +11,7 @@ internal class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public MeshRenderer meshRenderer = null;
     public Material[] materialVariants = new Material[0];
     public Material suckMaterial = null;
+    public AudioClip fallSFX = null;
     public AudioClip afterEatSFX = null;
 
     private int materialVariantIndex = 0;
@@ -37,7 +38,9 @@ internal class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     protected override IEnumerator StartAnimation()
     {
         // Move ScrapEater to startPosition
+        PlayOneShotSFX(fallSFX);
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
+        StopAudioSource(soundEffectsAudio);
         PlayOneShotSFX(landSFX, landIndex);
         ShakeCamera();
 

@@ -53,6 +53,21 @@ public class PlayerUtils
         return GameNetworkManager.Instance.localPlayerController;
     }
 
+    public static bool AreAllPlayersDead()
+    {
+        bool result = true;
+
+        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (!playerScript.isPlayerDead)
+            {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
     public static void SetLocalPlayerMovementEnabled(bool enabled)
     {
         PlayerControllerB playerScript = GetLocalPlayerScript();
@@ -106,6 +121,9 @@ public class PlayerUtils
     {
         yield return new WaitForSeconds(time);
 
-        StartOfRound.Instance.ReviveDeadPlayers();
+        if (AreAllPlayersDead())
+        {
+            StartOfRound.Instance.ReviveDeadPlayers();
+        }
     }
 }

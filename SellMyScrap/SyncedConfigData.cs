@@ -18,6 +18,7 @@ public class SyncedConfigData : INetworkSerializable
     public bool sellScrapWorthZero;
     public bool onlySellScrapOnFloor;
     public string dontSellListJson;
+    public string sellListJson;
 
     public SyncedConfigData() { }
 
@@ -34,6 +35,7 @@ public class SyncedConfigData : INetworkSerializable
         sellScrapWorthZero = configManager.SellScrapWorthZero;
         onlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
         dontSellListJson = JsonConvert.SerializeObject(configManager.DontSellListJson);
+        sellListJson = JsonConvert.SerializeObject(configManager.SellListJson);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -49,5 +51,6 @@ public class SyncedConfigData : INetworkSerializable
         serializer.SerializeValue(ref sellScrapWorthZero);
         serializer.SerializeValue(ref onlySellScrapOnFloor);
         serializer.SerializeValue(ref dontSellListJson);
+        serializer.SerializeValue(ref sellListJson);
     }
 }

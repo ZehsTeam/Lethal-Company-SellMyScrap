@@ -37,6 +37,7 @@ internal class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Move ScrapEater to startPosition
         PlayOneShotSFX(fallSFX);
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
+        StopAudioSource(soundEffectsAudio);
         PlayOneShotSFX(landSFX, landIndex);
         ShakeCamera();
 

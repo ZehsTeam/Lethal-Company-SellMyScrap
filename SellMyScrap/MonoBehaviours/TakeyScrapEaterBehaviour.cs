@@ -8,11 +8,14 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Header("Takey")]
     [Space(3f)]
+    public AudioSource soundEffectsAudioFar = null;
+    public AudioClip takeOffSFXFar = null;
     public AudioClip takeySitSFX = null;
     public AudioClip[] beforeEatSFX = new AudioClip[0];
     public AudioClip[] voiceLineSFX = new AudioClip[0];
     public GameObject jetpackObject = null;
     public GameObject flameEffectsObject = null;
+    public ParticleSystem smokeTrailParticleSystem = null;
     public AudioSource jetpackAudio = null;
     public AudioSource jetpackThrustAudio = null;
     public AudioSource jetpackBeepAudio = null;
@@ -88,6 +91,8 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Takey FLY!!!
         yield return StartCoroutine(JetpackFly(6f));
 
+        EndSmokeTrail();
+
         if (explode)
         {
             Utils.CreateExplosion(transform.position);
@@ -102,6 +107,7 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         jetpackObject.SetActive(true);
 
         PlayOneShotSFX(takeOffSFX);
+        PlayOneShotSFX(soundEffectsAudioFar, takeOffSFXFar);
         PlayOneShotSFX(jetpackAudio, jetpackThrustStartSFX);
         jetpackBeepAudio.Play();
 
@@ -115,6 +121,11 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         while (timer < duration)
         {
+            if (timer >= 0.3f && !smokeTrailParticleSystem.isPlaying)
+            {
+                smokeTrailParticleSystem.Play();
+            }
+
             flySpeed += flySpeedMultiplier * Time.deltaTime;
             if (flySpeed > maxFlySpeed) flySpeed = maxFlySpeed;
 
@@ -126,5 +137,12 @@ internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+    }
+
+    private void EndSmokeTrail()
+    {
+        smokeTrailParticleSystem.Stop();
+        smokeTrailParticleSystem.transform.SetParent(null);
+        smokeTrailParticleSystem.gameObject.AddComponent<DestroyAfterTimeBehaviour>().duration = 10f;
     }
 }

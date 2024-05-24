@@ -1,42 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-
+    
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.5.13</Version>                                              <!-- PLUGIN_VERSION -->
+    <Version>1.5.14</Version>                                              <!-- PLUGIN_VERSION -->
     <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +</Description>
-
+    
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
-
+    
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json;
     </RestoreAdditionalProjectSources>
-
   </PropertyGroup>
-
+  
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
     <ItemGroup>
       <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
     </ItemGroup>
   </Target>
-
+  
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <None Include="..\..\..\..\Lethal Company Modding\Unity Projects\LethalCompanyAssetBundles\AssetBundles\sellmyscrap_assets" Link="sellmyscrap_assets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.4.*" />
@@ -61,9 +59,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
+  
 	<ItemGroup>
-    
 		<Reference Include="0Harmony">                      <HintPath>$(BepInTools)\0Harmony.dll</HintPath>                          </Reference>
 		<Reference Include="BepInEx">                       <HintPath>$(BepInTools)\BepInEx.dll</HintPath>                           </Reference>
 		<Reference Include="Mono.Cecil">                    <HintPath>$(BepInTools)\Mono.Cecil.dll</HintPath>                        </Reference>
@@ -81,19 +78,18 @@
 		<Reference Include="UnityEngine">                   <HintPath>$(AssembliesPath)\UnityEngine.dll</HintPath>                   </Reference>
 		<Reference Include="UnityEngine.AssetBundleModule"> <HintPath>$(AssembliesPath)\UnityEngine.AssetBundleModule.dll</HintPath> </Reference>
 		<Reference Include="UnityEngine.UI">                <HintPath>$(AssembliesPath)\UnityEngine.UI.dll</HintPath>                </Reference>
-    
 	</ItemGroup>
-
+  
 	<ItemGroup>
 	  <None Update="packages.config">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-
+  
   <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
     <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
-
+  
   <Target Name="CopyToPluginsFolder" AfterTargets="PostBuildEvent" DependsOnTargets="NetcodePatch">
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\sellmyscrap_assets" />

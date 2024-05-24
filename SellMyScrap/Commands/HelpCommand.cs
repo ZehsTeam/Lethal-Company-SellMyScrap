@@ -26,6 +26,7 @@ internal class HelpCommand : Command
         message += "sell quota         sell-quota\n";
         message += "sell all           sell-all\n";
         message += "sell item <name>   sell-item <name>\n";
+        message += "sell list          sell-list\n";
         message += "view overtime      view-overtime\n";
         message += "view scrap         view-scrap\n";
         message += "view all scrap     view-all-scrap\n";

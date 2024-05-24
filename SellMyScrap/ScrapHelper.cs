@@ -26,7 +26,7 @@ internal class ScrapHelper
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
         GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
-        List<GrabbableObject> scrap = new List<GrabbableObject>();
+        List<GrabbableObject> scrap = [];
 
         string[] dontSellList = Plugin.ConfigManager.DontSellListJson;
 
@@ -44,7 +44,7 @@ internal class ScrapHelper
     public static List<GrabbableObject> GetScrapByItemName(string itemName, bool onlyAllowedScrap = true)
     {
         List<GrabbableObject> scrap = GetScrapFromShip(onlyAllowedScrap);
-        List<GrabbableObject> foundScrap = new List<GrabbableObject>();
+        List<GrabbableObject> foundScrap = [];
 
         scrap.ForEach(item =>
         {
@@ -57,6 +57,18 @@ internal class ScrapHelper
         });
 
         return foundScrap;
+    }
+
+    public static List<GrabbableObject> GetScrapBySellListJson(string[] sellListJson, bool onlyAllowedScrap = false)
+    {
+        List<GrabbableObject> scrap = [];
+
+        foreach (var itemName in sellListJson)
+        {
+            scrap.AddRange(GetScrapByItemName(itemName, onlyAllowedScrap));
+        }
+
+        return scrap;
     }
 
     public static List<Item> GetAllScrapItems()
@@ -228,6 +240,11 @@ internal class ScrapHelper
         }
 
         return bestMatch;
+    }
+
+    public static ScrapToSell GetScrapToSell(string[] sellListJson, bool onlyAllowedScrap = false)
+    {
+        return new ScrapToSell(GetScrapBySellListJson(sellListJson, onlyAllowedScrap));
     }
 
     private static int GetSellValue(int value)

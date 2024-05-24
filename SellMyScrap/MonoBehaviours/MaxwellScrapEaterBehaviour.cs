@@ -92,7 +92,7 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (isEvil)
         {
             yield return StartCoroutine(StartEvilMaxwell());
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(3f);
             yield break;
         }
 
@@ -151,6 +151,9 @@ internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         Vector3 position = transform.position;
         position.y += 0.31f;
         Utils.CreateExplosion(position, damage: 150);
+
+        evilObject.transform.SetParent(null);
+        evilObject.AddComponent<DestroyAfterTimeBehaviour>().duration = 15f;
 
         foreach (var rb in evilObject.GetComponentsInChildren<Rigidbody>())
         {

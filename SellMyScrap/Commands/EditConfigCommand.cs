@@ -8,8 +8,9 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class EditConfigCommand : Command
 {
-    private bool editingDontSellListJson = false;
+    private JsonListEditor activeJsonListEditor;
     private JsonListEditor dontSellListJsonEditor;
+    private JsonListEditor sellListJsonEditor;
 
     private bool inResetToDefaultMenu = false;
 
@@ -17,9 +18,22 @@ internal class EditConfigCommand : Command
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, configManager.DontSellListJson.ToList(), value =>
+        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, () =>
+        {
+            return configManager.DontSellListJson;
+        },
+        value =>
         {
             configManager.DontSellListJson = value;
+        });
+
+        sellListJsonEditor = new JsonListEditor("sellListJson", isHostOnly: true, () =>
+        {
+            return configManager.SellListJson;
+        },
+        value =>
+        {
+            configManager.SellListJson = value;
         });
     }
 
@@ -35,7 +49,7 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        editingDontSellListJson = false;
+        activeJsonListEditor = null;
         inResetToDefaultMenu = false;
 
         awaitingConfirmation = true;
@@ -56,9 +70,9 @@ internal class EditConfigCommand : Command
         
         if (exitStrings.Contains(_args[0]))
         {
-            if (editingDontSellListJson)
+            if (activeJsonListEditor != null)
             {
-                editingDontSellListJson = false;
+                activeJsonListEditor = null;
                 return TerminalPatch.CreateTerminalNode(GetMessage());
             }
 
@@ -68,15 +82,21 @@ internal class EditConfigCommand : Command
 
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        if (editingDontSellListJson)
+        if (activeJsonListEditor != null)
         {
-            return dontSellListJsonEditor.ExecuteConfirmation(args, configManager.DontSellListJson.ToList());
+            return activeJsonListEditor.ExecuteConfirmation(args, configManager.DontSellListJson.ToList());
         }
 
-        if (_args[0] == "json" || _args[0] == "dontselllistjson")
+        if (_args[0] == "dontselllistjson")
         {
-            editingDontSellListJson = true;
-            return dontSellListJsonEditor.Execute(configManager.DontSellListJson.ToList());
+            activeJsonListEditor = dontSellListJsonEditor;
+            return activeJsonListEditor.Execute();
+        }
+
+        if (_args[0] == "selllistjson")
+        {
+            activeJsonListEditor = sellListJsonEditor;
+            return activeJsonListEditor.Execute();
         }
 
         if (_args[0] == "reset")
@@ -99,7 +119,6 @@ internal class EditConfigCommand : Command
         message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
         message += $"The following commands are available:\n\n";
         message += $"<key> <value>\n";
-        message += $"json\n";
         message += $"reset\n";
         message += $"exit\n\n";
         message += additionMessage;
@@ -171,19 +190,20 @@ class JsonListEditor
     public string key;
     public bool isHostOnly = false;
     private List<string> list;
+    private Func<string[]> GetValue;
     private Action<string[]> SetValue;
 
-    public JsonListEditor(string key, bool isHostOnly, List<string> list, Action<string[]> SetValue)
+    public JsonListEditor(string key, bool isHostOnly, Func<string[]> GetValue, Action<string[]> SetValue)
     {
         this.key = key;
         this.isHostOnly = isHostOnly;
-        this.list = list;
+        this.GetValue = GetValue;
         this.SetValue = SetValue;
     }
 
-    public TerminalNode Execute(List<string> list)
+    public TerminalNode Execute()
     {
-        this.list = list;
+        list = GetValue().ToList();
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 

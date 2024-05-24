@@ -7,13 +7,14 @@ public enum SellType
     SellQuota,
     SellAll,
     SellItem,
+    SellList
 }
 
 public enum ConfirmationType
 {
     None,
     AwaitingConfirmation,
-    Confirmed,
+    Confirmed
 }
 
 public class SellRequest

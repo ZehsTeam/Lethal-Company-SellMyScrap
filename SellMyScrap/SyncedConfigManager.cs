@@ -10,35 +10,36 @@ public class SyncedConfigManager
 {
     #region Config Setting Default Values
     // Sell Settings Defaults
-    internal static bool sellGiftsDefault = false;
-    internal static bool sellShotgunsDefault = false;
-    internal static bool sellAmmoDefault = false;
-    internal static bool sellKnivesDefault = false;
-    internal static bool sellPicklesDefault = true;
+    internal readonly static bool sellGiftsDefault = false;
+    internal readonly static bool sellShotgunsDefault = false;
+    internal readonly static bool sellAmmoDefault = false;
+    internal readonly static bool sellKnivesDefault = false;
+    internal readonly static bool sellPicklesDefault = true;
 
     // Advanced Sell Settings Defaults
-    internal static bool sellScrapWorthZeroDefault = false;
-    internal static bool onlySellScrapOnFloorDefault = false;
-    internal static string[] dontSellListJsonDefault = [];
+    internal readonly static bool sellScrapWorthZeroDefault = false;
+    internal readonly static bool onlySellScrapOnFloorDefault = false;
+    internal readonly static string[] dontSellListJsonDefault = [];
+    internal readonly static string[] sellListJsonDefault = ["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"];
 
     // Terminal Settings Defaults
-    internal static bool overrideWelcomeMessageDefault = true;
-    internal static bool overrideHelpMessageDefault = true;
-    internal static bool showFoundItemsDefault = true;
-    internal static bool sortFoundItemsPriceDefault = true;
-    internal static bool alignFoundItemsPriceDefault = true;
+    internal readonly static bool overrideWelcomeMessageDefault = true;
+    internal readonly static bool overrideHelpMessageDefault = true;
+    internal readonly static bool showFoundItemsDefault = true;
+    internal readonly static bool sortFoundItemsPriceDefault = true;
+    internal readonly static bool alignFoundItemsPriceDefault = true;
 
     // Misc Settings Defaults
-    internal static bool speakInShipDefault = true;
+    internal readonly static bool speakInShipDefault = true;
 
     // Scrap Eater Settings Defaults
-    internal static int ScrapEaterChanceDefault = 40;
-    internal static int OctolarSpawnWeightDefault = 1;
-    internal static int TakeySpawnWeightDefault = 1;
-    internal static int MaxwellSpawnWeightDefault = 1;
-    internal static int YippeeSpawnWeightDefault = 1;
-    internal static int CookieFumoSpawnWeightDefault = 1;
-    internal static int PsychoSpawnWeightDefault = 1;
+    internal readonly static int ScrapEaterChanceDefault = 40;
+    internal readonly static int OctolarSpawnWeightDefault = 1;
+    internal readonly static int TakeySpawnWeightDefault = 1;
+    internal readonly static int MaxwellSpawnWeightDefault = 1;
+    internal readonly static int YippeeSpawnWeightDefault = 1;
+    internal readonly static int CookieFumoSpawnWeightDefault = 1;
+    internal readonly static int PsychoSpawnWeightDefault = 1;
     #endregion
 
     private SyncedConfigData hostConfigData;
@@ -55,6 +56,7 @@ public class SyncedConfigManager
     private ConfigEntry<bool> SellScrapWorthZeroCfg;
     private ConfigEntry<bool> OnlySellScrapOnFloorCfg;
     private ConfigEntry<string> DontSellListJsonCfg;
+    private ConfigEntry<string> SellListJsonCfg;
 
     // Terminal Settings
     private ConfigEntry<bool> OverrideWelcomeMessageCfg;
@@ -66,7 +68,7 @@ public class SyncedConfigManager
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
 
-    // Scrap Eater Settings
+    // Scrap Eater Settingss
     private ConfigEntry<int> ScrapEaterChanceCfg;
     private ConfigEntry<int> OctolarSpawnWeightCfg;
     private ConfigEntry<int> TakeySpawnWeightCfg;
@@ -212,6 +214,48 @@ public class SyncedConfigManager
         }
     }
 
+    internal string[] SellListJson
+    {
+        get
+        {
+            string text = SellListJsonCfg.Value;
+
+            if (hostConfigData != null)
+            {
+                text = hostConfigData.sellListJson;
+            }
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return [];
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<string[]>(text);
+            }
+            catch (System.Exception e)
+            {
+                Plugin.logger.LogError($"Error: failed to deserialize sellListJson config setting.\n\n{e}");
+                return [];
+            }
+        }
+        set
+        {
+            try
+            {
+                SellListJsonCfg.Value = JsonConvert.SerializeObject(value);
+            }
+            catch (System.Exception e)
+            {
+                Plugin.logger.LogError($"Error: failed to serialize sellListJson config setting.\n\n{e}");
+                SellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
+            }
+
+            SyncedConfigsChanged();
+        }
+    }
+
     // Terminal Settings
     internal bool OverrideWelcomeMessage { get { return OverrideWelcomeMessageCfg.Value; } set => OverrideWelcomeMessageCfg.Value = value; }
     internal bool OverrideHelpMessage { get { return OverrideHelpMessageCfg.Value; } set => OverrideHelpMessageCfg.Value = value; }
@@ -281,16 +325,16 @@ public class SyncedConfigManager
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
 
-        string dontSellListJsonCfgDescription = "JSON array of item names to not sell.\n";
-        dontSellListJsonCfgDescription += "Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.\n";
-        dontSellListJsonCfgDescription += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
-        dontSellListJsonCfgDescription += "Item names are not case-sensitive but, spaces do matter.\n";
-        dontSellListJsonCfgDescription += "https://www.w3schools.com/js/js_json_arrays.asp\n";
-        dontSellListJsonCfgDescription += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Octolar Plush\", \"Smol Takey\"]";
         DontSellListJsonCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
             JsonConvert.SerializeObject(dontSellListJsonDefault),
-            new ConfigDescription(dontSellListJsonCfgDescription)
+            new ConfigDescription(GetDontSellListJsonDescription())
+        );
+
+        SellListJsonCfg = configFile.Bind(
+            new ConfigDefinition("Advanced Sell Settings", "sellListJson"),
+            JsonConvert.SerializeObject(sellListJsonDefault),
+            new ConfigDescription(GetSellListJsonDescription())
         );
 
         // Terminal Settings
@@ -372,6 +416,29 @@ public class SyncedConfigManager
         );
     }
 
+    private string GetDontSellListJsonDescription()
+    {
+        string message = "JSON array of item names to not sell.\n";
+        message += "Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.\n";
+        message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
+        message += "Item names are not case-sensitive but, spaces do matter.\n";
+        message += "https://www.w3schools.com/js/js_json_arrays.asp\n";
+        message += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Blahaj\", \"Octolar Plush\", \"Smol Takey\", \"Dusty Plush\"]";
+
+        return message;
+    }
+
+    private string GetSellListJsonDescription()
+    {
+        string message = "JSON array of item names to sell when using the `sell list` command.\n";
+        message += "Use the `edit config` command to easily edit the `sellListJson` config setting from the terminal.\n";
+        message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
+        message += "Item names are not case-sensitive but, spaces do matter.\n";
+        message += "https://www.w3schools.com/js/js_json_arrays.asp\n";
+
+        return message;
+    }
+
     internal void ResetToDefault()
     {
         // Sell Settings
@@ -385,6 +452,7 @@ public class SyncedConfigManager
         SellScrapWorthZeroCfg.Value = sellScrapWorthZeroDefault;
         OnlySellScrapOnFloorCfg.Value = onlySellScrapOnFloorDefault;
         DontSellListJsonCfg.Value = JsonConvert.SerializeObject(dontSellListJsonDefault);
+        SellListJsonCfg.Value = JsonConvert.SerializeObject(sellListJsonDefault);
 
         // Terminal Settings
         OverrideWelcomeMessageCfg.Value = overrideWelcomeMessageDefault;

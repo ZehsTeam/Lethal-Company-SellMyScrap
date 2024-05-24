@@ -15,6 +15,7 @@ internal class CommandManager
             new SellQuotaCommand(),
             new SellAllCommand(),
             new SellItemCommand(),
+            new SellListCommand(),
             new SellAmountCommand(),
             new ViewScrapCommand(),
             new ViewAllScrapCommand(),

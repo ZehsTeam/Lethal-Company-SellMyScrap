@@ -1,7 +1,8 @@
 # SellMyScrap
 **Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +**
 
-<ins><b>This mod will sell scrap as close to the requested value as possible.</b></ins>
+<ins><b>This mod will sell scrap as close to the requested value as possible.</b></ins><br>
+<ins><b>This mod is for all clients!</b></ins>
 
 * You must be landed at The Company building to use sell commands.
 <br><br>
@@ -33,6 +34,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell quota` | Will sell scrap to reach the profit quota. | `-se`, `-se:<number>` |
 | `sell all` | Will sell all of your scrap. | `-se`, `-se:<number>` |
 | `sell item <name>` | Will sell scrap by their item name. | `-se`, `-se:<number>` |
+| `sell list` | Will sell all the scrap from the `sellListJson` config setting. | `-se`, `-se:<number>` |
 
 * Using the `-se` flag will spawn a random scrap eater.
     * Usage: `<sell-command> -se`
@@ -54,6 +56,11 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
     * `sell item Whoopie cushion`
     * `sell item Whoopie`
     * `sell item Whoo`
+
+<h4>Additional info for the <code>sell list</code> command.</h4>
+
+* This command will sell all the items from the `sellListJson` config setting.
+* This command will bypass the `dontSellListJson` config setting.
 
 | Command |Description |
 | ----------- | ----------- |
@@ -88,6 +95,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
 | `onlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
 | `dontSellListJson` | `String` | `[]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+| `sellListJson` | `String` | `["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to sell when using the `sell list` command. |
 
 <h4>Additional info for the <code>dontSellListJson</code> config setting.</h4>
 
@@ -95,6 +103,12 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 * Item names are not case-sensitive but, spaces do matter.
 * Example value: `["Maxwell", "Cookie Fumo", "Octolar Plush", "Smol Takey"]`
+
+<h4>Additional info for the <code>sellListJson</code> config setting.</h4>
+
+* Use the `edit config` command to easily edit the `sellListJson` config setting from the terminal.
+* Use the `view scrap` or `view all scrap` command to see the correct item names to use.
+* Item names are not case-sensitive but, spaces do matter.
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -134,10 +148,14 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
     * Model made by Antlers.
 
 ## Screenshots
+<details>
+  <summary>Expand</summary>
+<br>
+
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/hIHJQn7.png" width="273px">
+    <img src="https://i.imgur.com/L8sE5te.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
@@ -175,10 +193,13 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/q67Sj6x.png" width="100%">
+    <img src="https://i.imgur.com/KaWA5aT.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/BS73hgY.png" width="412px">
-    <img src="https://i.imgur.com/carvtWw.png" width="412px">
+    <img src="https://i.imgur.com/K0wg7Lo.png" width="273px">
+    <img src="https://i.imgur.com/PDngxYH.png" width="273px">
+    <img src="https://i.imgur.com/EcZjuif.png" width="273px">
 </div>
+
+</details>
