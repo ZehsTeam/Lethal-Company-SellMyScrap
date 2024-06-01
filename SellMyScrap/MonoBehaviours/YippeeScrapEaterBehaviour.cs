@@ -3,10 +3,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Yippee")]
-    [Space(3f)]
+    [Space(5f)]
     public Animator animator = null;
     public AudioSource voiceAudio = null;
     public AudioSource flyAudio = null;

@@ -6,24 +6,25 @@ namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 {
+    [Space(20f)]
     [Header("Extra")]
-    [Space(3f)]
+    [Space(5f)]
     public Vector3 spawnPosition = new Vector3(-8.9f, 150f, -3.2f);
     public Vector3 spawnRotationOffset = new Vector3(0f, 90f, 0f);
     public Vector3 startPosition = new Vector3(-8.9f, 0f, -3.2f);
     public Vector3 endPosition = new Vector3(-8.9f, 0f, -6.72f);
 
-    [Space(3f)]
+    [Space(5f)]
     public Transform mouthTransform = null;
     public AudioSource soundEffectsAudio = null;
     public AudioSource movementAudio = null;
 
-    [Space(3f)]
+    [Space(5f)]
     public float movementDuration = 4f;
     public float suckDuration = 3.5f;
     public float pauseDuration = 2f;
 
-    [Space(3f)]
+    [Space(5f)]
     public AudioClip[] landSFX = new AudioClip[0];
     public AudioClip eatSFX = null;
     public AudioClip takeOffSFX = null;

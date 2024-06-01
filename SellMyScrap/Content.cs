@@ -15,6 +15,7 @@ internal class Content
     public static GameObject yippeeScrapEaterPrefab;
     public static GameObject cookieFumoScrapEaterPrefab;
     public static GameObject psychoScrapEaterPrefab;
+    public static GameObject zombiesScrapEaterPrefab;
 
     public static void Load()
     {
@@ -40,6 +41,7 @@ internal class Content
             yippeeScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("YippeeScrapEater");
             cookieFumoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
             psychoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("PsychoScrapEater");
+            zombiesScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("ZombiesScrapEater");
 
             Plugin.logger.LogInfo("Successfully loaded assets from AssetBundle!");
         }

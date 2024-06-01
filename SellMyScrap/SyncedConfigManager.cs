@@ -8,40 +8,6 @@ namespace com.github.zehsteam.SellMyScrap;
 
 public class SyncedConfigManager
 {
-    #region Config Setting Default Values
-    // Sell Settings Defaults
-    internal readonly static bool sellGiftsDefault = false;
-    internal readonly static bool sellShotgunsDefault = false;
-    internal readonly static bool sellAmmoDefault = false;
-    internal readonly static bool sellKnivesDefault = false;
-    internal readonly static bool sellPicklesDefault = true;
-
-    // Advanced Sell Settings Defaults
-    internal readonly static bool sellScrapWorthZeroDefault = false;
-    internal readonly static bool onlySellScrapOnFloorDefault = false;
-    internal readonly static string[] dontSellListJsonDefault = [];
-    internal readonly static string[] sellListJsonDefault = ["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"];
-
-    // Terminal Settings Defaults
-    internal readonly static bool overrideWelcomeMessageDefault = true;
-    internal readonly static bool overrideHelpMessageDefault = true;
-    internal readonly static bool showFoundItemsDefault = true;
-    internal readonly static bool sortFoundItemsPriceDefault = true;
-    internal readonly static bool alignFoundItemsPriceDefault = true;
-
-    // Misc Settings Defaults
-    internal readonly static bool speakInShipDefault = true;
-
-    // Scrap Eater Settings Defaults
-    internal readonly static int ScrapEaterChanceDefault = 40;
-    internal readonly static int OctolarSpawnWeightDefault = 1;
-    internal readonly static int TakeySpawnWeightDefault = 1;
-    internal readonly static int MaxwellSpawnWeightDefault = 1;
-    internal readonly static int YippeeSpawnWeightDefault = 1;
-    internal readonly static int CookieFumoSpawnWeightDefault = 1;
-    internal readonly static int PsychoSpawnWeightDefault = 1;
-    #endregion
-
     private SyncedConfigData hostConfigData;
 
     #region ConfigEntries
@@ -76,6 +42,7 @@ public class SyncedConfigManager
     private ConfigEntry<int> YippeeSpawnWeightCfg;
     private ConfigEntry<int> CookieFumoSpawnWeightCfg;
     private ConfigEntry<int> PsychoSpawnWeightCfg;
+    private ConfigEntry<int> ZombiesSpawnWeightCfg;
     #endregion
 
     #region Config Setting Get/Set Properties
@@ -274,6 +241,7 @@ public class SyncedConfigManager
     internal int YippeeSpawnWeight { get { return YippeeSpawnWeightCfg.Value; } set => YippeeSpawnWeightCfg.Value = value; }
     internal int CookieFumoSpawnWeight { get { return CookieFumoSpawnWeightCfg.Value; } set => CookieFumoSpawnWeightCfg.Value = value; }
     internal int PsychoSpawnWeight { get { return PsychoSpawnWeightCfg.Value; } set => PsychoSpawnWeightCfg.Value = value; }
+    internal int ZombiesSpawnWeight { get { return ZombiesSpawnWeightCfg.Value; } set => ZombiesSpawnWeightCfg.Value = value; }
     #endregion
 
     public SyncedConfigManager()
@@ -289,129 +257,133 @@ public class SyncedConfigManager
         // Sell Settings
         SellGiftsCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellGifts"),
-            sellGiftsDefault,
+            false,
             new ConfigDescription("Do you want to sell Gifts?")
         );
         SellShotgunsCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellShotguns"),
-            sellShotgunsDefault,
+            false,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
         SellAmmoCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellAmmo"),
-            sellAmmoDefault,
+            false,
             new ConfigDescription("Do you want to sell Ammo?")
         );
         SellKnivesCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellKnives"),
-            sellKnivesDefault,
+            false,
             new ConfigDescription("Do you want to sell Kitchen knives?")
         );
         SellPicklesCfg = configFile.Bind(
             new ConfigDefinition("Sell Settings", "sellPickles"),
-            sellPicklesDefault,
+            true,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
         // Advanced Sell Settings
         SellScrapWorthZeroCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "sellScrapWorthZero"),
-            sellScrapWorthZeroDefault,
+            false,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
         OnlySellScrapOnFloorCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "onlySellScrapOnFloor"),
-            onlySellScrapOnFloorDefault,
+            false,
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
-
         DontSellListJsonCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
-            JsonConvert.SerializeObject(dontSellListJsonDefault),
+            JsonConvert.SerializeObject(new string[0]),
             new ConfigDescription(GetDontSellListJsonDescription())
         );
-
         SellListJsonCfg = configFile.Bind(
             new ConfigDefinition("Advanced Sell Settings", "sellListJson"),
-            JsonConvert.SerializeObject(sellListJsonDefault),
+            JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" }),
             new ConfigDescription(GetSellListJsonDescription())
         );
 
         // Terminal Settings
         OverrideWelcomeMessageCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
-            overrideWelcomeMessageDefault,
+            true,
             new ConfigDescription("Overrides the terminal welcome message to add additional info.")
         );
         OverrideHelpMessageCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
-            overrideHelpMessageDefault,
+            true,
             new ConfigDescription("Overrides the terminal help message to add additional info.")
         );
         ShowFoundItemsCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "showFoundItems"),
-            showFoundItemsDefault,
+            true,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
         SortFoundItemsPriceCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "sortFoundItemsPrice"),
-            sortFoundItemsPriceDefault,
+            true,
             new ConfigDescription("Sorts found items from most to least expensive.")
         );
         AlignFoundItemsPriceCfg = configFile.Bind(
             new ConfigDefinition("Terminal Settings", "alignFoundItemsPrice"),
-            alignFoundItemsPriceDefault,
+            true,
             new ConfigDescription("Align all prices of found items.")
         );
 
         // Misc Settings
         SpeakInShipCfg = configFile.Bind(
             new ConfigDefinition("Misc Settings", "speakInShip"),
-            speakInShipDefault,
+            true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
-            ScrapEaterChanceDefault,
+            40,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
         OctolarSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "octolarSpawnWeight"),
-            OctolarSpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         TakeySpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
-            TakeySpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         MaxwellSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
-            MaxwellSpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         YippeeSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
-            YippeeSpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         CookieFumoSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "cookieFumoSpawnWeight"),
-            CookieFumoSpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         PsychoSpawnWeightCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "psychoSpawnWeight"),
-            PsychoSpawnWeightDefault,
+            1,
             new ConfigDescription("The spawn chance weight Psycho will spawn?! (scrap eater)",
+            new AcceptableValueRange<int>(0, 100))
+        );
+        ZombiesSpawnWeightCfg = configFile.Bind(
+            new ConfigDefinition("Scrap Eater Settings", "zombiesSpawnWeight"),
+            1,
+            new ConfigDescription("The spawn chance weight Zombies will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
     }
@@ -442,36 +414,37 @@ public class SyncedConfigManager
     internal void ResetToDefault()
     {
         // Sell Settings
-        SellGiftsCfg.Value = sellGiftsDefault; 
-        SellShotgunsCfg.Value = sellShotgunsDefault; 
-        SellAmmoCfg.Value = sellAmmoDefault; 
-        SellKnivesCfg.Value = sellKnivesDefault; 
-        SellPicklesCfg.Value = sellPicklesDefault;
+        SellGiftsCfg.Value = (bool)SellGiftsCfg.DefaultValue; 
+        SellShotgunsCfg.Value = (bool)SellShotgunsCfg.DefaultValue; 
+        SellAmmoCfg.Value = (bool)SellAmmoCfg.DefaultValue; 
+        SellKnivesCfg.Value = (bool)SellKnivesCfg.DefaultValue; 
+        SellPicklesCfg.Value = (bool)SellPicklesCfg.DefaultValue;
 
         // Advanced Sell Settings
-        SellScrapWorthZeroCfg.Value = sellScrapWorthZeroDefault;
-        OnlySellScrapOnFloorCfg.Value = onlySellScrapOnFloorDefault;
-        DontSellListJsonCfg.Value = JsonConvert.SerializeObject(dontSellListJsonDefault);
-        SellListJsonCfg.Value = JsonConvert.SerializeObject(sellListJsonDefault);
+        SellScrapWorthZeroCfg.Value = (bool)SellScrapWorthZeroCfg.DefaultValue;
+        OnlySellScrapOnFloorCfg.Value = (bool)OnlySellScrapOnFloorCfg.DefaultValue;
+        DontSellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
+        SellListJsonCfg.Value = JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" });
 
         // Terminal Settings
-        OverrideWelcomeMessageCfg.Value = overrideWelcomeMessageDefault;
-        OverrideHelpMessageCfg.Value = overrideHelpMessageDefault;
-        ShowFoundItemsCfg.Value = showFoundItemsDefault;
-        SortFoundItemsPriceCfg.Value = sortFoundItemsPriceDefault;
-        AlignFoundItemsPriceCfg.Value = alignFoundItemsPriceDefault;
+        OverrideWelcomeMessageCfg.Value = (bool)OverrideWelcomeMessageCfg.DefaultValue;
+        OverrideHelpMessageCfg.Value = (bool)OverrideHelpMessageCfg.DefaultValue;
+        ShowFoundItemsCfg.Value = (bool)ShowFoundItemsCfg.DefaultValue;
+        SortFoundItemsPriceCfg.Value = (bool)SortFoundItemsPriceCfg.DefaultValue;
+        AlignFoundItemsPriceCfg.Value = (bool)AlignFoundItemsPriceCfg.DefaultValue;
 
         // Misc Settings
-        SpeakInShipCfg.Value = speakInShipDefault;
+        SpeakInShipCfg.Value = (bool)SpeakInShipCfg.DefaultValue;
 
         // Scrap Eater Settings
-        ScrapEaterChanceCfg.Value = ScrapEaterChanceDefault;
-        OctolarSpawnWeightCfg.Value = OctolarSpawnWeightDefault;
-        TakeySpawnWeightCfg.Value = TakeySpawnWeightDefault;
-        MaxwellSpawnWeightCfg.Value = MaxwellSpawnWeightDefault;
-        YippeeSpawnWeightCfg.Value = YippeeSpawnWeightDefault;
-        CookieFumoSpawnWeightCfg.Value = CookieFumoSpawnWeightDefault;
-        PsychoSpawnWeightCfg.Value = PsychoSpawnWeightDefault;
+        ScrapEaterChanceCfg.Value = (int)ScrapEaterChanceCfg.DefaultValue;
+        OctolarSpawnWeightCfg.Value = (int)OctolarSpawnWeightCfg.DefaultValue;
+        TakeySpawnWeightCfg.Value = (int)TakeySpawnWeightCfg.DefaultValue;
+        MaxwellSpawnWeightCfg.Value = (int)MaxwellSpawnWeightCfg.DefaultValue;
+        YippeeSpawnWeightCfg.Value = (int)YippeeSpawnWeightCfg.DefaultValue;
+        CookieFumoSpawnWeightCfg.Value = (int)CookieFumoSpawnWeightCfg.DefaultValue;
+        PsychoSpawnWeightCfg.Value = (int)PsychoSpawnWeightCfg.DefaultValue;
+        ZombiesSpawnWeightCfg.Value = (int)ZombiesSpawnWeightCfg.DefaultValue;
 
         Plugin.logger.LogInfo("Reset all config settings to their default value.");
 

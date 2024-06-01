@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Octolar")]
-    [Space(3f)]
+    [Space(5f)]
     public MeshRenderer meshRenderer = null;
     public Material[] materialVariants = new Material[0];
     public Material suckMaterial = null;

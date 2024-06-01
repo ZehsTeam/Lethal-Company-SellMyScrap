@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Maxwell")]
-    [Space(3f)]
+    [Space(5f)]
     public GameObject bodyObject = null;
     public GameObject evilObject = null;
     public Animator danceAnimator = null;

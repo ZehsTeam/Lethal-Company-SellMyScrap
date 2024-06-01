@@ -10,6 +10,8 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 {
     protected bool IsHostOrServer => IsHost || IsServer;
 
+    [Header("Scrap Eater")]
+    [Space(5f)]
     public GameObject modelObject = null;
 
     [HideInInspector]

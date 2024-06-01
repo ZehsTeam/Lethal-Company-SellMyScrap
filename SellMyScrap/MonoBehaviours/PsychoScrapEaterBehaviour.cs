@@ -4,9 +4,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Psycho")]
+    [Space(5f)]
     public MeshRenderer meshRenderer = null;
     public Material normalMaterial = null;
     public Material suckMaterial = null;

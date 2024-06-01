@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Cookie Fumo")]
-    [Space(3f)]
+    [Space(5f)]
     public AudioClip fallSFX = null;
     public AudioClip beforeEatSFX = null;
     public AudioClip[] voiceLineSFX = new AudioClip[0];

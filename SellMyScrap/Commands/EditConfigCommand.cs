@@ -84,7 +84,7 @@ internal class EditConfigCommand : Command
 
         if (activeJsonListEditor != null)
         {
-            return activeJsonListEditor.ExecuteConfirmation(args, configManager.DontSellListJson.ToList());
+            return activeJsonListEditor.ExecuteConfirmation(args);
         }
 
         if (_args[0] == "dontselllistjson")
@@ -207,10 +207,10 @@ class JsonListEditor
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
-    public TerminalNode ExecuteConfirmation(string[] args, List<string> list)
+    public TerminalNode ExecuteConfirmation(string[] args)
     {
         string[] _args = Utils.GetArrayToLower(args);
-        this.list = list;
+        list = GetValue().ToList();
 
         if (isHostOnly && !Plugin.IsHostOrServer)
         {

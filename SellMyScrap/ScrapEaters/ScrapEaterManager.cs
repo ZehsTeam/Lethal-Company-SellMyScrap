@@ -32,6 +32,9 @@ public class ScrapEaterManager
             new ScrapEater(Content.psychoScrapEaterPrefab, () => {
                 return configManager.PsychoSpawnWeight;
             }),
+            new ScrapEater(Content.zombiesScrapEaterPrefab, () => {
+                return configManager.ZombiesSpawnWeight;
+            }),
         ];
     }
 

@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
-internal class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
+public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
+    [Space(20f)]
     [Header("Takey")]
-    [Space(3f)]
+    [Space(5f)]
     public AudioSource soundEffectsAudioFar = null;
     public AudioClip takeOffSFXFar = null;
     public AudioClip takeySitSFX = null;
