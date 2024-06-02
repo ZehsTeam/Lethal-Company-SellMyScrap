@@ -340,7 +340,7 @@ public class SyncedConfigManager
         // Scrap Eater Settings
         ScrapEaterChanceCfg = configFile.Bind(
             new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
-            40,
+            75,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
@@ -386,6 +386,8 @@ public class SyncedConfigManager
             new ConfigDescription("The spawn chance weight Zombies will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
+
+        UpdateScrapEaterChance();
     }
 
     private string GetDontSellListJsonDescription()
@@ -409,6 +411,25 @@ public class SyncedConfigManager
         message += "https://www.w3schools.com/js/js_json_arrays.asp\n";
 
         return message;
+    }
+
+    private void UpdateScrapEaterChance()
+    {
+        int targetValue = (int)ScrapEaterChanceCfg.DefaultValue;
+
+        if (ScrapEaterChance <= 0) return;
+
+        if (!SaveSystem.SetScrapEaterChance)
+        {
+            if (ScrapEaterChance >= targetValue)
+            {
+                SaveSystem.SetScrapEaterChance = true;
+                return;
+            }
+
+            ScrapEaterChance = targetValue;
+            SaveSystem.SetScrapEaterChance = true;
+        }
     }
 
     internal void ResetToDefault()
