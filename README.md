@@ -127,7 +127,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `scrapEaterChance` | `Int32` | `40` | The percent chance a scrap eater will spawn?! |
+| `scrapEaterChance` | `Int32` | `75` | The percent chance a scrap eater will spawn?! |
 | `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (scrap eater) |
 | `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
 | `maxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
@@ -150,9 +150,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 #### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
-* Maxwell from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
-* Cookie Fumo from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
-    * Model made by Antlers.
+* [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/) - *Maxwell and Cookie Fumo (models + audios)*
 
 ## Screenshots
 <details>
@@ -162,12 +160,12 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 <div>
     <img src="https://i.imgur.com/UyX90Y6.png" width="273px">
     <img src="https://i.imgur.com/lzsWM28.png" width="273px">
-    <img src="https://i.imgur.com/L8sE5te.png" width="273px">
+    <img src="https://i.imgur.com/zyDW9TD.png" width="273px">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/BYeYs4d.png" width="531px">
-    <img src="https://i.imgur.com/bYQtN1Y.png" width="531px">
+    <img src="https://i.imgur.com/BYeYs4d.png" width="412px">
+    <img src="https://i.imgur.com/bYQtN1Y.png" width="412px">
 </div>
 <h4><code>sell quota</code></h4>
 <div>
@@ -200,13 +198,13 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>view config</code></h4>
 <div>
-    <img src="https://i.imgur.com/KaWA5aT.png" width="100%">
+    <img src="https://i.imgur.com/wzBdRq3.png" width="100%">
 </div>
 <h4><code>edit config</code></h4>
 <div>
-    <img src="https://i.imgur.com/K0wg7Lo.png" width="273px">
-    <img src="https://i.imgur.com/PDngxYH.png" width="273px">
-    <img src="https://i.imgur.com/EcZjuif.png" width="273px">
+    <img src="https://i.imgur.com/8WhcmNE.png" width="273px">
+    <img src="https://i.imgur.com/Wkk1Thz.png" width="273px">
+    <img src="https://i.imgur.com/lfPwUt2.png" width="273px">
 </div>
 
 </details>

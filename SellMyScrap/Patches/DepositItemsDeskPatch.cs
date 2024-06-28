@@ -23,8 +23,8 @@ internal class DepositItemsDeskPatch
         }
     }
 
-    private static int clipIndex = -1;
-    private static bool speakInShip = false;
+    private static int _clipIndex = -1;
+    private static bool _speakInShip = false;
 
     [HarmonyPatch("SellItemsOnServer")]
     [HarmonyPrefix]
@@ -37,7 +37,7 @@ internal class DepositItemsDeskPatch
 
         if (Plugin.IsHostOrServer)
         {
-            SetMicrophoneSpeakDataOnServer(speakInShip);
+            SetMicrophoneSpeakDataOnServer(_speakInShip);
         }
 
         return true;
@@ -52,24 +52,24 @@ internal class DepositItemsDeskPatch
             .. __instance.rareMicrophoneAudios
         ];
 
-        if (clipIndex == -1)
+        if (_clipIndex == -1)
         {
-            clipIndex = GetRandomAudioClipIndex();
+            _clipIndex = GetRandomAudioClipIndex();
         }
 
-        AudioClip audioClip = audioClips[clipIndex];
+        AudioClip audioClip = audioClips[_clipIndex];
 
         // Play audio clip at the desk
         __instance.speakerAudio.PlayOneShot(audioClip, 1f);
 
         // Play audio clip in the ship
-        if (Plugin.ConfigManager.SpeakInShip && speakInShip)
+        if (Plugin.ConfigManager.SpeakInShip && _speakInShip)
         {
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(audioClip, 1f);
         }
 
-        speakInShip = false;
-        clipIndex = -1;
+        _speakInShip = false;
+        _clipIndex = -1;
 
         return false;
     }
@@ -84,23 +84,23 @@ internal class DepositItemsDeskPatch
         return Random.Range(0, Instance.microphoneAudios.Length);
     }
 
-    public static void SetMicrophoneSpeakDataOnClient(bool _speakInShip, int _clipIndex)
+    public static void SetMicrophoneSpeakDataOnClient(bool speakInShip, int clipIndex)
     {
-        speakInShip = _speakInShip;
-        clipIndex = _clipIndex;
+        _speakInShip = speakInShip;
+        _clipIndex = clipIndex;
     }
 
-    private static void SetMicrophoneSpeakDataOnServer(bool _speakInShip)
+    private static void SetMicrophoneSpeakDataOnServer(bool speakInShip)
     {
-        speakInShip = _speakInShip;
-        clipIndex = GetRandomAudioClipIndex();
+        _speakInShip = speakInShip;
+        _clipIndex = GetRandomAudioClipIndex();
 
-        PluginNetworkBehaviour.Instance.SetMicrophoneSpeakDataClientRpc(speakInShip, clipIndex);
+        PluginNetworkBehaviour.Instance.SetMicrophoneSpeakDataClientRpc(speakInShip, _clipIndex);
     }
 
     public static void SellItemsOnServer()
     {
-        speakInShip = true;
+        _speakInShip = true;
         Instance.SellItemsOnServer();
     }
 

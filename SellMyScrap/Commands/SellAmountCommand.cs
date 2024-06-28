@@ -8,7 +8,7 @@ internal class SellAmountCommand : SellCommand
 {
     public SellAmountCommand()
     {
-        flags.Add(new CommandFlag("-o"));
+        Flags.Add(new CommandFlag("-o"));
     }
 
     public override bool IsCommand(string[] args)
@@ -54,13 +54,13 @@ internal class SellAmountCommand : SellCommand
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
 
-        if (scrapToSell.amount == 0)
+        if (scrapToSell.Amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
-        awaitingConfirmation = true;
+        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.Value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        AwaitingConfirmation = true;
 
         string message = GetMessage(requestedValue, scrapToSell);
         return TerminalPatch.CreateTerminalNode(message);
@@ -68,16 +68,16 @@ internal class SellAmountCommand : SellCommand
 
     private string GetMessage(int requestedValue, ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.realValue}\n";
+        string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.RealValue}\n";
         message += $"Requested value: ${requestedValue}\n";
         message += GetQuotaFulfilledString();
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
-        message += GetOvertimeBonusString(scrapToSell.realValue);
+        message += GetOvertimeBonusString(scrapToSell.RealValue);
         message += "\n";
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";
@@ -117,9 +117,9 @@ internal class SellAmountCommand : SellCommand
 
     private bool GetWithOvertimeBonus(List<CommandFlag> foundFlags)
     {
-        CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-o");
+        CommandFlag flag = foundFlags.Find(_ => _.Key.ToLower() == "-o");
         if (flag == null) return false;
 
-        return flag.canUse;
+        return flag.CanUse;
     }
 }

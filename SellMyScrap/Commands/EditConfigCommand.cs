@@ -8,17 +8,17 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class EditConfigCommand : Command
 {
-    private JsonListEditor activeJsonListEditor;
-    private JsonListEditor dontSellListJsonEditor;
-    private JsonListEditor sellListJsonEditor;
+    private JsonListEditor _activeJsonListEditor;
+    private JsonListEditor _dontSellListJsonEditor;
+    private JsonListEditor _sellListJsonEditor;
 
-    private bool inResetToDefaultMenu = false;
+    private bool _inResetToDefaultMenu = false;
 
     public EditConfigCommand()
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, () =>
+        _dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, () =>
         {
             return configManager.DontSellListJson;
         },
@@ -27,7 +27,7 @@ internal class EditConfigCommand : Command
             configManager.DontSellListJson = value;
         });
 
-        sellListJsonEditor = new JsonListEditor("sellListJson", isHostOnly: true, () =>
+        _sellListJsonEditor = new JsonListEditor("sellListJson", isHostOnly: true, () =>
         {
             return configManager.SellListJson;
         },
@@ -49,17 +49,17 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        activeJsonListEditor = null;
-        inResetToDefaultMenu = false;
+        _activeJsonListEditor = null;
+        _inResetToDefaultMenu = false;
 
-        awaitingConfirmation = true;
+        AwaitingConfirmation = true;
 
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
-        if (inResetToDefaultMenu)
+        if (_inResetToDefaultMenu)
         {
             return ExecuteResetToDefaultConfirmation(args);
         }
@@ -70,38 +70,38 @@ internal class EditConfigCommand : Command
         
         if (exitStrings.Contains(_args[0]))
         {
-            if (activeJsonListEditor != null)
+            if (_activeJsonListEditor != null)
             {
-                activeJsonListEditor = null;
+                _activeJsonListEditor = null;
                 return TerminalPatch.CreateTerminalNode(GetMessage());
             }
 
-            awaitingConfirmation = false;
+            AwaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
         }
 
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        if (activeJsonListEditor != null)
+        if (_activeJsonListEditor != null)
         {
-            return activeJsonListEditor.ExecuteConfirmation(args);
+            return _activeJsonListEditor.ExecuteConfirmation(args);
         }
 
         if (_args[0] == "dontselllistjson")
         {
-            activeJsonListEditor = dontSellListJsonEditor;
-            return activeJsonListEditor.Execute();
+            _activeJsonListEditor = _dontSellListJsonEditor;
+            return _activeJsonListEditor.Execute();
         }
 
         if (_args[0] == "selllistjson")
         {
-            activeJsonListEditor = sellListJsonEditor;
-            return activeJsonListEditor.Execute();
+            _activeJsonListEditor = _sellListJsonEditor;
+            return _activeJsonListEditor.Execute();
         }
 
         if (_args[0] == "reset")
         {
-            inResetToDefaultMenu = true;
+            _inResetToDefaultMenu = true;
             return ExecuteResetToDefault();
         }
 
@@ -133,7 +133,7 @@ internal class EditConfigCommand : Command
 
         if (ConfigHelper.TrySetConfigValue(key, value, out ConfigItem configItem, out string parsedValue))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.key} to {parsedValue}\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.Key} to {parsedValue}\n\n"));
         }
 
         if (configItem == null)
@@ -141,7 +141,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
 
-        if (configItem.isHostOnly && !Plugin.IsHostOrServer)
+        if (configItem.IsHostOnly && !Plugin.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can edit this setting.\n\n"));
         }
@@ -161,13 +161,13 @@ internal class EditConfigCommand : Command
         if ("confirm".Contains(arg) && arg.Length > 0)
         {
             Plugin.ConfigManager.ResetToDefault();
-            inResetToDefaultMenu = false;
+            _inResetToDefaultMenu = false;
             return TerminalPatch.CreateTerminalNode(GetMessage("Reset all config settings to their default value.\n\n"));
         }
 
         if ("deny".Contains(arg) && arg.Length > 0)
         {
-            inResetToDefaultMenu = false;
+            _inResetToDefaultMenu = false;
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
@@ -188,32 +188,32 @@ internal class EditConfigCommand : Command
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class JsonListEditor
 {
-    public string key;
-    public bool isHostOnly = false;
-    private List<string> list;
+    public string Key;
+    public bool IsHostOnly = false;
+    private List<string> List;
     private Func<string[]> GetValue;
     private Action<string[]> SetValue;
 
     public JsonListEditor(string key, bool isHostOnly, Func<string[]> GetValue, Action<string[]> SetValue)
     {
-        this.key = key;
-        this.isHostOnly = isHostOnly;
+        Key = key;
+        IsHostOnly = isHostOnly;
         this.GetValue = GetValue;
         this.SetValue = SetValue;
     }
 
     public TerminalNode Execute()
     {
-        list = GetValue().ToList();
+        List = GetValue().ToList();
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
     public TerminalNode ExecuteConfirmation(string[] args)
     {
         string[] _args = Utils.GetArrayToLower(args);
-        list = GetValue().ToList();
+        List = GetValue().ToList();
 
-        if (isHostOnly && !Plugin.IsHostOrServer)
+        if (IsHostOnly && !Plugin.IsHostOrServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can edit this setting.\n\n"));
         }
@@ -250,8 +250,8 @@ public class JsonListEditor
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
         }
 
-        list.Add(item);
-        SetValue(list.ToArray());
+        List.Add(item);
+        SetValue(List.ToArray());
 
         return TerminalPatch.CreateTerminalNode(GetMessage($"Added \"{item}\"\n\n"));
     }
@@ -265,23 +265,23 @@ public class JsonListEditor
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
         }
 
-        string _item = Utils.GetItemFromList(list, item);
+        string _item = Utils.GetItemFromList(List, item);
 
         if (_item == string.Empty)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: item was not found.\n\n"));
         }
 
-        list.Remove(_item);
-        SetValue(list.ToArray());
+        List.Remove(_item);
+        SetValue(List.ToArray());
 
         return TerminalPatch.CreateTerminalNode(GetMessage($"Removed \"{_item}\"\n\n"));
     }
 
     private TerminalNode ClearAll(string[] args)
     {
-        list = [];
-        SetValue(list.ToArray());
+        List = [];
+        SetValue(List.ToArray());
 
         return TerminalPatch.CreateTerminalNode(GetMessage($"Removed all items.\n\n"));
     }
@@ -294,8 +294,8 @@ public class JsonListEditor
     private string GetMessage(string additionalMessage = "")
     {
         string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += $"{key} config editor\n\n";
-        message += $"{JsonConvert.SerializeObject(list)}\n\n";
+        message += $"{Key} config editor\n\n";
+        message += $"{JsonConvert.SerializeObject(List)}\n\n";
         message += $"The following commands are available:\n\n";
         message += $"add <value>\n";
         message += $"remove <value>\n";

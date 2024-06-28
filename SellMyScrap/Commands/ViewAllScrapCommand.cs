@@ -7,10 +7,10 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class ViewAllScrapCommand : Command
 {
-    private List<Item> scrapItems = new List<Item>();
-    private int itemsPerPage = 50;
-    private int pages;
-    private int pageIndex;
+    private List<Item> _scrapItems = [];
+    private int _itemsPerPage = 50;
+    private int _pages;
+    private int _pageIndex;
 
     public override bool IsCommand(string[] args)
     {
@@ -24,13 +24,13 @@ internal class ViewAllScrapCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        scrapItems = ScrapHelper.GetAllScrapItems();
-        pages = Mathf.CeilToInt((float)scrapItems.Count / (float)itemsPerPage);
-        pageIndex = 0;
+        _scrapItems = ScrapHelper.GetAllScrapItems();
+        _pages = Mathf.CeilToInt((float)_scrapItems.Count / (float)_itemsPerPage);
+        _pageIndex = 0;
 
         string message = GetMessage();
 
-        awaitingConfirmation = true;
+        AwaitingConfirmation = true;
 
         return TerminalPatch.CreateTerminalNode(message);
     }
@@ -43,22 +43,22 @@ internal class ViewAllScrapCommand : Command
 
         if (exitStrings.Contains(_args[0]))
         {
-            awaitingConfirmation = false;
+            AwaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed view all scrap.\n\n");
         }
 
         if (_args[0] == "next" || _args[0] == "n")
         {
-            pageIndex++;
-            pageIndex = Mathf.Clamp(pageIndex, 0, pages - 1);
+            _pageIndex++;
+            _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
 
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
         if (_args[0] == "prev" || _args[0] == "p")
         {
-            pageIndex--;
-            pageIndex = Mathf.Clamp(pageIndex, 0, pages - 1);
+            _pageIndex--;
+            _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
 
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
@@ -73,20 +73,20 @@ internal class ViewAllScrapCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid page number.\n\n"));
         }
 
-        requestedPage = Mathf.Clamp(requestedPage, 1, pages);
-        pageIndex = requestedPage - 1;
+        requestedPage = Mathf.Clamp(requestedPage, 1, _pages);
+        _pageIndex = requestedPage - 1;
 
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
     private string GetMessage(string additionMessage = "")
     {
-        int index = pageIndex * itemsPerPage;
+        int index = _pageIndex * _itemsPerPage;
         int columns = 2;
-        int amount = Mathf.Min(scrapItems.Count - index, itemsPerPage);
-        List<Item> scrapItemsForPage = scrapItems.GetRange(index, amount);
+        int amount = Mathf.Min(_scrapItems.Count - index, _itemsPerPage);
+        List<Item> scrapItemsForPage = _scrapItems.GetRange(index, amount);
 
-        string message = $"Found {scrapItems.Count} total items from all moons. (Page {pageIndex + 1} / {pages})\n\n";
+        string message = $"Found {_scrapItems.Count} total items from all moons. (Page {_pageIndex + 1} / {_pages})\n\n";
         message += $"{ScrapHelper.GetScrapItemMessage(scrapItemsForPage, columns, 26)}\n\n";
         message += "The following commands are available:\n\n";
         message += "page <number>\n";

@@ -25,8 +25,8 @@ internal class Plugin : BaseUnityPlugin
 
     public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
-    public ScrapToSell scrapToSell;
-    public SellRequest sellRequest;
+    public ScrapToSell ScrapToSell { get; private set; }
+    public SellRequest SellRequest { get; private set; }
 
     void Awake()
     {
@@ -88,28 +88,28 @@ internal class Plugin : BaseUnityPlugin
 
     public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
     {
-        scrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus);
-        return scrapToSell;
+        ScrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus);
+        return ScrapToSell;
     }
 
     public ScrapToSell GetScrapToSell(string[] sellListJson)
     {
-        scrapToSell = ScrapHelper.GetScrapToSell(sellListJson);
-        return scrapToSell;
+        ScrapToSell = ScrapHelper.GetScrapToSell(sellListJson);
+        return ScrapToSell;
     }
 
     public ScrapToSell SetScrapToSell(List<GrabbableObject> scrap)
     {
-        scrapToSell = new ScrapToSell(scrap);
-        return scrapToSell;
+        ScrapToSell = new ScrapToSell(scrap);
+        return ScrapToSell;
     }
 
     #region SellRequest Methods
     public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType, int scrapEaterIndex = -1)
     {
-        sellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex);
+        SellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex);
 
-        string message = $"Created sell request. {scrapToSell.amount} items for ${value}.";
+        string message = $"Created sell request. {ScrapToSell.Amount} items for ${value}.";
 
         if (scrapEaterIndex >= 0)
         {
@@ -121,11 +121,11 @@ internal class Plugin : BaseUnityPlugin
 
     public void ConfirmSellRequest()
     {
-        if (scrapToSell == null || sellRequest == null) return;
+        if (ScrapToSell == null || SellRequest == null) return;
 
-        sellRequest.confirmationType = ConfirmationType.Confirmed;
+        SellRequest.ConfirmationType = ConfirmationType.Confirmed;
 
-        logger.LogInfo($"Attempting to sell {scrapToSell.amount} items for ${scrapToSell.value}.");
+        logger.LogInfo($"Attempting to sell {ScrapToSell.Amount} items for ${ScrapToSell.Value}.");
 
         if (IsHostOrServer)
         {
@@ -136,7 +136,7 @@ internal class Plugin : BaseUnityPlugin
             ConfirmSellRequestOnClient();
         }
 
-        sellRequest = null;
+        SellRequest = null;
     }
 
     private void ConfirmSellRequestOnServer()
@@ -147,29 +147,29 @@ internal class Plugin : BaseUnityPlugin
     private void ConfirmSellRequestOnClient()
     {
         int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
-        string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap);
+        string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(ScrapToSell.Scrap);
 
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, sellRequest.sellType, sellRequest.realValue, scrapToSell.amount, sellRequest.scrapEaterIndex);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, SellRequest.SellType, SellRequest.RealValue, ScrapToSell.Amount, SellRequest.ScrapEaterIndex);
     }
 
     public void CancelSellRequest()
     {
-        sellRequest = null;
-        scrapToSell = null;
+        SellRequest = null;
+        ScrapToSell = null;
     }
     #endregion
 
     public void PerformSellOnServerFromClient(List<GrabbableObject> scrap, SellType sellType, int scrapEaterIndex = -1)
     {
-        scrapToSell = new ScrapToSell(scrap);
-        CreateSellRequest(sellType, scrapToSell.value, scrapToSell.value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        ScrapToSell = new ScrapToSell(scrap);
+        CreateSellRequest(sellType, ScrapToSell.Value, ScrapToSell.Value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         ConfirmSellRequest();
     }
 
     public IEnumerator PerformSellOnServer()
     {
-        if (scrapToSell == null || sellRequest == null) yield return null;
-        if (sellRequest.confirmationType != ConfirmationType.Confirmed) yield return null;
+        if (ScrapToSell == null || SellRequest == null) yield return null;
+        if (SellRequest.ConfirmationType != ConfirmationType.Confirmed) yield return null;
 
         if (DepositItemsDeskPatch.Instance == null)
         {
@@ -177,31 +177,31 @@ internal class Plugin : BaseUnityPlugin
             yield break;
         }
 
-        int scrapEaterIndex = sellRequest.scrapEaterIndex;
+        int scrapEaterIndex = SellRequest.ScrapEaterIndex;
 
         if (scrapEaterIndex == 0)
         {
-            ScrapEaterManager.StartRandomScrapEaterOnServer(scrapToSell.scrap);
+            ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
             yield break;
         }
 
         if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
         {
-            ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, scrapToSell.scrap);
+            ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, ScrapToSell.Scrap);
             yield break;
         }
 
         if (ScrapEaterManager.CanUseScrapEater())
         {
-            ScrapEaterManager.StartRandomScrapEaterOnServer(scrapToSell.scrap);
+            ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
             yield break;
         }
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(scrapToSell.scrap);
-        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(scrapToSell.scrap));
+        DepositItemsDeskPatch.PlaceItemsOnCounter(ScrapToSell.Scrap);
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(ScrapToSell.Scrap));
         yield return new WaitForSeconds(0.5f);
         DepositItemsDeskPatch.SellItemsOnServer();
 
-        scrapToSell = null;
+        ScrapToSell = null;
     }
 }

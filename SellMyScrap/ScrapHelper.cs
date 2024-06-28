@@ -9,7 +9,7 @@ namespace com.github.zehsteam.SellMyScrap;
 internal class ScrapHelper
 {
     private static GameObject _hangarShip;
-    public static GameObject hangarShip
+    public static GameObject HangarShip
     {
         get
         {
@@ -25,7 +25,7 @@ internal class ScrapHelper
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        GrabbableObject[] itemsInShip = hangarShip.GetComponentsInChildren<GrabbableObject>();
+        GrabbableObject[] itemsInShip = HangarShip.GetComponentsInChildren<GrabbableObject>();
         List<GrabbableObject> scrap = [];
 
         string[] dontSellList = Plugin.ConfigManager.DontSellListJson;
@@ -133,7 +133,7 @@ internal class ScrapHelper
         if (boxCollider == null) return true;
 
         Bounds bounds = boxCollider.bounds;
-        float shipY = hangarShip.transform.position.y;
+        float shipY = HangarShip.transform.position.y;
         float bottomY = bounds.center.y - bounds.extents.y;
         float yOffset = bottomY - shipY;
 

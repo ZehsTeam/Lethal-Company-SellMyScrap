@@ -5,45 +5,45 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(TimeOfDay))]
 internal class TimeOfDayPatch
 {
-    private static int daysUntilDeadline = 3;
-    private static int preDaysUntilDeadline = 3;
-    private static int postDaysUntilDeadline = 3;
+    private static int _daysUntilDeadline = 3;
+    private static int _preDaysUntilDeadline = 3;
+    private static int _postDaysUntilDeadline = 3;
 
     [HarmonyPatch("SetBuyingRateForDay")]
     [HarmonyPrefix]
     static void SetBuyingRateForDayPatchPrefix()
     {
-        preDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
+        _preDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
     }
 
     [HarmonyPatch("SetBuyingRateForDay")]
     [HarmonyPostfix]
     static void SetBuyingRateForDayPatchPostfix()
     {
-        postDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
+        _postDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
 
         SetDaysUntilDeadline();
     }
 
     private static void SetDaysUntilDeadline()
     {
-        if (postDaysUntilDeadline == 0)
+        if (_postDaysUntilDeadline == 0)
         {
-            if (preDaysUntilDeadline == 0)
+            if (_preDaysUntilDeadline == 0)
             {
-                daysUntilDeadline = 0;
+                _daysUntilDeadline = 0;
                 return;
             }
 
-            daysUntilDeadline = -1;
+            _daysUntilDeadline = -1;
             return;
         }
 
-        daysUntilDeadline = postDaysUntilDeadline;
+        _daysUntilDeadline = _postDaysUntilDeadline;
     }
 
     public static int GetDaysUntilDeadline()
     {
-        return daysUntilDeadline;
+        return _daysUntilDeadline;
     }
 }

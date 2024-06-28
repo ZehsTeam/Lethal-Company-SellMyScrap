@@ -17,11 +17,11 @@ internal class GameNetworkManagerPatch
 
     private static void AddNetworkPrefabs()
     {
-        AddNetworkPrefab(Content.networkHandlerPrefab);
+        AddNetworkPrefab(Content.NetworkHandlerPrefab);
 
-        ScrapEaterManager.scrapEaters.ForEach(scrapEater =>
+        ScrapEaterManager.ScrapEaters.ForEach(scrapEater =>
         {
-            AddNetworkPrefab(scrapEater.spawnPrefab);
+            AddNetworkPrefab(scrapEater.SpawnPrefab);
         });
     }
 

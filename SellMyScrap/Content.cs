@@ -5,17 +5,17 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class Content
 {
-    // NetworkHandler
-    public static GameObject networkHandlerPrefab;
+    // Network Handler
+    public static GameObject NetworkHandlerPrefab;
 
     // Scrap Eaters
-    public static GameObject octolarScrapEaterPrefab;
-    public static GameObject takeyScrapEaterPrefab;
-    public static GameObject maxwellScrapEaterPrefab;
-    public static GameObject yippeeScrapEaterPrefab;
-    public static GameObject cookieFumoScrapEaterPrefab;
-    public static GameObject psychoScrapEaterPrefab;
-    public static GameObject zombiesScrapEaterPrefab;
+    public static GameObject OctolarScrapEaterPrefab;
+    public static GameObject TakeyScrapEaterPrefab;
+    public static GameObject MaxwellScrapEaterPrefab;
+    public static GameObject YippeeScrapEaterPrefab;
+    public static GameObject CookieFumoScrapEaterPrefab;
+    public static GameObject PsychoScrapEaterPrefab;
+    public static GameObject ZombiesScrapEaterPrefab;
 
     public static void Load()
     {
@@ -30,18 +30,18 @@ internal class Content
             var assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "sellmyscrap_assets");
             AssetBundle assetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
 
-            // NetworkHandler
-            networkHandlerPrefab = assetBundle.LoadAsset<GameObject>("NetworkHandler");
-            networkHandlerPrefab.AddComponent<PluginNetworkBehaviour>();
+            // Network Handler
+            NetworkHandlerPrefab = assetBundle.LoadAsset<GameObject>("NetworkHandler");
+            NetworkHandlerPrefab.AddComponent<PluginNetworkBehaviour>();
 
             // Scrap Eaters
-            octolarScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("OctolarScrapEater");
-            takeyScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("TakeyScrapEater");
-            maxwellScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
-            yippeeScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("YippeeScrapEater");
-            cookieFumoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
-            psychoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("PsychoScrapEater");
-            zombiesScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("ZombiesScrapEater");
+            OctolarScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("OctolarScrapEater");
+            TakeyScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("TakeyScrapEater");
+            MaxwellScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("MaxwellScrapEater");
+            YippeeScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("YippeeScrapEater");
+            CookieFumoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
+            PsychoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("PsychoScrapEater");
+            ZombiesScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("ZombiesScrapEater");
 
             Plugin.logger.LogInfo("Successfully loaded assets from AssetBundle!");
         }

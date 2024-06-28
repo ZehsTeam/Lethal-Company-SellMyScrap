@@ -4,12 +4,13 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class CommandManager
 {
-    private static List<Command> commands = new List<Command>();
-    public static Command awaitingConfirmationCommand;
+    private static List<Command> _commands = [];
+
+    public static Command AwaitingConfirmationCommand;
 
     public static void Initialize()
     {
-        commands =
+        _commands =
         [
             new HelpCommand(),
             new SellQuotaCommand(),
@@ -24,7 +25,7 @@ internal class CommandManager
             new EditConfigCommand(),
         ];
 
-        awaitingConfirmationCommand = null;
+        AwaitingConfirmationCommand = null;
     }
 
     public static bool TryExecuteCommand(string[] array, out TerminalNode terminalNode)
@@ -33,11 +34,11 @@ internal class CommandManager
 
         string[] args = GetArgs(array, 3);
 
-        if (awaitingConfirmationCommand != null)
+        if (AwaitingConfirmationCommand != null)
         {
-            Command _command = awaitingConfirmationCommand;
+            Command _command = AwaitingConfirmationCommand;
             terminalNode = _command.ExecuteConfirmation(args);
-            _command.previousTerminalNode = terminalNode;
+            _command.PreviousTerminalNode = terminalNode;
             return true;
         }
 
@@ -45,18 +46,18 @@ internal class CommandManager
         if (command == null) return false;
         
         terminalNode = command.Execute(args);
-        command.previousTerminalNode = terminalNode;
+        command.PreviousTerminalNode = terminalNode;
         return true;
     }
     
     public static void OnLocalDisconnect()
     {
-        awaitingConfirmationCommand = null;
+        AwaitingConfirmationCommand = null;
     }
 
     public static void OnTerminalQuit()
     {
-        awaitingConfirmationCommand = null;
+        AwaitingConfirmationCommand = null;
     }
 
     private static string[] GetArgs(string[] array, int length)
@@ -84,7 +85,7 @@ internal class CommandManager
     {
         string[] _args = args;
 
-        foreach (var command in commands)
+        foreach (var command in _commands)
         {
             if (command.IsCommand(_args))
             {

@@ -119,8 +119,10 @@ internal class SaveSystem
     }
 }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [Serializable]
 public class SaveData
+
 {
     public bool SetScrapEaterChance = false;
 }

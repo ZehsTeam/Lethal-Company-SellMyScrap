@@ -9,49 +9,49 @@ namespace com.github.zehsteam.SellMyScrap;
 public class SyncedConfigData : INetworkSerializable
 {
     // Sell Settings
-    public bool sellGifts;
-    public bool sellShotguns;
-    public bool sellAmmo;
-    public bool sellKnives;
-    public bool sellPickles;
+    public bool SellGifts;
+    public bool SellShotguns;
+    public bool SellAmmo;
+    public bool SellKnives;
+    public bool SellPickles;
 
     // Advanced Sell Settings
-    public bool sellScrapWorthZero;
-    public bool onlySellScrapOnFloor;
-    public string dontSellListJson;
-    public string sellListJson;
+    public bool SellScrapWorthZero;
+    public bool OnlySellScrapOnFloor;
+    public string DontSellListJson;
+    public string SellListJson;
 
     public SyncedConfigData() { }
 
     public SyncedConfigData(SyncedConfigManager configManager)
     {
         // Sell Settings
-        sellGifts = configManager.SellGifts;
-        sellShotguns = configManager.SellShotguns;
-        sellAmmo = configManager.SellAmmo;
-        sellKnives = configManager.SellKnives;
-        sellPickles = configManager.SellPickles;
+        SellGifts = configManager.SellGifts;
+        SellShotguns = configManager.SellShotguns;
+        SellAmmo = configManager.SellAmmo;
+        SellKnives = configManager.SellKnives;
+        SellPickles = configManager.SellPickles;
 
         // Advanced Sell Settings
-        sellScrapWorthZero = configManager.SellScrapWorthZero;
-        onlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
-        dontSellListJson = JsonConvert.SerializeObject(configManager.DontSellListJson);
-        sellListJson = JsonConvert.SerializeObject(configManager.SellListJson);
+        SellScrapWorthZero = configManager.SellScrapWorthZero;
+        OnlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
+        DontSellListJson = JsonConvert.SerializeObject(configManager.DontSellListJson);
+        SellListJson = JsonConvert.SerializeObject(configManager.SellListJson);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         // Sell Settings
-        serializer.SerializeValue(ref sellGifts);
-        serializer.SerializeValue(ref sellShotguns);
-        serializer.SerializeValue(ref sellAmmo);
-        serializer.SerializeValue(ref sellKnives);
-        serializer.SerializeValue(ref sellPickles);
+        serializer.SerializeValue(ref SellGifts);
+        serializer.SerializeValue(ref SellShotguns);
+        serializer.SerializeValue(ref SellAmmo);
+        serializer.SerializeValue(ref SellKnives);
+        serializer.SerializeValue(ref SellPickles);
 
         // Advanced Sell Settings
-        serializer.SerializeValue(ref sellScrapWorthZero);
-        serializer.SerializeValue(ref onlySellScrapOnFloor);
-        serializer.SerializeValue(ref dontSellListJson);
-        serializer.SerializeValue(ref sellListJson);
+        serializer.SerializeValue(ref SellScrapWorthZero);
+        serializer.SerializeValue(ref OnlySellScrapOnFloor);
+        serializer.SerializeValue(ref DontSellListJson);
+        serializer.SerializeValue(ref SellListJson);
     }
 }

@@ -37,13 +37,13 @@ internal class SellQuotaCommand : SellCommand
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue);
 
-        if (scrapToSell.amount == 0)
+        if (scrapToSell.Amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
-        awaitingConfirmation = true;
+        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.Value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
         return TerminalPatch.CreateTerminalNode(message);
@@ -51,15 +51,15 @@ internal class SellQuotaCommand : SellCommand
 
     private string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.realValue}\n";
+        string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.RealValue}\n";
         message += GetQuotaFulfilledString();
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
-        message += GetOvertimeBonusString(scrapToSell.realValue);
+        message += GetOvertimeBonusString(scrapToSell.RealValue);
         message += "\n";
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

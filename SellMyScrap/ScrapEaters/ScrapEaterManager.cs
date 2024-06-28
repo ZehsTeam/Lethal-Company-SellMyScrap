@@ -8,32 +8,32 @@ namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class ScrapEaterManager
 {
-    internal static List<ScrapEater> scrapEaters = new List<ScrapEater>();
+    public static List<ScrapEater> ScrapEaters { get; private set; } = [];
 
     internal static void Initialize()
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        scrapEaters = [
-            new ScrapEater(Content.octolarScrapEaterPrefab, () => {
+        ScrapEaters = [
+            new ScrapEater(Content.OctolarScrapEaterPrefab, () => {
                 return configManager.OctolarSpawnWeight;
             }),
-            new ScrapEater(Content.takeyScrapEaterPrefab, () => {
+            new ScrapEater(Content.TakeyScrapEaterPrefab, () => {
                 return configManager.TakeySpawnWeight;
             }),
-            new ScrapEater(Content.maxwellScrapEaterPrefab, () => {
+            new ScrapEater(Content.MaxwellScrapEaterPrefab, () => {
                 return configManager.MaxwellSpawnWeight;
             }),
-            new ScrapEater(Content.yippeeScrapEaterPrefab, () => {
+            new ScrapEater(Content.YippeeScrapEaterPrefab, () => {
                 return configManager.YippeeSpawnWeight;
             }),
-            new ScrapEater(Content.cookieFumoScrapEaterPrefab, () => {
+            new ScrapEater(Content.CookieFumoScrapEaterPrefab, () => {
                 return configManager.CookieFumoSpawnWeight;
             }),
-            new ScrapEater(Content.psychoScrapEaterPrefab, () => {
+            new ScrapEater(Content.PsychoScrapEaterPrefab, () => {
                 return configManager.PsychoSpawnWeight;
             }),
-            new ScrapEater(Content.zombiesScrapEaterPrefab, () => {
+            new ScrapEater(Content.ZombiesScrapEaterPrefab, () => {
                 return configManager.ZombiesSpawnWeight;
             }),
         ];
@@ -47,8 +47,8 @@ public class ScrapEaterManager
 
     internal static bool HasScrapEater(int index)
     {
-        if (scrapEaters.Count == 0) return false;
-        if (index < 0 || index > scrapEaters.Count - 1) return false;
+        if (ScrapEaters.Count == 0) return false;
+        if (index < 0 || index > ScrapEaters.Count - 1) return false;
 
         return true;
     }
@@ -60,7 +60,7 @@ public class ScrapEaterManager
     /// <param name="GetSpawnWeight">Func for getting your spawnWeight config setting value.</param>
     public static void AddScrapEater(GameObject spawnPrefab, System.Func<int> GetSpawnWeight)
     {
-        scrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
+        ScrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
     }
 
     internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
@@ -77,7 +77,7 @@ public class ScrapEaterManager
     {
         if (!Plugin.IsHostOrServer) return;
 
-        GameObject prefab = scrapEaters[index].spawnPrefab;
+        GameObject prefab = ScrapEaters[index].SpawnPrefab;
         GameObject gameObject = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
         NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
         networkObject.Spawn(destroyWithScene: true);
@@ -92,9 +92,9 @@ public class ScrapEaterManager
     {
         List<(int index, int weight)> weightedItems = new List<(int index, int weight)>();
 
-        for (int i = 0; i < scrapEaters.Count; i++)
+        for (int i = 0; i < ScrapEaters.Count; i++)
         {
-            int spawnWeight = scrapEaters[i].GetSpawnWeight();
+            int spawnWeight = ScrapEaters[i].GetSpawnWeight();
             if (spawnWeight <= 0) continue;
 
             weightedItems.Add((i, spawnWeight));

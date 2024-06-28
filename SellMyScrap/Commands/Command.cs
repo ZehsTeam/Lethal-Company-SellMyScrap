@@ -7,20 +7,21 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 public class Command
 {
-    public TerminalNode previousTerminalNode;
-    public bool awaitingConfirmation
+    public TerminalNode PreviousTerminalNode;
+
+    public bool AwaitingConfirmation
     {
         get
         {
-            return CommandManager.awaitingConfirmationCommand == this;
+            return CommandManager.AwaitingConfirmationCommand == this;
         }
         set
         {
-            CommandManager.awaitingConfirmationCommand = value ? this : null;
+            CommandManager.AwaitingConfirmationCommand = value ? this : null;
         }
     }
 
-    protected List<CommandFlag> flags = new List<CommandFlag>();
+    protected List<CommandFlag> Flags = [];
 
     public virtual bool IsCommand(string[] args)
     {
@@ -61,7 +62,7 @@ public class Command
 
     protected virtual TerminalNode OnInvalidInput(string[] args)
     {
-        return previousTerminalNode;
+        return PreviousTerminalNode;
     }
 
     protected List<CommandFlag> GetFlagsFromString(string extra)
@@ -88,9 +89,9 @@ public class Command
     {
         CommandFlag foundFlag = null;
 
-        foreach (var flag in flags)
+        foreach (var flag in Flags)
         {
-            if (text.StartsWith(flag.key, System.StringComparison.OrdinalIgnoreCase))
+            if (text.StartsWith(flag.Key, System.StringComparison.OrdinalIgnoreCase))
             {
                 foundFlag = flag;
                 break;
@@ -99,8 +100,8 @@ public class Command
 
         if (foundFlag == null) return null;
 
-        bool validLength = text.Length == foundFlag.key.Length;
-        bool hasData = foundFlag.canHaveData && text.Contains(":");
+        bool validLength = text.Length == foundFlag.Key.Length;
+        bool hasData = foundFlag.CanHaveData && text.Contains(":");
         if (hasData) validLength = true;
 
         if (!validLength) return null;
@@ -112,16 +113,16 @@ public class Command
             flagData = text.Split(":")[1];
         }
 
-        return new CommandFlag(foundFlag.key, foundFlag.isHostOnly, foundFlag.canHaveData, flagData);
+        return new CommandFlag(foundFlag.Key, foundFlag.IsHostOnly, foundFlag.CanHaveData, flagData);
     }
 
     protected int GetFlagsStartIndexInString(string extra)
     {
         int startIndex = -1;
 
-        flags.ForEach(flag =>
+        Flags.ForEach(flag =>
         {
-            int index = extra.IndexOf(flag.key, System.StringComparison.OrdinalIgnoreCase);
+            int index = extra.IndexOf(flag.Key, System.StringComparison.OrdinalIgnoreCase);
             if (index == -1) return;
 
             if (startIndex == -1)
@@ -142,18 +143,18 @@ public class Command
 
 public class CommandFlag
 {
-    public string key;
-    public bool isHostOnly;
-    public bool canHaveData;
-    public string data;
+    public string Key;
+    public bool IsHostOnly;
+    public bool CanHaveData;
+    public string Data;
 
-    public bool canUse => isHostOnly ? Plugin.IsHostOrServer : true;
+    public bool CanUse => IsHostOnly ? Plugin.IsHostOrServer : true;
 
     public CommandFlag(string key, bool isHostOnly = false, bool canHaveData = false, string data = "")
     {
-        this.key = key;
-        this.isHostOnly = isHostOnly;
-        this.canHaveData = canHaveData;
-        this.data = data;
+        this.Key = key;
+        this.IsHostOnly = isHostOnly;
+        this.CanHaveData = canHaveData;
+        this.Data = data;
     }
 }

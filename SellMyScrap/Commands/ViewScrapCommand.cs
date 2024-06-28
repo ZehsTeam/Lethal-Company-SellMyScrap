@@ -19,13 +19,13 @@ internal class ViewScrapCommand : Command
         ScrapToSell scrapToSell = new ScrapToSell(ScrapHelper.GetScrapFromShip(false));
 
         // No items found
-        if (scrapToSell.amount == 0)
+        if (scrapToSell.Amount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found.\n\n");
         }
 
-        string message = $"Found {scrapToSell.amount} items with a total value of ${scrapToSell.value}\n\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.scrap)}\n\n";
+        string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.Value}\n\n";
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap)}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

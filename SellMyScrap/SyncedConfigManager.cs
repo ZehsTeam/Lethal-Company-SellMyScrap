@@ -54,7 +54,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return _hostConfigData == null ? SellGiftsCfg.Value : _hostConfigData.sellGifts;
+            return _hostConfigData == null ? SellGiftsCfg.Value : _hostConfigData.SellGifts;
         }
         set
         {
@@ -67,7 +67,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return _hostConfigData == null ? SellShotgunsCfg.Value : _hostConfigData.sellShotguns;
+            return _hostConfigData == null ? SellShotgunsCfg.Value : _hostConfigData.SellShotguns;
         }
         set
         {
@@ -80,7 +80,7 @@ public class SyncedConfigManager
     {
         get 
         {
-            return _hostConfigData == null ? SellAmmoCfg.Value : _hostConfigData.sellAmmo;
+            return _hostConfigData == null ? SellAmmoCfg.Value : _hostConfigData.SellAmmo;
         }
         set
         {
@@ -93,7 +93,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return _hostConfigData == null ? SellKnivesCfg.Value : _hostConfigData.sellKnives;
+            return _hostConfigData == null ? SellKnivesCfg.Value : _hostConfigData.SellKnives;
         }
         set
         {
@@ -106,7 +106,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return _hostConfigData == null ? SellPicklesCfg.Value : _hostConfigData.sellPickles;
+            return _hostConfigData == null ? SellPicklesCfg.Value : _hostConfigData.SellPickles;
         }
         set
         {
@@ -120,7 +120,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return _hostConfigData == null ? SellScrapWorthZeroCfg.Value : _hostConfigData.sellScrapWorthZero;
+            return _hostConfigData == null ? SellScrapWorthZeroCfg.Value : _hostConfigData.SellScrapWorthZero;
         }
         set
         {
@@ -133,7 +133,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return _hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : _hostConfigData.onlySellScrapOnFloor;
+            return _hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : _hostConfigData.OnlySellScrapOnFloor;
         }
         set
         {
@@ -150,7 +150,7 @@ public class SyncedConfigManager
 
             if (_hostConfigData != null)
             {
-                text = _hostConfigData.dontSellListJson;
+                text = _hostConfigData.DontSellListJson;
             }
 
             if (string.IsNullOrEmpty(text))
@@ -192,7 +192,7 @@ public class SyncedConfigManager
 
             if (_hostConfigData != null)
             {
-                text = _hostConfigData.sellListJson;
+                text = _hostConfigData.SellListJson;
             }
 
             if (string.IsNullOrEmpty(text))

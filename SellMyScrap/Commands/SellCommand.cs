@@ -8,17 +8,17 @@ internal class SellCommand : Command
 {
     public SellCommand()
     {
-        flags.Add(new CommandFlag("-se", canHaveData: true));
+        Flags.Add(new CommandFlag("-se", canHaveData: true));
     }
 
     protected static int CompanyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
 
     protected override TerminalNode OnConfirm(string[] args)
     {
-        string message = $"Sell confirmed. Processing {Plugin.Instance.sellRequest.realValue}...\n\n";
+        string message = $"Sell confirmed. Processing {Plugin.Instance.SellRequest.RealValue}...\n\n";
 
         Plugin.Instance.ConfirmSellRequest();
-        awaitingConfirmation = false;
+        AwaitingConfirmation = false;
 
         return TerminalPatch.CreateTerminalNode(message);
     }
@@ -27,7 +27,7 @@ internal class SellCommand : Command
     {
         Plugin.Instance.CancelSellRequest();
 
-        awaitingConfirmation = false;
+        AwaitingConfirmation = false;
 
         return TerminalPatch.CreateTerminalNode($"Sell aborted.\n\n");
     }
@@ -82,10 +82,10 @@ internal class SellCommand : Command
     /// <returns>-1 = no scrap eater, 0 = random scrap eater, 1+ = scrap eater index.</returns>
     protected static int GetScrapEaterIndex(List<CommandFlag> foundFlags)
     {
-        CommandFlag flag = foundFlags.Find(_ => _.key.ToLower() == "-se");
-        if (flag == null || !flag.canUse) return -1;
+        CommandFlag flag = foundFlags.Find(_ => _.Key.ToLower() == "-se");
+        if (flag == null || !flag.CanUse) return -1;
 
-        if (int.TryParse(flag.data, out int index))
+        if (int.TryParse(flag.Data, out int index))
         {
             return index;
         }
