@@ -4,6 +4,7 @@ using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class NetworkUtils
 {
     public static string ConvertIntListToString(List<int> list)

@@ -185,7 +185,8 @@ internal class EditConfigCommand : Command
     }
 }
 
-class JsonListEditor
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+public class JsonListEditor
 {
     public string key;
     public bool isHostOnly = false;
@@ -301,7 +302,7 @@ class JsonListEditor
         message += $"clear all\n";
         message += $"exit\n\n";
         message += additionalMessage;
-
+        
         return message;
     }
 }

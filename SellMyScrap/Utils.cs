@@ -6,12 +6,13 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class Utils
 {
-    public static bool RandomPercent(int percent)
+    public static bool RandomPercent(float percent)
     {
-        if (percent <= 0) return false;
-        if (percent >= 100) return true;
+        if (percent <= 0f) return false;
+        if (percent >= 100f) return true;
         return Random.value <= percent * 0.01f;
     }
 

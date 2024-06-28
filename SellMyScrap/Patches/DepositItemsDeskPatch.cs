@@ -23,16 +23,8 @@ internal class DepositItemsDeskPatch
         }
     }
 
-    private static System.Random companyLevelRandom = new System.Random();
     private static int clipIndex = -1;
     private static bool speakInShip = false;
-
-    [HarmonyPatch("Start")]
-    [HarmonyPostfix]
-    static void StartPatch(ref System.Random ___CompanyLevelRandom)
-    {
-        companyLevelRandom = ___CompanyLevelRandom;
-    }
 
     [HarmonyPatch("SellItemsOnServer")]
     [HarmonyPrefix]
@@ -84,12 +76,12 @@ internal class DepositItemsDeskPatch
 
     private static int GetRandomAudioClipIndex()
     {
-        if (companyLevelRandom.NextDouble() < 0.029999999329447746)
+        if (Utils.RandomPercent(Plugin.ConfigManager.RareVoiceLineChance))
         {
-            return companyLevelRandom.Next(0, Instance.microphoneAudios.Length);
+            return Random.Range(0, Instance.rareMicrophoneAudios.Length) + Instance.microphoneAudios.Length;
         }
 
-        return companyLevelRandom.Next(0, Instance.rareMicrophoneAudios.Length);
+        return Random.Range(0, Instance.microphoneAudios.Length);
     }
 
     public static void SetMicrophoneSpeakDataOnClient(bool _speakInShip, int _clipIndex)

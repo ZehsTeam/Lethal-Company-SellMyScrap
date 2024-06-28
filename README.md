@@ -1,8 +1,10 @@
 # SellMyScrap
-**Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +**
+#### Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +
 
-<ins><b>This mod will sell scrap as close to the requested value as possible.</b></ins><br>
-<ins><b>This mod is for all clients!</b></ins>
+#### This mod will sell scrap as close to the requested value as possible.
+
+#### This mod is for all clients!
+<br>
 
 * You must be landed at The Company building to use sell commands.
 <br><br>
@@ -121,6 +123,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `rareVoiceLineChance` | `Single` | `5` | The percent chance the Company will say a rare microphone voice line after selling. |
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -135,13 +138,16 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 </details>
 
-## Bug Reports, Help, or Suggestions
-https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
+## Developer Contact
+#### Report bugs or give suggestions here:
+https://github.com/ZehsTeam/Lethal-Company-ToilHead/issues
 
 | Discord server | Forum | Post |
 | ----------- | ----------- | ----------- |
 | [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
 | [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
+
+#### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
 * Maxwell from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
@@ -160,8 +166,8 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/BYeYs4d.png" width="412px">
-    <img src="https://i.imgur.com/bYQtN1Y.png" width="412px">
+    <img src="https://i.imgur.com/BYeYs4d.png" width="531px">
+    <img src="https://i.imgur.com/bYQtN1Y.png" width="531px">
 </div>
 <h4><code>sell quota</code></h4>
 <div>

@@ -4,49 +4,36 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class PlayerUtils
 {
-    private static float previousPlayerMovementSpeed;
-    private static float previousPlayerJumpForce;
+    private static float _previousPlayerMovementSpeed;
+    private static float _previousPlayerJumpForce;
 
-    private static ulong magorokuSteamId = 76561197982837475;
-    private static string magorokuUsername = "Magoroku";
-
+    #region Magoroku
     public static bool HasPlayerMagoroku()
-    {
-        return HasPlayer(magorokuSteamId, magorokuUsername);
-    }
-
-    public static bool IsLocalPlayerMagoroku()
-    {
-        return IsLocalPlayer(magorokuSteamId, magorokuUsername);
-    }
-
-    public static bool HasPlayer(ulong steamId, string username)
     {
         foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
         {
-            if (IsPlayer(playerScript, steamId, username))
-            {
-                return true;
-            }
+            if (IsPlayerMagoroku(playerScript)) return true;
         }
 
         return false;
     }
 
-    public static bool IsLocalPlayer(ulong steamId, string username)
+    public static bool IsLocalPlayerMagoroku()
     {
-        return IsPlayer(GetLocalPlayerScript(), steamId, username);
+        return IsPlayerMagoroku(GetLocalPlayerScript());
     }
 
-    private static bool IsPlayer(PlayerControllerB playerScript, ulong steamId, string username)
+    public static bool IsPlayerMagoroku(PlayerControllerB playerScript)
     {
-        if (playerScript.playerSteamId == steamId) return true;
-        if (playerScript.playerUsername == username) return true;
+        if (playerScript.playerSteamId == 76561197982837475) return true;
+        if (playerScript.playerUsername == "Magoroku") return true;
 
         return false;
     }
+    #endregion
 
     public static PlayerControllerB GetLocalPlayerScript()
     {
@@ -75,18 +62,18 @@ public class PlayerUtils
         // Enabled
         if (enabled)
         {
-            if (previousPlayerMovementSpeed == 0f)
+            if (_previousPlayerMovementSpeed == 0f)
             {
-                previousPlayerMovementSpeed = 4.6f;
+                _previousPlayerMovementSpeed = 4.6f;
             }
 
-            if (previousPlayerJumpForce == 0f)
+            if (_previousPlayerJumpForce == 0f)
             {
-                previousPlayerJumpForce = 13f;
+                _previousPlayerJumpForce = 13f;
             }
 
-            playerScript.movementSpeed = previousPlayerMovementSpeed;
-            playerScript.jumpForce = previousPlayerJumpForce;
+            playerScript.movementSpeed = _previousPlayerMovementSpeed;
+            playerScript.jumpForce = _previousPlayerJumpForce;
 
             return;
         }
@@ -95,12 +82,12 @@ public class PlayerUtils
 
         if (playerScript.movementSpeed > 0f)
         {
-            previousPlayerMovementSpeed = playerScript.movementSpeed;
+            _previousPlayerMovementSpeed = playerScript.movementSpeed;
         }
 
         if (playerScript.jumpForce > 0f)
         {
-            previousPlayerJumpForce = playerScript.jumpForce;
+            _previousPlayerJumpForce = playerScript.jumpForce;
         }
 
         playerScript.movementSpeed = 0f;

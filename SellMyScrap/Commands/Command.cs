@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 public class Command
 {
     public TerminalNode previousTerminalNode;

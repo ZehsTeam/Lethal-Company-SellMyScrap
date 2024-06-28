@@ -6,9 +6,11 @@ using System.Reflection;
 
 namespace com.github.zehsteam.SellMyScrap;
 
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class SyncedConfigManager
 {
-    private SyncedConfigData hostConfigData;
+    private SyncedConfigData _hostConfigData;
 
     #region ConfigEntries
     // Sell Settings (Synced)
@@ -33,6 +35,7 @@ public class SyncedConfigManager
 
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
+    private ConfigEntry<float> RareVoiceLineChanceCfg;
 
     // Scrap Eater Settingss
     private ConfigEntry<int> ScrapEaterChanceCfg;
@@ -51,7 +54,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return hostConfigData == null ? SellGiftsCfg.Value : hostConfigData.sellGifts;
+            return _hostConfigData == null ? SellGiftsCfg.Value : _hostConfigData.sellGifts;
         }
         set
         {
@@ -64,7 +67,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return hostConfigData == null ? SellShotgunsCfg.Value : hostConfigData.sellShotguns;
+            return _hostConfigData == null ? SellShotgunsCfg.Value : _hostConfigData.sellShotguns;
         }
         set
         {
@@ -77,7 +80,7 @@ public class SyncedConfigManager
     {
         get 
         {
-            return hostConfigData == null ? SellAmmoCfg.Value : hostConfigData.sellAmmo;
+            return _hostConfigData == null ? SellAmmoCfg.Value : _hostConfigData.sellAmmo;
         }
         set
         {
@@ -90,7 +93,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return hostConfigData == null ? SellKnivesCfg.Value : hostConfigData.sellKnives;
+            return _hostConfigData == null ? SellKnivesCfg.Value : _hostConfigData.sellKnives;
         }
         set
         {
@@ -103,7 +106,7 @@ public class SyncedConfigManager
     { 
         get
         {
-            return hostConfigData == null ? SellPicklesCfg.Value : hostConfigData.sellPickles;
+            return _hostConfigData == null ? SellPicklesCfg.Value : _hostConfigData.sellPickles;
         }
         set
         {
@@ -117,7 +120,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return hostConfigData == null ? SellScrapWorthZeroCfg.Value : hostConfigData.sellScrapWorthZero;
+            return _hostConfigData == null ? SellScrapWorthZeroCfg.Value : _hostConfigData.sellScrapWorthZero;
         }
         set
         {
@@ -130,7 +133,7 @@ public class SyncedConfigManager
     {
         get
         {
-            return hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : hostConfigData.onlySellScrapOnFloor;
+            return _hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : _hostConfigData.onlySellScrapOnFloor;
         }
         set
         {
@@ -145,9 +148,9 @@ public class SyncedConfigManager
         {
             string text = DontSellListJsonCfg.Value;
 
-            if (hostConfigData != null)
+            if (_hostConfigData != null)
             {
-                text = hostConfigData.dontSellListJson;
+                text = _hostConfigData.dontSellListJson;
             }
 
             if (string.IsNullOrEmpty(text))
@@ -187,9 +190,9 @@ public class SyncedConfigManager
         {
             string text = SellListJsonCfg.Value;
 
-            if (hostConfigData != null)
+            if (_hostConfigData != null)
             {
-                text = hostConfigData.sellListJson;
+                text = _hostConfigData.sellListJson;
             }
 
             if (string.IsNullOrEmpty(text))
@@ -232,6 +235,7 @@ public class SyncedConfigManager
 
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
+    internal float RareVoiceLineChance { get { return RareVoiceLineChanceCfg.Value; } set => RareVoiceLineChanceCfg.Value = value; }
 
     // Scrap Eaters
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
@@ -335,6 +339,11 @@ public class SyncedConfigManager
             new ConfigDefinition("Misc Settings", "speakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
+        );
+        RareVoiceLineChanceCfg = configFile.Bind(
+            new ConfigDefinition("Misc Settings", "rareVoiceLineChance"),
+            5f,
+            new ConfigDescription("The percent chance the Company will say a rare microphone voice line after selling.")
         );
 
         // Scrap Eater Settings
@@ -456,6 +465,7 @@ public class SyncedConfigManager
 
         // Misc Settings
         SpeakInShipCfg.Value = (bool)SpeakInShipCfg.DefaultValue;
+        RareVoiceLineChanceCfg.Value = (float)RareVoiceLineChanceCfg.DefaultValue;
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg.Value = (int)ScrapEaterChanceCfg.DefaultValue;
@@ -485,7 +495,7 @@ public class SyncedConfigManager
 
     internal void SetHostConfigData(SyncedConfigData syncedConfigData)
     {
-        hostConfigData = syncedConfigData;
+        _hostConfigData = syncedConfigData;
     }
 
     private void SyncedConfigsChanged()

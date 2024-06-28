@@ -27,7 +27,7 @@ internal class ViewOvertimeCommand : Command
 
         string message = $"Your current overtime bonus is ${overtimeBonus}\n";
         message += $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
-        message += $"Your new total credits will be: ${newTotalCredits}\n\n";
+        message += $"Your new total credits will be ${newTotalCredits}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

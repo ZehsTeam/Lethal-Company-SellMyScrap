@@ -5,14 +5,16 @@ using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 public class ConfigHelper
 {
     // Config Items
-    private static List<ConfigItem> sellConfigItems = new List<ConfigItem>();
-    private static List<ConfigItem> advancedSellConfigItems = new List<ConfigItem>();
-    private static List<ConfigItem> terminalConfigItems = new List<ConfigItem>();
-    private static List<ConfigItem> miscConfigItems = new List<ConfigItem>();
-    private static List<ConfigItem> scrapEaterConfigItems = new List<ConfigItem>();
+    private static List<ConfigItem> sellConfigItems = [];
+    private static List<ConfigItem> advancedSellConfigItems = [];
+    private static List<ConfigItem> terminalConfigItems = [];
+    private static List<ConfigItem> miscConfigItems = [];
+    private static List<ConfigItem> scrapEaterConfigItems = [];
 
     private static List<ConfigItem> allConfigItems
     {
@@ -56,7 +58,8 @@ public class ConfigHelper
         ];
 
         miscConfigItems = [
-            new ConfigItem("speakInShip",               typeof(bool), isHostOnly: false, value => { configManager.SpeakInShip =               bool.Parse(value); }, () => { return configManager.SpeakInShip.ToString();               }),
+            new ConfigItem("speakInShip",         typeof(bool),  isHostOnly: false, value => { configManager.SpeakInShip =         bool.Parse(value);  }, () => { return configManager.SpeakInShip.ToString();         }),
+            new ConfigItem("rareVoiceLineChance", typeof(float), isHostOnly: true,  value => { configManager.RareVoiceLineChance = float.Parse(value); }, () => { return configManager.RareVoiceLineChance.ToString(); }),
         ];
 
         scrapEaterConfigItems = [
@@ -90,6 +93,11 @@ public class ConfigHelper
             return TrySetIntConfigValue(configItem, value, out parsedValue);
         }
 
+        if (configItem.type == typeof(float))
+        {
+            return TrySetFloatConfigValue(configItem, value, out parsedValue);
+        }
+
         return false;
     }
 
@@ -112,10 +120,25 @@ public class ConfigHelper
     {
         parsedValue = string.Empty;
 
-        if (int.TryParse(value, out int parsedInteger))
+        if (int.TryParse(value, out int parsedInt))
         {
             configItem.SetValue(value);
-            parsedValue = parsedInteger.ToString();
+            parsedValue = parsedInt.ToString();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TrySetFloatConfigValue(ConfigItem configItem, string value, out string parsedValue)
+    {
+        parsedValue = string.Empty;
+
+        if (float.TryParse(value, out float parsedFloat))
+        {
+            configItem.SetValue(value);
+            parsedValue = parsedFloat.ToString();
 
             return true;
         }
