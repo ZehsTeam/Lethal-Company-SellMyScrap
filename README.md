@@ -140,7 +140,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 ## Developer Contact
 #### Report bugs or give suggestions here:
-https://github.com/ZehsTeam/Lethal-Company-ToilHead/issues
+https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 
 | Discord server | Forum | Post |
 | ----------- | ----------- | ----------- |
