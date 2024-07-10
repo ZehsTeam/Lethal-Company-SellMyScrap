@@ -25,16 +25,16 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
     public GameObject angryObject = null;
     public GameObject drunkObject = null;
     public GameObject heartObject = null;
-    public AudioClip[] happySFX = new AudioClip[0];
-    public AudioClip[] scaredSFX = new AudioClip[0];
-    public AudioClip[] angrySFX = new AudioClip[0];
-    public AudioClip[] drunkSFX = new AudioClip[0];
-    public AudioClip[] heartSFX = new AudioClip[0];
+    public AudioClip[] happySFX = [];
+    public AudioClip[] scaredSFX = [];
+    public AudioClip[] angrySFX = [];
+    public AudioClip[] drunkSFX = [];
+    public AudioClip[] heartSFX = [];
     public AudioClip fallDamageSFX = null;
     public AudioClip dieSFX = null;
-    public AudioClip[] hurtSFX = new AudioClip[0];
-    public AudioClip[] idleSFX = new AudioClip[0];
-    public AudioClip[] stepSFX = new AudioClip[0];
+    public AudioClip[] hurtSFX = [];
+    public AudioClip[] idleSFX = [];
+    public AudioClip[] stepSFX = [];
     public float inbetweenStepDuration = 0.1f;
 
     private ZombieState _zombieState = ZombieState.Happy;

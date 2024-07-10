@@ -13,8 +13,8 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public AudioSource soundEffectsAudioFar = null;
     public AudioClip takeOffSFXFar = null;
     public AudioClip takeySitSFX = null;
-    public AudioClip[] beforeEatSFX = new AudioClip[0];
-    public AudioClip[] voiceLineSFX = new AudioClip[0];
+    public AudioClip[] beforeEatSFX = [];
+    public AudioClip[] voiceLineSFX = [];
     public GameObject jetpackObject = null;
     public GameObject flameEffectsObject = null;
     public ParticleSystem smokeTrailParticleSystem = null;

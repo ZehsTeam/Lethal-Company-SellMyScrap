@@ -26,7 +26,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
     public float pauseDuration = 2f;
 
     [Space(5f)]
-    public AudioClip[] landSFX = new AudioClip[0];
+    public AudioClip[] landSFX = [];
     public AudioClip eatSFX = null;
     public AudioClip takeOffSFX = null;
 

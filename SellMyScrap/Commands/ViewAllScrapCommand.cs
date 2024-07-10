@@ -30,6 +30,8 @@ internal class ViewAllScrapCommand : Command
 
         string message = GetMessage();
 
+        Plugin.logger.LogInfo($"\n\n{ScrapHelper.GetScrapItemMessage(_scrapItems)}\n");
+
         AwaitingConfirmation = true;
 
         return TerminalPatch.CreateTerminalNode(message);

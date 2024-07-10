@@ -11,9 +11,10 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Header("Octolar")]
     [Space(5f)]
     public MeshRenderer meshRenderer = null;
-    public Material[] materialVariants = new Material[0];
+    public Material[] materialVariants = [];
     public Material suckMaterial = null;
     public AudioClip fallSFX = null;
+    public AudioClip suckSFX = null;
     public AudioClip afterEatSFX = null;
 
     private int materialVariantIndex = 0;
@@ -56,12 +57,14 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         // Move targetScrap to mouthTransform over time.
         SetMaterial(suckMaterial);
-        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration);
+        PlayOneShotSFX(suckSFX);
         yield return new WaitForSeconds(suckDuration);
 
         SetMaterialVariant(materialVariantIndex);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
-        PlayOneShotSFX(afterEatSFX);
+        yield return new WaitForSeconds(PlayOneShotSFX(afterEatSFX));
         yield return new WaitForSeconds(pauseDuration);
 
         // Move ScrapEater to startPosition

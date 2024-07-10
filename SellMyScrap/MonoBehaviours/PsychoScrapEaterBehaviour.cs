@@ -62,12 +62,12 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         // Move targetScrap to mouthTransform over time.
         SetMaterial(suckMaterial);
-        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration);
         PlayOneShotSFX(suckSFX);
         yield return new WaitForSeconds(suckDuration);
 
         SetMaterial(normalMaterial);
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         yield return new WaitForSeconds(PlayOneShotSFX(hohSFX));
         yield return new WaitForSeconds(pauseDuration / 2f);

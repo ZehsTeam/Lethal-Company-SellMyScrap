@@ -16,7 +16,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public Animator danceAnimator = null;
     public AudioSource purrAudio = null;
     public AudioSource danceAudio = null;
-    public AudioClip[] meowSFX = new AudioClip[0];
+    public AudioClip[] meowSFX = [];
     public AudioClip evilNoise = null;
 
     private bool isEvil = false;
