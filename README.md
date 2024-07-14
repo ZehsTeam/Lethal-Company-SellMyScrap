@@ -150,7 +150,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 #### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
-* [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/) - *Maxwell and Cookie Fumo (models + audios)*
+* [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/) - *Maxwell and Cookie Fumo (models + sounds)*
 
 ## Screenshots
 <details>
