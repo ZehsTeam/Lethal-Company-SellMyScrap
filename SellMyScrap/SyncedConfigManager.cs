@@ -2,6 +2,7 @@
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -251,152 +252,151 @@ public class SyncedConfigManager
     public SyncedConfigManager()
     {
         BindConfigs();
+        MigrateOldConfigSettings();
         ClearUnusedEntries();
     }
-
+    
     private void BindConfigs()
     {
         ConfigFile configFile = Plugin.Instance.Config;
 
         // Sell Settings
         SellGiftsCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "sellGifts"),
+            new ConfigDefinition("Sell Settings", "SellGifts"),
             false,
             new ConfigDescription("Do you want to sell Gifts?")
         );
         SellShotgunsCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "sellShotguns"),
+            new ConfigDefinition("Sell Settings", "SellShotguns"),
             false,
             new ConfigDescription("Do you want to sell Shotguns?")
         );
         SellAmmoCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "sellAmmo"),
+            new ConfigDefinition("Sell Settings", "SellAmmo"),
             false,
             new ConfigDescription("Do you want to sell Ammo?")
         );
         SellKnivesCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "sellKnives"),
+            new ConfigDefinition("Sell Settings", "SellKnives"),
             false,
             new ConfigDescription("Do you want to sell Kitchen knives?")
         );
         SellPicklesCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "sellPickles"),
+            new ConfigDefinition("Sell Settings", "SellPickles"),
             true,
             new ConfigDescription("Do you want to sell Jar of pickles?")
         );
 
         // Advanced Sell Settings
         SellScrapWorthZeroCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "sellScrapWorthZero"),
+            new ConfigDefinition("Advanced Sell Settings", "SellScrapWorthZero"),
             false,
             new ConfigDescription("Do you want to sell scrap worth zero?")
         );
         OnlySellScrapOnFloorCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "onlySellScrapOnFloor"),
+            new ConfigDefinition("Advanced Sell Settings", "OnlySellScrapOnFloor"),
             false,
             new ConfigDescription("Do you want to sell scrap that is only on the floor?")
         );
         DontSellListJsonCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "dontSellListJson"),
+            new ConfigDefinition("Advanced Sell Settings", "DontSellListJson"),
             JsonConvert.SerializeObject(new string[0]),
             new ConfigDescription(GetDontSellListJsonDescription())
         );
         SellListJsonCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "sellListJson"),
+            new ConfigDefinition("Advanced Sell Settings", "SellListJson"),
             JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" }),
             new ConfigDescription(GetSellListJsonDescription())
         );
 
         // Terminal Settings
         OverrideWelcomeMessageCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "overrideWelcomeMessage"),
+            new ConfigDefinition("Terminal Settings", "OverrideWelcomeMessage"),
             true,
             new ConfigDescription("Overrides the terminal welcome message to add additional info.")
         );
         OverrideHelpMessageCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "overrideHelpMessage"),
+            new ConfigDefinition("Terminal Settings", "OverrideHelpMessage"),
             true,
             new ConfigDescription("Overrides the terminal help message to add additional info.")
         );
         ShowFoundItemsCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "showFoundItems"),
+            new ConfigDefinition("Terminal Settings", "ShowFoundItems"),
             true,
             new ConfigDescription("Show found items on the confirmation screen.")
         );
         SortFoundItemsPriceCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "sortFoundItemsPrice"),
+            new ConfigDefinition("Terminal Settings", "SortFoundItemsPrice"),
             true,
             new ConfigDescription("Sorts found items from most to least expensive.")
         );
         AlignFoundItemsPriceCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "alignFoundItemsPrice"),
+            new ConfigDefinition("Terminal Settings", "AlignFoundItemsPrice"),
             true,
             new ConfigDescription("Align all prices of found items.")
         );
 
         // Misc Settings
         SpeakInShipCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "speakInShip"),
+            new ConfigDefinition("Misc Settings", "SpeakInShip"),
             true,
             new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
         );
         RareVoiceLineChanceCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "rareVoiceLineChance"),
+            new ConfigDefinition("Misc Settings", "RareVoiceLineChance"),
             5f,
             new ConfigDescription("The percent chance the Company will say a rare microphone voice line after selling.")
         );
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "scrapEaterChance"),
+            new ConfigDefinition("Scrap Eater Settings", "ScrapEaterChance"),
             75,
             new ConfigDescription("The percent chance a scrap eater will spawn?!",
             new AcceptableValueRange<int>(0, 100))
         );
         OctolarSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "octolarSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "OctolarSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         TakeySpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "takeySpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "TakeySpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         MaxwellSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "maxwellSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "MaxwellSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         YippeeSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "yippeeSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "YippeeSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         CookieFumoSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "cookieFumoSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "CookieFumoSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         PsychoSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "psychoSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "PsychoSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Psycho will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
         ZombiesSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "zombiesSpawnWeight"),
+            new ConfigDefinition("Scrap Eater Settings", "ZombiesSpawnWeight"),
             1,
             new ConfigDescription("The spawn chance weight Zombies will spawn?! (scrap eater)",
             new AcceptableValueRange<int>(0, 100))
         );
-
-        UpdateScrapEaterChance();
     }
 
     private string GetDontSellListJsonDescription()
@@ -422,39 +422,154 @@ public class SyncedConfigManager
         return message;
     }
 
-    private void UpdateScrapEaterChance()
+    private void MigrateOldConfigSettings()
     {
-        int targetValue = (int)ScrapEaterChanceCfg.DefaultValue;
+        ConfigFile configFile = Plugin.Instance.Config;
 
-        if (ScrapEaterChance <= 0) return;
+        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
 
-        if (!SaveSystem.SetScrapEaterChance)
+        foreach (var entry in orphanedEntries)
         {
-            if (ScrapEaterChance >= targetValue)
-            {
-                SaveSystem.SetScrapEaterChance = true;
-                return;
-            }
-
-            ScrapEaterChance = targetValue;
-            SaveSystem.SetScrapEaterChance = true;
+            MigrateOldConfigSetting(entry.Key.Section, entry.Key.Key, entry.Value);
         }
+    }
+
+    private void MigrateOldConfigSetting(string section, string key, string value)
+    {
+        if (section == "Sell Settings")
+        {
+            switch (key)
+            {
+                case "sellGifts":
+                    SellGiftsCfg.Value = bool.Parse(value);
+                    break;
+                case "sellShotguns":
+                    SellShotgunsCfg.Value = bool.Parse(value);
+                    break;
+                case "sellAmmo":
+                    SellAmmoCfg.Value = bool.Parse(value);
+                    break;
+                case "sellKnives":
+                    SellKnivesCfg.Value = bool.Parse(value);
+                    break;
+                case "sellPickles":
+                    SellPicklesCfg.Value = bool.Parse(value);
+                    break;
+            }
+        }
+
+        if (section == "Advanced Sell Settings")
+        {
+            switch (key)
+            {
+                case "sellScrapWorthZero":
+                    SellScrapWorthZeroCfg.Value = bool.Parse(value);
+                    break;
+                case "onlySellScrapOnFloor":
+                    OnlySellScrapOnFloorCfg.Value = bool.Parse(value);
+                    break;
+                case "dontSellListJson":
+                    DontSellListJsonCfg.Value = value.Replace("\\", string.Empty);
+                    break;
+                case "sellListJson":
+                    SellListJsonCfg.Value = value.Replace("\\", string.Empty);
+                    break;
+            }
+        }
+
+        if (section == "Terminal Settings")
+        {
+            switch (key)
+            {
+                case "overrideWelcomeMessage":
+                    OverrideWelcomeMessageCfg.Value = bool.Parse(value);
+                    break;
+                case "overrideHelpMessage":
+                    OverrideHelpMessageCfg.Value = bool.Parse(value);
+                    break;
+                case "showFoundItems":
+                    ShowFoundItemsCfg.Value = bool.Parse(value);
+                    break;
+                case "sortFoundItemsPrice":
+                    SortFoundItemsPriceCfg.Value = bool.Parse(value);
+                    break;
+                case "alignFoundItemsPrice":
+                    AlignFoundItemsPriceCfg.Value = bool.Parse(value);
+                    break;
+            }
+        }
+
+        if (section == "Misc Settings")
+        {
+            switch (key)
+            {
+                case "speakInShip":
+                    SpeakInShipCfg.Value = bool.Parse(value);
+                    break;
+                case "rareVoiceLineChance":
+                    RareVoiceLineChanceCfg.Value = float.Parse(value);
+                    break;
+            }
+        }
+
+        if (section == "Scrap Eater Settings")
+        {
+            switch (key)
+            {
+                case "scrapEaterChance":
+                    ScrapEaterChanceCfg.Value = int.Parse(value);
+                    break;
+                case "octolarSpawnWeight":
+                    OctolarSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "takeySpawnWeight":
+                    TakeySpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "maxwellSpawnWeight":
+                    MaxwellSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "yippeeSpawnWeight":
+                    YippeeSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "cookieFumoSpawnWeight":
+                    CookieFumoSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "psychoSpawnWeight":
+                    PsychoSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+                case "zombiesSpawnWeight":
+                    ZombiesSpawnWeightCfg.Value = int.Parse(value);
+                    break;
+            }
+        }
+    }
+
+    private void ClearUnusedEntries()
+    {
+        ConfigFile configFile = Plugin.Instance.Config;
+
+        // Normally, old unused config entries don't get removed, so we do it with this piece of code. Credit to Kittenji.
+        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
+        orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
+        configFile.Save(); // Save the config file to save these changes
     }
 
     internal void ResetToDefault()
     {
         // Sell Settings
-        SellGiftsCfg.Value = (bool)SellGiftsCfg.DefaultValue; 
-        SellShotgunsCfg.Value = (bool)SellShotgunsCfg.DefaultValue; 
-        SellAmmoCfg.Value = (bool)SellAmmoCfg.DefaultValue; 
-        SellKnivesCfg.Value = (bool)SellKnivesCfg.DefaultValue; 
+        SellGiftsCfg.Value = (bool)SellGiftsCfg.DefaultValue;
+        SellShotgunsCfg.Value = (bool)SellShotgunsCfg.DefaultValue;
+        SellAmmoCfg.Value = (bool)SellAmmoCfg.DefaultValue;
+        SellKnivesCfg.Value = (bool)SellKnivesCfg.DefaultValue;
         SellPicklesCfg.Value = (bool)SellPicklesCfg.DefaultValue;
 
         // Advanced Sell Settings
         SellScrapWorthZeroCfg.Value = (bool)SellScrapWorthZeroCfg.DefaultValue;
         OnlySellScrapOnFloorCfg.Value = (bool)OnlySellScrapOnFloorCfg.DefaultValue;
-        DontSellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
-        SellListJsonCfg.Value = JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" });
+        DontSellListJsonCfg.Value = (string)DontSellListJsonCfg.DefaultValue;
+        SellListJsonCfg.Value = (string)SellListJsonCfg.DefaultValue;
 
         // Terminal Settings
         OverrideWelcomeMessageCfg.Value = (bool)OverrideWelcomeMessageCfg.DefaultValue;
@@ -482,15 +597,50 @@ public class SyncedConfigManager
         SyncedConfigsChanged();
     }
 
-    private void ClearUnusedEntries()
+    internal void TrySetCustomValues()
     {
-        ConfigFile configFile = Plugin.Instance.Config;
+        if (SteamUtils.IsLocalPlayerInsym()) return;
 
-        // Normally, old unused config entries don't get removed, so we do it with this piece of code. Credit to Kittenji.
-        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
-        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
-        orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
-        configFile.Save(); // Save the config file to save these changes
+        TrySetCustomValuesForThorlar();
+        TrySetCustomValuesForTakerst();
+
+        // Reset ScrapEaterChance for Insym's modpack is not Insym.
+
+        if (ScrapEaterChance != 0) return;
+
+        if (DontSellListJson.Length == 1 && DontSellListJson[0].Equals("gold bar", System.StringComparison.OrdinalIgnoreCase))
+        {
+            if (!(bool)SaveSystem.ReadValue("ResetScrapEaterChance", false))
+            {
+                ScrapEaterChance = (int)ScrapEaterChanceCfg.DefaultValue;
+
+                SaveSystem.WriteValue("ResetScrapEaterChance", true);
+            }
+        }
+    }
+
+    private void TrySetCustomValuesForThorlar()
+    {
+        if (!SteamUtils.IsLocalPlayerThorlar()) return;
+
+        if (TakeySpawnWeight == 1 && !(bool)SaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
+        {
+            TakeySpawnWeight = 0;
+
+            SaveSystem.WriteValue("RemovedTakeyScrapEaterSpawnWeight", true);
+        }
+    }
+
+    private void TrySetCustomValuesForTakerst()
+    {
+        if (!SteamUtils.IsLocalPlayerTakerst()) return;
+        
+        if (!Utils.ArrayContains(DontSellListJson, "Smol Takey"))
+        {
+            List<string> array = DontSellListJson.ToList();
+            array.Add("Smol Takey");
+            DontSellListJsonCfg.Value = JsonConvert.SerializeObject(array);
+        }
     }
 
     internal void SetHostConfigData(SyncedConfigData syncedConfigData)

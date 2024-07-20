@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -25,20 +24,28 @@ internal class ScrapHelper
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
     {
-        GrabbableObject[] itemsInShip = HangarShip.GetComponentsInChildren<GrabbableObject>();
+        List<GrabbableObject> items = HangarShip.GetComponentsInChildren<GrabbableObject>().ToList();
+        items.AddRange(GetAllItemsFromVehicle());
+
         List<GrabbableObject> scrap = [];
 
-        string[] dontSellList = Plugin.ConfigManager.DontSellListJson;
-
-        foreach (var item in itemsInShip)
+        foreach (var item in items)
         {
             if (!IsScrapItem(item)) continue;
-            if (onlyAllowedScrap && !IsAllowedScrapItem(item, dontSellList)) continue;
+            if (onlyAllowedScrap && !IsAllowedScrapItem(item, Plugin.ConfigManager.DontSellListJson)) continue;
 
             scrap.Add(item);
         }
 
         return scrap;
+    }
+
+    public static List<GrabbableObject> GetAllItemsFromVehicle()
+    {
+        VehicleController vehicleController = Object.FindFirstObjectByType<VehicleController>();
+        if (vehicleController == null) return [];
+
+        return vehicleController.GetComponentsInChildren<GrabbableObject>().ToList();
     }
 
     public static List<GrabbableObject> GetScrapByItemName(string itemName, bool onlyAllowedScrap = true)
@@ -50,7 +57,7 @@ internal class ScrapHelper
         {
             string _itemName = item.itemProperties.itemName;
 
-            if (_itemName.Contains(itemName, StringComparison.OrdinalIgnoreCase))
+            if (_itemName.Contains(itemName, System.StringComparison.OrdinalIgnoreCase))
             {
                 foundScrap.Add(item);
             }
@@ -190,7 +197,7 @@ internal class ScrapHelper
                 if (i == 0 || j == 0)
                     dp[i, j] = 0;
                 else if (scrap[i - 1].scrapValue <= j)
-                    dp[i, j] = Math.Max(dp[i - 1, j], scrap[i - 1].scrapValue + dp[i - 1, j - scrap[i - 1].scrapValue]);
+                    dp[i, j] = System.Math.Max(dp[i - 1, j], scrap[i - 1].scrapValue + dp[i - 1, j - scrap[i - 1].scrapValue]);
                 else
                     dp[i, j] = dp[i - 1, j];
             }

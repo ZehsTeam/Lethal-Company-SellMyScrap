@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Text;
@@ -7,122 +7,104 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class SaveSystem
 {
-    private const string _fileName = "sellmyscrap_savedata.json";
+    public const string FileName = $"{MyPluginInfo.PLUGIN_NAME}_SaveData.json";
 
-    public static bool SetScrapEaterChance
+    public static string FilePath
     {
         get
         {
-            SaveData saveData = ReadSaveData();
-            return saveData.SetScrapEaterChance;
-        }
-        set
-        {
-            SaveData saveData = ReadSaveData();
-            saveData.SetScrapEaterChance = value;
-            WriteSaveData(saveData);
+            string folderPath = Path.GetDirectoryName(Plugin.Instance.Config.ConfigFilePath);
+            return Path.Combine(folderPath, FileName);
         }
     }
 
-    private static SaveData ReadSaveData()
+    public static bool FileExists => File.Exists(FilePath);
+
+    private static JObject _saveFileObject;
+    
+    public static void Initialize()
+    {
+        if (!FileExists)
+        {
+            WriteFile(JObject.Parse("{}"));
+        }
+
+        _saveFileObject = ReadFile();
+    }
+
+    public static bool ContainsKey(string key)
+    {
+        return _saveFileObject.ContainsKey(key);
+    }
+
+    public static JToken ReadValue(string key, JToken defaultValue)
+    {
+        if (TryReadValue(key, out JToken value))
+        {
+            return value;
+        }
+
+        return defaultValue;
+    }
+
+    public static bool TryReadValue(string key, out JToken value)
+    {
+        value = string.Empty;
+
+        if (_saveFileObject.TryGetValue(key, out JToken jToken))
+        {
+            value = jToken;
+            return true;
+        }
+
+        return false;
+    }
+
+    public static bool WriteValue(string key, JToken value)
+    {
+        if (_saveFileObject.ContainsKey(key)) return false;
+
+        _saveFileObject.Add(key, value);
+        WriteFile(_saveFileObject);
+
+        return true;
+    }
+
+    #region Read/Write File
+    private static JObject ReadFile()
     {
         try
         {
-            return JsonConvert.DeserializeObject<SaveData>(ReadFile());
+            using FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite);
+            using StreamReader reader = new StreamReader(fs, Encoding.UTF8);
+
+            return JObject.Parse(reader.ReadToEnd());
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"[SaveSystem] Error: Failed to read save data.\n\n{e}");
+            Plugin.logger.LogError($"Error: Failed to read save file.\n\n{e}");
         }
 
         return null;
     }
 
-    private static bool WriteSaveData(SaveData saveData)
+    private static bool WriteFile(JObject jObject)
     {
         try
         {
-            return WriteFile(JsonConvert.SerializeObject(saveData, Formatting.Indented));
-        }
-        catch (Exception e)
-        {
-            Plugin.logger.LogError($"[SaveSystem] Error: Failed to write save data.\n\n{e}");
-        }
-
-        return false;
-    }
-
-    private static string CreateSaveDataFile()
-    {
-        try
-        {
-            if (WriteSaveData(new SaveData()))
-            {
-                return ReadFile();
-            }
-        }
-        catch (Exception e)
-        {
-            Plugin.logger.LogError($"[SaveSystem] Error: Failed to create save data file.\n\n{e}");
-        }
-
-        return string.Empty;
-    }
-
-    private static string ReadFile()
-    {
-        try
-        {
-            string filePath = GetFilePath();
-
-            if (!File.Exists(filePath))
-            {
-                return CreateSaveDataFile();
-            }
-
-            using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
-            using StreamReader reader = new StreamReader(fs, Encoding.UTF8);
-
-            return reader.ReadToEnd();
-        }
-        catch (Exception e)
-        {
-            Plugin.logger.LogError($"[SaveSystem] Error: Failed to read save file.\n\n{e}");
-        }
-
-        return string.Empty;
-    }
-
-    private static bool WriteFile(string text)
-    {
-        try
-        {
-            using FileStream fs = new FileStream(GetFilePath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            using FileStream fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
             using StreamWriter writer = new StreamWriter(fs, Encoding.UTF8);
 
-            writer.WriteLine(text);
+            writer.WriteLine(jObject.ToString());
 
             return true;
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"[SaveSystem] Error: Failed to write save file.\n\n{e}");
+            Plugin.logger.LogError($"Error: Failed to write save file.\n\n{e}");
         }
 
         return false;
     }
-
-    private static string GetFilePath()
-    {
-        string folderPath = Path.GetDirectoryName(Plugin.Instance.Info.Location);
-        return Path.Combine(folderPath, _fileName);
-    }
-}
-
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-[Serializable]
-public class SaveData
-
-{
-    public bool SetScrapEaterChance = false;
+    #endregion
 }

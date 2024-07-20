@@ -23,6 +23,13 @@ internal class StartOfRoundPatch
         networkHandlerHost.GetComponent<NetworkObject>().Spawn();
     }
 
+    [HarmonyPatch("Start")]
+    [HarmonyPostfix]
+    static void StartPatch()
+    {
+        Plugin.ConfigManager.TrySetCustomValues();
+    }
+
     [HarmonyPatch("OnClientConnect")]
     [HarmonyPrefix]
     static void OnClientConnectPatch(ref ulong clientId)

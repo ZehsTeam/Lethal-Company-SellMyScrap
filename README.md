@@ -86,18 +86,18 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `sellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
-| `sellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
-| `sellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
-| `sellKnives` | `Boolean` | `false` | Do you want to sell Kitchen knives? |
-| `sellPickles` | `Boolean` | `true` | Do you want to sell Jar of pickles? |
+| `SellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
+| `SellShotguns` | `Boolean` | `false` | Do you want to sell Shotguns? |
+| `SellAmmo` | `Boolean` | `false` | Do you want to sell Ammo? |
+| `SellKnives` | `Boolean` | `false` | Do you want to sell Kitchen knives? |
+| `SellPickles` | `Boolean` | `true` | Do you want to sell Jar of pickles? |
 
 | Advanced Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `sellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
-| `onlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
-| `dontSellListJson` | `String` | `[]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
-| `sellListJson` | `String` | `["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to sell when using the `sell list` command. |
+| `SellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
+| `OnlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
+| `DontSellListJson` | `String` | `[]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
+| `SellListJson` | `String` | `["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to sell when using the `sell list` command. |
 
 <h4>Additional info for the <code>dontSellListJson</code> config setting.</h4>
 
@@ -114,27 +114,27 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `overrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add additional info. |
-| `overrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add additional info. |
-| `showFoundItems` | `Boolean` | `true` | Show found items on the confirmation screen. |
-| `sortFoundItemsPrice` | `Boolean` | `true` | Sorts found items from most to least expensive. |
-| `alignFoundItemsPrice` | `Boolean` | `true` | Aligns all prices of found items. |
+| `OverrideWelcomeMessage` | `Boolean` | `true` | Overrides the terminal welcome message to add additional info. |
+| `OverrideHelpMessage` | `Boolean` | `true` | Overrides the terminal help message to add additional info. |
+| `ShowFoundItems` | `Boolean` | `true` | Show found items on the confirmation screen. |
+| `SortFoundItemsPrice` | `Boolean` | `true` | Sorts found items from most to least expensive. |
+| `AlignFoundItemsPrice` | `Boolean` | `true` | Aligns all prices of found items. |
 
 | Misc Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `speakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
-| `rareVoiceLineChance` | `Single` | `5` | The percent chance the Company will say a rare microphone voice line after selling. |
+| `SpeakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
+| `RareVoiceLineChance` | `Single` | `5` | The percent chance the Company will say a rare microphone voice line after selling. |
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `scrapEaterChance` | `Int32` | `75` | The percent chance a scrap eater will spawn?! |
-| `octolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (scrap eater) |
-| `takeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
-| `maxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
-| `yippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
-| `cookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
-| `psychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
-| `zombiesSpawnWeight` | `Int32` | `1` | The spawn chance weight [Zombies](https://www.twitch.tv/zombiesatemychannel) will spawn?! (scrap eater) |
+| `ScrapEaterChance` | `Int32` | `75` | The percent chance a scrap eater will spawn?! |
+| `OctolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (scrap eater) |
+| `TakeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
+| `MaxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
+| `YippeeSpawnWeight` | `Int32` | `1` | The spawn chance weight Yippee will spawn?! (scrap eater) |
+| `CookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
+| `PsychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
+| `ZombiesSpawnWeight` | `Int32` | `1` | The spawn chance weight [Zombies](https://www.twitch.tv/zombiesatemychannel) will spawn?! (scrap eater) |
 
 </details>
 

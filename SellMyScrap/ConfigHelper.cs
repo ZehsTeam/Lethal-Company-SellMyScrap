@@ -35,42 +35,42 @@ public class ConfigHelper
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
         _sellConfigItems = [
-            new ConfigItem("sellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
-            new ConfigItem("sellShotguns", typeof(bool), isHostOnly: true, value => { configManager.SellShotguns = bool.Parse(value); }, () => { return configManager.SellShotguns.ToString(); }),
-            new ConfigItem("sellAmmo",     typeof(bool), isHostOnly: true, value => { configManager.SellAmmo =     bool.Parse(value); }, () => { return configManager.SellAmmo.ToString();     }),
-            new ConfigItem("sellKnives",   typeof(bool), isHostOnly: true, value => { configManager.SellKnives =   bool.Parse(value); }, () => { return configManager.SellKnives.ToString();   }),
-            new ConfigItem("sellPickles",  typeof(bool), isHostOnly: true, value => { configManager.SellPickles =  bool.Parse(value); }, () => { return configManager.SellPickles.ToString();  }),
+            new ConfigItem("SellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
+            new ConfigItem("SellShotguns", typeof(bool), isHostOnly: true, value => { configManager.SellShotguns = bool.Parse(value); }, () => { return configManager.SellShotguns.ToString(); }),
+            new ConfigItem("SellAmmo",     typeof(bool), isHostOnly: true, value => { configManager.SellAmmo =     bool.Parse(value); }, () => { return configManager.SellAmmo.ToString();     }),
+            new ConfigItem("SellKnives",   typeof(bool), isHostOnly: true, value => { configManager.SellKnives =   bool.Parse(value); }, () => { return configManager.SellKnives.ToString();   }),
+            new ConfigItem("SellPickles",  typeof(bool), isHostOnly: true, value => { configManager.SellPickles =  bool.Parse(value); }, () => { return configManager.SellPickles.ToString();  }),
         ];
 
         _advancedSellConfigItems = [
-            new ConfigItem("sellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
-            new ConfigItem("onlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
-            new ConfigItem("dontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
-            new ConfigItem("sellListJson",         typeof(string[]), isHostOnly: true, value => { configManager.SellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.SellListJson); }),
+            new ConfigItem("SellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
+            new ConfigItem("OnlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
+            new ConfigItem("DontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
+            new ConfigItem("SellListJson",         typeof(string[]), isHostOnly: true, value => { configManager.SellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.SellListJson); }),
         ];
 
         _terminalConfigItems = [
-            new ConfigItem("overrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }, () => { return configManager.OverrideWelcomeMessage.ToString(); }),
-            new ConfigItem("overrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }, () => { return configManager.OverrideHelpMessage.ToString();    }),
-            new ConfigItem("showFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }, () => { return configManager.ShowFoundItems.ToString();         }),
-            new ConfigItem("sortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }, () => { return configManager.SortFoundItemsPrice.ToString();    }),
-            new ConfigItem("alignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }, () => { return configManager.AlignFoundItemsPrice.ToString();   }),
+            new ConfigItem("OverrideWelcomeMessage", typeof(bool), isHostOnly: false, value => { configManager.OverrideWelcomeMessage = bool.Parse(value); }, () => { return configManager.OverrideWelcomeMessage.ToString(); }),
+            new ConfigItem("OverrideHelpMessage",    typeof(bool), isHostOnly: false, value => { configManager.OverrideHelpMessage =    bool.Parse(value); }, () => { return configManager.OverrideHelpMessage.ToString();    }),
+            new ConfigItem("ShowFoundItems",         typeof(bool), isHostOnly: false, value => { configManager.ShowFoundItems =         bool.Parse(value); }, () => { return configManager.ShowFoundItems.ToString();         }),
+            new ConfigItem("SortFoundItemsPrice",    typeof(bool), isHostOnly: false, value => { configManager.SortFoundItemsPrice =    bool.Parse(value); }, () => { return configManager.SortFoundItemsPrice.ToString();    }),
+            new ConfigItem("AlignFoundItemsPrice",   typeof(bool), isHostOnly: false, value => { configManager.AlignFoundItemsPrice =   bool.Parse(value); }, () => { return configManager.AlignFoundItemsPrice.ToString();   }),
         ];
 
         _miscConfigItems = [
-            new ConfigItem("speakInShip",         typeof(bool),  isHostOnly: false, value => { configManager.SpeakInShip =         bool.Parse(value);  }, () => { return configManager.SpeakInShip.ToString();         }),
-            new ConfigItem("rareVoiceLineChance", typeof(float), isHostOnly: true,  value => { configManager.RareVoiceLineChance = float.Parse(value); }, () => { return configManager.RareVoiceLineChance.ToString(); }),
+            new ConfigItem("SpeakInShip",         typeof(bool),  isHostOnly: false, value => { configManager.SpeakInShip =         bool.Parse(value);  }, () => { return configManager.SpeakInShip.ToString();         }),
+            new ConfigItem("RareVoiceLineChance", typeof(float), isHostOnly: true,  value => { configManager.RareVoiceLineChance = float.Parse(value); }, () => { return configManager.RareVoiceLineChance.ToString(); }),
         ];
 
         _scrapEaterConfigItems = [
-            new ConfigItem("scrapEaterChance",      typeof(int), isHostOnly: true, value => { configManager.ScrapEaterChance =      int.Parse(value); }, () => { return configManager.ScrapEaterChance.ToString();      }),
-            new ConfigItem("octolarSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.OctolarSpawnWeight =    int.Parse(value); }, () => { return configManager.OctolarSpawnWeight.ToString();    }),
-            new ConfigItem("takeySpawnWeight",      typeof(int), isHostOnly: true, value => { configManager.TakeySpawnWeight =      int.Parse(value); }, () => { return configManager.TakeySpawnWeight.ToString();      }),
-            new ConfigItem("maxwellSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.MaxwellSpawnWeight =    int.Parse(value); }, () => { return configManager.MaxwellSpawnWeight.ToString();    }),
-            new ConfigItem("yippeeSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.YippeeSpawnWeight =     int.Parse(value); }, () => { return configManager.YippeeSpawnWeight.ToString();     }),
-            new ConfigItem("cookieFumoSpawnWeight", typeof(int), isHostOnly: true, value => { configManager.CookieFumoSpawnWeight = int.Parse(value); }, () => { return configManager.CookieFumoSpawnWeight.ToString(); }),
-            new ConfigItem("psychoSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.PsychoSpawnWeight =     int.Parse(value); }, () => { return configManager.PsychoSpawnWeight.ToString();     }),
-            new ConfigItem("zombiesSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.ZombiesSpawnWeight =    int.Parse(value); }, () => { return configManager.ZombiesSpawnWeight.ToString();    }),
+            new ConfigItem("ScrapEaterChance",      typeof(int), isHostOnly: true, value => { configManager.ScrapEaterChance =      int.Parse(value); }, () => { return configManager.ScrapEaterChance.ToString();      }),
+            new ConfigItem("OctolarSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.OctolarSpawnWeight =    int.Parse(value); }, () => { return configManager.OctolarSpawnWeight.ToString();    }),
+            new ConfigItem("TakeySpawnWeight",      typeof(int), isHostOnly: true, value => { configManager.TakeySpawnWeight =      int.Parse(value); }, () => { return configManager.TakeySpawnWeight.ToString();      }),
+            new ConfigItem("MaxwellSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.MaxwellSpawnWeight =    int.Parse(value); }, () => { return configManager.MaxwellSpawnWeight.ToString();    }),
+            new ConfigItem("YippeeSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.YippeeSpawnWeight =     int.Parse(value); }, () => { return configManager.YippeeSpawnWeight.ToString();     }),
+            new ConfigItem("CookieFumoSpawnWeight", typeof(int), isHostOnly: true, value => { configManager.CookieFumoSpawnWeight = int.Parse(value); }, () => { return configManager.CookieFumoSpawnWeight.ToString(); }),
+            new ConfigItem("PsychoSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.PsychoSpawnWeight =     int.Parse(value); }, () => { return configManager.PsychoSpawnWeight.ToString();     }),
+            new ConfigItem("ZombiesSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.ZombiesSpawnWeight =    int.Parse(value); }, () => { return configManager.ZombiesSpawnWeight.ToString();    }),
         ];
     }
 
@@ -147,9 +147,9 @@ public class ConfigHelper
     }
 
     /// <summary>
-    /// Link your scrap eater spawnWeight config setting to the SellMyScrap terminal config editor.
+    /// Link your scrap eater SpawnWeight config setting to the SellMyScrap terminal config editor.
     /// </summary>
-    /// <param name="key">spawnWeight config setting key.</param>
+    /// <param name="key">SpawnWeight config setting key.</param>
     /// <param name="SetValue">Action for setting your spawnWeight config setting value.</param>
     /// <param name="GetValue">Func for getting your spawnWeight config setting value.</param>
     public static void AddScrapEaterConfigItem(string key, Action<string> SetValue, Func<string> GetValue)

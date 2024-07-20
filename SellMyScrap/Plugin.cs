@@ -42,6 +42,8 @@ internal class Plugin : BaseUnityPlugin
         harmony.PatchAll(typeof(TerminalPatch));
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
 
+        SaveSystem.Initialize();
+        
         ConfigManager = new SyncedConfigManager();
 
         Content.Load();

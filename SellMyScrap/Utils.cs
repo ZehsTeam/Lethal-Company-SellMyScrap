@@ -58,6 +58,19 @@ public class Utils
         return string.Empty;
     }
 
+    public static bool ArrayContains(string[] array, string value)
+    {
+        foreach (var item in array)
+        {
+            if (item.Equals(value, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static int GetOvertimeBonus(int value)
     {
         int profitQuota = TimeOfDay.Instance.profitQuota;
@@ -75,23 +88,6 @@ public class Utils
         HUDManager.Instance.globalNotificationAnimator.SetTrigger("TriggerNotif");
         HUDManager.Instance.globalNotificationText.text = displayText;
         HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
-    }
-
-    public static void DisplayTip(string headerText, string bodyText, bool isWarning = false)
-    {
-        HUDManager.Instance.tipsPanelHeader.text = headerText;
-        HUDManager.Instance.tipsPanelBody.text = bodyText;
-
-        if (isWarning)
-        {
-            HUDManager.Instance.tipsPanelAnimator.SetTrigger("TriggerWarning");
-            RoundManager.PlayRandomClip(HUDManager.Instance.UIAudio, HUDManager.Instance.warningSFX, randomize: false);
-        }
-        else
-        {
-            HUDManager.Instance.tipsPanelAnimator.SetTrigger("TriggerHint");
-            RoundManager.PlayRandomClip(HUDManager.Instance.UIAudio, HUDManager.Instance.tipsSFX, randomize: false);
-        }
     }
 
     public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
