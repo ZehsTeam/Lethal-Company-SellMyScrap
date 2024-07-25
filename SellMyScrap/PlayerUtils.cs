@@ -10,6 +10,21 @@ public class PlayerUtils
     private static float _previousPlayerMovementSpeed;
     private static float _previousPlayerJumpForce;
 
+    #region Takerst
+    public static bool IsLocalPlayerTakerst()
+    {
+        return IsPlayerTakerst(GetLocalPlayerScript());
+    }
+
+    public static bool IsPlayerTakerst(PlayerControllerB playerScript)
+    {
+        if (playerScript.playerSteamId == 76561197980238122) return true;
+        if (playerScript.playerUsername == "Takerst") return true;
+
+        return false;
+    }
+    #endregion
+
     #region Magoroku
     public static bool HasPlayerMagoroku()
     {

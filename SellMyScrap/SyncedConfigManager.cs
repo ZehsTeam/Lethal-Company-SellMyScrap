@@ -604,17 +604,17 @@ public class SyncedConfigManager
         TrySetCustomValuesForThorlar();
         TrySetCustomValuesForTakerst();
 
-        // Reset ScrapEaterChance for Insym's modpack is not Insym.
+        // Reset ScrapEaterChance for Insym's modpack if not Insym.
 
         if (ScrapEaterChance != 0) return;
 
         if (DontSellListJson.Length == 1 && DontSellListJson[0].Equals("gold bar", System.StringComparison.OrdinalIgnoreCase))
         {
-            if (!(bool)SaveSystem.ReadValue("ResetScrapEaterChance", false))
+            if (!(bool)ModpackSaveSystem.ReadValue("ResetScrapEaterChance", false))
             {
                 ScrapEaterChance = (int)ScrapEaterChanceCfg.DefaultValue;
 
-                SaveSystem.WriteValue("ResetScrapEaterChance", true);
+                ModpackSaveSystem.WriteValue("ResetScrapEaterChance", true);
             }
         }
     }
@@ -623,11 +623,11 @@ public class SyncedConfigManager
     {
         if (!SteamUtils.IsLocalPlayerThorlar()) return;
 
-        if (TakeySpawnWeight == 1 && !(bool)SaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
+        if (TakeySpawnWeight == 1 && !(bool)ModpackSaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
         {
             TakeySpawnWeight = 0;
 
-            SaveSystem.WriteValue("RemovedTakeyScrapEaterSpawnWeight", true);
+            ModpackSaveSystem.WriteValue("RemovedTakeyScrapEaterSpawnWeight", true);
         }
     }
 

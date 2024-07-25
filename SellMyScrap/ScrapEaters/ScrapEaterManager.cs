@@ -90,7 +90,15 @@ public class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        List<(int index, int weight)> weightedItems = new List<(int index, int weight)>();
+        bool forcedShowBigEyesScrapEater = (bool)ModpackSaveSystem.ReadValue("ForcedShowBigEyesScrapEater", false);
+
+        if (PlayerUtils.IsLocalPlayerTakerst() && TryGetBigEyesScrapEaterIndex(out int bigEyesScrapEaterIndex) && !forcedShowBigEyesScrapEater && Utils.RandomPercent(75))
+        {
+            ModpackSaveSystem.WriteValue("ForcedShowBigEyesScrapEater", true);
+            return bigEyesScrapEaterIndex;
+        }
+
+        List<(int index, int weight)> weightedItems = [];
 
         for (int i = 0; i < ScrapEaters.Count; i++)
         {
@@ -122,5 +130,21 @@ public class ScrapEaterManager
 
         // This should never happen if weights are correctly specified
         throw new System.InvalidOperationException("Weights are not properly specified.");
+    }
+
+    private static bool TryGetBigEyesScrapEaterIndex(out int index)
+    {
+        index = -1;
+
+        for (int i = 0; i < ScrapEaters.Count; i++)
+        {
+            if (ScrapEaters[i].SpawnPrefab.name.Contains("BigEyes", System.StringComparison.OrdinalIgnoreCase))
+            {
+                index = i;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class SaveSystem
+internal class ModpackSaveSystem
 {
     public const string FileName = $"{MyPluginInfo.PLUGIN_NAME}_SaveData.json";
 
