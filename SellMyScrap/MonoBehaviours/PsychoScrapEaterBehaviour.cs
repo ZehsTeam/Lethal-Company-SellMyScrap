@@ -18,7 +18,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public AudioClip raidSFX = null;
     public ParticleSystem potatoesParticleSystem = null;
 
-    private bool raid = false;
+    private bool _raid = false;
 
     protected override void Start()
     {
@@ -31,8 +31,8 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         if (IsHostOrServer)
         {
-            raid = Utils.RandomPercent(100);
-            SetDataClientRpc(raid);
+            _raid = Utils.RandomPercent(100);
+            SetDataClientRpc(_raid);
         }
 
         base.Start();
@@ -41,7 +41,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(bool raid)
     {
-        this.raid = raid;
+        _raid = raid;
     }
 
     protected override IEnumerator StartAnimation()
@@ -72,7 +72,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(PlayOneShotSFX(hohSFX));
         yield return new WaitForSeconds(pauseDuration / 2f);
 
-        if (raid)
+        if (_raid)
         {
             yield return StartCoroutine(RaidAnimation());
         }

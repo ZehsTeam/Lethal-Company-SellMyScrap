@@ -16,10 +16,10 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     public GameObject modelObject = null;
 
     [HideInInspector]
-    public List<GrabbableObject> targetScrap = new List<GrabbableObject>();
+    public List<GrabbableObject> targetScrap = [];
 
-    private int clientsReceivedTargetScrap = 0;
-    private int clientsFinishedAnimation = 0;
+    private int _clientsReceivedTargetScrap = 0;
+    private int _clientsFinishedAnimation = 0;
 
     protected virtual void Start()
     {
@@ -59,11 +59,11 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     protected void ReceivedTargetScrapServerRpc()
     {
-        clientsReceivedTargetScrap++;
+        _clientsReceivedTargetScrap++;
 
-        if (clientsReceivedTargetScrap >= GameNetworkManager.Instance.connectedPlayers)
+        if (_clientsReceivedTargetScrap >= GameNetworkManager.Instance.connectedPlayers)
         {
-            clientsReceivedTargetScrap = 0;
+            _clientsReceivedTargetScrap = 0;
             OnAllClientsReceivedTargetScrap();
         }
     }
@@ -106,11 +106,11 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     protected void AnimationFinishedServerRpc()
     {
-        clientsFinishedAnimation++;
+        _clientsFinishedAnimation++;
 
-        if (clientsFinishedAnimation >= GameNetworkManager.Instance.connectedPlayers)
+        if (_clientsFinishedAnimation >= GameNetworkManager.Instance.connectedPlayers)
         {
-            clientsFinishedAnimation = 0;
+            _clientsFinishedAnimation = 0;
             OnAllClientsFinishedAnimation();
         }
     }

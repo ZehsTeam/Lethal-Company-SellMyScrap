@@ -7,7 +7,6 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal class ScrapHelper
 {
-    private static GameObject _hangarShip;
     public static GameObject HangarShip
     {
         get
@@ -20,6 +19,8 @@ internal class ScrapHelper
             return _hangarShip;
         }
     }
+
+    private static GameObject _hangarShip;
 
     #region Get Scrap
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)

@@ -17,7 +17,7 @@ public class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public float maxFlySpeed = 100f;
     public float flySpeedMultiplier = 10f;
 
-    private float flySpeed = 0f;
+    private float _flySpeed = 0f;
 
     protected override IEnumerator StartAnimation()
     {
@@ -103,16 +103,16 @@ public class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private IEnumerator FlyAway(float duration)
     {
-        flySpeed = startFlySpeed;
+        _flySpeed = startFlySpeed;
         float timer = 0f;
 
         while (timer < duration)
         {
-            flySpeed += flySpeedMultiplier * Time.deltaTime;
-            if (flySpeed > maxFlySpeed) flySpeed = maxFlySpeed;
+            _flySpeed += flySpeedMultiplier * Time.deltaTime;
+            if (_flySpeed > maxFlySpeed) _flySpeed = maxFlySpeed;
 
             Vector3 position = transform.localPosition;
-            position.y += flySpeed * Time.deltaTime;
+            position.y += _flySpeed * Time.deltaTime;
 
             transform.localPosition = position;
 

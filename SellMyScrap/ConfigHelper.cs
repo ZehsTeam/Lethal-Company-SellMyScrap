@@ -205,7 +205,7 @@ public class ConfigHelper
         {
             if (configItem.GetValue == null)
             {
-                Plugin.logger.LogError($"Error: Func<string> GetValue() for ConfigItem key: \"{configItem.Key}\" could not be found!");
+                Plugin.logger.LogError($"Func<string> GetValue() for ConfigItem key: \"{configItem.Key}\" could not be found!");
                 return;
             }
 

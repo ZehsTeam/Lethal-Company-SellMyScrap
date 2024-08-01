@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -90,46 +91,7 @@ public class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        bool forcedShowBigEyesScrapEater = (bool)ModpackSaveSystem.ReadValue("ForcedShowBigEyesScrapEater", false);
-
-        if (PlayerUtils.IsLocalPlayerTakerst() && TryGetBigEyesScrapEaterIndex(out int bigEyesScrapEaterIndex) && !forcedShowBigEyesScrapEater && Utils.RandomPercent(75))
-        {
-            ModpackSaveSystem.WriteValue("ForcedShowBigEyesScrapEater", true);
-            return bigEyesScrapEaterIndex;
-        }
-
-        List<(int index, int weight)> weightedItems = [];
-
-        for (int i = 0; i < ScrapEaters.Count; i++)
-        {
-            int spawnWeight = ScrapEaters[i].GetSpawnWeight();
-            if (spawnWeight <= 0) continue;
-
-            weightedItems.Add((i, spawnWeight));
-        }
-
-        int totalWeight = 0;
-        foreach (var (_, weight) in weightedItems)
-        {
-            totalWeight += weight;
-        }
-
-        if (totalWeight == 0) return -1;
-
-        int randomNumber = Random.Range(0, totalWeight);
-
-        int cumulativeWeight = 0;
-        foreach (var (index, weight) in weightedItems)
-        {
-            cumulativeWeight += weight;
-            if (randomNumber < cumulativeWeight)
-            {
-                return index;
-            }
-        }
-
-        // This should never happen if weights are correctly specified
-        throw new System.InvalidOperationException("Weights are not properly specified.");
+        return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(_ => _.GetSpawnWeight()).ToList());
     }
 
     private static bool TryGetBigEyesScrapEaterIndex(out int index)

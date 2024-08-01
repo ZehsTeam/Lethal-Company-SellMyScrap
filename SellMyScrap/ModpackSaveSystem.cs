@@ -60,14 +60,18 @@ internal class ModpackSaveSystem
         return false;
     }
 
-    public static bool WriteValue(string key, JToken value)
+    public static void WriteValue(string key, JToken value)
     {
-        if (_saveFileObject.ContainsKey(key)) return false;
+        if (_saveFileObject.ContainsKey(key))
+        {
+            _saveFileObject[key] = value;
+        }
+        else
+        {
+            _saveFileObject.Add(key, value);
+        }
 
-        _saveFileObject.Add(key, value);
         WriteFile(_saveFileObject);
-
-        return true;
     }
 
     #region Read/Write File
@@ -82,7 +86,7 @@ internal class ModpackSaveSystem
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"Error: Failed to read save file.\n\n{e}");
+            Plugin.logger.LogError($"Failed to read save file.\n\n{e}");
         }
 
         return null;
@@ -101,7 +105,7 @@ internal class ModpackSaveSystem
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"Error: Failed to write save file.\n\n{e}");
+            Plugin.logger.LogError($"Failed to write save file.\n\n{e}");
         }
 
         return false;

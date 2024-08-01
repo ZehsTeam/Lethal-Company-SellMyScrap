@@ -92,7 +92,7 @@ public class Utils
 
     public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
     {
-        Debug.Log("Spawning explosion at pos: {explosionPosition}");
+        Plugin.logger.LogInfo($"Spawning explosion at pos: {explosionPosition}");
 
         Transform holder = null;
 
@@ -145,7 +145,7 @@ public class Utils
                 Landmine componentInChildren = array[i].gameObject.GetComponentInChildren<Landmine>();
                 if (componentInChildren != null && !componentInChildren.hasExploded && num2 < 6f)
                 {
-                    Debug.Log("Setting off other mine");
+                    Plugin.logger.LogInfo("Setting off other mine");
                     StartOfRound.Instance.StartCoroutine(TriggerOtherMineDelayed(componentInChildren));
                 }
             }
@@ -182,5 +182,41 @@ public class Utils
         yield return new WaitForSeconds(0.2f);
 
         mine.SetOffMineAnimation();
+    }
+
+    public static int GetRandomIndexFromWeightList(List<int> weightList)
+    {
+        List<(int index, int weight)> weightedItems = [];
+
+        for (int i = 0; i < weightList.Count; i++)
+        {
+            int spawnWeight = weightList[i];
+            if (spawnWeight <= 0) continue;
+
+            weightedItems.Add((i, spawnWeight));
+        }
+
+        int totalWeight = 0;
+        foreach (var (_, weight) in weightedItems)
+        {
+            totalWeight += weight;
+        }
+
+        if (totalWeight == 0) return -1;
+
+        int randomNumber = Random.Range(0, totalWeight);
+
+        int cumulativeWeight = 0;
+        foreach (var (index, weight) in weightedItems)
+        {
+            cumulativeWeight += weight;
+            if (randomNumber < cumulativeWeight)
+            {
+                return index;
+            }
+        }
+
+        // This should never happen if weights are correctly specified
+        throw new System.InvalidOperationException("Weights are not properly specified.");
     }
 }

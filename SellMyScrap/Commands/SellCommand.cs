@@ -34,15 +34,16 @@ internal class SellCommand : Command
 
     protected static bool CanUseCommand(out TerminalNode terminalNode)
     {
-        terminalNode = null;
+        terminalNode = TerminalPatch.CreateTerminalNode($"You must be landed at The Company building to sell your scrap.\n\n");
 
-        StartOfRound startOfRound = StartOfRound.Instance;
-        bool isAtCompany = startOfRound.currentLevelID == 3;
-        bool isLanded = !startOfRound.inShipPhase && !startOfRound.travellingToNewLevel;
+        if (StartOfRound.Instance.currentLevelID != 3) return false; // Return false if not at the Company moon.
+        if (StartOfRound.Instance.inShipPhase) return false; // Return false if the ship is in orbit.
+        
+        bool isShipLanded = StartOfRound.Instance.shipHasLanded;
+        bool isShipLeaving = StartOfRound.Instance.shipIsLeaving;
 
-        if (!isAtCompany || !isLanded)
+        if (!isShipLanded && !isShipLeaving)
         {
-            terminalNode = TerminalPatch.CreateTerminalNode($"You must be landed at The Company building to sell your scrap.\n\n");
             return false;
         }
 

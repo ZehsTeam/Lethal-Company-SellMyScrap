@@ -17,15 +17,15 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public AudioClip suckSFX = null;
     public AudioClip afterEatSFX = null;
 
-    private int materialVariantIndex = 0;
+    private int _materialVariantIndex = 0;
 
     protected override void Start()
     {
         if (IsHostOrServer && materialVariants.Length > 0)
         {
-            materialVariantIndex = Random.Range(0, materialVariants.Length);
+            _materialVariantIndex = Random.Range(0, materialVariants.Length);
 
-            SetDataClientRpc(materialVariantIndex);
+            SetDataClientRpc(_materialVariantIndex);
         }
 
         base.Start();
@@ -34,7 +34,7 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(int materialVariantIndex)
     {
-        this.materialVariantIndex = materialVariantIndex;
+        _materialVariantIndex = materialVariantIndex;
         SetMaterialVariant(materialVariantIndex);
     }
 
@@ -61,7 +61,7 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
         PlayOneShotSFX(suckSFX);
         yield return new WaitForSeconds(suckDuration);
 
-        SetMaterialVariant(materialVariantIndex);
+        SetMaterialVariant(_materialVariantIndex);
         yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         yield return new WaitForSeconds(PlayOneShotSFX(afterEatSFX));

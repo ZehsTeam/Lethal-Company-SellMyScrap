@@ -9,7 +9,6 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(DepositItemsDesk))]
 internal class DepositItemsDeskPatch
 {
-    private static DepositItemsDesk _instance;
     public static DepositItemsDesk Instance
     {
         get
@@ -22,6 +21,8 @@ internal class DepositItemsDeskPatch
             return _instance;
         }
     }
+
+    private static DepositItemsDesk _instance;
 
     private static int _clipIndex = -1;
     private static bool _speakInShip = false;
@@ -126,5 +127,34 @@ internal class DepositItemsDeskPatch
 
         grabbableObject.transform.SetParent(Instance.deskObjectsContainer.transform);
         grabbableObject.transform.localPosition = Vector3.zero;
+    }
+
+    public static void PlaceRagdollOnCounter(RagdollGrabbableObject ragdollGrabbableObject)
+    {
+        if (ragdollGrabbableObject == null || Instance == null) return;
+        if (Instance.itemsOnCounter.Contains(ragdollGrabbableObject)) return;
+
+        Instance.itemsOnCounter.Add(ragdollGrabbableObject);
+
+        NetworkObject networkObject = ragdollGrabbableObject.gameObject.GetComponent<NetworkObject>();
+        Instance.itemsOnCounterNetworkObjects.Add(networkObject);
+
+        ragdollGrabbableObject.EnablePhysics(false);
+        ragdollGrabbableObject.EnableItemMeshes(false);
+
+        Transform ragdollTransform = ragdollGrabbableObject.ragdoll.transform;
+
+        foreach (var renderer in ragdollTransform.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = false;
+        }
+
+        foreach (var renderer in ragdollTransform.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            renderer.enabled = false;
+        }
+
+        ragdollTransform.SetParent(Instance.deskObjectsContainer.transform);
+        ragdollTransform.localPosition = Vector3.zero;
     }
 }

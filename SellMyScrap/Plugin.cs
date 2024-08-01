@@ -41,6 +41,8 @@ internal class Plugin : BaseUnityPlugin
         harmony.PatchAll(typeof(HUDManagerPatch));
         harmony.PatchAll(typeof(TerminalPatch));
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
+        harmony.PatchAll(typeof(StartMatchLeverPatch));
+        harmony.PatchAll(typeof(InteractTriggerPatch));
 
         ModpackSaveSystem.Initialize();
         
@@ -175,28 +177,32 @@ internal class Plugin : BaseUnityPlugin
 
         if (DepositItemsDeskPatch.Instance == null)
         {
-            logger.LogError($"Error: could not find depositItemsDesk. Are you landed at The Company building?");
+            logger.LogError($"Could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;
         }
 
         int scrapEaterIndex = SellRequest.ScrapEaterIndex;
 
-        if (scrapEaterIndex == 0)
+        // Try to show a scrap eater if the ship is not leaving.
+        if (!StartOfRound.Instance.shipIsLeaving)
         {
-            ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
-            yield break;
-        }
+            if (scrapEaterIndex == 0)
+            {
+                ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
+                yield break;
+            }
 
-        if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
-        {
-            ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, ScrapToSell.Scrap);
-            yield break;
-        }
+            if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
+            {
+                ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, ScrapToSell.Scrap);
+                yield break;
+            }
 
-        if (ScrapEaterManager.CanUseScrapEater())
-        {
-            ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
-            yield break;
+            if (ScrapEaterManager.CanUseScrapEater())
+            {
+                ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
+                yield break;
+            }
         }
 
         DepositItemsDeskPatch.PlaceItemsOnCounter(ScrapToSell.Scrap);

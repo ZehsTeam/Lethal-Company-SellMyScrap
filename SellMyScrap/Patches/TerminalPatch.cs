@@ -7,7 +7,6 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal class TerminalPatch
 {
-    private static Terminal _instance;
     public static Terminal Instance
     {
         get
@@ -20,6 +19,8 @@ internal class TerminalPatch
             return _instance;
         }
     }
+
+    private static Terminal _instance;
 
     private static bool hasOverrideTerminalNodes = false;
 
@@ -89,7 +90,7 @@ internal class TerminalPatch
         {
             if (terminalNode == null)
             {
-                __result = CreateTerminalNode("Error: terminalNode is null!\n\n");
+                __result = CreateTerminalNode("TerminalNode is null!\n\n");
                 return false;
             }
 

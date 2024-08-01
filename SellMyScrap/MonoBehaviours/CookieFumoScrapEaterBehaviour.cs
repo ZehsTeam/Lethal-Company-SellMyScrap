@@ -14,15 +14,15 @@ public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public AudioClip beforeEatSFX = null;
     public AudioClip[] voiceLineSFX = [];
 
-    private int voiceLineIndex = 0;
+    private int _voiceLineIndex = 0;
 
     protected override void Start()
     {
         if (IsHostOrServer)
         {
-            voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
+            _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
 
-            SetDataClientRpc(voiceLineIndex);
+            SetDataClientRpc(_voiceLineIndex);
         }
 
         base.Start();
@@ -31,7 +31,7 @@ public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(int voiceLineIndex)
     {
-        this.voiceLineIndex = voiceLineIndex;
+        _voiceLineIndex = voiceLineIndex;
     }
 
     protected override IEnumerator StartAnimation()
@@ -58,7 +58,7 @@ public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(suckDuration);
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
-        yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, voiceLineIndex));
+        yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
         yield return new WaitForSeconds(pauseDuration / 2f);
 
         // Move ScrapEater to startPosition

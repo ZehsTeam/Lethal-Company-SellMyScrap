@@ -19,10 +19,10 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public AudioClip[] meowSFX = [];
     public AudioClip evilNoise = null;
 
-    private bool isEvil = false;
-    private int meowIndex = 0;
+    private bool _isEvil = false;
+    private int _meowIndex = 0;
 
-    private bool isTarget = false;
+    private bool _isTarget = false;
 
     protected override void Start()
     {
@@ -30,16 +30,16 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             if (PlayerUtils.HasPlayerMagoroku())
             {
-                isEvil = Utils.RandomPercent(80);
+                _isEvil = Utils.RandomPercent(80);
             }
             else
             {
-                isEvil = Utils.RandomPercent(50);
+                _isEvil = Utils.RandomPercent(50);
             }
             
-            meowIndex = Random.Range(0, meowSFX.Length);
+            _meowIndex = Random.Range(0, meowSFX.Length);
 
-            SetDataClientRpc(isEvil, meowIndex);
+            SetDataClientRpc(_isEvil, _meowIndex);
         }
 
         base.Start();
@@ -48,12 +48,12 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(bool isEvil, int meowIndex)
     {
-        this.isEvil = isEvil;
-        this.meowIndex = meowIndex;
+        _isEvil = isEvil;
+        _meowIndex = meowIndex;
 
         if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
         {
-            isTarget = true;
+            _isTarget = true;
         }
     }
 
@@ -64,7 +64,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
         PlayOneShotSFX(landSFX, landIndex);
-        PlayOneShotSFX(meowSFX, meowIndex);
+        PlayOneShotSFX(meowSFX, _meowIndex);
         ShakeCamera();
 
         yield return new WaitForSeconds(1f);
@@ -79,7 +79,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(pauseDuration / 3f * 2f);
 
         // Move targetScrap to mouthTransform over time.
-        if (isTarget) StartCoroutine(MoveLocalPlayerToMaxwell(suckDuration - 0.1f));
+        if (_isTarget) StartCoroutine(MoveLocalPlayerToMaxwell(suckDuration - 0.1f));
         MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
         yield return new WaitForSeconds(suckDuration);
 
@@ -89,16 +89,16 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         SetAnimationIdle();
         yield return new WaitForSeconds(pauseDuration / 3f);
 
-        if (isTarget) PlayerUtils.SetLocalPlayerAllowDeathEnabled(true);
+        if (_isTarget) PlayerUtils.SetLocalPlayerAllowDeathEnabled(true);
 
-        if (isEvil)
+        if (_isEvil)
         {
             yield return StartCoroutine(StartEvilMaxwell());
             yield return new WaitForSeconds(3f);
             yield break;
         }
 
-        if (isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
+        if (_isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
 
         // Move ScrapEater to startPosition
         PlayAudioSource(movementAudio);
@@ -116,7 +116,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         PlayerControllerB localPlayerScript = PlayerUtils.GetLocalPlayerScript();
 
-        isTarget = true;
+        _isTarget = true;
         PlayerUtils.SetLocalPlayerMovementEnabled(false);
         PlayerUtils.SetLocalPlayerAllowDeathEnabled(false);
 
@@ -147,7 +147,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         PlayOneShotSFX(evilNoise);
 
         yield return new WaitForSeconds(1.25f);
-        if (isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
+        if (_isTarget) PlayerUtils.SetLocalPlayerMovementEnabled(true);
         yield return new WaitForSeconds(0.25f);
 
         Vector3 position = transform.position;

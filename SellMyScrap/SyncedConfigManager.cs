@@ -165,7 +165,7 @@ public class SyncedConfigManager
             }
             catch (System.Exception e)
             {
-                Plugin.logger.LogError($"Error: failed to deserialize dontSellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Failed to deserialize dontSellListJson config setting.\n\n{e}");
                 return [];
             }
         }
@@ -177,7 +177,7 @@ public class SyncedConfigManager
             }
             catch (System.Exception e)
             {
-                Plugin.logger.LogError($"Error: failed to serialize dontSellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Failed to serialize dontSellListJson config setting.\n\n{e}");
                 DontSellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
             }
             
@@ -207,7 +207,7 @@ public class SyncedConfigManager
             }
             catch (System.Exception e)
             {
-                Plugin.logger.LogError($"Error: failed to deserialize sellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Failed to deserialize sellListJson config setting.\n\n{e}");
                 return [];
             }
         }
@@ -219,7 +219,7 @@ public class SyncedConfigManager
             }
             catch (System.Exception e)
             {
-                Plugin.logger.LogError($"Error: failed to serialize sellListJson config setting.\n\n{e}");
+                Plugin.logger.LogError($"Failed to serialize sellListJson config setting.\n\n{e}");
                 SellListJsonCfg.Value = JsonConvert.SerializeObject(new string[0]);
             }
 
