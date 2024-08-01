@@ -134,14 +134,24 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             ChickenAnimator.SetBool("Animate", false);
         }
 
+        if (IsVariantType(TakeyVariantType.DinkDonk))
+        {
+            DinkDonkAnimator.SetBool("Animate", true);
+            DinkDonkAudio.Play();
+        }
+
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
         PlayOneShotSFX(landSFX, landIndex);
         PlayOneShotSFX(takeySitSFX);
+
         if (IsVariantType(TakeyVariantType.DinkDonk))
         {
+            DinkDonkAnimator.SetBool("Animate", false);
+            DinkDonkAudio.Stop();
             PlayOneShotSFX(DinkDonkDropSFX);
         }
+
         ShakeCamera();
 
         yield return new WaitForSeconds(1f);
@@ -206,6 +216,13 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         StopAudioSource(movementAudio);
 
         yield return new WaitForSeconds(1f);
+
+        if (IsVariantType(TakeyVariantType.DinkDonk))
+        {
+            DinkDonkAnimator.SetBool("Animate", true);
+            DinkDonkAudio.Play();
+            yield return new WaitForSeconds(0.5f);
+        }
 
         // Takey FLY!!!
         yield return StartCoroutine(JetpackFly(6f));

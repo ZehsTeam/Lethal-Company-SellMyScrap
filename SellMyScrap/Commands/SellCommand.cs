@@ -38,14 +38,6 @@ internal class SellCommand : Command
 
         if (StartOfRound.Instance.currentLevelID != 3) return false; // Return false if not at the Company moon.
         if (StartOfRound.Instance.inShipPhase) return false; // Return false if the ship is in orbit.
-        
-        bool isShipLanded = StartOfRound.Instance.shipHasLanded;
-        bool isShipLeaving = StartOfRound.Instance.shipIsLeaving;
-
-        if (!isShipLanded && !isShipLeaving)
-        {
-            return false;
-        }
 
         return true;
     }
