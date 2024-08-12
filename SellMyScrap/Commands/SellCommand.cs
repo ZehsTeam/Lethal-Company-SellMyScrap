@@ -42,7 +42,7 @@ internal class SellCommand : Command
         return true;
     }
 
-    protected static string GetQuotaFulfilledString()
+    protected static string GetQuotaFulfilledString(int valueFound)
     {
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
         int profitQuota = TimeOfDay.Instance.profitQuota;
@@ -53,7 +53,8 @@ internal class SellCommand : Command
             return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
         }
 
-        return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} (Need: ${valueNeeded})\n";
+        string needColor = valueFound >= valueNeeded ? TerminalPatch.GreenColor2 : "red";
+        return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} <color={needColor}>(Need: ${valueNeeded})</color>\n";
     }
 
     protected static string GetOvertimeBonusString(int value)
@@ -65,9 +66,24 @@ internal class SellCommand : Command
             return string.Empty;
         }
 
-        return $"Overtime bonus: ${overtimeBonus} (With value: ${value + overtimeBonus})\n";
+        return $"Overtime bonus: ${overtimeBonus} <color={TerminalPatch.GreenColor2}>(With value: ${value + overtimeBonus})</color>\n";
     }
 
+    protected static string GetOvertimeBonusWithValueString(int value, int targetValue, out bool hasEnoughWithOvertimeBonus)
+    {
+        int overtimeBonus = Mathf.Max(Utils.GetOvertimeBonus(value), 0);
+
+        hasEnoughWithOvertimeBonus = value + overtimeBonus >= targetValue;
+
+        if (overtimeBonus <= 0)
+        {
+            return string.Empty;
+        }
+
+        string withValueColor = hasEnoughWithOvertimeBonus ? TerminalPatch.GreenColor2 : "red";
+        return $"Overtime bonus: ${overtimeBonus} <color={withValueColor}>(With value: ${value + overtimeBonus})</color>\n";
+    }
+    
     /// <summary>
     /// 
     /// </summary>

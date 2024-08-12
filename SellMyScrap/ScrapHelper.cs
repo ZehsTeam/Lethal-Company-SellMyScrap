@@ -164,90 +164,68 @@ internal class ScrapHelper
 
         int targetValue = withOvertimeBonus ? GetSellValueWithOvertime(value) : GetSellValue(value);
 
-        List<GrabbableObject> bestMatch = FindBestMatch(scrap, targetValue);
-        bestMatch ??= [];
-
-        return new ScrapToSell(bestMatch);
+        return new ScrapToSell(FindBestMatch(scrap, targetValue));
     }
 
-    private static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int targetValue)
+    public static List<GrabbableObject> FindBestMatch(List<GrabbableObject> scrap, int targetValue)
     {
-        if (scrap.Count == 0) return scrap;
+        // Step 1: Handle empty list or max target value
+        if (scrap.Count == 0 || targetValue == int.MaxValue)
+            return scrap;
 
-        if (targetValue < scrap.Min(item => item.scrapValue))
+        // Step 2: Find the minimum scrapValue item
+        var minScrapItem = scrap.OrderBy(go => go.scrapValue).First();
+        if (targetValue <= minScrapItem.scrapValue)
+            return [minScrapItem];
+
+        // Step 3: Check if total scrapValue is less than targetValue
+        int totalScrapValue = scrap.Sum(go => go.scrapValue);
+        if (totalScrapValue < targetValue)
+            return scrap;
+
+        // Step 4 and 5: Dynamic Programming approach to find the best match
+        int maxPossibleValue = totalScrapValue;
+        int[] dp = new int[maxPossibleValue + 1];
+        List<GrabbableObject>[] dpItems = new List<GrabbableObject>[maxPossibleValue + 1];
+
+        for (int i = 0; i <= maxPossibleValue; i++)
         {
-            // If quota is less than the value of the lowest value item,
-            // return a list containing only the lowest value item
-            var lowestValueItem = scrap.OrderBy(item => item.scrapValue).First();
-            return [lowestValueItem];
+            dp[i] = int.MaxValue;
+            dpItems[i] = new List<GrabbableObject>();
         }
 
-        int totalValue = scrap.Sum(item => item.scrapValue);
+        dp[0] = 0; // Base case
 
-        // If total value is under or equal to the quota, return all items
-        if (totalValue <= targetValue) return scrap;
-
-        int n = scrap.Count;
-        int[,] dp = new int[n + 1, targetValue + 1];
-
-        // Fill the dp array
-        for (int i = 0; i <= n; i++)
+        foreach (var item in scrap)
         {
-            for (int j = 0; j <= targetValue; j++)
+            for (int j = maxPossibleValue; j >= item.scrapValue; j--)
             {
-                if (i == 0 || j == 0)
-                    dp[i, j] = 0;
-                else if (scrap[i - 1].scrapValue <= j)
-                    dp[i, j] = System.Math.Max(dp[i - 1, j], scrap[i - 1].scrapValue + dp[i - 1, j - scrap[i - 1].scrapValue]);
-                else
-                    dp[i, j] = dp[i - 1, j];
-            }
-        }
-
-        // Reconstruct the solution
-        List<GrabbableObject> bestMatch = [];
-        int total = targetValue;
-        for (int i = n; i > 0; i--)
-        {
-            if (dp[i, total] != dp[i - 1, total])
-            {
-                bestMatch.Add(scrap[i - 1]);
-                total -= scrap[i - 1].scrapValue;
-            }
-        }
-
-        // If an exact match is not found, find the best match that is the smallest amount over the quota
-        if (total != 0)
-        {
-            int smallestOverAmount = int.MaxValue;
-            List<GrabbableObject> smallestOverMatch = null;
-
-            for (int i = n; i >= 0; i--)
-            {
-                if (dp[i, total] == total)
+                int remainingValue = j - item.scrapValue;
+                if (dp[remainingValue] != int.MaxValue && dp[remainingValue] + item.scrapValue < dp[j])
                 {
-                    int overAmount = dp[i, targetValue] - targetValue;
-                    if (overAmount < smallestOverAmount)
-                    {
-                        smallestOverAmount = overAmount;
-                        smallestOverMatch = [];
-                        for (int j = i; j > 0; j--)
-                        {
-                            if (dp[j, total] != dp[j - 1, total])
-                            {
-                                smallestOverMatch.Add(scrap[j - 1]);
-                                total -= scrap[j - 1].scrapValue;
-                            }
-                        }
-                    }
+                    dp[j] = dp[remainingValue] + item.scrapValue;
+                    dpItems[j] = new List<GrabbableObject>(dpItems[remainingValue]) { item };
                 }
             }
-
-            if (smallestOverMatch != null)
-                bestMatch = smallestOverMatch;
         }
 
-        return bestMatch;
+        // Exact match check
+        if (dp[targetValue] != int.MaxValue)
+        {
+            return dpItems[targetValue];
+        }
+
+        // Smallest over target check
+        for (int i = targetValue + 1; i <= maxPossibleValue; i++)
+        {
+            if (dp[i] != int.MaxValue)
+            {
+                return dpItems[i];
+            }
+        }
+
+        // Fallback in case no valid set is found (which shouldn't happen)
+        return scrap;
     }
 
     public static ScrapToSell GetScrapToSell(string[] sellListJson, bool onlyAllowedScrap = false)
@@ -282,16 +260,16 @@ internal class ScrapHelper
     #endregion
 
     #region Get Scrap Message
-    public static string GetScrapMessage(List<GrabbableObject> scrap)
+    public static string GetScrapMessage(List<GrabbableObject> scrap, string color2 = "")
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
-        return GetScrapMessage(scrap, configManager.SortFoundItemsPrice, configManager.AlignFoundItemsPrice);
+        return GetScrapMessage(scrap, configManager.SortFoundItemsPrice, configManager.AlignFoundItemsPrice, color2);
     }
 
-    public static string GetScrapMessage(List<GrabbableObject> scrap, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
+    public static string GetScrapMessage(List<GrabbableObject> scrap, bool sortFoundItemsPrice, bool alignFoundItemsPrice, string color2 = "")
     {
         List<string> distinctScrap = scrap.Select(item => item.itemProperties.itemName).Distinct().ToList();
-        Dictionary<string, int> combinedScrap = new Dictionary<string, int>();
+        Dictionary<string, int> combinedScrap = [];
 
         distinctScrap.ForEach(distinctItem =>
         {
@@ -306,7 +284,14 @@ internal class ScrapHelper
                 value += item.scrapValue;
             });
 
-            combinedScrap.Add($"{distinctItem} (x{amount}) :", value);
+            if (string.IsNullOrWhiteSpace(color2))
+            {
+                combinedScrap.Add($"{distinctItem} (x{amount}) :", value);
+            }
+            else
+            {
+                combinedScrap.Add($"{distinctItem} <color={color2}>(x{amount})</color>  ", value);
+            }
         });
 
         if (sortFoundItemsPrice)

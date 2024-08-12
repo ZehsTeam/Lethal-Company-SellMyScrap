@@ -3,7 +3,7 @@
 
 #### This mod will sell scrap as close to the requested value as possible.
 
-#### This mod is for all clients!
+#### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
 <br>
 
 * You must be landed at The Company building to use sell commands.
@@ -138,6 +138,10 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 </details>
 
+## Want more Scrap Eaters?
+* [GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*
+* [BigEyes](https://thunderstore.io/c/lethal-company/p/Wexop/BigEyes/) - *Adds an additional scrap eater.*
+
 ## Developer Contact
 #### Report bugs or give suggestions here:
 https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
@@ -150,7 +154,21 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 #### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
-* [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/) - *Maxwell and Cookie Fumo (models + sounds)*
+#### Maxwell (scrap eater) and Cookie Fumo (scrap eater)
+* Models and sounds from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
+
+#### Zombies (scrap eater)
+* Model by MissSuperE.
+
+#### Takey (scrap eater)
+* Pirate Hat model by [ReversedG](https://sketchfab.com/ReversedG) on [Sketchfab](https://sketchfab.com/3d-models/pirate-hat-84b496f5860340eca3cc1d63985aa524).
+* Playing Cards model by [Dumokan Art](https://sketchfab.com/dumokanart) on [Sketchfab](https://sketchfab.com/3d-models/playing-cards-793274af15df4f20848d83ab6d127493).
+* Chicken model by [marksethcaballes](https://sketchfab.com/marksethcaballes) on [Sketchfab](https://sketchfab.com/3d-models/low-poly-chicken-8995b3423ee9430983dd88492b8fa4e2).
+* Bell model by [ApprenticeRaccoon](https://sketchfab.com/ApprenticeRaccoon) on [Sketchfab](https://sketchfab.com/3d-models/bell-3132eda94ea4496fa51e39b8a5b3a4a8).
+* Handbell sounds by [yake01](https://freesound.org/people/yake01/) on [Freesound](https://freesound.org/people/yake01/sounds/586567/).
+* Boxing Gloves (Left) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-left-handed-076293541203455da59a38eea5b6a44b).
+* Boxing Gloves (Right) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-right-handed-1ae09e8e4959418b9c4274f9515c5d29).
+* Gift Bow model by [buzzkirill](https://sketchfab.com/buzzkirill) on [Sketchfab](https://sketchfab.com/3d-models/gift-bow-4a6528079ece48828f2500964fd60e13).
 
 ## Screenshots
 <details>

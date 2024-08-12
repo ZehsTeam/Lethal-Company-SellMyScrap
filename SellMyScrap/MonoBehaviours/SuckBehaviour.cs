@@ -59,7 +59,10 @@ public class SuckBehaviour : MonoBehaviour
             timer += Time.deltaTime;
         }
 
-        transform.position = targetTransform.position;
+        if (targetTransform != null)
+        {
+            transform.position = targetTransform.position;
+        }
     }
 
     protected virtual IEnumerator MoveRagdollToPosition(Transform targetTransform, float duration)
@@ -94,7 +97,10 @@ public class SuckBehaviour : MonoBehaviour
             timer += Time.deltaTime;
         }
 
-        ragdollTransform.position = targetTransform.position;
+        if (targetTransform != null)
+        {
+            ragdollTransform.position = targetTransform.position;
+        }
     }
 
     protected void PlaceItemOnCounter()

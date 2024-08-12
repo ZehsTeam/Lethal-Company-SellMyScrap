@@ -22,6 +22,8 @@ internal class TerminalPatch
 
     private static Terminal _instance;
 
+    public const string GreenColor2 = "#007f00";
+
     private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch("Start")]

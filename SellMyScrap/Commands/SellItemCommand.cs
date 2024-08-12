@@ -53,11 +53,11 @@ internal class SellItemCommand : SellCommand
     private static string GetMessage(ScrapToSell scrapToSell)
     {
         string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.RealValue}\n";
-        message += GetQuotaFulfilledString();
-        message += $"The Company is buying at %{CompanyBuyingRate}\n";
+        message += GetQuotaFulfilledString(scrapToSell.RealValue);
         message += GetOvertimeBonusString(scrapToSell.RealValue);
+        message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += "\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap)}\n\n";
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap, TerminalPatch.GreenColor2)}\n\n";
         message += "Please CONFIRM or DENY.\n\n";
 
         return message;

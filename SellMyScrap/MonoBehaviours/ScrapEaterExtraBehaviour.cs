@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -98,6 +100,26 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
             SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
             suckBehaviour.StartEvent(targetTransform, duration);
         });
+    }
+
+    protected virtual IEnumerator MoveTargetScrapToTargetTransformDelayed(Transform targetTransform, float suckDuration, float duration = 10f)
+    {
+        List<GrabbableObject> sortedTargetScrap = targetScrap.OrderBy(_ => Vector3.Distance(targetTransform.position, _.transform.position)).ToList();
+
+        float interval = duration / sortedTargetScrap.Count;
+
+        for (int i = 0; i < sortedTargetScrap.Count; i++)
+        {
+            if (sortedTargetScrap[i] == null) continue;
+
+            SuckBehaviour suckBehaviour = sortedTargetScrap[i].gameObject.AddComponent<SuckBehaviour>();
+            suckBehaviour.StartEvent(targetTransform, suckDuration);
+
+            if (i <= sortedTargetScrap.Count - 2)
+            {
+                yield return new WaitForSeconds(interval);
+            }
+        }
     }
 
     protected IEnumerator MoveToPosition(Vector3 from, Vector3 to, float duration)

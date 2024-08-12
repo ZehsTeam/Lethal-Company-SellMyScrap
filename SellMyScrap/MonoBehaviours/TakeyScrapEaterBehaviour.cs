@@ -37,11 +37,15 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     [Header("Peepo Chicken Variant")]
     public Animator ChickenAnimator = null;
+    public AudioSource ChickenAudio = null;
 
     [Header("Donk Dink Variant")]
     public Animator DinkDonkAnimator = null;
     public AudioSource DinkDonkAudio = null;
     public AudioClip DinkDonkDropSFX = null;
+
+    [Header("Feels Variant")]
+    public Animator FeelsAnimator = null;
 
     private float _flySpeed = 0f;
 
@@ -60,12 +64,14 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             _variantIndex = GetRandomVariantIndex();
             _cardMeshIndex = Random.Range(0, CardMeshes.Length);
+
+            UpdateVariantOnLocalClient();
+
             _explode = Utils.RandomPercent(50f);
             _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
             _beforeEatIndex = Random.Range(0, beforeEatSFX.Length);
 
             SetDataClientRpc(_variantIndex, _cardMeshIndex, _explode, _voiceLineIndex, _beforeEatIndex);
-            UpdateVariantOnLocalClient();
         }
 
         base.Start();
@@ -88,6 +94,12 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     #region Variant Stuff
     private int GetRandomVariantIndex()
     {
+        if (PlayerUtils.IsLocalPlayerTakerst() && Utils.RandomPercent(75) && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", false))
+        {
+            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", true);
+            return GetVariantIndex(TakeyVariantType.PeepoChicken);
+        }
+
         return Utils.GetRandomIndexFromWeightList(Variants.Select(_ => _.Weight).ToList());
     }
 
@@ -98,7 +110,17 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             Variants[i].ModelObject.SetActive(i == _variantIndex);
         }
 
-        mouthTransform = GetVariant().MouthTransform;
+        TakeyVariant variant = GetVariant();
+
+        if (variant.MouthTransform != null)
+        {
+            mouthTransform = variant.MouthTransform;
+        }
+        
+        if (variant.BeforeEatSFX.Length > 0)
+        {
+            beforeEatSFX = variant.BeforeEatSFX;
+        }
 
         if (IsVariantType(TakeyVariantType.Gamble))
         {
@@ -125,6 +147,19 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         return GetVariantType() == type;
     }
+
+    public int GetVariantIndex(TakeyVariantType type)
+    {
+        for (int i = 0; i < Variants.Length; i++)
+        {
+            if (Variants[i].Type == type)
+            {
+                return i;
+            }
+        }
+
+        return Random.Range(0, Variants.Length);
+    }
     #endregion
 
     protected override IEnumerator StartAnimation()
@@ -138,6 +173,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             DinkDonkAnimator.SetBool("Animate", true);
             DinkDonkAudio.Play();
+        }
+
+        if (IsVariantType(TakeyVariantType.Feels))
+        {
+            FeelsAnimator.SetBool("Animate", true);
         }
 
         // Move ScrapEater to startPosition
@@ -165,19 +205,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (IsVariantType(TakeyVariantType.PeepoChicken))
         {
             ChickenAnimator.SetBool("Animate", true);
+            ChickenAudio.Play();
             yield return new WaitForSeconds(1f);
         }
 
-        AudioClip beforeEatOverrideSFX = GetVariant().BeforeEatSFX;
-
-        if (beforeEatOverrideSFX != null)
-        {
-            yield return new WaitForSeconds(PlayOneShotSFX(beforeEatOverrideSFX));
-        }
-        else
-        {
-            yield return new WaitForSeconds(PlayOneShotSFX(beforeEatSFX, _beforeEatIndex));
-        }
+        yield return new WaitForSeconds(PlayOneShotSFX(beforeEatSFX, _beforeEatIndex));
 
         if (IsVariantType(TakeyVariantType.DinkDonk))
         {
@@ -189,7 +221,15 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(1f);
 
         // Move targetScrap to mouthTransform over time.
-        MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        {
+            yield return StartCoroutine(MoveTargetScrapToTargetTransformDelayed(mouthTransform, suckDuration - 0.1f, duration: 15f));
+        }
+        else
+        {
+            MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+        }
+        
         yield return new WaitForSeconds(suckDuration);
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
@@ -207,6 +247,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (IsVariantType(TakeyVariantType.PeepoChicken))
         {
             ChickenAnimator.SetBool("Animate", false);
+            ChickenAudio.Stop();
             yield return new WaitForSeconds(1f);
         }
 
@@ -292,7 +333,10 @@ public enum TakeyVariantType
     Gamble,
     PeepoChicken,
     DinkDonk,
-    FightClub
+    FightClub,
+    Cute,
+    Feels,
+    Stabby
 }
 
 [System.Serializable]
@@ -303,5 +347,5 @@ public class TakeyVariant
     public int Weight;
     public GameObject ModelObject;
     public Transform MouthTransform;
-    public AudioClip BeforeEatSFX;
+    public AudioClip[] BeforeEatSFX;
 }

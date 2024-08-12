@@ -37,6 +37,7 @@ public class SyncedConfigManager
     // Misc Settings
     private ConfigEntry<bool> SpeakInShipCfg;
     private ConfigEntry<float> RareVoiceLineChanceCfg;
+    private ConfigEntry<bool> ShowQuotaWarningCfg;
 
     // Scrap Eater Settingss
     private ConfigEntry<int> ScrapEaterChanceCfg;
@@ -237,6 +238,7 @@ public class SyncedConfigManager
     // Misc Settings
     internal bool SpeakInShip { get { return SpeakInShipCfg.Value; } set => SpeakInShipCfg.Value = value; }
     internal float RareVoiceLineChance { get { return RareVoiceLineChanceCfg.Value; } set => RareVoiceLineChanceCfg.Value = value; }
+    internal bool ShowQuotaWarning { get { return ShowQuotaWarningCfg.Value; } set => ShowQuotaWarningCfg.Value = value; }
 
     // Scrap Eaters
     internal int ScrapEaterChance { get { return ScrapEaterChanceCfg.Value; } set => ScrapEaterChanceCfg.Value = value; }
@@ -346,6 +348,11 @@ public class SyncedConfigManager
             new ConfigDefinition("Misc Settings", "RareVoiceLineChance"),
             5f,
             new ConfigDescription("The percent chance the Company will say a rare microphone voice line after selling.")
+        );
+        ShowQuotaWarningCfg = configFile.Bind(
+            new ConfigDefinition("Misc Settings", "ShowQuotaWarning"),
+            true,
+            new ConfigDescription("If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building on the last day.")
         );
 
         // Scrap Eater Settings
@@ -581,6 +588,7 @@ public class SyncedConfigManager
         // Misc Settings
         SpeakInShipCfg.Value = (bool)SpeakInShipCfg.DefaultValue;
         RareVoiceLineChanceCfg.Value = (float)RareVoiceLineChanceCfg.DefaultValue;
+        ShowQuotaWarningCfg.Value = (bool)ShowQuotaWarningCfg.DefaultValue;
 
         // Scrap Eater Settings
         ScrapEaterChanceCfg.Value = (int)ScrapEaterChanceCfg.DefaultValue;

@@ -24,8 +24,8 @@ internal class StartMatchLeverPatch
         if (TimeOfDay.Instance.daysUntilDeadline > 0) return; // Return if there are still more days until the deadline.
         if (!StartOfRound.Instance.shipHasLanded) return; // Return if the ship is not landed.
 
-        // If the profit quota was fulfilled, reset the timeToHold on the InteractTrigger and return.
-        if (TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota)
+        // If the profit quota was fulfilled (or ShowQuotaWarning was disabled), reset the timeToHold on the InteractTrigger and return.
+        if (TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota || !Plugin.ConfigManager.ShowQuotaWarning)
         {
             __instance.triggerScript.timeToHold = 0.7f;
             return;

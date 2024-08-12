@@ -60,6 +60,7 @@ public class ConfigHelper
         _miscConfigItems = [
             new ConfigItem("SpeakInShip",         typeof(bool),  isHostOnly: false, value => { configManager.SpeakInShip =         bool.Parse(value);  }, () => { return configManager.SpeakInShip.ToString();         }),
             new ConfigItem("RareVoiceLineChance", typeof(float), isHostOnly: true,  value => { configManager.RareVoiceLineChance = float.Parse(value); }, () => { return configManager.RareVoiceLineChance.ToString(); }),
+            new ConfigItem("ShowQuotaWarning",    typeof(bool),  isHostOnly: false, value => { configManager.ShowQuotaWarning =    bool.Parse(value);  }, () => { return configManager.ShowQuotaWarning.ToString();    }),
         ];
 
         _scrapEaterConfigItems = [
