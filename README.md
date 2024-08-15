@@ -124,6 +124,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | ----------- | ----------- | ----------- | ----------- |
 | `SpeakInShip` | `Boolean` | `true` | The Company will speak inside your ship after selling from the terminal. |
 | `RareVoiceLineChance` | `Single` | `5` | The percent chance the Company will say a rare microphone voice line after selling. |
+| `ShowQuotaWarning` | `Boolean` | `true` | If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building with 0 days left. |
 
 | Scrap Eater Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -154,12 +155,6 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 #### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
-#### Maxwell (scrap eater) and Cookie Fumo (scrap eater)
-* Models and sounds from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
-
-#### Zombies (scrap eater)
-* Model by MissSuperE.
-
 #### Takey (scrap eater)
 * Pirate Hat model by [ReversedG](https://sketchfab.com/ReversedG) on [Sketchfab](https://sketchfab.com/3d-models/pirate-hat-84b496f5860340eca3cc1d63985aa524).
 * Playing Cards model by [Dumokan Art](https://sketchfab.com/dumokanart) on [Sketchfab](https://sketchfab.com/3d-models/playing-cards-793274af15df4f20848d83ab6d127493).
@@ -169,6 +164,13 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 * Boxing Gloves (Left) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-left-handed-076293541203455da59a38eea5b6a44b).
 * Boxing Gloves (Right) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-right-handed-1ae09e8e4959418b9c4274f9515c5d29).
 * Gift Bow model by [buzzkirill](https://sketchfab.com/buzzkirill) on [Sketchfab](https://sketchfab.com/3d-models/gift-bow-4a6528079ece48828f2500964fd60e13).
+* Crystal Heart model by [Kalem.Masters](https://sketchfab.com/Kalem.Masters) on [Sketchfab](https://sketchfab.com/3d-models/crystal-empire-crystal-heart-mlp-53dc64a4841c4a85bf7eda7be3d14570).
+
+#### Maxwell (scrap eater) and Cookie Fumo (scrap eater)
+* Models and sounds from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
+
+#### Zombies (scrap eater)
+* Model by MissSuperE.
 
 ## Screenshots
 <details>

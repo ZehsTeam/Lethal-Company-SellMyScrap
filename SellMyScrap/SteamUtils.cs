@@ -19,6 +19,11 @@ internal class SteamUtils
         return IsLocalPlayer("Takerst", 76561197980238122);
     }
 
+    public static bool IsLocalPlayerPsycho()
+    {
+        return IsLocalPlayer("PsychoHypnotic", 76561197970440803);
+    }
+
     public static bool IsLocalPlayer(string username, ulong steamId)
     {
         if (!SteamClient.IsValid) return false;

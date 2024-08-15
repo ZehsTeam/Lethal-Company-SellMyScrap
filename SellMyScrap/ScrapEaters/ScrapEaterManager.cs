@@ -91,22 +91,12 @@ public class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(_ => _.GetSpawnWeight()).ToList());
-    }
-
-    private static bool TryGetBigEyesScrapEaterIndex(out int index)
-    {
-        index = -1;
-
-        for (int i = 0; i < ScrapEaters.Count; i++)
+        if (SteamUtils.IsLocalPlayerPsycho() && !(bool)ModpackSaveSystem.ReadValue("ForceShowedTakeyScrapEater", false) && Utils.RandomPercent(80))
         {
-            if (ScrapEaters[i].SpawnPrefab.name.Contains("BigEyes", System.StringComparison.OrdinalIgnoreCase))
-            {
-                index = i;
-                return true;
-            }
+            ModpackSaveSystem.WriteValue("ForceShowedTakeyScrapEater", true);
+            return 1; // Takey scrap eater index.
         }
 
-        return false;
+        return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(_ => _.GetSpawnWeight()).ToList());
     }
 }

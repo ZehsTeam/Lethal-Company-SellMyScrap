@@ -47,6 +47,9 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Header("Feels Variant")]
     public Animator FeelsAnimator = null;
 
+    [Header("LUBBERS Variant")]
+    public Animator LUBBERSAnimator = null;
+
     private float _flySpeed = 0f;
 
     private int _variantIndex = 0;
@@ -94,7 +97,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     #region Variant Stuff
     private int GetRandomVariantIndex()
     {
-        if (PlayerUtils.IsLocalPlayerTakerst() && Utils.RandomPercent(75) && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", false))
+        if (SteamUtils.IsLocalPlayerPsycho() && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", false))
         {
             ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", true);
             return GetVariantIndex(TakeyVariantType.PeepoChicken);
@@ -178,6 +181,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (IsVariantType(TakeyVariantType.Feels))
         {
             FeelsAnimator.SetBool("Animate", true);
+        }
+
+        if (IsVariantType(TakeyVariantType.LUBBERS))
+        {
+            LUBBERSAnimator.SetBool("Animate", true);
         }
 
         // Move ScrapEater to startPosition
@@ -336,7 +344,8 @@ public enum TakeyVariantType
     FightClub,
     Cute,
     Feels,
-    Stabby
+    Stabby,
+    LUBBERS
 }
 
 [System.Serializable]

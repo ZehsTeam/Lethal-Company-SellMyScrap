@@ -20,8 +20,14 @@ internal class StartMatchLeverPatch
     [HarmonyPostfix]
     static void BeginHoldingInteractOnLeverPatch(ref StartMatchLever __instance)
     {
+        // Return if there are still more days until the deadline AND reset the timeToHold on the InteractTrigger.
+        if (TimeOfDay.Instance.daysUntilDeadline > 0 && __instance.triggerScript.timeToHold == 4.01f)
+        {
+            __instance.triggerScript.timeToHold = 0.7f;
+            return;
+        }
+
         if (StartOfRound.Instance.currentLevelID != 3) return; // Return if not at the Company moon.
-        if (TimeOfDay.Instance.daysUntilDeadline > 0) return; // Return if there are still more days until the deadline.
         if (!StartOfRound.Instance.shipHasLanded) return; // Return if the ship is not landed.
 
         // If the profit quota was fulfilled (or ShowQuotaWarning was disabled), reset the timeToHold on the InteractTrigger and return.
@@ -35,7 +41,7 @@ internal class StartMatchLeverPatch
         {
             DisplayedSellWarning = true;
 
-            __instance.triggerScript.timeToHold = 4f;
+            __instance.triggerScript.timeToHold = 4.01f;
             HUDManager.Instance.DisplayTip("HALT!", "You did not sell enough scrap to fulfill the profit quota.", isWarning: true);
         }
     }

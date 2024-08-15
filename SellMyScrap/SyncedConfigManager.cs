@@ -352,7 +352,7 @@ public class SyncedConfigManager
         ShowQuotaWarningCfg = configFile.Bind(
             new ConfigDefinition("Misc Settings", "ShowQuotaWarning"),
             true,
-            new ConfigDescription("If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building on the last day.")
+            new ConfigDescription("If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building with 0 days left.")
         );
 
         // Scrap Eater Settings
