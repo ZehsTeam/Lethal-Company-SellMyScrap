@@ -7,7 +7,7 @@
     
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.6.1</Version>                                               <!-- PLUGIN_VERSION -->
+    <Version>1.6.2</Version>                                               <!-- PLUGIN_VERSION -->
     <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +</Description>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -64,6 +64,10 @@
 	  <None Update="packages.config">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	</ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="TakeyPlush"> <HintPath>$(PluginsFolder)\com.github.zehsteam.TakeyPlush.dll</HintPath></Reference>
 	</ItemGroup>
   
   <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">

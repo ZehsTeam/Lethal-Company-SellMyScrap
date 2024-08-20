@@ -102,6 +102,17 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
         });
     }
 
+    protected virtual void MoveTargetScrapToTargetTransform(List<GrabbableObject> items, Transform targetTransform, float duration)
+    {
+        items.ForEach(item =>
+        {
+            if (item == null) return;
+
+            SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
+            suckBehaviour.StartEvent(targetTransform, duration);
+        });
+    }
+
     protected virtual IEnumerator MoveTargetScrapToTargetTransformDelayed(Transform targetTransform, float suckDuration, float duration = 10f)
     {
         List<GrabbableObject> sortedTargetScrap = targetScrap.OrderBy(_ => Vector3.Distance(targetTransform.position, _.transform.position)).ToList();
@@ -148,7 +159,9 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     protected float PlayOneShotSFX(AudioClip[] audioClips, int index, float volumeScale = 1f)
     {
+        if (audioClips == null || audioClips.Length == 0) return 0f;
         if (index < 0 || index > audioClips.Length - 1) return 0f;
+        if (audioClips[index] == null) return 0f;
 
         PlayOneShotSFX(audioClips[index], volumeScale);
         return audioClips[index].length;

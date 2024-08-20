@@ -33,6 +33,8 @@ internal class ScrapHelper
         foreach (var item in items)
         {
             if (!IsScrapItem(item)) continue;
+            if (!Plugin.ConfigManager.SellScrapWorthZero && item.scrapValue <= 0) continue;
+            if (Plugin.ConfigManager.OnlySellScrapOnFloor && !IsScrapOnFloor(item)) continue;
             if (onlyAllowedScrap && !IsAllowedScrapItem(item, Plugin.ConfigManager.DontSellListJson)) continue;
 
             scrap.Add(item);
@@ -114,9 +116,6 @@ internal class ScrapHelper
     private static bool IsAllowedScrapItem(GrabbableObject grabbableObject, string[] dontSellList)
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
-
-        if (grabbableObject.scrapValue <= 0 && !configManager.SellScrapWorthZero) return false;
-        if (configManager.OnlySellScrapOnFloor && !IsScrapOnFloor(grabbableObject)) return false;
 
         string itemName = grabbableObject.itemProperties.itemName;
 

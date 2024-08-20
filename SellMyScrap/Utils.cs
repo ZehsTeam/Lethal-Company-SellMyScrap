@@ -219,4 +219,20 @@ public class Utils
         // This should never happen if weights are correctly specified
         throw new System.InvalidOperationException("Weights are not properly specified.");
     }
+
+    public static List<List<T>> SplitList<T>(List<T> items, int numberOfLists)
+    {
+        List<List<T>> result = [];
+
+        int count = items.Count;
+        int size = Mathf.CeilToInt(count / (float)numberOfLists);
+
+        for (int i = 0; i < numberOfLists; i++)
+        {
+            List<T> sublist = items.GetRange(i * size, Mathf.Min(size, count - i * size));
+            result.Add(sublist);
+        }
+
+        return result;
+    }
 }

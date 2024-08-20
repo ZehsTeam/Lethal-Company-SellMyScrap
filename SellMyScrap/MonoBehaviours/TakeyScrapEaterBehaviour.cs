@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using com.github.zehsteam.SellMyScrap.Compatibility;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -43,6 +45,10 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public Animator DinkDonkAnimator = null;
     public AudioSource DinkDonkAudio = null;
     public AudioClip DinkDonkDropSFX = null;
+    public AudioClip DinkDonkSpecialLine1SFX = null;
+    public AudioClip DinkDonkSpecialLine2SFX = null;
+    public AudioClip DinkDonkSpecialLine3SFX = null;
+    public AudioClip DinkDonkSpecialLine4SFX = null;
 
     [Header("Feels Variant")]
     public Animator FeelsAnimator = null;
@@ -100,7 +106,13 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (SteamUtils.IsLocalPlayerPsycho() && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", false))
         {
             ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", true);
-            return GetVariantIndex(TakeyVariantType.PeepoChicken);
+            return GetVariantIndex(TakeyVariantType.ChickenDance);
+        }
+
+        if (SteamUtils.IsLocalPlayerTakerst() && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(_ => _.scrapValue) >= 1000 && Utils.RandomPercent(30))
+        {
+            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterDinkDonkVariant", true);
+            return GetVariantIndex(TakeyVariantType.DinkDonk);
         }
 
         return Utils.GetRandomIndexFromWeightList(Variants.Select(_ => _.Weight).ToList());
@@ -130,7 +142,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             CardMeshFilter.mesh = CardMeshes[_cardMeshIndex];
         }
 
-        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        if (IsVariantType(TakeyVariantType.ChickenDance))
         {
             ChickenAnimator.SetBool("Animate", false);
         }
@@ -167,7 +179,15 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     protected override IEnumerator StartAnimation()
     {
-        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        HangarShipDoor hangarShipDoor = FindFirstObjectByType<HangarShipDoor>();
+
+        if (IsVariantType(TakeyVariantType.Gazmi) && hangarShipDoor != null)
+        {
+            hangarShipDoor.PlayDoorAnimation(closed: false);
+            hangarShipDoor.SetDoorButtonsEnabled(false);
+        }
+
+        if (IsVariantType(TakeyVariantType.ChickenDance))
         {
             ChickenAnimator.SetBool("Animate", false);
         }
@@ -176,6 +196,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             DinkDonkAnimator.SetBool("Animate", true);
             DinkDonkAudio.Play();
+            TriggerTakeyPlushDinkDonkScrapEaterSpawnedEvent();
         }
 
         if (IsVariantType(TakeyVariantType.Feels))
@@ -210,7 +231,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         StopAudioSource(movementAudio);
         yield return new WaitForSeconds(1f);
 
-        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        if (IsVariantType(TakeyVariantType.ChickenDance))
         {
             ChickenAnimator.SetBool("Animate", true);
             ChickenAudio.Play();
@@ -228,19 +249,28 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // Move targetScrap to mouthTransform over time.
-        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        bool playedCustomSuckAnimation = false;
+
+        if (IsVariantType(TakeyVariantType.ChickenDance))
         {
+            playedCustomSuckAnimation = true;
             yield return StartCoroutine(MoveTargetScrapToTargetTransformDelayed(mouthTransform, suckDuration - 0.1f, duration: 15f));
+            yield return new WaitForSeconds(suckDuration);
+            yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         }
-        else
+
+        if (IsVariantType(TakeyVariantType.DinkDonk) && targetScrap.Sum(_ => _.scrapValue) >= 1000)
+        {
+            playedCustomSuckAnimation = true;
+            yield return StartCoroutine(DinkDonkSpecialSuckAnimation());
+        }
+
+        if (!playedCustomSuckAnimation)
         {
             MoveTargetScrapToTargetTransform(mouthTransform, suckDuration - 0.1f);
+            yield return new WaitForSeconds(suckDuration);
+            yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         }
-        
-        yield return new WaitForSeconds(suckDuration);
-
-        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
 
         if (IsVariantType(TakeyVariantType.DinkDonk))
         {
@@ -252,7 +282,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
         yield return new WaitForSeconds(1f);
 
-        if (IsVariantType(TakeyVariantType.PeepoChicken))
+        if (IsVariantType(TakeyVariantType.ChickenDance))
         {
             ChickenAnimator.SetBool("Animate", false);
             ChickenAudio.Stop();
@@ -273,6 +303,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
+        if (IsVariantType(TakeyVariantType.Gazmi) && hangarShipDoor != null)
+        {
+            hangarShipDoor.SetDoorButtonsEnabled(true);
+        }
+
         // Takey FLY!!!
         yield return StartCoroutine(JetpackFly(6f));
 
@@ -285,6 +320,50 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         flameEffectsObject.SetActive(false);
         jetpackObject.SetActive(false);
+    }
+
+    private void TriggerTakeyPlushDinkDonkScrapEaterSpawnedEvent()
+    {
+        if (!IsVariantType(TakeyVariantType.DinkDonk)) return;
+
+        try
+        {
+            if (!TakeyPlushCompat.HasMod) return;
+
+            TakeyPlushCompat.TriggerDinkDonkScrapEaterSpawnedEvent();
+        }
+        catch (System.Exception e)
+        {
+            Plugin.logger.LogError(e);
+        }
+    }
+
+    private IEnumerator DinkDonkSpecialSuckAnimation()
+    {
+        List<List<GrabbableObject>> targetScrapLists = Utils.SplitList(targetScrap.OrderBy(_ => _.scrapValue).ToList(), numberOfLists: 3);
+
+        yield return new WaitForSeconds(PlayOneShotSFX(DinkDonkSpecialLine1SFX));
+        yield return new WaitForSeconds(0.5f);
+
+        PlayOneShotSFX(DinkDonkSpecialLine2SFX);
+        yield return new WaitForSeconds(1f);
+        MoveTargetScrapToTargetTransform(targetScrapLists[0], mouthTransform, suckDuration - 0.1f);
+        yield return new WaitForSeconds(suckDuration);
+        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
+        yield return new WaitForSeconds(0.5f);
+
+        PlayOneShotSFX(DinkDonkSpecialLine3SFX);
+        yield return new WaitForSeconds(1.2f);
+        MoveTargetScrapToTargetTransform(targetScrapLists[1], mouthTransform, suckDuration - 0.1f);
+        yield return new WaitForSeconds(suckDuration);
+        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
+        yield return new WaitForSeconds(0.5f);
+
+        PlayOneShotSFX(DinkDonkSpecialLine4SFX);
+        yield return new WaitForSeconds(2.1f);
+        MoveTargetScrapToTargetTransform(targetScrapLists[2], mouthTransform, suckDuration - 0.1f);
+        yield return new WaitForSeconds(suckDuration);
+        yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
     }
 
     private IEnumerator JetpackFly(float duration)
@@ -335,11 +414,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 public enum TakeyVariantType
 {
     Default,
-    Horny,
+    Gazmi,
     Shady,
     Captain,
     Gamble,
-    PeepoChicken,
+    ChickenDance,
     DinkDonk,
     FightClub,
     Cute,
