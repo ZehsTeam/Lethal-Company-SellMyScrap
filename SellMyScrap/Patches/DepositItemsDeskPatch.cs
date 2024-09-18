@@ -7,7 +7,7 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(DepositItemsDesk))]
-internal class DepositItemsDeskPatch
+internal static class DepositItemsDeskPatch
 {
     public static DepositItemsDesk Instance
     {
@@ -27,16 +27,16 @@ internal class DepositItemsDeskPatch
     private static int _clipIndex = -1;
     private static bool _speakInShip = false;
 
-    [HarmonyPatch("SellItemsOnServer")]
+    [HarmonyPatch(nameof(DepositItemsDesk.SellItemsOnServer))]
     [HarmonyPrefix]
-    static bool SellItemsOnServerPatch(ref DepositItemsDesk __instance)
+    private static bool SellItemsOnServerPatch(ref DepositItemsDesk __instance)
     {
         if (__instance.itemsOnCounter.Count == 0)
         {
             return false;
         }
 
-        if (Plugin.IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             SetMicrophoneSpeakDataOnServer(_speakInShip);
         }
@@ -44,9 +44,9 @@ internal class DepositItemsDeskPatch
         return true;
     }
 
-    [HarmonyPatch("MicrophoneSpeak")]
+    [HarmonyPatch(nameof(DepositItemsDesk.MicrophoneSpeak))]
     [HarmonyPrefix]
-    static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance)
+    private static bool MicrophoneSpeakPatch(ref DepositItemsDesk __instance)
     {
         List<AudioClip> audioClips = [
             .. __instance.microphoneAudios,

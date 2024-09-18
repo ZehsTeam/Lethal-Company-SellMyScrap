@@ -1,13 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.Dependencies;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class ConfigHelper
+public static class ConfigHelper
 {
     // Config Items
     private static List<ConfigItem> _sellConfigItems = [];
@@ -82,7 +85,7 @@ public class ConfigHelper
         configItem = GetConfigItem(key);
         if (configItem == null) return false;
 
-        if (configItem.IsHostOnly && !Plugin.IsHostOrServer) return false;
+        if (configItem.IsHostOnly && !NetworkUtils.IsServer) return false;
 
         if (configItem.Type == typeof(bool))
         {
@@ -190,12 +193,12 @@ public class ConfigHelper
 
         string additionalHeaderMessage = string.Empty;
 
-        if (syncedWithHost && !Plugin.IsHostOrServer)
+        if (syncedWithHost && !NetworkUtils.IsServer)
         {
             additionalHeaderMessage = " (Synced with host)";
         }
 
-        if (hostOnly && !Plugin.IsHostOrServer)
+        if (hostOnly && !NetworkUtils.IsServer)
         {
             additionalHeaderMessage = " (Host only)";
         }
@@ -215,6 +218,68 @@ public class ConfigHelper
 
         return $"{message.Trim()}\n\n";
     }
+
+    #region LethalConfig
+    public static void SetModIcon(Sprite sprite)
+    {
+        if (LethalConfigProxy.Enabled)
+        {
+            LethalConfigProxy.SetModIcon(sprite);
+        }
+    }
+
+    public static void SetModDescription(string description)
+    {
+        if (LethalConfigProxy.Enabled)
+        {
+            LethalConfigProxy.SetModDescription(description);
+        }
+    }
+
+    public static void SkipAutoGen()
+    {
+        if (LethalConfigProxy.Enabled)
+        {
+            LethalConfigProxy.SkipAutoGen();
+        }
+    }
+
+    public static ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, bool requiresRestart, string description, AcceptableValueBase acceptableValues = null, Action<T> settingChanged = null, ConfigFile configFile = null)
+    {
+        configFile ??= Plugin.Instance.Config;
+
+        var configEntry = acceptableValues == null
+            ? configFile.Bind(section, key, defaultValue, description)
+            : configFile.Bind(section, key, defaultValue, new ConfigDescription(description, acceptableValues));
+
+        if (settingChanged != null)
+        {
+            configEntry.SettingChanged += (object sender, EventArgs e) => settingChanged?.Invoke(configEntry.Value);
+        }
+
+        if (LethalConfigProxy.Enabled)
+        {
+            if (acceptableValues == null)
+            {
+                LethalConfigProxy.AddConfig(configEntry, requiresRestart);
+            }
+            else
+            {
+                LethalConfigProxy.AddConfigSlider(configEntry, requiresRestart);
+            }
+        }
+
+        return configEntry;
+    }
+
+    public static void AddButton(string section, string name, string description, string buttonText, Action callback)
+    {
+        if (LethalConfigProxy.Enabled)
+        {
+            LethalConfigProxy.AddButton(section, name, description, buttonText, callback);
+        }
+    }
+    #endregion
 }
 
 public class ConfigItem
@@ -225,12 +290,12 @@ public class ConfigItem
     public Action<string> SetValue;
     public Func<string> GetValue;
 
-    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> SetValue, Func<string> GetValue)
+    public ConfigItem(string key, Type type, bool isHostOnly, Action<string> setValue, Func<string> getValue)
     {
         Key = key;
         Type = type;
         IsHostOnly = isHostOnly;
-        this.SetValue = SetValue;
-        this.GetValue = GetValue;
+        SetValue = setValue;
+        GetValue = getValue;
     }
 }

@@ -5,54 +5,84 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class PlayerUtils
+internal static class PlayerUtils
 {
     private static float _previousPlayerMovementSpeed;
     private static float _previousPlayerJumpForce;
 
-    #region Takerst
-    public static bool IsLocalPlayerTakerst()
+    public static PlayerControllerB GetLocalPlayerScript()
     {
-        return IsPlayerTakerst(GetLocalPlayerScript());
+        if (GameNetworkManager.Instance == null) return null;
+        return GameNetworkManager.Instance.localPlayerController;
     }
 
-    public static bool IsPlayerTakerst(PlayerControllerB playerScript)
+    public static bool IsLocalPlayer(PlayerControllerB playerScript)
     {
-        if (playerScript.playerSteamId == 76561197980238122) return true;
-        if (playerScript.playerUsername == "Takerst") return true;
-
-        return false;
+        return playerScript == GetLocalPlayerScript();
     }
-    #endregion
 
-    #region Magoroku
-    public static bool HasPlayerMagoroku()
+    public static bool IsLocalPlayer(PlayerName playerName)
     {
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        return SteamUtils.IsLocalClient(playerName);
+    }
+
+    public static bool IsLocalPlayer(PlayerName[] playerNames)
+    {
+        foreach (var playerName in playerNames)
         {
-            if (IsPlayerMagoroku(playerScript)) return true;
+            if (SteamUtils.IsLocalClient(playerName))
+            {
+                return true;
+            }
         }
 
         return false;
     }
 
-    public static bool IsLocalPlayerMagoroku()
+    public static bool IsPlayer(PlayerControllerB playerScript, PlayerName playerName)
     {
-        return IsPlayerMagoroku(GetLocalPlayerScript());
+        if (playerScript == null) return false;
+
+        return SteamUtils.IsPlayer(playerName, playerScript.playerUsername, playerScript.playerSteamId);
     }
 
-    public static bool IsPlayerMagoroku(PlayerControllerB playerScript)
+    public static bool HasPlayer(PlayerName playerName)
     {
-        if (playerScript.playerSteamId == 76561197982837475) return true;
-        if (playerScript.playerUsername == "Magoroku") return true;
+        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (IsPlayer(playerScript, playerName))
+            {
+                return true;
+            }
+        }
 
         return false;
     }
-    #endregion
 
-    public static PlayerControllerB GetLocalPlayerScript()
+    public static PlayerControllerB GetPlayerScript(PlayerName playerName)
     {
-        return GameNetworkManager.Instance.localPlayerController;
+        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (IsPlayer(playerScript, playerName))
+            {
+                return playerScript;
+            }
+        }
+
+        return null;
+    }
+
+    public static PlayerControllerB GetPlayerScriptByClientId(ulong clientId)
+    {
+        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (playerScript.actualClientId == clientId)
+            {
+                return playerScript;
+            }
+        }
+
+        return null;
     }
 
     public static bool AreAllPlayersDead()

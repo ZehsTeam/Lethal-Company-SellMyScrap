@@ -1,79 +1,74 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class NetworkUtils
+public static class NetworkUtils
 {
-    public static string ConvertIntListToString(List<int> list)
+    public static bool IsServer
     {
-        return string.Join(',', list);
-    }
-
-    public static List<int> CovertStringToIntList(string list)
-    {
-        return list.Split(',').Select(int.Parse).ToList();
-    }
-
-    public static string GetNetworkObjectIdsString(List<GrabbableObject> grabbableObjects)
-    {
-        return ConvertIntListToString(GetNetworkObjectIds(grabbableObjects));
-    }
-
-    public static List<int> GetNetworkObjectIds(List<GrabbableObject> grabbableObjects)
-    {
-        List<int> intList = new List<int>();
-
-        grabbableObjects.ForEach(grabbableObject =>
+        get
         {
-            int networkObjectId = GetNetworkObjectId(grabbableObject);
-            if (networkObjectId == -1) return;
+            if (NetworkManager.Singleton == null) return false;
 
-            intList.Add(networkObjectId);
-        });
-
-        return intList;
+            return NetworkManager.Singleton.IsServer;
+        }
     }
 
-    public static int GetNetworkObjectId(GrabbableObject grabbableObject)
+    public static bool IsHost
     {
-        NetworkObject networkObject = grabbableObject.gameObject.GetComponent<NetworkObject>();
-        return networkObject == null ? -1 : (int)networkObject.NetworkObjectId;
-    }
-
-    public static List<GrabbableObject> GetGrabbableObjects(string networkObjectIds)
-    {
-        return GetGrabbableObjects(CovertStringToIntList(networkObjectIds));
-    }
-
-    public static List<GrabbableObject> GetGrabbableObjects(List<int> networkObjectIds)
-    {
-        List<GrabbableObject> grabbableObjects = new List<GrabbableObject>();
-
-        networkObjectIds.ForEach(networkObjectId =>
+        get
         {
-            GrabbableObject grabbableObject = GetGrabbableObject(networkObjectId);
-            if (grabbableObject == null) return;
+            if (NetworkManager.Singleton == null) return false;
 
-            grabbableObjects.Add(grabbableObject);
-        });
+            return NetworkManager.Singleton.IsHost;
+        }
+    }
+
+    public static ulong GetLocalClientId()
+    {
+        return NetworkManager.Singleton.LocalClientId;
+    }
+
+    public static bool IsLocalClientId(ulong clientId)
+    {
+        return clientId == GetLocalClientId();
+    }
+
+    public static NetworkObjectReference[] GetNetworkObjectReferences(List<GrabbableObject> grabbableObjects)
+    {
+        if (grabbableObjects == null || grabbableObjects.Count == 0) return [];
+
+        List<NetworkObjectReference> networkObjectReferences = [];
+
+        foreach (var grabbableObject in grabbableObjects)
+        {
+            if (grabbableObject.TryGetComponent(out NetworkObject networkObject))
+            {
+                networkObjectReferences.Add(networkObject);
+            }
+        }
+
+        return networkObjectReferences.ToArray();
+    }
+
+    public static List<GrabbableObject> GetGrabbableObjects(NetworkObjectReference[] networkObjectReferences)
+    {
+        if (networkObjectReferences == null || networkObjectReferences.Length == 0) return [];
+
+        List<GrabbableObject> grabbableObjects = [];
+
+        foreach (var networkObjectReference in networkObjectReferences)
+        {
+            if (!networkObjectReference.TryGet(out NetworkObject networkObject)) continue;
+
+            if (networkObject.TryGetComponent(out GrabbableObject grabbableObject))
+            {
+                grabbableObjects.Add(grabbableObject);
+            }
+        }
 
         return grabbableObjects;
-    }
-
-    public static GrabbableObject GetGrabbableObject(int networkObjectId)
-    {
-        NetworkObject networkObject = GetNetworkObject(networkObjectId);
-        if (networkObject == null) return null;
-
-        return networkObject.gameObject.GetComponent<GrabbableObject>();
-    }
-
-    public static NetworkObject GetNetworkObject(int networkObjectId)
-    {
-        NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue((ulong)networkObjectId, out NetworkObject networkObject);
-        return networkObject;
     }
 }

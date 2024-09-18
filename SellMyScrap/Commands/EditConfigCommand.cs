@@ -141,7 +141,7 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
         }
 
-        if (configItem.IsHostOnly && !Plugin.IsHostOrServer)
+        if (configItem.IsHostOnly && !NetworkUtils.IsServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can edit this setting.\n\n"));
         }
@@ -213,7 +213,7 @@ public class JsonListEditor
         string[] _args = Utils.GetArrayToLower(args);
         List = GetValue().ToList();
 
-        if (IsHostOnly && !Plugin.IsHostOrServer)
+        if (IsHostOnly && !NetworkUtils.IsServer)
         {
             return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can edit this setting.\n\n"));
         }

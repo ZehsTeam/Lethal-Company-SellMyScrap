@@ -148,7 +148,7 @@ public class CommandFlag
     public bool CanHaveData;
     public string Data;
 
-    public bool CanUse => IsHostOnly ? Plugin.IsHostOrServer : true;
+    public bool CanUse => IsHostOnly ? NetworkUtils.IsServer : true;
 
     public CommandFlag(string key, bool isHostOnly = false, bool canHaveData = false, string data = "")
     {

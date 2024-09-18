@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class ModpackSaveSystem
+internal static class ModpackSaveSystem
 {
     public const string FileName = $"{MyPluginInfo.PLUGIN_NAME}_SaveData.json";
 
@@ -21,7 +22,7 @@ internal class ModpackSaveSystem
     public static bool FileExists => File.Exists(FilePath);
 
     private static JObject _saveFileObject;
-    
+
     public static void Initialize()
     {
         if (!FileExists)
@@ -37,38 +38,49 @@ internal class ModpackSaveSystem
         return _saveFileObject.ContainsKey(key);
     }
 
-    public static JToken ReadValue(string key, JToken defaultValue)
+    public static T ReadValue<T>(string key, T defaultValue = default)
     {
-        if (TryReadValue(key, out JToken value))
+        if (_saveFileObject.TryGetValue(key, out JToken jToken))
         {
-            return value;
+            try
+            {
+                // Attempt to convert the JToken to the specified type T
+                return jToken.ToObject<T>();
+            }
+            catch (JsonException ex)
+            {
+                // Handle JSON conversion errors
+                Plugin.logger.LogError($"JSON Conversion Error: {ex.Message}");
+            }
+            catch (ArgumentNullException ex)
+            {
+                // Handle cases where the JToken is null
+                Plugin.logger.LogError($"Argument Null Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Handle any other unexpected exceptions
+                Plugin.logger.LogError($"Unexpected Error: {ex.Message}");
+            }
+
+            // Return the default value of T if conversion fails
+            return defaultValue;
         }
 
         return defaultValue;
     }
 
-    public static bool TryReadValue(string key, out JToken value)
+    public static void WriteValue<T>(string key, T value)
     {
-        value = string.Empty;
+        JToken jToken = JToken.FromObject(value);
 
-        if (_saveFileObject.TryGetValue(key, out JToken jToken))
-        {
-            value = jToken;
-            return true;
-        }
-
-        return false;
-    }
-
-    public static void WriteValue(string key, JToken value)
-    {
         if (_saveFileObject.ContainsKey(key))
         {
-            _saveFileObject[key] = value;
+            _saveFileObject[key] = jToken;
         }
         else
         {
-            _saveFileObject.Add(key, value);
+            _saveFileObject.Add(key, jToken);
         }
 
         WriteFile(_saveFileObject);

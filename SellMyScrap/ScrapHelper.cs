@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class ScrapHelper
+internal static class ScrapHelper
 {
     public static GameObject HangarShip
     {

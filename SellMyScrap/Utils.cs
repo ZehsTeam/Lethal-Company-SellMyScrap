@@ -7,7 +7,7 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class Utils
+internal static class Utils
 {
     public static bool RandomPercent(float percent)
     {
@@ -80,14 +80,7 @@ public class Utils
         int valueOver = quotaFulfilled - profitQuota;
         int overtimeBonus = valueOver / 5 + 15 * TimeOfDayPatch.GetDaysUntilDeadline();
 
-        return overtimeBonus;
-    }
-
-    public static void DisplayNotification(string displayText)
-    {
-        HUDManager.Instance.globalNotificationAnimator.SetTrigger("TriggerNotif");
-        HUDManager.Instance.globalNotificationText.text = displayText;
-        HUDManager.Instance.UIAudio.PlayOneShot(HUDManager.Instance.globalNotificationSFX);
+        return Mathf.Max(overtimeBonus, 0);
     }
 
     public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)

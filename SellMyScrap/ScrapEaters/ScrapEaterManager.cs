@@ -7,7 +7,7 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class ScrapEaterManager
+public static class ScrapEaterManager
 {
     public static List<ScrapEater> ScrapEaters { get; private set; } = [];
 
@@ -66,7 +66,7 @@ public class ScrapEaterManager
 
     internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
     {
-        if (!Plugin.IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         int index = GetRandomScrapEaterIndex();
         if (index == -1) return;
@@ -76,7 +76,7 @@ public class ScrapEaterManager
 
     internal static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
     {
-        if (!Plugin.IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         GameObject prefab = ScrapEaters[index].SpawnPrefab;
         GameObject gameObject = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
@@ -91,9 +91,9 @@ public class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        if (SteamUtils.IsLocalPlayerPsycho() && !(bool)ModpackSaveSystem.ReadValue("ForceShowedTakeyScrapEater", false) && Utils.RandomPercent(80))
+        if (PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic) && !ModpackSaveSystem.ReadValue("ForceShowedTakeyScrapEater3", false) && Utils.RandomPercent(80))
         {
-            ModpackSaveSystem.WriteValue("ForceShowedTakeyScrapEater", true);
+            ModpackSaveSystem.WriteValue("ForceShowedTakeyScrapEater3", true);
             return 1; // Takey scrap eater index.
         }
 

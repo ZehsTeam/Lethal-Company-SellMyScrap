@@ -18,7 +18,7 @@ public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     protected override void Start()
     {
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
 

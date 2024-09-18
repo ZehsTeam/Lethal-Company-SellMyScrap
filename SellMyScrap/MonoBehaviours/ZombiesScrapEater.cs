@@ -47,7 +47,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
 
     protected override void Start()
     {
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             _zombieState = (ZombieState)Random.Range(0, 5);
             _stateSFXIndex = GetStateSFXIndex();
@@ -64,7 +64,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(ZombieState state, int stateSFXIndex, int hurtSFXIndex, int idleSFXIndex, bool playDieAnimation)
     {
-        if (IsHostOrServer) return;
+        if (NetworkUtils.IsServer) return;
 
         _zombieState = state;
         _stateSFXIndex = stateSFXIndex;

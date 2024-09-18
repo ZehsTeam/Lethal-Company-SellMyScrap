@@ -3,14 +3,14 @@
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(StartMatchLever))]
-internal class StartMatchLeverPatch
+internal static class StartMatchLeverPatch
 {
     public static InteractTrigger InteractTrigger;
     public static bool DisplayedSellWarning;
 
     [HarmonyPatch(nameof(StartMatchLever.Start))]
     [HarmonyPostfix]
-    static void StartPatch(ref StartMatchLever __instance)
+    private static void StartPatch(ref StartMatchLever __instance)
     {
         InteractTrigger = __instance.GetComponent<InteractTrigger>();
         DisplayedSellWarning = false;
@@ -18,7 +18,7 @@ internal class StartMatchLeverPatch
 
     [HarmonyPatch(nameof(StartMatchLever.BeginHoldingInteractOnLever))]
     [HarmonyPostfix]
-    static void BeginHoldingInteractOnLeverPatch(ref StartMatchLever __instance)
+    private static void BeginHoldingInteractOnLeverPatch(ref StartMatchLever __instance)
     {
         // Return if there are still more days until the deadline AND reset the timeToHold on the InteractTrigger.
         if (TimeOfDay.Instance.daysUntilDeadline > 0 && __instance.triggerScript.timeToHold == 4.01f)

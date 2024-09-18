@@ -9,9 +9,9 @@ public class ScrapEater
     public GameObject SpawnPrefab;
     public Func<int> GetSpawnWeight;
 
-    public ScrapEater(GameObject spawnPrefab, Func<int> GetSpawnWeight)
+    public ScrapEater(GameObject spawnPrefab, Func<int> getSpawnWeight)
     {
         SpawnPrefab = spawnPrefab;
-        this.GetSpawnWeight = GetSpawnWeight;
+        GetSpawnWeight = getSpawnWeight;
     }
 }

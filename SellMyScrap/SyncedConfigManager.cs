@@ -260,150 +260,42 @@ public class SyncedConfigManager
     
     private void BindConfigs()
     {
-        ConfigFile configFile = Plugin.Instance.Config;
+        ConfigHelper.SkipAutoGen();
 
         // Sell Settings
-        SellGiftsCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "SellGifts"),
-            false,
-            new ConfigDescription("Do you want to sell Gifts?")
-        );
-        SellShotgunsCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "SellShotguns"),
-            false,
-            new ConfigDescription("Do you want to sell Shotguns?")
-        );
-        SellAmmoCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "SellAmmo"),
-            false,
-            new ConfigDescription("Do you want to sell Ammo?")
-        );
-        SellKnivesCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "SellKnives"),
-            false,
-            new ConfigDescription("Do you want to sell Kitchen knives?")
-        );
-        SellPicklesCfg = configFile.Bind(
-            new ConfigDefinition("Sell Settings", "SellPickles"),
-            true,
-            new ConfigDescription("Do you want to sell Jar of pickles?")
-        );
+        SellGiftsCfg =    ConfigHelper.Bind("Sell Settings", "SellGifts",    defaultValue: false, requiresRestart: false, "Do you want to sell Gifts?");
+        SellShotgunsCfg = ConfigHelper.Bind("Sell Settings", "SellShotguns", defaultValue: false, requiresRestart: false, "Do you want to sell Shotguns?");
+        SellAmmoCfg =     ConfigHelper.Bind("Sell Settings", "SellAmmo",     defaultValue: false, requiresRestart: false, "Do you want to sell Ammo?");
+        SellKnivesCfg =   ConfigHelper.Bind("Sell Settings", "SellKnives",   defaultValue: false, requiresRestart: false, "Do you want to sell Kitchen knives?");
+        SellPicklesCfg =  ConfigHelper.Bind("Sell Settings", "SellPickles",  defaultValue: true,  requiresRestart: false, "Do you want to sell Jar of pickles?");
 
         // Advanced Sell Settings
-        SellScrapWorthZeroCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "SellScrapWorthZero"),
-            false,
-            new ConfigDescription("Do you want to sell scrap worth zero?")
-        );
-        OnlySellScrapOnFloorCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "OnlySellScrapOnFloor"),
-            false,
-            new ConfigDescription("Do you want to sell scrap that is only on the floor?")
-        );
-        DontSellListJsonCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "DontSellListJson"),
-            JsonConvert.SerializeObject(new string[0]),
-            new ConfigDescription(GetDontSellListJsonDescription())
-        );
-        SellListJsonCfg = configFile.Bind(
-            new ConfigDefinition("Advanced Sell Settings", "SellListJson"),
-            JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" }),
-            new ConfigDescription(GetSellListJsonDescription())
-        );
+        SellScrapWorthZeroCfg =   ConfigHelper.Bind("Advanced Sell Settings", "SellScrapWorthZero",   defaultValue: false, requiresRestart: false, "Do you want to sell scrap worth zero?");
+        OnlySellScrapOnFloorCfg = ConfigHelper.Bind("Advanced Sell Settings", "OnlySellScrapOnFloor", defaultValue: false, requiresRestart: false, "Do you want to sell scrap that is only on the floor?");
+        DontSellListJsonCfg =     ConfigHelper.Bind("Advanced Sell Settings", "DontSellListJson",     defaultValue: JsonConvert.SerializeObject(new string[0]),                                                         requiresRestart: false, GetDontSellListJsonDescription());
+        SellListJsonCfg =         ConfigHelper.Bind("Advanced Sell Settings", "SellListJson",         defaultValue: JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" }), requiresRestart: false, GetSellListJsonDescription());
 
         // Terminal Settings
-        OverrideWelcomeMessageCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "OverrideWelcomeMessage"),
-            true,
-            new ConfigDescription("Overrides the terminal welcome message to add additional info.")
-        );
-        OverrideHelpMessageCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "OverrideHelpMessage"),
-            true,
-            new ConfigDescription("Overrides the terminal help message to add additional info.")
-        );
-        ShowFoundItemsCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "ShowFoundItems"),
-            true,
-            new ConfigDescription("Show found items on the confirmation screen.")
-        );
-        SortFoundItemsPriceCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "SortFoundItemsPrice"),
-            true,
-            new ConfigDescription("Sorts found items from most to least expensive.")
-        );
-        AlignFoundItemsPriceCfg = configFile.Bind(
-            new ConfigDefinition("Terminal Settings", "AlignFoundItemsPrice"),
-            true,
-            new ConfigDescription("Align all prices of found items.")
-        );
+        OverrideWelcomeMessageCfg = ConfigHelper.Bind("Terminal Settings", "OverrideWelcomeMessage", defaultValue: true, requiresRestart: false, "Overrides the terminal welcome message to add additional info.");
+        OverrideHelpMessageCfg =    ConfigHelper.Bind("Terminal Settings", "OverrideHelpMessage",    defaultValue: true, requiresRestart: false, "Overrides the terminal help message to add additional info.");
+        ShowFoundItemsCfg =         ConfigHelper.Bind("Terminal Settings", "ShowFoundItems",         defaultValue: true, requiresRestart: false, "Show found items on the confirmation screen.");
+        SortFoundItemsPriceCfg =    ConfigHelper.Bind("Terminal Settings", "SortFoundItemsPrice",    defaultValue: true, requiresRestart: false, "Sorts found items from most to least expensive.");
+        AlignFoundItemsPriceCfg =   ConfigHelper.Bind("Terminal Settings", "AlignFoundItemsPrice",   defaultValue: true, requiresRestart: false, "Align all prices of found items.");
 
         // Misc Settings
-        SpeakInShipCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "SpeakInShip"),
-            true,
-            new ConfigDescription("The Company will speak inside your ship after selling from the terminal.")
-        );
-        RareVoiceLineChanceCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "RareVoiceLineChance"),
-            5f,
-            new ConfigDescription("The percent chance the Company will say a rare microphone voice line after selling.")
-        );
-        ShowQuotaWarningCfg = configFile.Bind(
-            new ConfigDefinition("Misc Settings", "ShowQuotaWarning"),
-            true,
-            new ConfigDescription("If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building with 0 days left.")
-        );
+        SpeakInShipCfg =         ConfigHelper.Bind("Misc Settings", "SpeakInShip",         defaultValue: true, requiresRestart: false, "The Company will speak inside your ship after selling from the terminal.");
+        RareVoiceLineChanceCfg = ConfigHelper.Bind("Misc Settings", "RareVoiceLineChance", defaultValue: 5f,   requiresRestart: false, "The percent chance the Company will say a rare microphone voice line after selling.");
+        ShowQuotaWarningCfg =    ConfigHelper.Bind("Misc Settings", "ShowQuotaWarning",    defaultValue: true, requiresRestart: false, "If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building with 0 days left.");
 
         // Scrap Eater Settings
-        ScrapEaterChanceCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "ScrapEaterChance"),
-            75,
-            new ConfigDescription("The percent chance a scrap eater will spawn?!",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        OctolarSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "OctolarSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Octolar will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        TakeySpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "TakeySpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Takey will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        MaxwellSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "MaxwellSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Maxwell will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        YippeeSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "YippeeSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Yippee will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        CookieFumoSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "CookieFumoSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Cookie Fumo will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        PsychoSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "PsychoSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Psycho will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
-        ZombiesSpawnWeightCfg = configFile.Bind(
-            new ConfigDefinition("Scrap Eater Settings", "ZombiesSpawnWeight"),
-            1,
-            new ConfigDescription("The spawn chance weight Zombies will spawn?! (scrap eater)",
-            new AcceptableValueRange<int>(0, 100))
-        );
+        ScrapEaterChanceCfg =      ConfigHelper.Bind("Scrap Eater Settings", "ScrapEaterChance",      defaultValue: 75, requiresRestart: false, "The percent chance a scrap eater will spawn?!",                  new AcceptableValueRange<int>(0, 100));
+        OctolarSpawnWeightCfg =    ConfigHelper.Bind("Scrap Eater Settings", "OctolarSpawnWeight",    defaultValue: 1,  requiresRestart: false, "The spawn chance weight Octolar will spawn?! (scrap eater)",     new AcceptableValueRange<int>(0, 100));
+        TakeySpawnWeightCfg =      ConfigHelper.Bind("Scrap Eater Settings", "TakeySpawnWeight",      defaultValue: 1,  requiresRestart: false, "The spawn chance weight Takey will spawn?! (scrap eater)",       new AcceptableValueRange<int>(0, 100));
+        MaxwellSpawnWeightCfg =    ConfigHelper.Bind("Scrap Eater Settings", "MaxwellSpawnWeight",    defaultValue: 1,  requiresRestart: false, "The spawn chance weight Maxwell will spawn?! (scrap eater)",     new AcceptableValueRange<int>(0, 100));
+        YippeeSpawnWeightCfg =     ConfigHelper.Bind("Scrap Eater Settings", "YippeeSpawnWeight",     defaultValue: 1,  requiresRestart: false, "The spawn chance weight Yippee will spawn?! (scrap eater)",      new AcceptableValueRange<int>(0, 100));
+        CookieFumoSpawnWeightCfg = ConfigHelper.Bind("Scrap Eater Settings", "CookieFumoSpawnWeight", defaultValue: 1,  requiresRestart: false, "The spawn chance weight Cookie Fumo will spawn?! (scrap eater)", new AcceptableValueRange<int>(0, 100));
+        PsychoSpawnWeightCfg =     ConfigHelper.Bind("Scrap Eater Settings", "PsychoSpawnWeight",     defaultValue: 1,  requiresRestart: false, "The spawn chance weight Psycho will spawn?! (scrap eater)",      new AcceptableValueRange<int>(0, 100));
+        ZombiesSpawnWeightCfg =    ConfigHelper.Bind("Scrap Eater Settings", "ZombiesSpawnWeight",    defaultValue: 1,  requiresRestart: false, "The spawn chance weight Zombies will spawn?! (scrap eater)",     new AcceptableValueRange<int>(0, 100));
     }
 
     private string GetDontSellListJsonDescription()
@@ -607,7 +499,7 @@ public class SyncedConfigManager
 
     internal void TrySetCustomValues()
     {
-        if (SteamUtils.IsLocalPlayerInsym()) return;
+        if (SteamUtils.IsLocalClient(PlayerName.Insym)) return;
 
         TrySetCustomValuesForThorlar();
         TrySetCustomValuesForTakerst();
@@ -618,7 +510,7 @@ public class SyncedConfigManager
 
         if (DontSellListJson.Length == 1 && DontSellListJson[0].Equals("gold bar", System.StringComparison.OrdinalIgnoreCase))
         {
-            if (!(bool)ModpackSaveSystem.ReadValue("ResetScrapEaterChance", false))
+            if (!ModpackSaveSystem.ReadValue("ResetScrapEaterChance", false))
             {
                 ScrapEaterChance = (int)ScrapEaterChanceCfg.DefaultValue;
 
@@ -629,9 +521,9 @@ public class SyncedConfigManager
 
     private void TrySetCustomValuesForThorlar()
     {
-        if (!SteamUtils.IsLocalPlayerThorlar()) return;
+        if (!SteamUtils.IsLocalClient(PlayerName.Thorlar)) return;
 
-        if (TakeySpawnWeight == 1 && !(bool)ModpackSaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
+        if (TakeySpawnWeight == 1 && !ModpackSaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
         {
             TakeySpawnWeight = 0;
 
@@ -641,7 +533,7 @@ public class SyncedConfigManager
 
     private void TrySetCustomValuesForTakerst()
     {
-        if (!SteamUtils.IsLocalPlayerTakerst()) return;
+        if (!SteamUtils.IsLocalClient(PlayerName.Takerst)) return;
         
         if (!Utils.ArrayContains(DontSellListJson, "Smol Takey"))
         {
@@ -658,7 +550,7 @@ public class SyncedConfigManager
 
     private void SyncedConfigsChanged()
     {
-        if (!Plugin.IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(this));
     }

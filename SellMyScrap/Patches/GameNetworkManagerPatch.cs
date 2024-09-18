@@ -6,11 +6,11 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(GameNetworkManager))]
-internal class GameNetworkManagerPatch
+internal static class GameNetworkManagerPatch
 {
-    [HarmonyPatch("Start")]
+    [HarmonyPatch(nameof(GameNetworkManager.Start))]
     [HarmonyPostfix]
-    static void StartPatch()
+    private static void StartPatch()
     {
         AddNetworkPrefabs();
     }

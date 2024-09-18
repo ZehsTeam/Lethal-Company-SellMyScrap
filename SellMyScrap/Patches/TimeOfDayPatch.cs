@@ -3,22 +3,22 @@
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(TimeOfDay))]
-internal class TimeOfDayPatch
+internal static class TimeOfDayPatch
 {
     private static int _daysUntilDeadline = 3;
     private static int _preDaysUntilDeadline = 3;
     private static int _postDaysUntilDeadline = 3;
 
-    [HarmonyPatch("SetBuyingRateForDay")]
+    [HarmonyPatch(nameof(TimeOfDay.SetBuyingRateForDay))]
     [HarmonyPrefix]
-    static void SetBuyingRateForDayPatchPrefix()
+    private static void SetBuyingRateForDayPatchPrefix()
     {
         _preDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
     }
 
-    [HarmonyPatch("SetBuyingRateForDay")]
+    [HarmonyPatch(nameof(TimeOfDay.SetBuyingRateForDay))]
     [HarmonyPostfix]
-    static void SetBuyingRateForDayPatchPostfix()
+    private static void SetBuyingRateForDayPatchPostfix()
     {
         _postDaysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
 

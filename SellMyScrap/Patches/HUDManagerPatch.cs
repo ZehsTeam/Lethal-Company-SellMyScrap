@@ -7,12 +7,12 @@ using UnityEngine.UI;
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(HUDManager))]
-internal class HUDManagerPatch
+internal static class HUDManagerPatch
 {
-    [HarmonyPatch("DisplayCreditsEarning")]
+    [HarmonyPatch(nameof(HUDManager.DisplayCreditsEarning))]
     [HarmonyPrefix]
     [HarmonyPriority(Priority.First)]
-    static bool DisplayCreditsEarningPatch(ref HUDManager __instance, int creditsEarned, GrabbableObject[] objectsSold, int newGroupCredits, ref Coroutine ___scrollRewardTextCoroutine)
+    private static bool DisplayCreditsEarningPatch(ref HUDManager __instance, int creditsEarned, GrabbableObject[] objectsSold, int newGroupCredits, ref Coroutine ___scrollRewardTextCoroutine)
     {
         Plugin.logger.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");
 

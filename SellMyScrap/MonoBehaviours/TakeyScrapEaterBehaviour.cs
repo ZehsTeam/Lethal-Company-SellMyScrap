@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Compatibility;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +8,26 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+public enum TakeyVariantType
+{
+    Default,
+    Gazmi,
+    Shady,
+    Captain,
+    Gamble,
+    ChickenDance,
+    DinkDonk,
+    FightClub,
+    Cute,
+    Feels,
+    Stabby,
+    LUBBERS,
+    ALOO,
+    Gift,
+    Cake
+}
+
 public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 {
     [Space(20f)]
@@ -69,7 +89,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         flameEffectsObject.SetActive(false);
         jetpackObject.SetActive(false);
 
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             _variantIndex = GetRandomVariantIndex();
             _cardMeshIndex = Random.Range(0, CardMeshes.Length);
@@ -89,7 +109,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [ClientRpc]
     private void SetDataClientRpc(int variantIndex, int cardMeshIndex, bool explode, int voiceLineIndex, int beforeEatIndex)
     {
-        if (Plugin.IsHostOrServer) return;
+        if (NetworkUtils.IsServer) return;
 
         _variantIndex = variantIndex;
         _cardMeshIndex = cardMeshIndex;
@@ -103,13 +123,13 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     #region Variant Stuff
     private int GetRandomVariantIndex()
     {
-        if (SteamUtils.IsLocalPlayerPsycho() && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", false))
+        if (PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", false))
         {
-            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant", true);
+            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", true);
             return GetVariantIndex(TakeyVariantType.ChickenDance);
         }
 
-        if (SteamUtils.IsLocalPlayerTakerst() && !(bool)ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(_ => _.scrapValue) >= 1000 && Utils.RandomPercent(30))
+        if (PlayerUtils.IsLocalPlayer(PlayerName.Takerst) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(_ => _.scrapValue) >= 1000 && Utils.RandomPercent(60))
         {
             ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterDinkDonkVariant", true);
             return GetVariantIndex(TakeyVariantType.DinkDonk);
@@ -279,8 +299,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
-        yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
-        yield return new WaitForSeconds(1f);
+        if (!(IsVariantType(TakeyVariantType.DinkDonk) && playedCustomSuckAnimation))
+        {
+            yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
+            yield return new WaitForSeconds(1f);
+        }
 
         if (IsVariantType(TakeyVariantType.ChickenDance))
         {
@@ -326,15 +349,9 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         if (!IsVariantType(TakeyVariantType.DinkDonk)) return;
 
-        try
+        if (TakeyPlushProxy.Enabled)
         {
-            if (!TakeyPlushCompat.HasMod) return;
-
-            TakeyPlushCompat.TriggerDinkDonkScrapEaterSpawnedEvent();
-        }
-        catch (System.Exception e)
-        {
-            Plugin.logger.LogError(e);
+            TakeyPlushProxy.TriggerDinkDonkScrapEaterSpawnedEvent();
         }
     }
 
@@ -409,22 +426,6 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         smokeTrailParticleSystem.transform.SetParent(null);
         smokeTrailParticleSystem.gameObject.AddComponent<DestroyAfterTimeBehaviour>().duration = 10f;
     }
-}
-
-public enum TakeyVariantType
-{
-    Default,
-    Gazmi,
-    Shady,
-    Captain,
-    Gamble,
-    ChickenDance,
-    DinkDonk,
-    FightClub,
-    Cute,
-    Feels,
-    Stabby,
-    LUBBERS
 }
 
 [System.Serializable]

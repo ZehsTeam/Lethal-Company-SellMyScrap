@@ -21,7 +21,7 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     protected override void Start()
     {
-        if (IsHostOrServer && materialVariants.Length > 0)
+        if (NetworkUtils.IsServer && materialVariants.Length > 0)
         {
             _materialVariantIndex = Random.Range(0, materialVariants.Length);
 

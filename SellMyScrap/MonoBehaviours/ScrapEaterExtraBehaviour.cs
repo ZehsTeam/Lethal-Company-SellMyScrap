@@ -41,7 +41,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
         transform.localRotation = Quaternion.identity;
         transform.Rotate(spawnRotationOffset, Space.Self);
 
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             landIndex = Random.Range(0, landSFX.Length);
 

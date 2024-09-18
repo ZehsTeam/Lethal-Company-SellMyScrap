@@ -71,7 +71,7 @@ internal class SellCommand : Command
 
     protected static string GetOvertimeBonusWithValueString(int value, int targetValue, out bool hasEnoughWithOvertimeBonus)
     {
-        int overtimeBonus = Mathf.Max(Utils.GetOvertimeBonus(value), 0);
+        int overtimeBonus = Utils.GetOvertimeBonus(value);
 
         hasEnoughWithOvertimeBonus = value + overtimeBonus >= targetValue;
 

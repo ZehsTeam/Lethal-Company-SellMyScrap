@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
-internal class Content
+internal static class Content
 {
     // Network Handler
     public static GameObject NetworkHandlerPrefab;
@@ -16,6 +16,9 @@ internal class Content
     public static GameObject CookieFumoScrapEaterPrefab;
     public static GameObject PsychoScrapEaterPrefab;
     public static GameObject ZombiesScrapEaterPrefab;
+
+    // Sprites
+    public static Sprite ModIcon;
 
     public static void Load()
     {
@@ -42,6 +45,9 @@ internal class Content
             CookieFumoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("CookieFumoScrapEater");
             PsychoScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("PsychoScrapEater");
             ZombiesScrapEaterPrefab = assetBundle.LoadAsset<GameObject>("ZombiesScrapEater");
+
+            // Sprites
+            ModIcon = assetBundle.LoadAsset<Sprite>("ModIcon");
 
             Plugin.logger.LogInfo("Successfully loaded assets from AssetBundle!");
         }

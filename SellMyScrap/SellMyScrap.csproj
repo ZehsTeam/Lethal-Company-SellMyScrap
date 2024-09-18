@@ -46,6 +46,7 @@
   </ItemGroup>
   
   <PropertyGroup>
+    <LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
     <PluginsFolder>D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins</PluginsFolder>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -67,6 +68,7 @@
 	</ItemGroup>
   
   <ItemGroup>
+    <Reference Include="LethalConfig"><HintPath>$(LibraryFolder)\AinaVT-LethalConfig\LethalConfig.dll</HintPath></Reference>
     <Reference Include="TakeyPlush"> <HintPath>$(PluginsFolder)\com.github.zehsteam.TakeyPlush.dll</HintPath></Reference>
 	</ItemGroup>
   

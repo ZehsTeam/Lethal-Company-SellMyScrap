@@ -26,9 +26,9 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     protected override void Start()
     {
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
-            if (PlayerUtils.HasPlayerMagoroku())
+            if (PlayerUtils.HasPlayer(PlayerName.Magoroku))
             {
                 _isEvil = Utils.RandomPercent(80);
             }
@@ -51,7 +51,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _isEvil = isEvil;
         _meowIndex = meowIndex;
 
-        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
+        if (PlayerUtils.IsLocalPlayer(PlayerName.Magoroku) && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
         {
             _isTarget = true;
         }

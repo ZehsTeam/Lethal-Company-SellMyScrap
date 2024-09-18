@@ -2,7 +2,7 @@
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
-internal class CommandManager
+internal static class CommandManager
 {
     private static List<Command> _commands = [];
 

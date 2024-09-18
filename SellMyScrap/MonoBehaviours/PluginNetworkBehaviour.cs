@@ -1,7 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using System;
-using System.Collections.Generic;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -18,37 +17,46 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     [ClientRpc]
     public void SendConfigToPlayerClientRpc(SyncedConfigData syncedConfigData, ClientRpcParams clientRpcParams = default)
     {
-        if (Plugin.IsHostOrServer) return;
+        if (NetworkUtils.IsServer) return;
 
         Plugin.logger.LogInfo("Syncing config with host.");
         Plugin.ConfigManager.SetHostConfigData(syncedConfigData);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void PerformSellServerRpc(int fromPlayerId, string networkObjectIdsString, SellType sellType, int value, int amount, int scrapEaterIndex = -1)
+    public void PerformSellServerRpc(NetworkObjectReference[] networkObjectReferences, SellType sellType, int value, int amount, int scrapEaterIndex = -1, ServerRpcParams serverRpcParams = default)
     {
-        PlayerControllerB fromPlayerScript = StartOfRound.Instance.allPlayerScripts[fromPlayerId];
-        List<GrabbableObject> grabbableObjects = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
+        var senderClientId = serverRpcParams.Receive.SenderClientId;
+        if (!NetworkManager.ConnectedClients.ContainsKey(senderClientId)) return;
 
-        string message = $"{fromPlayerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
+        PlayerControllerB playerScript = PlayerUtils.GetPlayerScriptByClientId(senderClientId);
+
+        if (playerScript == null)
+        {
+            Plugin.logger.LogError("Failed to perform sell server rpc. PlayerControllerB is null.");
+            return;
+        }
+
+        string message = $"{playerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {amount} items for ${value}";
 
         Plugin.logger.LogInfo(message);
-        Utils.DisplayNotification(message);
-        Plugin.Instance.PerformSellOnServerFromClient(grabbableObjects, sellType, scrapEaterIndex);
+        HUDManager.Instance.DisplayGlobalNotification(message);
+
+        Plugin.Instance.PerformSellOnServerFromClient(networkObjectReferences, sellType, scrapEaterIndex);
     }
 
     [ClientRpc]
-    public void PlaceItemsOnCounterClientRpc(string networkObjectIdsString)
+    public void PlaceItemsOnCounterClientRpc(NetworkObjectReference[] networkObjectReferences)
     {
-        if (Plugin.IsHostOrServer) return;
+        if (NetworkUtils.IsServer) return;
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectIdsString));
+        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
     }
 
     [ClientRpc]
     public void SetMicrophoneSpeakDataClientRpc(bool speakInShip, int clipIndex)
     {
-        if (Plugin.IsHostOrServer) return;
+        if (NetworkUtils.IsServer) return;
 
         DepositItemsDeskPatch.SetMicrophoneSpeakDataOnClient(speakInShip, clipIndex);
     }

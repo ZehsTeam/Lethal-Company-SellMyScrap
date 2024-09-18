@@ -6,40 +6,40 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(StartOfRound))]
-internal class StartOfRoundPatch
+internal static class StartOfRoundPatch
 {
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(StartOfRound.Awake))]
     [HarmonyPostfix]
-    static void AwakePatch()
+    private static void AwakePatch()
     {
         SpawnNetworkHandler();
     }
 
     private static void SpawnNetworkHandler()
     {
-        if (!Plugin.IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         var networkHandlerHost = Object.Instantiate(Content.NetworkHandlerPrefab, Vector3.zero, Quaternion.identity);
         networkHandlerHost.GetComponent<NetworkObject>().Spawn();
     }
 
-    [HarmonyPatch("Start")]
+    [HarmonyPatch(nameof(StartOfRound.Start))]
     [HarmonyPostfix]
-    static void StartPatch()
+    private static void StartPatch()
     {
         Plugin.ConfigManager.TrySetCustomValues();
     }
 
-    [HarmonyPatch("OnClientConnect")]
+    [HarmonyPatch(nameof(StartOfRound.OnClientConnect))]
     [HarmonyPrefix]
-    static void OnClientConnectPatch(ref ulong clientId)
+    private static void OnClientConnectPatch(ref ulong clientId)
     {
         SendConfigToNewConnectedPlayer(clientId);
     }
 
     private static void SendConfigToNewConnectedPlayer(ulong clientId)
     {
-        if (!Plugin.IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
@@ -54,9 +54,9 @@ internal class StartOfRoundPatch
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.ConfigManager), clientRpcParams);
     }
 
-    [HarmonyPatch("OnLocalDisconnect")]
+    [HarmonyPatch(nameof(StartOfRound.OnLocalDisconnect))]
     [HarmonyPrefix]
-    static void OnLocalDisconnectPatch()
+    private static void OnLocalDisconnectPatch()
     {
         Plugin.Instance.OnLocalDisconnect();
     }

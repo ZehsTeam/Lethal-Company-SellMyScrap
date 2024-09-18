@@ -23,8 +23,6 @@ internal class Plugin : BaseUnityPlugin
 
     internal static SyncedConfigManager ConfigManager;
 
-    public static bool IsHostOrServer => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
-
     public ScrapToSell ScrapToSell { get; private set; }
     public SellRequest SellRequest { get; private set; }
 
@@ -43,15 +41,18 @@ internal class Plugin : BaseUnityPlugin
         harmony.PatchAll(typeof(DepositItemsDeskPatch));
         harmony.PatchAll(typeof(StartMatchLeverPatch));
         harmony.PatchAll(typeof(InteractTriggerPatch));
-
-        ModpackSaveSystem.Initialize();
         
         ConfigManager = new SyncedConfigManager();
 
         Content.Load();
+        ModpackSaveSystem.Initialize();
+
         CommandManager.Initialize();
         ConfigHelper.Initialize();
         ScrapEaterManager.Initialize();
+
+        ConfigHelper.SetModIcon(Content.ModIcon);
+        ConfigHelper.SetModDescription("Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +");
 
         NetcodePatcherAwake();
     }
@@ -131,7 +132,7 @@ internal class Plugin : BaseUnityPlugin
 
         logger.LogInfo($"Attempting to sell {ScrapToSell.Amount} items for ${ScrapToSell.Value}.");
 
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             ConfirmSellRequestOnServer();
         }
@@ -150,10 +151,7 @@ internal class Plugin : BaseUnityPlugin
 
     private void ConfirmSellRequestOnClient()
     {
-        int fromPlayerId = (int)StartOfRound.Instance.localPlayerController.playerClientId;
-        string networkObjectIdsString = NetworkUtils.GetNetworkObjectIdsString(ScrapToSell.Scrap);
-
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(fromPlayerId, networkObjectIdsString, SellRequest.SellType, SellRequest.RealValue, ScrapToSell.Amount, SellRequest.ScrapEaterIndex);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(NetworkUtils.GetNetworkObjectReferences(ScrapToSell.Scrap), SellRequest.SellType, SellRequest.RealValue, ScrapToSell.Amount, SellRequest.ScrapEaterIndex);
     }
 
     public void CancelSellRequest()
@@ -163,9 +161,9 @@ internal class Plugin : BaseUnityPlugin
     }
     #endregion
 
-    public void PerformSellOnServerFromClient(List<GrabbableObject> scrap, SellType sellType, int scrapEaterIndex = -1)
+    public void PerformSellOnServerFromClient(NetworkObjectReference[] networkObjectReferences, SellType sellType, int scrapEaterIndex = -1)
     {
-        ScrapToSell = new ScrapToSell(scrap);
+        ScrapToSell = new ScrapToSell(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
         CreateSellRequest(sellType, ScrapToSell.Value, ScrapToSell.Value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
         ConfirmSellRequest();
     }
@@ -206,7 +204,7 @@ internal class Plugin : BaseUnityPlugin
         }
 
         DepositItemsDeskPatch.PlaceItemsOnCounter(ScrapToSell.Scrap);
-        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectIdsString(ScrapToSell.Scrap));
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectReferences(ScrapToSell.Scrap));
         yield return new WaitForSeconds(0.5f);
         DepositItemsDeskPatch.SellItemsOnServer();
 

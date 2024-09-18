@@ -9,8 +9,6 @@ namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class ScrapEaterBehaviour : NetworkBehaviour
 {
-    protected bool IsHostOrServer => IsHost || IsServer;
-
     [Header("Scrap Eater")]
     [Space(5f)]
     public GameObject modelObject = null;
@@ -25,11 +23,11 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     {
         modelObject.SetActive(false);
 
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             if (GameNetworkManager.Instance.connectedPlayers > 1)
             {
-                SetTargetScrapClientRpc(NetworkUtils.GetNetworkObjectIdsString(targetScrap));
+                SetTargetScrapClientRpc(NetworkUtils.GetNetworkObjectReferences(targetScrap));
             }
             else
             {
@@ -45,14 +43,17 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
-    protected void SetTargetScrapClientRpc(string networkObjectIdsString)
+    protected void SetTargetScrapClientRpc(NetworkObjectReference[] networkObjectReferences)
     {
-        if (!IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
-            targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectIdsString);
-            targetScrap.ForEach(item => item.grabbable = false);
+            ReceivedTargetScrapServerRpc();
+            return;
         }
-        
+
+        targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectReferences);
+        targetScrap.ForEach(item => item.grabbable = false);
+
         ReceivedTargetScrapServerRpc();
     }
 
@@ -134,7 +135,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
     protected void SellTargetScrapOnServer()
     {
-        if (!IsHostOrServer) return;
+        if (!NetworkUtils.IsServer) return;
 
         DepositItemsDeskPatch.SellItemsOnServer();
     }

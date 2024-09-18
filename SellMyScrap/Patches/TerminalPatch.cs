@@ -5,7 +5,7 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(Terminal))]
-internal class TerminalPatch
+internal static class TerminalPatch
 {
     public static Terminal Instance
     {
@@ -26,10 +26,10 @@ internal class TerminalPatch
 
     private static bool hasOverrideTerminalNodes = false;
 
-    [HarmonyPatch("Start")]
+    [HarmonyPatch(nameof(Terminal.Start))]
     [HarmonyPostfix]
     [HarmonyPriority(Priority.Last)]
-    static void StartPatch(ref TerminalNodesList ___terminalNodes)
+    private static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
         OverrideTerminalNodes(___terminalNodes);
     }
@@ -74,19 +74,19 @@ internal class TerminalPatch
     }
     #endregion
 
-    [HarmonyPatch("QuitTerminal")]
+    [HarmonyPatch(nameof(Terminal.QuitTerminal))]
     [HarmonyPostfix]
-    static void QuitTerminalPatch()
+    private static void QuitTerminalPatch()
     {
         Plugin.Instance.OnTerminalQuit();
     }
 
-    [HarmonyPatch("ParsePlayerSentence")]
+    [HarmonyPatch(nameof(Terminal.ParsePlayerSentence))]
     [HarmonyPrefix]
     [HarmonyPriority(Priority.First)]
-    static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
+    private static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
-        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ');
+        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
 
         if (CommandManager.TryExecuteCommand(array, out TerminalNode terminalNode))
         {

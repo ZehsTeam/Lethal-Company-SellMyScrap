@@ -29,7 +29,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
             suckDuration = suckSFX.length;
         }
 
-        if (IsHostOrServer)
+        if (NetworkUtils.IsServer)
         {
             _raid = Utils.RandomPercent(100);
             SetDataClientRpc(_raid);
