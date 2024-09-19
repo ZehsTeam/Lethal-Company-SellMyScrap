@@ -123,19 +123,24 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     #region Variant Stuff
     private int GetRandomVariantIndex()
     {
+        if (TargetVariantIndex > -1)
+        {
+            return Mathf.Clamp(TargetVariantIndex, 0, Variants.Length - 1);
+        }
+
         if (PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", false))
         {
             ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", true);
             return GetVariantIndex(TakeyVariantType.ChickenDance);
         }
 
-        if (PlayerUtils.IsLocalPlayer(PlayerName.Takerst) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(_ => _.scrapValue) >= 1000 && Utils.RandomPercent(60))
+        if (PlayerUtils.IsLocalPlayer(PlayerName.Takerst) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(x => x.scrapValue) >= 1000 && Utils.RandomPercent(60))
         {
             ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterDinkDonkVariant", true);
             return GetVariantIndex(TakeyVariantType.DinkDonk);
         }
 
-        return Utils.GetRandomIndexFromWeightList(Variants.Select(_ => _.Weight).ToList());
+        return Utils.GetRandomIndexFromWeightList(Variants.Select(x => x.Weight).ToList());
     }
 
     private void UpdateVariantOnLocalClient()
@@ -279,7 +284,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         }
 
-        if (IsVariantType(TakeyVariantType.DinkDonk) && targetScrap.Sum(_ => _.scrapValue) >= 1000)
+        if (IsVariantType(TakeyVariantType.DinkDonk) && targetScrap.Sum(x => x.scrapValue) >= 1000)
         {
             playedCustomSuckAnimation = true;
             yield return StartCoroutine(DinkDonkSpecialSuckAnimation());
@@ -357,7 +362,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private IEnumerator DinkDonkSpecialSuckAnimation()
     {
-        List<List<GrabbableObject>> targetScrapLists = Utils.SplitList(targetScrap.OrderBy(_ => _.scrapValue).ToList(), numberOfLists: 3);
+        List<List<GrabbableObject>> targetScrapLists = Utils.SplitList(targetScrap.OrderBy(x => x.scrapValue).ToList(), numberOfLists: 3);
 
         yield return new WaitForSeconds(PlayOneShotSFX(DinkDonkSpecialLine1SFX));
         yield return new WaitForSeconds(0.5f);

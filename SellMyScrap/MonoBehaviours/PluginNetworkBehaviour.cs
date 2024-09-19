@@ -1,6 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
+using JetBrains.Annotations;
 using System;
 using Unity.Netcode;
 
@@ -25,7 +26,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void PerformSellServerRpc(ScrapToSell scrapToSell, SellType sellType, int scrapEaterIndex = -1, ServerRpcParams serverRpcParams = default)
+    public void PerformSellServerRpc(ScrapToSell scrapToSell, SellType sellType, int scrapEaterIndex = -2, int scrapEaterVariantIndex = -1, ServerRpcParams serverRpcParams = default)
     {
         var senderClientId = serverRpcParams.Receive.SenderClientId;
         if (!NetworkManager.ConnectedClients.ContainsKey(senderClientId)) return;
@@ -43,7 +44,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         Plugin.logger.LogInfo(message);
         HUDManager.Instance.DisplayGlobalNotification(message);
 
-        Plugin.Instance.PerformSellOnServerFromClient(scrapToSell, sellType, scrapEaterIndex);
+        Plugin.Instance.PerformSellOnServerFromClient(scrapToSell, sellType, scrapEaterIndex, scrapEaterVariantIndex);
     }
 
     [ClientRpc]

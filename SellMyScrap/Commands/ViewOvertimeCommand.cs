@@ -4,16 +4,17 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class ViewOvertimeCommand : Command
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "view" && args[1] == "overtime") return true;
-        if (args[0] == "view-overtime") return true;
-        if (args[0] == "view" && args[1] == "overtime" && args[2] == "bonus") return true;
-        if (args[0] == "view-overtime-bonus") return true;
-        if (args[0] == "view" && args[1] == "overtimebonus") return true;
-        if (args[0] == "view-overtimebonus") return true;
+        if (MatchesPattern(ref args, "overtime")) return true;
+        if (MatchesPattern(ref args, "overtime", "bonus")) return true;
+        if (MatchesPattern(ref args, "overtime-bonus")) return true;
+        if (MatchesPattern(ref args, "view", "overtime")) return true;
+        if (MatchesPattern(ref args, "view-overtime")) return true;
+        if (MatchesPattern(ref args, "view", "overtime", "bonus")) return true;
+        if (MatchesPattern(ref args, "view-overtime-bonus")) return true;
+        if (MatchesPattern(ref args, "view", "overtimebonus")) return true;
+        if (MatchesPattern(ref args, "view-overtimebonus")) return true;
 
         return false;
     }

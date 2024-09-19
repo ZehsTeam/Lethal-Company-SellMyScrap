@@ -29,6 +29,16 @@ internal static class StartOfRoundPatch
     private static void StartPatch()
     {
         Plugin.ConfigManager.TrySetCustomValues();
+
+        RemoveMapPropsContainerForTesting();
+    }
+
+    private static void RemoveMapPropsContainerForTesting()
+    {
+        GameObject gameObject = GameObject.Find("Environment/MapPropsContainerForTesting");
+        if (gameObject == null) return;
+
+        gameObject.SetActive(false);
     }
 
     [HarmonyPatch(nameof(StartOfRound.OnClientConnect))]

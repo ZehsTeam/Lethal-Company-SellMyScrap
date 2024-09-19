@@ -1,19 +1,16 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellAllCommand : SellCommand
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] == "all") return true;
-        if (args[0] == "sell-all") return true;
-        if (args[0] == "sell" && args[1] == "everything") return true;
-        if (args[0] == "sell-everything") return true;
+        if (MatchesPattern(ref args, "sell", "all")) return true;
+        if (MatchesPattern(ref args, "sell-all")) return true;
+        if (MatchesPattern(ref args, "sell", "everything")) return true;
+        if (MatchesPattern(ref args, "sell-everything", "everything")) return true;
 
         return false;
     }
@@ -25,18 +22,14 @@ internal class SellAllCommand : SellCommand
             return terminalNode;
         }
 
-        string extra = string.Join(' ', args).Trim();
-        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
-        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
-
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(int.MaxValue);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(int.MaxValue, onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellAll, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
@@ -53,7 +46,7 @@ internal class SellAllCommand : SellCommand
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

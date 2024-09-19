@@ -14,7 +14,7 @@ public enum ItemLocation
 public class ItemData
 {
     public GrabbableObject GrabbableObject { get; set; }
-    public ItemDataProxy ItemDataProxy { get; set; }
+    public ShipInventoryItemData ShipInventoryItemData { get; set; }
 
     public ItemLocation ItemLocation { get; set; }
     public string ItemName => GetItemName();
@@ -26,9 +26,9 @@ public class ItemData
         ItemLocation = itemLocation;
     }
 
-    public ItemData(ItemDataProxy itemDataProxy, ItemLocation itemLocation)
+    public ItemData(ShipInventoryItemData shipInventoryItemData, ItemLocation itemLocation)
     {
-        ItemDataProxy = itemDataProxy;
+        ShipInventoryItemData = shipInventoryItemData;
         ItemLocation = itemLocation;
     }
 
@@ -39,9 +39,9 @@ public class ItemData
             return GrabbableObject.itemProperties.itemName;
         }
 
-        if (ShipInventoryProxy.Enabled && ItemDataProxy != null)
+        if (ShipInventoryProxy.Enabled && ShipInventoryItemData != null)
         {
-            return ItemDataProxy.ItemName;
+            return ShipInventoryItemData.ItemName;
         }
 
         return string.Empty;
@@ -54,9 +54,9 @@ public class ItemData
             return GrabbableObject.scrapValue;
         }
 
-        if (ShipInventoryProxy.Enabled && ItemDataProxy != null)
+        if (ShipInventoryProxy.Enabled && ShipInventoryItemData != null)
         {
-            return ItemDataProxy.ScrapValue;
+            return ShipInventoryItemData.ScrapValue;
         }
 
         return 0;

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.Data;
@@ -35,8 +34,8 @@ public class SyncedConfigData : INetworkSerializable
         // Advanced Sell Settings
         SellScrapWorthZero = configManager.SellScrapWorthZero;
         OnlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
-        DontSellList = JsonConvert.SerializeObject(configManager.DontSellList);
-        SellList = JsonConvert.SerializeObject(configManager.SellList);
+        DontSellList = string.Join(", ", configManager.DontSellList);
+        SellList = string.Join(", ", configManager.SellList);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter

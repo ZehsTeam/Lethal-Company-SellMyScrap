@@ -129,13 +129,13 @@ internal class Plugin : BaseUnityPlugin
         CancelSellRequest();
     }
 
-    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
+    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false, bool onlyUseShipInventory = false)
     {
-        ScrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus);
+        ScrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus, onlyUseShipInventory);
         return ScrapToSell;
     }
 
-    public ScrapToSell GetScrapToSell(string[] sellList)
+    public ScrapToSell GetScrapToSell(string[] sellList, bool onlyUseShipInventory = false)
     {
         ScrapToSell = ScrapHelper.GetScrapToSell(sellList);
         return ScrapToSell;
@@ -148,15 +148,15 @@ internal class Plugin : BaseUnityPlugin
     }
 
     #region SellRequest Methods
-    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationStatus confirmationType, int scrapEaterIndex = -1)
+    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationStatus confirmationType, int scrapEaterIndex = -2, int scrapEaterVariantIndex = -1)
     {
-        SellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex);
+        SellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex, scrapEaterVariantIndex);
 
         string message = $"Created sell request. {ScrapToSell.ItemCount} items for ${value}.";
 
         if (scrapEaterIndex >= 0)
         {
-            message += $" (scrapEaterIndex: {scrapEaterIndex})";
+            message += $" (ScrapEaterIndex: {scrapEaterIndex}, ScrapEaterVariantIndex: {scrapEaterVariantIndex})";
         }
 
         logger.LogInfo(message);
@@ -199,10 +199,10 @@ internal class Plugin : BaseUnityPlugin
     }
     #endregion
 
-    public void PerformSellOnServerFromClient(ScrapToSell scrapToSell, SellType sellType, int scrapEaterIndex = -1)
+    public void PerformSellOnServerFromClient(ScrapToSell scrapToSell, SellType sellType, int scrapEaterIndex = -2, int scrapEaterVariantIndex = -1)
     {
         ScrapToSell = scrapToSell;
-        CreateSellRequest(sellType, ScrapToSell.TotalScrapValue, ScrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        CreateSellRequest(sellType, ScrapToSell.TotalScrapValue, ScrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex, scrapEaterVariantIndex);
         ConfirmSellRequest();
     }
 
@@ -218,12 +218,13 @@ internal class Plugin : BaseUnityPlugin
         }
 
         int scrapEaterIndex = SellRequest.ScrapEaterIndex;
+        int scrapEaterVariantIndex = SellRequest.ScrapEaterVariantIndex;
 
         List<GrabbableObject> grabbableObjects = ScrapToSell.GrabbableObjects;
 
-        if (ShipInventoryProxy.Enabled && ScrapToSell.ItemDataProxies.Length > 0)
+        if (ShipInventoryProxy.Enabled && ScrapToSell.ShipInventoryItems.Length > 0)
         {
-            ShipInventoryProxy.SpawnItemsOnServer(ScrapToSell.ItemDataProxies);
+            ShipInventoryProxy.SpawnItemsOnServer(ScrapToSell.ShipInventoryItems);
 
             yield return new WaitUntil(() => !ShipInventoryProxy.IsSpawning);
 
@@ -242,21 +243,21 @@ internal class Plugin : BaseUnityPlugin
         // Try to show a scrap eater if the ship is not leaving.
         if (!StartOfRound.Instance.shipIsLeaving)
         {
-            if (scrapEaterIndex == 0)
+            if (scrapEaterIndex == -1)
             {
-                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects);
+                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects, scrapEaterVariantIndex);
                 yield break;
             }
 
-            if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
+            if (scrapEaterIndex > -1 && ScrapEaterManager.HasScrapEater(scrapEaterIndex))
             {
-                ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, grabbableObjects);
+                ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex, grabbableObjects, scrapEaterVariantIndex);
                 yield break;
             }
 
             if (ScrapEaterManager.CanUseScrapEater())
             {
-                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects);
+                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects, scrapEaterVariantIndex);
                 yield break;
             }
         }

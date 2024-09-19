@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -32,24 +33,26 @@ internal static class CommandManager
     {
         terminalNode = null;
 
-        string[] args = GetArgs(array, 3);
+        string[] args = GetArgs(array, expectedLength: 5);
+
+        Command command;
 
         if (AwaitingConfirmationCommand != null)
         {
-            Command _command = AwaitingConfirmationCommand;
-            terminalNode = _command.ExecuteConfirmation(args);
-            _command.PreviousTerminalNode = terminalNode;
+            command = AwaitingConfirmationCommand;
+            terminalNode = command.ExecuteConfirmation(args);
+            command.PreviousTerminalNode = terminalNode;
             return true;
         }
 
-        Command command = GetCommand(args);
+        command = GetCommand(ref args);
         if (command == null) return false;
-        
-        terminalNode = command.Execute(args);
+
+        terminalNode = command.Execute(GetArgs(args, expectedLength: 5));
         command.PreviousTerminalNode = terminalNode;
         return true;
     }
-    
+
     public static void OnLocalDisconnect()
     {
         AwaitingConfirmationCommand = null;
@@ -60,34 +63,18 @@ internal static class CommandManager
         AwaitingConfirmationCommand = null;
     }
 
-    private static string[] GetArgs(string[] array, int length)
+    private static string[] GetArgs(string[] array, int expectedLength)
     {
-        List<string> args = new List<string>();
+        if (array.Length >= expectedLength) return array;
 
-        foreach (string arg in array)
-        {
-            if (arg.Trim() == string.Empty) continue;
-
-            args.Add(arg.Trim());
-        }
-
-        if (args.Count > length) return args.ToArray();
-
-        for (int i = 0; i < length - args.Count; i++)
-        {
-            args.Add(string.Empty);
-        }
-
-        return args.ToArray();
+        return array.Concat(Enumerable.Repeat(string.Empty, expectedLength - array.Length)).ToArray();
     }
 
-    private static Command GetCommand(string[] args)
+    private static Command GetCommand(ref string[] args)
     {
-        string[] _args = args;
-
         foreach (var command in _commands)
         {
-            if (command.IsCommand(_args))
+            if (command.IsCommand(ref args))
             {
                 return command;
             }

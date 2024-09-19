@@ -17,7 +17,7 @@ internal static class ScrapHelper
     {
         if (grabbableObjects == null) return [];
 
-        return grabbableObjects.Where(_ => IsValidScrap(_, onlyAllowedScrap)).ToList();
+        return grabbableObjects.Where(x => IsValidScrap(x, onlyAllowedScrap)).ToList();
     }
 
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
@@ -35,7 +35,7 @@ internal static class ScrapHelper
         return GetValidScrap(vehicleController.GetComponentsInChildren<GrabbableObject>(), onlyAllowedScrap);
     }
 
-    public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, ItemDataProxy[] itemDataProxies)
+    public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, ShipInventoryItemData[] shipInventoryItems)
     {
         List<ItemData> items = [];
 
@@ -49,58 +49,46 @@ internal static class ScrapHelper
             items.Add(new ItemData(grabbableObject, ItemLocation.Vehicle));
         }
 
-        foreach (var itemDataProxy in itemDataProxies)
+        foreach (var shipInventoryItemData in shipInventoryItems)
         {
-            items.Add(new ItemData(itemDataProxy, ItemLocation.ShipInventory));
+            items.Add(new ItemData(shipInventoryItemData, ItemLocation.ShipInventory));
         }
 
         return items;
     }
 
-    public static List<ItemData> GetItemDataList(List<GrabbableObject> grabbableObjects, ItemDataProxy[] itemDataProxies = default)
+    public static List<ItemData> GetAllScrap(bool onlyAllowedScrap = true, bool onlyUseShipInventory = false)
     {
-        List<ItemData> items = [];
-
-        foreach (var grabbableObject in grabbableObjects)
-        {
-            items.Add(new ItemData(grabbableObject, GetScrapLocation(grabbableObject)));
-        }
-
-        foreach (var itemDataProxy in itemDataProxies)
-        {
-            items.Add(new ItemData(itemDataProxy, ItemLocation.ShipInventory));
-        }
-
-        return items;
-    }
-
-    public static List<ItemData> GetAllScrap(bool onlyAllowedScrap = true)
-    {
-        ItemDataProxy[] itemDataProxies = [];
+        ShipInventoryItemData[] shipInventoryItems = [];
 
         if (ShipInventoryProxy.Enabled)
         {
-            itemDataProxies = ShipInventoryProxy.GetItems().Where(_ => IsValidScrap(_, onlyAllowedScrap)).ToArray();
+            shipInventoryItems = ShipInventoryProxy.GetItems().Where(x => IsValidScrap(x, onlyAllowedScrap)).ToArray();
+
+            if (onlyUseShipInventory)
+            {
+                return GetItemDataList([], [], shipInventoryItems);
+            }
         }
 
-        return GetItemDataList(GetScrapFromShip(onlyAllowedScrap), GetScrapFromVehicle(onlyAllowedScrap), itemDataProxies);
+        return GetItemDataList(GetScrapFromShip(onlyAllowedScrap), GetScrapFromVehicle(onlyAllowedScrap), shipInventoryItems);
     }
 
-    public static List<ItemData> GetAllScrapByItemName(string itemName, bool matchCase = false, bool onlyAllowedScrap = false)
+    public static List<ItemData> GetAllScrapByItemName(string itemName, bool matchCase = false, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
         System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
 
-        return GetAllScrap(onlyAllowedScrap).Where(item =>
+        return GetAllScrap(onlyAllowedScrap, onlyUseShipInventory).Where(item =>
         {
             return item.ItemName.Contains(itemName, comparisonType);
         }).ToList();
     }
 
-    public static List<ItemData> GetAllScrapByItemNames(string[] itemNames, bool matchCase = false, bool onlyAllowedScrap = false)
+    public static List<ItemData> GetAllScrapByItemNames(string[] itemNames, bool matchCase = false, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
         System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
 
-        return GetAllScrap(onlyAllowedScrap).Where(item =>
+        return GetAllScrap(onlyAllowedScrap, onlyUseShipInventory).Where(item =>
         {
             foreach (var itemName in itemNames)
             {
@@ -155,11 +143,11 @@ internal static class ScrapHelper
         return IsAllowedScrap(item.itemName, dontSellItemNames, matchCase);
     }
 
-    public static bool IsAllowedScrap(ItemDataProxy itemDataProxy, string[] dontSellItemNames, bool matchCase = false)
+    public static bool IsAllowedScrap(ShipInventoryItemData shipInventoryItemData, string[] dontSellItemNames, bool matchCase = false)
     {
-        if (itemDataProxy == null) return false;
+        if (shipInventoryItemData == null) return false;
 
-        return IsAllowedScrap(itemDataProxy.ItemName, dontSellItemNames, matchCase);
+        return IsAllowedScrap(shipInventoryItemData.ItemName, dontSellItemNames, matchCase);
     }
 
     public static bool IsAllowedScrap(string itemName, string[] dontSellItemNames, bool matchCase = false)
@@ -207,16 +195,16 @@ internal static class ScrapHelper
         return true;
     }
 
-    public static bool IsValidScrap(ItemDataProxy itemDataProxy, bool onlyAllowedScrap)
+    public static bool IsValidScrap(ShipInventoryItemData shipInventoryItemData, bool onlyAllowedScrap)
     {
-        if (itemDataProxy == null) return false;
+        if (shipInventoryItemData == null) return false;
 
-        if (!Plugin.ConfigManager.SellScrapWorthZero && itemDataProxy.ScrapValue <= 0)
+        if (!Plugin.ConfigManager.SellScrapWorthZero && shipInventoryItemData.ScrapValue <= 0)
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(itemDataProxy, Plugin.ConfigManager.DontSellList))
+        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, Plugin.ConfigManager.DontSellList))
         {
             return false;
         }
@@ -238,32 +226,12 @@ internal static class ScrapHelper
 
         return yOffset <= 0.1f;
     }
-
-    public static ItemLocation GetScrapLocation(GrabbableObject grabbableObject)
-    {
-        Transform parentTransform = grabbableObject.transform;
-
-        while (true)
-        {
-            if (parentTransform == null) break;
-            if (parentTransform.parent == null) break;
-
-            if (parentTransform.parent == HangarShipTransform)
-            {
-                return ItemLocation.Ship;
-            }
-
-            parentTransform = parentTransform.parent;
-        }
-
-        return ItemLocation.Vehicle;
-    }
     #endregion
 
     #region Get Scrap to Sell
-    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false)
+    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false, bool onlyUseShipInventory = false)
     {
-        return GetScrapToSell(GetAllScrap(onlyAllowedScrap), value, withOvertimeBonus);
+        return GetScrapToSell(GetAllScrap(onlyAllowedScrap, onlyUseShipInventory), value, withOvertimeBonus);
     }
 
     private static ScrapToSell GetScrapToSell(List<ItemData> items, int value, bool withOvertimeBonus = false)
@@ -339,9 +307,9 @@ internal static class ScrapHelper
         return items;
     }
 
-    public static ScrapToSell GetScrapToSell(string[] sellList, bool onlyAllowedScrap = false)
+    public static ScrapToSell GetScrapToSell(string[] sellList, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
-        return new ScrapToSell(GetAllScrapByItemNames(sellList, onlyAllowedScrap));
+        return new ScrapToSell(GetAllScrapByItemNames(sellList, onlyAllowedScrap, onlyUseShipInventory));
     }
 
     private static int GetSellValue(int value)
@@ -371,32 +339,32 @@ internal static class ScrapHelper
     #endregion
 
     #region Get Scrap Message
-    public static string GetScrapMessage(List<ItemData> items, string color2)
+    public static string GetScrapMessage(List<ItemData> items)
     {
-        return GetScrapMessage(items, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice, color2);
+        return GetScrapMessage(items, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice);
     }
 
-    public static string GetScrapMessage(List<ItemData> items, bool sortFoundItemsPrice, bool alignFoundItemsPrice, string color2)
+    public static string GetScrapMessage(List<ItemData> items, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
     {
-        string[] itemNames = items.Select(_ => _.ItemName).ToArray();
-        int[] scrapValues = items.Select(_ => _.ScrapValue).ToArray();
-        ItemLocation[] itemLocations = items.Select(_ => _.ItemLocation).ToArray();
+        string[] itemNames = items.Select(x => x.ItemName).ToArray();
+        int[] scrapValues = items.Select(x => x.ScrapValue).ToArray();
+        ItemLocation[] itemLocations = items.Select(x => x.ItemLocation).ToArray();
 
-        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2);
+        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2: TerminalPatch.GreenColor2);
     }
     
-    public static string GetScrapMessage(List<GrabbableObject> grabbableObjects, string color2)
+    public static string GetScrapMessage(List<GrabbableObject> grabbableObjects)
     {
-        return GetScrapMessage(grabbableObjects, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice, color2);
+        return GetScrapMessage(grabbableObjects, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice);
     }
 
-    public static string GetScrapMessage(List<GrabbableObject> grabbableObjects, bool sortFoundItemsPrice, bool alignFoundItemsPrice, string color2)
+    public static string GetScrapMessage(List<GrabbableObject> grabbableObjects, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
     {
-        string[] itemNames = grabbableObjects.Select(_ => _.itemProperties.itemName).ToArray();
-        int[] scrapValues = grabbableObjects.Select(_ => _.scrapValue).ToArray();
+        string[] itemNames = grabbableObjects.Select(x => x.itemProperties.itemName).ToArray();
+        int[] scrapValues = grabbableObjects.Select(x => x.scrapValue).ToArray();
         ItemLocation[] itemLocations = Enumerable.Repeat(ItemLocation.Ship, itemNames.Length).ToArray();
 
-        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2);
+        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2: string.Empty);
     }
 
     public static string GetScrapMessage(string[] itemNames, int[] scrapValues, ItemLocation[] itemLocations, bool sortFoundItemsPrice, bool alignFoundItemsPrice, string color2)
@@ -474,12 +442,12 @@ internal static class ScrapHelper
     }
 
     // Helper function to get the location text
-    private static string GetLocationText(ItemLocation location, string color = "#7f7f7f")
+    private static string GetLocationText(ItemLocation location)
     {
         return location switch
         {
-            ItemLocation.Vehicle => $" <color={color}>(Vehicle)</color>",
-            ItemLocation.ShipInventory => $" <color={color}>(ShipInventory)</color>",
+            ItemLocation.Vehicle => $" <color={TerminalPatch.GrayColor}>(Vehicle)</color>",
+            ItemLocation.ShipInventory => $" <color={TerminalPatch.GrayColor}>(ShipInventory)</color>",
             _ => string.Empty
         };
     }

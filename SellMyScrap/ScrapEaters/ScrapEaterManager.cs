@@ -64,17 +64,17 @@ public static class ScrapEaterManager
         ScrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
     }
 
-    internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap)
+    internal static void StartRandomScrapEaterOnServer(List<GrabbableObject> scrap, int variantIndex = -1)
     {
         if (!NetworkUtils.IsServer) return;
 
         int index = GetRandomScrapEaterIndex();
         if (index == -1) return;
 
-        StartScrapEaterOnServer(index, scrap);
+        StartScrapEaterOnServer(index, scrap, variantIndex);
     }
 
-    internal static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap)
+    internal static void StartScrapEaterOnServer(int index, List<GrabbableObject> scrap, int variantIndex = -1)
     {
         if (!NetworkUtils.IsServer) return;
 
@@ -84,7 +84,7 @@ public static class ScrapEaterManager
         networkObject.Spawn(destroyWithScene: true);
 
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
-        behaviour.SetTargetScrapOnServer(scrap);
+        behaviour.SetData(scrap, variantIndex);
 
         Plugin.logger.LogInfo($"Spawned scrap eater #{index + 1}");
     }
@@ -97,6 +97,6 @@ public static class ScrapEaterManager
             return 1; // Takey scrap eater index.
         }
 
-        return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(_ => _.GetSpawnWeight()).ToList());
+        return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(x => x.GetSpawnWeight()).ToList());
     }
 }

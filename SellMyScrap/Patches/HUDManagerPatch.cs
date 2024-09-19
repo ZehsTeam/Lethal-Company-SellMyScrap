@@ -16,7 +16,7 @@ internal static class HUDManagerPatch
     {
         Plugin.logger.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");
 
-        string message = ScrapHelper.GetScrapMessage(objectsSold.ToList(), color2: "");
+        string message = ScrapHelper.GetScrapMessage(objectsSold.ToList());
 
         int lines = message.Split('\n').Length;
         int amount = lines < 8 ? 8 - lines : 0;

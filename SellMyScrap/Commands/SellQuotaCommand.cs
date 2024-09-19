@@ -1,17 +1,14 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellQuotaCommand : SellCommand
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] == "quota") return true;
-        if (args[0] == "sell-quota") return true;
+        if (MatchesPattern(ref args, "sell", "quota")) return true;
+        if (MatchesPattern(ref args, "sell-quota")) return true;
 
         return false;
     }
@@ -23,10 +20,6 @@ internal class SellQuotaCommand : SellCommand
             return terminalNode;
         }
 
-        string extra = string.Join(' ', args).Trim();
-        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
-        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
-
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
         int requestedValue = profitQuota - quotaFulfilled;
@@ -36,14 +29,14 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("Quota has already been fulfilled.\n\n");
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue);
@@ -61,7 +54,7 @@ internal class SellQuotaCommand : SellCommand
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

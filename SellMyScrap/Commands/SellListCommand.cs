@@ -1,17 +1,14 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellListCommand : SellCommand
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] == "list") return true;
-        if (args[0] == "sell-list") return true;
+        if (MatchesPattern(ref args, "sell", "list")) return true;
+        if (MatchesPattern(ref args, "sell-list")) return true;
 
         return false;
     }
@@ -23,18 +20,14 @@ internal class SellListCommand : SellCommand
             return terminalNode;
         }
 
-        string extra = string.Join(' ', args).Trim();
-        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
-        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
-
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellList);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellList, onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellList, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellList, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
         
         string message = GetMessage(scrapToSell);
@@ -51,7 +44,7 @@ internal class SellListCommand : SellCommand
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

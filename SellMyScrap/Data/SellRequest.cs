@@ -27,13 +27,15 @@ public class SellRequest
     public int RequestedScrapValue;
     public ConfirmationStatus ConfirmationStatus;
     public int ScrapEaterIndex;
+    public int ScrapEaterVariantIndex;
 
-    public SellRequest(SellType sellType, int scrapValue, int requestedScrapValue, ConfirmationStatus confirmationStatus, int scrapEaterIndex = -2)
+    public SellRequest(SellType sellType, int scrapValue, int requestedScrapValue, ConfirmationStatus confirmationStatus, int scrapEaterIndex = -2, int scrapEaterVariantIndex = -1)
     {
         SellType = sellType;
         ScrapValue = scrapValue;
         RequestedScrapValue = requestedScrapValue;
         ConfirmationStatus = confirmationStatus;
         ScrapEaterIndex = scrapEaterIndex;
+        ScrapEaterVariantIndex = scrapEaterVariantIndex;
     }
 }

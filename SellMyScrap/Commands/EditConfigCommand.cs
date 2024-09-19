@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +7,16 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class EditConfigCommand : Command
 {
-    private JsonListEditor _activeJsonListEditor;
-    private JsonListEditor _dontSellListJsonEditor;
-    private JsonListEditor _sellListJsonEditor;
-
+    private StringArrayEditor _activeStringArrayEditor;
+    private StringArrayEditor _dontSellListEditor;
+    private StringArrayEditor _sellListEditor;
     private bool _inResetToDefaultMenu = false;
 
     public EditConfigCommand()
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        _dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, () =>
+        _dontSellListEditor = new StringArrayEditor("dontSellList", isHostOnly: true, () =>
         {
             return configManager.DontSellList;
         },
@@ -27,7 +25,7 @@ internal class EditConfigCommand : Command
             configManager.DontSellList = value;
         });
 
-        _sellListJsonEditor = new JsonListEditor("sellListJson", isHostOnly: true, () =>
+        _sellListEditor = new StringArrayEditor("sellList", isHostOnly: true, () =>
         {
             return configManager.SellList;
         },
@@ -37,93 +35,104 @@ internal class EditConfigCommand : Command
         });
     }
 
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "edit" && args[1] == "config") return true;
-        if (args[0] == "edit-config") return true;
-
-        return false;
+        return MatchesPattern(ref args, "edit", "config") || MatchesPattern(ref args, "edit-config");
     }
 
     public override TerminalNode Execute(string[] args)
     {
-        _activeJsonListEditor = null;
+        _activeStringArrayEditor = null;
         _inResetToDefaultMenu = false;
 
         AwaitingConfirmation = true;
-
         return TerminalPatch.CreateTerminalNode(GetMessage());
     }
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
+        // Handle the reset-to-default confirmation
         if (_inResetToDefaultMenu)
         {
             return ExecuteResetToDefaultConfirmation(args);
         }
 
         string[] _args = Utils.GetArrayToLower(args);
+        string firstArg = _args.Length > 0 ? _args[0] : string.Empty;
 
+        // Handle common exit commands
         string[] exitStrings = ["exit", "quit", "q", "close", "leave", "back"];
-        
-        if (exitStrings.Contains(_args[0]))
-        {
-            if (_activeJsonListEditor != null)
-            {
-                _activeJsonListEditor = null;
-                return TerminalPatch.CreateTerminalNode(GetMessage());
-            }
 
-            AwaitingConfirmation = false;
-            return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
+        if (exitStrings.Contains(firstArg))
+        {
+            return HandleExit();
         }
 
-        SyncedConfigManager configManager = Plugin.ConfigManager;
-
-        if (_activeJsonListEditor != null)
+        // Handle active editor commands
+        if (_activeStringArrayEditor != null)
         {
-            return _activeJsonListEditor.ExecuteConfirmation(args);
+            return _activeStringArrayEditor.ExecuteConfirmation(args);
         }
 
-        if (_args[0] == "dontselllistjson")
+        if (firstArg.Equals(_dontSellListEditor.Key, StringComparison.OrdinalIgnoreCase))
         {
-            _activeJsonListEditor = _dontSellListJsonEditor;
-            return _activeJsonListEditor.Execute();
+            return SetActiveEditor(_dontSellListEditor);
         }
 
-        if (_args[0] == "selllistjson")
+        if (firstArg.Equals(_sellListEditor.Key, StringComparison.OrdinalIgnoreCase))
         {
-            _activeJsonListEditor = _sellListJsonEditor;
-            return _activeJsonListEditor.Execute();
+            return SetActiveEditor(_sellListEditor);
         }
 
-        if (_args[0] == "reset")
+        if (firstArg.Equals("reset", StringComparison.OrdinalIgnoreCase))
         {
-            _inResetToDefaultMenu = true;
-            return ExecuteResetToDefault();
+            return EnterResetToDefaultMenu();
         }
 
-        if (_args[0] != string.Empty && _args[1] != string.Empty)
+        if (args.Length >= 2)
         {
             return EditConfigSettings(args);
         }
 
-        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
+        return TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: invalid command."));
     }
 
-    private string GetMessage(string additionMessage = "")
+    private TerminalNode HandleExit()
     {
-        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
-        message += $"The following commands are available:\n\n";
-        message += $"<key> <value>\n";
-        message += $"reset\n";
-        message += $"exit\n\n";
-        message += additionMessage;
+        if (_activeStringArrayEditor != null)
+        {
+            _activeStringArrayEditor = null;
+            return TerminalPatch.CreateTerminalNode(GetMessage());
+        }
 
-        return message;
+        AwaitingConfirmation = false;
+        return TerminalPatch.CreateTerminalNode("Closed config editor.\n\n");
+    }
+
+    private TerminalNode SetActiveEditor(StringArrayEditor editor)
+    {
+        _activeStringArrayEditor = editor;
+        return _activeStringArrayEditor.Execute();
+    }
+
+    private TerminalNode EnterResetToDefaultMenu()
+    {
+        _inResetToDefaultMenu = true;
+        return ExecuteResetToDefault();
+    }
+
+    private string GetErrorMessage(string additionalMessage)
+    {
+        return GetMessage(Utils.GetStringWithColor(additionalMessage, TerminalPatch.RedColor));
+    }
+
+    private string GetMessage(string additionalMessage = "")
+    {
+        return $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n" +
+               $"{ConfigHelper.GetConfigSettingsMessage()}\n\n" +
+               $"The following commands are available:\n\n" +
+               $"<key> <value>\nreset\nexit\n\n" +
+               additionalMessage;
     }
 
     private TerminalNode EditConfigSettings(string[] args)
@@ -136,17 +145,11 @@ internal class EditConfigCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage($"Set {configItem.Key} to {parsedValue}\n\n"));
         }
 
-        if (configItem == null)
-        {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid key.\n\n"));
-        }
+        string errorMessage = configItem == null ? "Error: invalid key.\n\n" :
+                             configItem.IsHostOnly && !NetworkUtils.IsServer ? "Error: only the host can edit this setting.\n\n" :
+                             "Error: invalid value.\n\n";
 
-        if (configItem.IsHostOnly && !NetworkUtils.IsServer)
-        {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: only the host can edit this setting.\n\n"));
-        }
-
-        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid value.\n\n"));
+        return TerminalPatch.CreateTerminalNode(GetErrorMessage(errorMessage));
     }
 
     private TerminalNode ExecuteResetToDefault()
@@ -174,32 +177,30 @@ internal class EditConfigCommand : Command
         return TerminalPatch.CreateTerminalNode(GetResetToDefaultMessage());
     }
 
-    private string GetResetToDefaultMessage(string additionMessage = "")
+    private string GetResetToDefaultMessage(string additionalMessage = "")
     {
-        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += "Are you sure you want to reset all config settings to their default value?\n\n";
-        message += "Please CONFIRM or DENY.\n\n";
-        message += additionMessage;
-
-        return message;
+        return $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n" +
+               "Are you sure you want to reset all config settings to their default value?\n\n" +
+               "Please CONFIRM or DENY.\n\n" +
+               additionalMessage;
     }
 }
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class JsonListEditor
+public class StringArrayEditor
 {
-    public string Key;
-    public bool IsHostOnly = false;
+    public string Key { get; }
+    public bool IsHostOnly { get; }
     private List<string> List;
     private Func<string[]> GetValue;
     private Action<string[]> SetValue;
 
-    public JsonListEditor(string key, bool isHostOnly, Func<string[]> GetValue, Action<string[]> SetValue)
+    public StringArrayEditor(string key, bool isHostOnly, Func<string[]> getValue, Action<string[]> setValue)
     {
         Key = key;
         IsHostOnly = isHostOnly;
-        this.GetValue = GetValue;
-        this.SetValue = SetValue;
+        GetValue = getValue;
+        SetValue = setValue;
     }
 
     public TerminalNode Execute()
@@ -215,94 +216,74 @@ public class JsonListEditor
 
         if (IsHostOnly && !NetworkUtils.IsServer)
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage($"Error: only the host can edit this setting.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: only the host can edit this setting.\n\n"));
         }
 
-        if (_args[1] == string.Empty)
+        return _args[0] switch
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
-        }
-
-        if (_args[0] == "add")
-        {
-            return Add(args);
-        }
-
-        if (_args[0] == "remove")
-        {
-            return Remove(args);
-        }
-
-        if (_args[0] == "clear" && _args[1] == "all")
-        {
-            return ClearAll(args);
-        }
-
-        return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
+            "add" => Add(args),
+            "remove" => Remove(args),
+            "clear" when _args.Length > 1 && _args[1] == "all" => ClearAll(),
+            _ => TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: invalid command.\n\n"))
+        };
     }
 
     private TerminalNode Add(string[] args)
     {
         string item = GetItemName(args);
 
-        if (item == string.Empty)
+        if (string.IsNullOrEmpty(item))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: invalid input.\n\n"));
         }
 
         List.Add(item);
         SetValue(List.ToArray());
-
         return TerminalPatch.CreateTerminalNode(GetMessage($"Added \"{item}\"\n\n"));
     }
 
     private TerminalNode Remove(string[] args)
     {
         string item = GetItemName(args);
-
-        if (item == string.Empty)
+        if (string.IsNullOrEmpty(item))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid input.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: invalid input.\n\n"));
         }
 
         string _item = Utils.GetItemFromList(List, item);
-
-        if (_item == string.Empty)
+        if (string.IsNullOrEmpty(_item))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: item was not found.\n\n"));
+            return TerminalPatch.CreateTerminalNode(GetErrorMessage("Error: item was not found.\n\n"));
         }
 
         List.Remove(_item);
         SetValue(List.ToArray());
-
         return TerminalPatch.CreateTerminalNode(GetMessage($"Removed \"{_item}\"\n\n"));
     }
 
-    private TerminalNode ClearAll(string[] args)
+    private TerminalNode ClearAll()
     {
-        List = [];
+        List.Clear();
         SetValue(List.ToArray());
-
-        return TerminalPatch.CreateTerminalNode(GetMessage($"Removed all items.\n\n"));
+        return TerminalPatch.CreateTerminalNode(GetMessage("Removed all items.\n\n"));
     }
 
     private string GetItemName(string[] args)
     {
-        return string.Join(" ", args).Substring(args[0].Length).Replace("\"", "").Replace("\\", "").Trim();
+        return string.Join(" ", args.Skip(1)).Trim();
+    }
+
+    private string GetErrorMessage(string additionalMessage)
+    {
+        return GetMessage(Utils.GetStringWithColor(additionalMessage, TerminalPatch.RedColor));
     }
 
     private string GetMessage(string additionalMessage = "")
     {
-        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n";
-        message += $"{Key} config editor\n\n";
-        message += $"{JsonConvert.SerializeObject(List)}\n\n";
-        message += $"The following commands are available:\n\n";
-        message += $"add <value>\n";
-        message += $"remove <value>\n";
-        message += $"clear all\n";
-        message += $"exit\n\n";
-        message += additionalMessage;
-        
-        return message;
+        return $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config editor\n\n" +
+               $"{Key} config editor\n\n{Utils.GetStringWithColor(string.Join(", ", List), TerminalPatch.GreenColor2)}\n\n" +
+               "The following commands are available:\n\n" +
+               "add <value>\nremove <value>\nclear all\nexit\n\n" +
+               additionalMessage;
     }
 }

@@ -1,23 +1,16 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
 using System.Data;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellAmountCommand : SellCommand
 {
-    public SellAmountCommand()
+    public override bool IsCommand(ref string[] args)
     {
-        Flags.Add(new CommandFlag("-o"));
-    }
-
-    public override bool IsCommand(string[] args)
-    {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] != string.Empty) return true;
-        if (args[0] == "sell-amount" && args[1] != string.Empty) return true;
+        if (MatchesPattern(ref args, "sell") && args[0] != string.Empty) return true;
+        if (MatchesPattern(ref args, "sell", "amount")) return true;
+        if (MatchesPattern(ref args, "sell-amount")) return true;
 
         return false;
     }
@@ -29,14 +22,8 @@ internal class SellAmountCommand : SellCommand
             return terminalNode;
         }
 
-        string extra = string.Join(' ', args).Substring(args[0].Length).Trim();
-        string expression = GetExpression(extra);
-
-        List<CommandFlag> foundFlags = GetFlagsFromString(extra.Substring(expression.Length));
-        bool withOvertimeBonus = GetWithOvertimeBonus(foundFlags);
-        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
-
-        string evaluatedExpression = expression;
+        string expression = string.Join(" ", args).Trim();
+        string evaluatedExpression = string.Empty;
 
         try
         {
@@ -53,17 +40,17 @@ internal class SellAmountCommand : SellCommand
             return TerminalPatch.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: WithOvertimeBonus(), onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
-        string message = GetMessage(scrapToSell, requestedValue, withOvertimeBonus);
+        string message = GetMessage(scrapToSell, requestedValue, WithOvertimeBonus());
         return TerminalPatch.CreateTerminalNode(message);
     }
 
@@ -92,7 +79,7 @@ internal class SellAmountCommand : SellCommand
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";
@@ -115,26 +102,5 @@ internal class SellAmountCommand : SellCommand
         message += "    sell 550 -o\n\n";
 
         return message;
-    }
-
-    private string GetExpression(string extra)
-    {
-        string expression = extra;
-        int flagsStartIndex = GetFlagsStartIndexInString(extra);
-
-        if (flagsStartIndex != -1)
-        {
-            expression = expression.Substring(0, flagsStartIndex);
-        }
-
-        return expression.Trim();
-    }
-
-    private bool GetWithOvertimeBonus(List<CommandFlag> foundFlags)
-    {
-        CommandFlag flag = foundFlags.Find(_ => _.Key.ToLower() == "-o");
-        if (flag == null) return false;
-
-        return flag.CanUse;
     }
 }

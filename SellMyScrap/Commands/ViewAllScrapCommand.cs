@@ -12,12 +12,10 @@ internal class ViewAllScrapCommand : Command
     private int _pages;
     private int _pageIndex;
 
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "view" && args[1] == "all" && args[2] == "scrap") return true;
-        if (args[0] == "view-all-scrap") return true;
+        if (MatchesPattern(ref args, "view", "all", "scrap")) return true;
+        if (MatchesPattern(ref args, "sell-all-scrap")) return true;
 
         return false;
     }
@@ -39,17 +37,15 @@ internal class ViewAllScrapCommand : Command
 
     public override TerminalNode ExecuteConfirmation(string[] args)
     {
-        string[] _args = Utils.GetArrayToLower(args);
-
         string[] exitStrings = ["exit", "quit", "q", "close", "leave", "back"];
 
-        if (exitStrings.Contains(_args[0]))
+        if (exitStrings.Contains(args[0].ToLower()))
         {
             AwaitingConfirmation = false;
             return TerminalPatch.CreateTerminalNode("Closed view all scrap.\n\n");
         }
 
-        if (_args[0] == "next" || _args[0] == "n")
+        if ("next".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
         {
             _pageIndex++;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
@@ -57,7 +53,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
-        if (_args[0] == "prev" || _args[0] == "p")
+        if ("previous".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
         {
             _pageIndex--;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
@@ -65,7 +61,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalPatch.CreateTerminalNode(GetMessage());
         }
 
-        if (_args[0] != "page")
+        if ("page".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
         {
             return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
         }

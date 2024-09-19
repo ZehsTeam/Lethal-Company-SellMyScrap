@@ -1,7 +1,9 @@
 # SellMyScrap
-#### Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +
+#### Adds a few terminal commands to sell your scrap from the ship. Compatible with the ShipInventory mod. Highly Configurable. SellFromTerminal +
 
 #### This mod will sell scrap as close to the requested value as possible.
+
+#### This mod is compatibility with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
 
 #### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
 <br>
@@ -36,7 +38,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `sell quota` | Will sell scrap to reach the profit quota. | `-se`, `-se:<number>` |
 | `sell all` | Will sell all of your scrap. | `-se`, `-se:<number>` |
 | `sell item <name>` | Will sell scrap by their item name. | `-se`, `-se:<number>` |
-| `sell list` | Will sell all the scrap from the `sellListJson` config setting. | `-se`, `-se:<number>` |
+| `sell list` | Will sell all the scrap from the `sellList` config setting. | `-se`, `-se:<number>` |
 
 * Using the `-se` flag will spawn a random scrap eater.
     * Usage: `<sell-command> -se`
@@ -61,8 +63,8 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 
 <h4>Additional info for the <code>sell list</code> command.</h4>
 
-* This command will sell all the items from the `sellListJson` config setting.
-* This command will bypass the `dontSellListJson` config setting.
+* This command will sell all the items from the `sellList` config setting.
+* This command will bypass the `dontSellList` config setting.
 
 | Command |Description |
 | ----------- | ----------- |
@@ -84,6 +86,10 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Only the host can edit **Sell Settings** and **Advanced Sell Settings** using the config editor.
 * **Sell Settings** and **Advanced Sell Settings** will be synced with the host.
 
+| General Settings | Setting type | Default value | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| `ExtendedLogging` | `Boolean` | `false` | Enable extended logging. |
+
 | Sell Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
 | `SellGifts` | `Boolean` | `false` | Do you want to sell Gifts? |
@@ -96,21 +102,24 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | ----------- | ----------- | ----------- | ----------- |
 | `SellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
 | `OnlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
-| `DontSellListJson` | `String` | `[]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to not sell. |
-| `SellListJson` | `String` | `["Whoopie cushion", "Easter egg", "Tragedy", "Comedy"]` | [JSON array](https://www.w3schools.com/js/js_json_arrays.asp) of item names to sell when using the `sell list` command. |
+| `DontSellList` | `String` | ` ` | Array  of item names to not sell. |
+| `SellList` | `String` | `Whoopie cushion, Easter egg, Tragedy, Comedy` | Array of item names to sell when using the `sell list` command. |
 
-<h4>Additional info for the <code>dontSellListJson</code> config setting.</h4>
+<h4>Additional info for the <code>dontSellList</code> config setting.</h4>
 
-* Use the `edit config` command to easily edit the `dontSellListJson` config setting from the terminal.
+* Use the `edit config` command to easily edit the `dontSellList` config setting from the terminal.
 * Use the `view scrap` or `view all scrap` command to see the correct item names to use.
+* Each entry should be separated by a comma.
 * Item names are not case-sensitive but, spaces do matter.
-* Example value: `["Maxwell", "Cookie Fumo", "Octolar Plush", "Smol Takey"]`
+* Example value: `Maxwell, Cookie Fumo, Octolar Plush, Smol Takey, Blahaj`
 
-<h4>Additional info for the <code>sellListJson</code> config setting.</h4>
+<h4>Additional info for the <code>sellList</code> config setting.</h4>
 
-* Use the `edit config` command to easily edit the `sellListJson` config setting from the terminal.
+* Use the `edit config` command to easily edit the `sellList` config setting from the terminal.
 * Use the `view scrap` or `view all scrap` command to see the correct item names to use.
+* Each entry should be separated by a comma.
 * Item names are not case-sensitive but, spaces do matter.
+* Example value: `Whoopie cushion, Easter egg, Tragedy, Comedy`
 
 | Terminal Settings | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
@@ -138,6 +147,11 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `ZombiesSpawnWeight` | `Int32` | `1` | The spawn chance weight [Zombies](https://www.twitch.tv/zombiesatemychannel) will spawn?! (scrap eater) |
 
 </details>
+
+## ShipInventory Compatibility
+This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
+
+If you use the command flag `-inv` when writing sell commands, you can make the command only target the ShipInventory storage.
 
 ## Want more Scrap Eaters?
 * [GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*

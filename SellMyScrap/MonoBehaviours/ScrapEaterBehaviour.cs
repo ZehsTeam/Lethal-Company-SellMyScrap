@@ -15,6 +15,8 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
     [HideInInspector]
     public List<GrabbableObject> targetScrap = [];
+    [HideInInspector]
+    public int TargetVariantIndex = -1;
 
     private int _clientsReceivedTargetScrap = 0;
     private int _clientsFinishedAnimation = 0;
@@ -36,10 +38,12 @@ public class ScrapEaterBehaviour : NetworkBehaviour
         }
     }
 
-    public void SetTargetScrapOnServer(List<GrabbableObject> targetScrap)
+    public void SetData(List<GrabbableObject> targetScrap, int variantIndex = -1)
     {
         this.targetScrap = targetScrap;
         this.targetScrap.ForEach(item => item.grabbable = false);
+
+        TargetVariantIndex = variantIndex;
     }
 
     [ClientRpc]

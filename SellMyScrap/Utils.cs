@@ -245,4 +245,9 @@ internal static class Utils
 
         return null;
     }
+
+    public static string GetStringWithColor(string text, string colorHex)
+    {
+        return $"<color={colorHex}>{text}</color>";
+    }
 }

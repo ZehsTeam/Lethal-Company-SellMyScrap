@@ -1,16 +1,12 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Patches;
+using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellCommand : Command
 {
-    public SellCommand()
-    {
-        Flags.Add(new CommandFlag("-se", canHaveData: true));
-    }
-
     protected static int CompanyBuyingRate => (int)(StartOfRound.Instance.companyBuyingRate * 100);
 
     protected override TerminalNode OnConfirm(string[] args)
@@ -30,6 +26,43 @@ internal class SellCommand : Command
         AwaitingConfirmation = false;
 
         return TerminalPatch.CreateTerminalNode($"Sell aborted.\n\n");
+    }
+
+    protected int GetScrapEaterIndex()
+    {
+        if (TryGetFlagData("se", out int data))
+        {
+            return Mathf.Clamp(data - 1, 0, ScrapEaterManager.ScrapEaters.Count - 1);
+        }
+
+        return HasFlag("se") ? -1 : -2;
+    }
+
+    protected int GetScrapEaterVariantIndex()
+    {
+        if (TryGetFlagData("variant", out int data))
+        {
+            return Mathf.Max(data - 1, 0);
+        }
+
+        return -1;
+    }
+
+    protected bool WithOvertimeBonus()
+    {
+        return HasFlag("o");
+    }
+
+    protected bool OnlyUseShipInventory()
+    {
+        if (!ShipInventoryProxy.Enabled) return false;
+
+        if (HasFlag("inv")) return true;
+        if (HasFlag("inventory")) return true;
+        if (HasFlag("shipinv")) return true;
+        if (HasFlag("shipinventory")) return true;
+
+        return false;
     }
 
     protected static bool CanUseCommand(out TerminalNode terminalNode)
@@ -82,23 +115,5 @@ internal class SellCommand : Command
 
         string withValueColor = hasEnoughWithOvertimeBonus ? TerminalPatch.GreenColor2 : "red";
         return $"Overtime bonus: ${overtimeBonus} <color={withValueColor}>(With value: ${value + overtimeBonus})</color>\n";
-    }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="foundFlags"></param>
-    /// <returns>-1 = no scrap eater, 0 = random scrap eater, 1+ = scrap eater index.</returns>
-    protected static int GetScrapEaterIndex(List<CommandFlag> foundFlags)
-    {
-        CommandFlag flag = foundFlags.Find(_ => _.Key.ToLower() == "-se");
-        if (flag == null || !flag.CanUse) return -1;
-
-        if (int.TryParse(flag.Data, out int index))
-        {
-            return index;
-        }
-
-        return 0;
     }
 }

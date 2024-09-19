@@ -7,7 +7,7 @@ namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [Serializable]
-public class ItemDataProxy : INetworkSerializable
+public class ShipInventoryItemData : INetworkSerializable
 {
     public Item Item => ShipInventoryProxy.GetItemById(Id);
     public string ItemName => Item != null ? Item.itemName : string.Empty;
@@ -16,12 +16,12 @@ public class ItemDataProxy : INetworkSerializable
     public int ScrapValue;
     public int SaveData;
 
-    public ItemDataProxy()
+    public ShipInventoryItemData()
     {
 
     }
 
-    public ItemDataProxy(int id, int scrapValue, int saveData)
+    public ShipInventoryItemData(int id, int scrapValue, int saveData)
     {
         Id = id;
         ScrapValue = scrapValue;

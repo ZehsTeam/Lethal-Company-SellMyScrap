@@ -28,21 +28,41 @@ public class ScrapToSell : INetworkSerializable
         }
     }
 
-    public List<GrabbableObject> GrabbableObjects
+    public List<GrabbableObject> GrabbableObjects => [.. ShipGrabbableObjects, .. VehicleGrabbableObjects];
+
+    public List<GrabbableObject> ShipGrabbableObjects
     {
         get
         {
-            if (!_setGrabbableObjects)
+            if (!_setShipGrabbableObjects)
             {
-                SetGrabbableObjects();
+                SetShipGrabbableObjects();
             }
 
-            return _grabbableObjects;
+            return _shipGrabbableObjects;
         }
         set
         {
-            _grabbableObjects = value;
-            _setGrabbableObjects = true;
+            _shipGrabbableObjects = value;
+            _setShipGrabbableObjects = true;
+        }
+    }
+
+    public List<GrabbableObject> VehicleGrabbableObjects
+    {
+        get
+        {
+            if (!_setVehicleGrabbableObjects)
+            {
+                SetVehicleGrabbableObjects();
+            }
+
+            return _vehicleGrabbableObjects;
+        }
+        set
+        {
+            _vehicleGrabbableObjects = value;
+            _setVehicleGrabbableObjects = true;
         }
     }
 
@@ -50,13 +70,16 @@ public class ScrapToSell : INetworkSerializable
     public int TotalScrapValue => GetTotalScrapValue();
     public int RealTotalScrapValue => ScrapHelper.GetRealValue(TotalScrapValue);
 
-    public NetworkObjectReference[] NetworkObjectReferences = [];
-    public ItemDataProxy[] ItemDataProxies = [];
+    public NetworkObjectReference[] ShipNetworkObjectReferences = [];
+    public NetworkObjectReference[] VehicleNetworkObjectReferences = [];
+    public ShipInventoryItemData[] ShipInventoryItems = [];
 
-    private List<ItemData> _itemDataList;
+    private List<ItemData> _itemDataList = [];
     private bool _setItemDataList;
-    private List<GrabbableObject> _grabbableObjects;
-    private bool _setGrabbableObjects;
+    private List<GrabbableObject> _shipGrabbableObjects = [];
+    private bool _setShipGrabbableObjects;
+    private List<GrabbableObject> _vehicleGrabbableObjects = [];
+    private bool _setVehicleGrabbableObjects;
 
     public ScrapToSell()
     {
@@ -66,17 +89,19 @@ public class ScrapToSell : INetworkSerializable
     public ScrapToSell(List<ItemData> items)
     {
         ItemDataList = items;
-        GrabbableObjects = items.Where(_ => _.GrabbableObject != null).Select(_ => _.GrabbableObject).ToList();
-        ItemDataProxies = items.Where(_ => _.ItemDataProxy != null).Select(_ => _.ItemDataProxy).ToArray();
+        ShipGrabbableObjects = items.Where(x => x.GrabbableObject != null && x.ItemLocation == ItemLocation.Ship).Select(x => x.GrabbableObject).ToList();
+        VehicleGrabbableObjects = items.Where(x => x.GrabbableObject != null && x.ItemLocation == ItemLocation.Vehicle).Select(x => x.GrabbableObject).ToList();
+        ShipInventoryItems = items.Where(x => x.ShipInventoryItemData != null).Select(x => x.ShipInventoryItemData).ToArray();
 
-        SetNetworkObjectReferences();
+        SetShipNetworkObjectReferences();
+        SetVehicleNetworkObjectReferences();
     }
 
-    private void SetNetworkObjectReferences()
+    private void SetShipNetworkObjectReferences()
     {
         List<NetworkObjectReference> networkObjectReferences = [];
 
-        foreach (var grabbableObject in GrabbableObjects)
+        foreach (var grabbableObject in ShipGrabbableObjects)
         {
             if (grabbableObject.TryGetComponent(out NetworkObject networkObject))
             {
@@ -84,42 +109,73 @@ public class ScrapToSell : INetworkSerializable
             }
         }
 
-        NetworkObjectReferences = networkObjectReferences.ToArray();
+        ShipNetworkObjectReferences = networkObjectReferences.ToArray();
+    }
+
+    private void SetVehicleNetworkObjectReferences()
+    {
+        List<NetworkObjectReference> networkObjectReferences = [];
+
+        foreach (var grabbableObject in VehicleGrabbableObjects)
+        {
+            if (grabbableObject.TryGetComponent(out NetworkObject networkObject))
+            {
+                networkObjectReferences.Add(networkObject);
+            }
+        }
+
+        VehicleNetworkObjectReferences = networkObjectReferences.ToArray();
     }
 
     private void SetItemDataList()
     {
-        ItemDataList = ScrapHelper.GetItemDataList(GrabbableObjects, ItemDataProxies);
+        ItemDataList = ScrapHelper.GetItemDataList(ShipGrabbableObjects, VehicleGrabbableObjects, ShipInventoryItems);
     }
 
-    private void SetGrabbableObjects()
+    private void SetShipGrabbableObjects()
     {
-        GrabbableObjects = [];
+        ShipGrabbableObjects = [];
 
-        foreach (var networkObjectReference in NetworkObjectReferences)
+        foreach (var networkObjectReference in ShipNetworkObjectReferences)
         {
             if (!networkObjectReference.TryGet(out NetworkObject networkObject)) continue;
 
             if (networkObject.TryGetComponent(out GrabbableObject grabbableObject))
             {
-                GrabbableObjects.Add(grabbableObject);
+                ShipGrabbableObjects.Add(grabbableObject);
+            }
+        }
+    }
+
+    private void SetVehicleGrabbableObjects()
+    {
+        VehicleGrabbableObjects = [];
+
+        foreach (var networkObjectReference in VehicleNetworkObjectReferences)
+        {
+            if (!networkObjectReference.TryGet(out NetworkObject networkObject)) continue;
+
+            if (networkObject.TryGetComponent(out GrabbableObject grabbableObject))
+            {
+                VehicleGrabbableObjects.Add(grabbableObject);
             }
         }
     }
 
     private int GetItemCount()
     {
-        return GrabbableObjects.Count + ItemDataProxies.Length;
+        return GrabbableObjects.Count + ShipInventoryItems.Length;
     }
 
     private int GetTotalScrapValue()
     {
-        return GrabbableObjects.Sum(_ => _.scrapValue) + ItemDataProxies.Sum(_ => _.ScrapValue);
+        return GrabbableObjects.Sum(x => x.scrapValue) + ShipInventoryItems.Sum(x => x.ScrapValue);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
-        serializer.SerializeValue(ref NetworkObjectReferences);
-        serializer.SerializeValue(ref ItemDataProxies);
+        serializer.SerializeValue(ref ShipNetworkObjectReferences);
+        serializer.SerializeValue(ref VehicleNetworkObjectReferences);
+        serializer.SerializeValue(ref ShipInventoryItems);
     }
 }

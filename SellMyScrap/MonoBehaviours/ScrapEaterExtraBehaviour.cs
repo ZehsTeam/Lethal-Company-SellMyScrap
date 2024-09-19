@@ -115,7 +115,7 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     protected virtual IEnumerator MoveTargetScrapToTargetTransformDelayed(Transform targetTransform, float suckDuration, float duration = 10f)
     {
-        List<GrabbableObject> sortedTargetScrap = targetScrap.OrderBy(_ => Vector3.Distance(targetTransform.position, _.transform.position)).ToList();
+        List<GrabbableObject> sortedTargetScrap = targetScrap.OrderBy(x => Vector3.Distance(targetTransform.position, x.transform.position)).ToList();
 
         float interval = duration / sortedTargetScrap.Count;
 

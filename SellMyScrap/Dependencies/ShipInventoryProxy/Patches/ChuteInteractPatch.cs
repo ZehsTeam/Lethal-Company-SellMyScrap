@@ -29,7 +29,7 @@ internal static class ChuteInteractPatch
 
     public static List<GrabbableObject> GetSpawnedGrabbableObjects()
     {
-        return _spawnedGrabbableObjects.Where(_ => _ != null).ToList();
+        return _spawnedGrabbableObjects.Where(x => x != null).ToList();
     }
 
     public static void ClearSpawnedGrabbableObjects()

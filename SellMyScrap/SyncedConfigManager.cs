@@ -60,10 +60,7 @@ public class SyncedConfigManager
     // Sell Settings (Synced)
     internal bool SellGifts
     { 
-        get
-        {
-            return _hostConfigData == null ? SellGiftsCfg.Value : _hostConfigData.SellGifts;
-        }
+        get => _hostConfigData == null ? SellGiftsCfg.Value : _hostConfigData.SellGifts;
         set
         {
             SellGiftsCfg.Value = value;
@@ -73,10 +70,7 @@ public class SyncedConfigManager
     
     internal bool SellShotguns
     { 
-        get
-        {
-            return _hostConfigData == null ? SellShotgunsCfg.Value : _hostConfigData.SellShotguns;
-        }
+        get => _hostConfigData == null ? SellShotgunsCfg.Value : _hostConfigData.SellShotguns;
         set
         {
             SellShotgunsCfg.Value = value;
@@ -86,10 +80,7 @@ public class SyncedConfigManager
     
     internal bool SellAmmo 
     {
-        get 
-        {
-            return _hostConfigData == null ? SellAmmoCfg.Value : _hostConfigData.SellAmmo;
-        }
+        get => _hostConfigData == null ? SellAmmoCfg.Value : _hostConfigData.SellAmmo;
         set
         {
             SellAmmoCfg.Value = value;
@@ -99,10 +90,7 @@ public class SyncedConfigManager
 
     internal bool SellKnives
     {
-        get
-        {
-            return _hostConfigData == null ? SellKnivesCfg.Value : _hostConfigData.SellKnives;
-        }
+        get => _hostConfigData == null ? SellKnivesCfg.Value : _hostConfigData.SellKnives;
         set
         {
             SellKnivesCfg.Value = value;
@@ -112,10 +100,7 @@ public class SyncedConfigManager
 
     internal bool SellPickles
     { 
-        get
-        {
-            return _hostConfigData == null ? SellPicklesCfg.Value : _hostConfigData.SellPickles;
-        }
+        get => _hostConfigData == null ? SellPicklesCfg.Value : _hostConfigData.SellPickles;
         set
         {
             SellPicklesCfg.Value = value;
@@ -126,10 +111,7 @@ public class SyncedConfigManager
     // Advanced Sell Settings (Synced)
     internal bool SellScrapWorthZero
     {
-        get
-        {
-            return _hostConfigData == null ? SellScrapWorthZeroCfg.Value : _hostConfigData.SellScrapWorthZero;
-        }
+        get => _hostConfigData == null ? SellScrapWorthZeroCfg.Value : _hostConfigData.SellScrapWorthZero;
         set
         {
             SellScrapWorthZeroCfg.Value = value;
@@ -139,10 +121,7 @@ public class SyncedConfigManager
 
     internal bool OnlySellScrapOnFloor
     {
-        get
-        {
-            return _hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : _hostConfigData.OnlySellScrapOnFloor;
-        }
+        get => _hostConfigData == null ? OnlySellScrapOnFloorCfg.Value : _hostConfigData.OnlySellScrapOnFloor;
         set
         {
             OnlySellScrapOnFloorCfg.Value = value;
@@ -154,40 +133,12 @@ public class SyncedConfigManager
     { 
         get
         {
-            string text = DontSellListCfg.Value;
-
-            if (_hostConfigData != null)
-            {
-                text = _hostConfigData.DontSellList;
-            }
-
-            if (string.IsNullOrEmpty(text))
-            {
-                return [];
-            }
-
-            try
-            {
-                return JsonConvert.DeserializeObject<string[]>(text);
-            }
-            catch (System.Exception e)
-            {
-                Plugin.logger.LogError($"Failed to deserialize dontSellList config setting.\n\n{e}");
-                return [];
-            }
+            string text = _hostConfigData == null ? DontSellListCfg.Value : _hostConfigData.DontSellList;
+            return text.Split(",", System.StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
         }
         set
         {
-            try
-            {
-                DontSellListCfg.Value = JsonConvert.SerializeObject(value);
-            }
-            catch (System.Exception e)
-            {
-                Plugin.logger.LogError($"Failed to serialize dontSellList config setting.\n\n{e}");
-                DontSellListCfg.Value = JsonConvert.SerializeObject(new string[0]);
-            }
-            
+            DontSellListCfg.Value = string.Join(", ", value);
             SyncedConfigsChanged();
         }
     }
@@ -196,40 +147,12 @@ public class SyncedConfigManager
     {
         get
         {
-            string text = SellListCfg.Value;
-
-            if (_hostConfigData != null)
-            {
-                text = _hostConfigData.SellList;
-            }
-
-            if (string.IsNullOrEmpty(text))
-            {
-                return [];
-            }
-
-            try
-            {
-                return JsonConvert.DeserializeObject<string[]>(text);
-            }
-            catch (System.Exception e)
-            {
-                Plugin.logger.LogError($"Failed to deserialize sellList config setting.\n\n{e}");
-                return [];
-            }
+            string text = _hostConfigData == null ? SellListCfg.Value : _hostConfigData.SellList;
+            return text.Split(",", System.StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
         }
         set
         {
-            try
-            {
-                SellListCfg.Value = JsonConvert.SerializeObject(value);
-            }
-            catch (System.Exception e)
-            {
-                Plugin.logger.LogError($"Failed to serialize sellList config setting.\n\n{e}");
-                SellListCfg.Value = JsonConvert.SerializeObject(new string[0]);
-            }
-
+            SellListCfg.Value = string.Join(", ", value);
             SyncedConfigsChanged();
         }
     }
@@ -281,8 +204,8 @@ public class SyncedConfigManager
         // Advanced Sell Settings
         SellScrapWorthZeroCfg =   ConfigHelper.Bind("Advanced Sell Settings", "SellScrapWorthZero",   defaultValue: false, requiresRestart: false, "Do you want to sell scrap worth zero?");
         OnlySellScrapOnFloorCfg = ConfigHelper.Bind("Advanced Sell Settings", "OnlySellScrapOnFloor", defaultValue: false, requiresRestart: false, "Do you want to sell scrap that is only on the floor?");
-        DontSellListCfg =         ConfigHelper.Bind("Advanced Sell Settings", "DontSellList",         defaultValue: JsonConvert.SerializeObject(new string[0]),                                                         requiresRestart: false, GetDontSellListDescription());
-        SellListCfg =             ConfigHelper.Bind("Advanced Sell Settings", "SellList",             defaultValue: JsonConvert.SerializeObject(new string[] { "Whoopie cushion", "Easter egg", "Tragedy", "Comedy" }), requiresRestart: false, GetSellListDescription());
+        DontSellListCfg =         ConfigHelper.Bind("Advanced Sell Settings", "DontSellList",         defaultValue: "",                                             requiresRestart: false, GetDontSellListDescription());
+        SellListCfg =             ConfigHelper.Bind("Advanced Sell Settings", "SellList",             defaultValue: "Whoopie cushion, Easter egg, Tragedy, Comedy", requiresRestart: false, GetSellListDescription());
 
         // Terminal Settings
         OverrideWelcomeMessageCfg = ConfigHelper.Bind("Terminal Settings", "OverrideWelcomeMessage", defaultValue: true, requiresRestart: false, "Overrides the terminal welcome message to add additional info.");
@@ -312,9 +235,9 @@ public class SyncedConfigManager
         string message = "Array of item names to not sell.\n";
         message += "Use the `edit config` command to easily edit the `dontSellList` config setting from the terminal.\n";
         message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
-        message += "Each entry should be separated by a comma\n";
+        message += "Each entry should be separated by a comma.\n";
         message += "Item names are not case-sensitive but, spaces do matter.\n";
-        message += "Example value: [\"Maxwell\", \"Cookie Fumo\", \"Blahaj\", \"Octolar Plush\", \"Smol Takey\", \"Dusty Plush\"]";
+        message += "Example value: Maxwell, Cookie Fumo, Blahaj, Octolar Plush, Smol Takey, Dusty Plush";
 
         return message;
     }
@@ -324,9 +247,9 @@ public class SyncedConfigManager
         string message = "Array of item names to sell when using the `sell list` command.\n";
         message += "Use the `edit config` command to easily edit the `sellList` config setting from the terminal.\n";
         message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
-        message += "Each entry should be separated by a comma\n";
+        message += "Each entry should be separated by a comma.\n";
         message += "Item names are not case-sensitive but, spaces do matter.\n";
-        message += "Example value: [\"Whoopie cushion\", \"Easter egg\", \"Tragedy\", \"Comedy\"]";
+        message += "Example value: Whoopie cushion, Easter egg, Tragedy, Comedy";
 
         return message;
     }
@@ -378,18 +301,23 @@ public class SyncedConfigManager
                 case "onlySellScrapOnFloor":
                     OnlySellScrapOnFloorCfg.Value = bool.Parse(value);
                     break;
-                case "dontSellListJson":
-                    DontSellListCfg.Value = value.Replace("\\", string.Empty);
-                    break;
-                case "sellListJson":
-                    SellListCfg.Value = value.Replace("\\", string.Empty);
-                    break;
-                case "DontSellListJson":
-                    DontSellListCfg.Value = value.Replace("\\", string.Empty);
-                    break;
-                case "SellListJson":
-                    SellListCfg.Value = value.Replace("\\", string.Empty);
-                    break;
+            }
+
+            try
+            {
+                if (key.Equals("DontSellListJson", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    DontSellListCfg.Value = string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", "")));
+                }
+
+                if (key.Equals("SellListJson", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    SellListCfg.Value = string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", "")));
+                }
+            }
+            catch (System.Exception e)
+            {
+                Plugin.logger.LogError(e);
             }
         }
 

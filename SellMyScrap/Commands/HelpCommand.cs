@@ -4,22 +4,21 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class HelpCommand : Command
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] == string.Empty) return true;
-        if (args[0] == "sell" && args[1] == "help") return true;
-        if (args[0] == "sell-help") return true;
-        if (args[0] == "sellmyscrap") return true;
-        if (args[0] == "sell" && args[1] == "my" && args[2] == "scrap") return true;
-        if (args[0] == "sms") return true;
+        if (MatchesPattern(ref args, "sell", "")) return true;
+        if (MatchesPattern(ref args, "sell", "help")) return true;
+        if (MatchesPattern(ref args, "sell-help")) return true;
+        if (MatchesPattern(ref args, "sellmyscrap")) return true;
+        if (MatchesPattern(ref args, "sell", "my", "scrap")) return true;
+        if (MatchesPattern(ref args, "sms")) return true;
 
         return false;
     }
 
     public override TerminalNode Execute(string[] args)
     {
+        // The args here will no longer contain the matched command parts
         string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}\n\n";
         message += "The following commands are available:\n\n";
         message += "sell <amount>      sell-amount <amount>\n";

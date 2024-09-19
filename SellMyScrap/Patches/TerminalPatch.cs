@@ -23,6 +23,8 @@ internal static class TerminalPatch
     private static Terminal _instance;
 
     public const string GreenColor2 = "#007f00";
+    public const string GrayColor = "#7f7f7f";
+    public const string RedColor = "#ff0000";
 
     private static bool hasOverrideTerminalNodes = false;
 

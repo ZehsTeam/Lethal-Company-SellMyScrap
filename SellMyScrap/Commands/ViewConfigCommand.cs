@@ -4,12 +4,10 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class ViewConfigCommand : Command
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "view" && args[1] == "config") return true;
-        if (args[0] == "view-config") return true;
+        if (MatchesPattern(ref args, "view", "config")) return true;
+        if (MatchesPattern(ref args, "view-config")) return true;
 
         return false;
     }

@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 using com.github.zehsteam.SellMyScrap.Dependencies;
-using Newtonsoft.Json;
+using com.github.zehsteam.SellMyScrap.Patches;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,8 +54,8 @@ public static class ConfigHelper
         _advancedSellConfigItems = [
             new ConfigItem("SellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
             new ConfigItem("OnlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
-            new ConfigItem("DontSellList",         typeof(string[]), isHostOnly: true, value => { configManager.DontSellList = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellList); }),
-            new ConfigItem("SellList",             typeof(string[]), isHostOnly: true, value => { configManager.SellList = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.SellList); }),
+            new ConfigItem("DontSellList",         typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.DontSellList); }),
+            new ConfigItem("SellList",             typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.SellList); }),
         ];
 
         _terminalConfigItems = [
@@ -220,7 +220,7 @@ public static class ConfigHelper
                 return;
             }
 
-            message += $"{Utils.GetStringWithSpacingInBetween($"{configItem.Key}:", configItem.GetValue(), maxLength)}\n";
+            message += $"{Utils.GetStringWithSpacingInBetween($"{configItem.Key}:", Utils.GetStringWithColor(configItem.GetValue(), TerminalPatch.GreenColor2), maxLength)}\n";
         });
 
         return $"{message.Trim()}\n\n";

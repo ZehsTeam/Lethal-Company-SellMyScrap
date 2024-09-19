@@ -57,16 +57,16 @@ internal class ShipInventoryProxy
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static ItemDataProxy[] GetItems()
+    public static ShipInventoryItemData[] GetItems()
     {
-        List<ItemDataProxy> itemDataProxies = [];
+        List<ShipInventoryItemData> shipInventoryItems = [];
 
-        foreach (var itemData in ItemManager.GetItems().Where(_ => ScrapHelper.IsScrap(GetItemById(_.ID))))
+        foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(GetItemById(x.ID))))
         {
-            itemDataProxies.Add(new ItemDataProxy(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA));
+            shipInventoryItems.Add(new ShipInventoryItemData(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA));
         }
 
-        return itemDataProxies.ToArray();
+        return shipInventoryItems.ToArray();
     }
 
     public static Item GetItemById(int id)
@@ -79,15 +79,15 @@ internal class ShipInventoryProxy
         return ItemsAllowed[id];
     }
 
-    public static void SpawnItemsOnServer(ItemDataProxy[] itemDataProxies)
+    public static void SpawnItemsOnServer(ShipInventoryItemData[] shipInventoryItems)
     {
         if (!NetworkUtils.IsServer) return;
 
-        Utils.StartCoroutine(SpawnItemsOnServerCoroutine(itemDataProxies));
+        Utils.StartCoroutine(SpawnItemsOnServerCoroutine(shipInventoryItems));
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    private static IEnumerator SpawnItemsOnServerCoroutine(ItemDataProxy[] itemDataProxies)
+    private static IEnumerator SpawnItemsOnServerCoroutine(ShipInventoryItemData[] shipInventoryItems)
     {
         SpawnItemsStatus = SpawnItemsStatus.Spawning;
 
@@ -98,7 +98,7 @@ internal class ShipInventoryProxy
             yield break;
         }
 
-        ItemData[] items = itemDataProxies.Select(_ => _.GetItemData()).ToArray();
+        ItemData[] items = shipInventoryItems.Select(x => x.GetItemData()).ToArray();
 
         if (items.Length == 0)
         {

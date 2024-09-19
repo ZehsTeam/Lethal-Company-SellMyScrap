@@ -1,5 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -11,28 +13,43 @@ public class Command
 
     public bool AwaitingConfirmation
     {
-        get
-        {
-            return CommandManager.AwaitingConfirmationCommand == this;
-        }
-        set
-        {
-            CommandManager.AwaitingConfirmationCommand = value ? this : null;
-        }
+        get => CommandManager.AwaitingConfirmationCommand == this;
+        set => CommandManager.AwaitingConfirmationCommand = value ? this : null;
     }
 
-    protected List<CommandFlag> Flags = [];
+    // This will store the parsed flag data after executing the command
+    private Dictionary<string, string> parsedFlags = [];
 
-    public virtual bool IsCommand(string[] args)
+    public virtual bool IsCommand(ref string[] args)
     {
         return false;
+    }
+
+    // Helper method to match command patterns and remove matched args
+    protected bool MatchesPattern(ref string[] args, params string[] pattern)
+    {
+        // Check if the provided pattern matches the start of args
+        if (args.Length < pattern.Length) return false;
+
+        for (int i = 0; i < pattern.Length; i++)
+        {
+            if (!args[i].Equals(pattern[i], System.StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        // Remove matched args by slicing the array
+        args = ParseFlags(args.Skip(pattern.Length).ToArray());
+
+        return true;
     }
 
     public virtual TerminalNode Execute(string[] args)
     {
         return TerminalPatch.CreateTerminalNode("Execute override was not found.\n\n");
     }
-    
+
     public virtual TerminalNode ExecuteConfirmation(string[] args)
     {
         string arg = args[0].ToLower();
@@ -65,96 +82,77 @@ public class Command
         return PreviousTerminalNode;
     }
 
-    protected List<CommandFlag> GetFlagsFromString(string extra)
+    // Parses flags in the input string array and returns the remaining non-flag args
+    protected string[] ParseFlags(string[] args)
     {
-        int startIndex = GetFlagsStartIndexInString(extra);
-        if (startIndex == -1) return [];
+        parsedFlags.Clear();
 
-        List<CommandFlag> foundFlags = new List<CommandFlag>();
+        List<string> remainingArgs = [];
 
-        string[] items = extra.Substring(startIndex).Trim().Split(' ');
-
-        foreach (var item in items)
+        foreach (string arg in args)
         {
-            CommandFlag foundFlag = GetFlagFromString(item);
-            if (foundFlag == null) continue;
+            // Match flags in the form "-flag:data" or "-flag"
+            Match match = Regex.Match(arg, @"-(\w+)(?::(.+))?");
 
-            foundFlags.Add(foundFlag);
-        }
-
-        return foundFlags;
-    }
-
-    private CommandFlag GetFlagFromString(string text)
-    {
-        CommandFlag foundFlag = null;
-
-        foreach (var flag in Flags)
-        {
-            if (text.StartsWith(flag.Key, System.StringComparison.OrdinalIgnoreCase))
+            if (match.Success)
             {
-                foundFlag = flag;
-                break;
+                string flagKey = match.Groups[1].Value;
+                string flagDataString = match.Groups[2].Success ? match.Groups[2].Value : string.Empty;
+
+                // Add the flag to the parsedFlags dictionary
+                parsedFlags[flagKey] = flagDataString;
+            }
+            else
+            {
+                // If the argument is not a flag, keep it in the remaining args
+                remainingArgs.Add(arg);
             }
         }
 
-        if (foundFlag == null) return null;
+        return remainingArgs.ToArray(); // Return the updated args without the flags
+    }
 
-        bool validLength = text.Length == foundFlag.Key.Length;
-        bool hasData = foundFlag.CanHaveData && text.Contains(":");
-        if (hasData) validLength = true;
-
-        if (!validLength) return null;
-
-        string flagData = string.Empty;
-
-        if (hasData)
+    // Retrieve a flag with a specific key, allowing for data type parsing
+    protected T GetFlagData<T>(string flagKey, T defaultValue = default)
+    {
+        if (parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
-            flagData = text.Split(":")[1];
+            try
+            {
+                return (T)System.Convert.ChangeType(flagDataString, typeof(T));
+            }
+            catch (System.InvalidCastException)
+            {
+                throw new System.ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
+            }
         }
 
-        return new CommandFlag(foundFlag.Key, foundFlag.IsHostOnly, foundFlag.CanHaveData, flagData);
+        return defaultValue;
     }
 
-    protected int GetFlagsStartIndexInString(string extra)
+    protected bool TryGetFlagData<T>(string flagKey, out T flagData)
     {
-        int startIndex = -1;
+        flagData = default;
 
-        Flags.ForEach(flag =>
+        if (parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
-            int index = extra.IndexOf(flag.Key, System.StringComparison.OrdinalIgnoreCase);
-            if (index == -1) return;
-
-            if (startIndex == -1)
+            try
             {
-                startIndex = index;
-                return;
+                flagData = (T)System.Convert.ChangeType(flagDataString, typeof(T));
+                return true;
             }
-
-            if (index < startIndex)
+            catch (System.InvalidCastException)
             {
-                startIndex = index;
+                throw new System.ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
             }
-        });
+        }
 
-        return startIndex;
+        return false;
     }
-}
 
-public class CommandFlag
-{
-    public string Key;
-    public bool IsHostOnly;
-    public bool CanHaveData;
-    public string Data;
-
-    public bool CanUse => IsHostOnly ? NetworkUtils.IsServer : true;
-
-    public CommandFlag(string key, bool isHostOnly = false, bool canHaveData = false, string data = "")
+    // Check if a flag is present
+    protected bool HasFlag(string flagKey)
     {
-        this.Key = key;
-        this.IsHostOnly = isHostOnly;
-        this.CanHaveData = canHaveData;
-        this.Data = data;
+        return parsedFlags.ContainsKey(flagKey);
     }
 }

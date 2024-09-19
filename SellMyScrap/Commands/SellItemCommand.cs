@@ -1,17 +1,14 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
-using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
 internal class SellItemCommand : SellCommand
 {
-    public override bool IsCommand(string[] args)
+    public override bool IsCommand(ref string[] args)
     {
-        args = Utils.GetArrayToLower(args);
-
-        if (args[0] == "sell" && args[1] == "item") return true;
-        if (args[0] == "sell-item") return true;
+        if (MatchesPattern(ref args, "sell", "item")) return true;
+        if (MatchesPattern(ref args, "sell-item")) return true;
 
         return false;
     }
@@ -23,28 +20,21 @@ internal class SellItemCommand : SellCommand
             return terminalNode;
         }
 
-        string[] _args = Utils.GetArrayToLower(args);
+        string itemName = string.Join(" ", args).Trim();
 
-        int length = args[0].Length;
-        if (_args[1] == "item") length += args[1].Length + 1;
-        string extra = string.Join(' ', args).Substring(length).Trim();
-        string itemName = GetItemName(extra);
-        List<CommandFlag> foundFlags = GetFlagsFromString(extra);
-        int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
-
-        if (_args[1] == "item" && _args[2] == string.Empty || _args[1] == string.Empty)
+        if (string.IsNullOrWhiteSpace(itemName))
         {
             return TerminalPatch.CreateTerminalNode(GetSellItemInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.SetScrapToSell(ScrapHelper.GetAllScrapByItemName(itemName));
+        ScrapToSell scrapToSell = Plugin.Instance.SetScrapToSell(ScrapHelper.GetAllScrapByItemName(itemName, onlyUseShipInventory: OnlyUseShipInventory()));
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);
@@ -58,7 +48,7 @@ internal class SellItemCommand : SellCommand
         message += GetOvertimeBonusString(scrapToSell.RealTotalScrapValue);
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += "\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
         message += "Please CONFIRM or DENY.\n\n";
 
         return message;
@@ -76,18 +66,5 @@ internal class SellItemCommand : SellCommand
         message += "    sell item Whoo\n\n";
 
         return message;
-    }
-
-    private string GetItemName(string extra)
-    {
-        string itemName = extra;
-        int flagsStartIndex = GetFlagsStartIndexInString(extra);
-
-        if (flagsStartIndex != -1)
-        {
-            itemName = itemName.Substring(0, flagsStartIndex);
-        }
-
-        return itemName.Trim();
     }
 }
