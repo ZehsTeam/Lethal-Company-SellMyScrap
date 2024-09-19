@@ -228,4 +228,21 @@ internal static class Utils
 
         return result;
     }
+
+    public static Coroutine StartCoroutine(IEnumerator routine)
+    {
+        if (Plugin.Instance != null)
+        {
+            return Plugin.Instance.StartCoroutine(routine);
+        }
+
+        if (GameNetworkManager.Instance != null)
+        {
+            return GameNetworkManager.Instance.StartCoroutine(routine);
+        }
+
+        Plugin.logger.LogError("Failed to start coroutine. " + routine);
+
+        return null;
+    }
 }

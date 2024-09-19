@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -26,14 +27,14 @@ internal class SellListCommand : SellCommand
         List<CommandFlag> foundFlags = GetFlagsFromString(extra);
         int scrapEaterIndex = GetScrapEaterIndex(foundFlags);
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellListJson);
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellList);
 
-        if (scrapToSell.Amount == 0)
+        if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellList, scrapToSell.Value, scrapToSell.Value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellList, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
         AwaitingConfirmation = true;
         
         string message = GetMessage(scrapToSell);
@@ -42,15 +43,15 @@ internal class SellListCommand : SellCommand
 
     private string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.RealValue}\n";
-        message += GetQuotaFulfilledString(scrapToSell.RealValue);
-        message += GetOvertimeBonusString(scrapToSell.RealValue);
+        string message = $"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.RealTotalScrapValue}\n";
+        message += GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue);
+        message += GetOvertimeBonusString(scrapToSell.RealTotalScrapValue);
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += "\n";
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

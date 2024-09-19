@@ -14,6 +14,7 @@ public class SuckBehaviour : MonoBehaviour
     {
         _grabbableObject = GetComponent<GrabbableObject>();
         _grabbableObject.grabbable = false;
+        _grabbableObject.parentObject = null;
         _grabbableObject.EnablePhysics(false);
 
         _ragdollGrabbableObject = GetComponent<RagdollGrabbableObject>();

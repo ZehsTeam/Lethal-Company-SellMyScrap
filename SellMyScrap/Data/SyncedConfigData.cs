@@ -2,7 +2,7 @@
 using System;
 using Unity.Netcode;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Data;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [Serializable]
@@ -18,8 +18,8 @@ public class SyncedConfigData : INetworkSerializable
     // Advanced Sell Settings
     public bool SellScrapWorthZero;
     public bool OnlySellScrapOnFloor;
-    public string DontSellListJson;
-    public string SellListJson;
+    public string DontSellList;
+    public string SellList;
 
     public SyncedConfigData() { }
 
@@ -35,8 +35,8 @@ public class SyncedConfigData : INetworkSerializable
         // Advanced Sell Settings
         SellScrapWorthZero = configManager.SellScrapWorthZero;
         OnlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
-        DontSellListJson = JsonConvert.SerializeObject(configManager.DontSellListJson);
-        SellListJson = JsonConvert.SerializeObject(configManager.SellListJson);
+        DontSellList = JsonConvert.SerializeObject(configManager.DontSellList);
+        SellList = JsonConvert.SerializeObject(configManager.SellList);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -51,7 +51,7 @@ public class SyncedConfigData : INetworkSerializable
         // Advanced Sell Settings
         serializer.SerializeValue(ref SellScrapWorthZero);
         serializer.SerializeValue(ref OnlySellScrapOnFloor);
-        serializer.SerializeValue(ref DontSellListJson);
-        serializer.SerializeValue(ref SellListJson);
+        serializer.SerializeValue(ref DontSellList);
+        serializer.SerializeValue(ref SellList);
     }
 }

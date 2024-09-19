@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;

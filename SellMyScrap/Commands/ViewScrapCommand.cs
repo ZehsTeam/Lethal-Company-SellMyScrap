@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Patches;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -16,16 +17,16 @@ internal class ViewScrapCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        ScrapToSell scrapToSell = new ScrapToSell(ScrapHelper.GetScrapFromShip(false));
+        ScrapToSell scrapToSell = new ScrapToSell(ScrapHelper.GetAllScrap(onlyAllowedScrap: false));
 
         // No items found
-        if (scrapToSell.Amount == 0)
+        if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found.\n\n");
         }
 
-        string message = $"Found {scrapToSell.Amount} items with a total value of ${scrapToSell.Value}\n\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap)}\n\n";
+        string message = $"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.TotalScrapValue}\n\n";
+        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
 
         return TerminalPatch.CreateTerminalNode(message);
     }

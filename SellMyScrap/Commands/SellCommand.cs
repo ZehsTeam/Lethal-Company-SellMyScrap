@@ -15,7 +15,7 @@ internal class SellCommand : Command
 
     protected override TerminalNode OnConfirm(string[] args)
     {
-        string message = $"Sell confirmed. Processing {Plugin.Instance.SellRequest.RealValue}...\n\n";
+        string message = $"Sell confirmed. Processing {Plugin.Instance.SellRequest.RealScrapValue}...\n\n";
 
         Plugin.Instance.ConfirmSellRequest();
         AwaitingConfirmation = false;

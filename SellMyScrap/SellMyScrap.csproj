@@ -68,8 +68,10 @@
 	</ItemGroup>
   
   <ItemGroup>
-    <Reference Include="LethalConfig"><HintPath>$(LibraryFolder)\AinaVT-LethalConfig\LethalConfig.dll</HintPath></Reference>
-    <Reference Include="TakeyPlush"> <HintPath>$(PluginsFolder)\com.github.zehsteam.TakeyPlush.dll</HintPath></Reference>
+    <Reference Include="LethalConfig"> <HintPath>$(LibraryFolder)\AinaVT-LethalConfig\LethalConfig.dll     </HintPath></Reference>
+    <Reference Include="ShipInventory"><HintPath>$(LibraryFolder)\WarperSan-ShipInventory\ShipInventory.dll</HintPath></Reference>
+    <Reference Include="CSync">        <HintPath>$(LibraryFolder)\Sigurd-CSync\com.sigurd.csync.dll        </HintPath></Reference>
+    <Reference Include="TakeyPlush">   <HintPath>$(PluginsFolder)\com.github.zehsteam.TakeyPlush.dll       </HintPath></Reference>
 	</ItemGroup>
   
   <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">

@@ -1,19 +1,24 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using com.github.zehsteam.SellMyScrap.Commands;
+using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Dependencies;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency(ShipInventoryProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 internal class Plugin : BaseUnityPlugin
 {
     private readonly Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
@@ -42,6 +47,11 @@ internal class Plugin : BaseUnityPlugin
         harmony.PatchAll(typeof(StartMatchLeverPatch));
         harmony.PatchAll(typeof(InteractTriggerPatch));
         
+        if (ShipInventoryProxy.Enabled)
+        {
+            ShipInventoryProxy.PatchAll(harmony);
+        }
+
         ConfigManager = new SyncedConfigManager();
 
         Content.Load();
@@ -59,20 +69,48 @@ internal class Plugin : BaseUnityPlugin
 
     private void NetcodePatcherAwake()
     {
-        var types = Assembly.GetExecutingAssembly().GetTypes();
-
-        foreach (var type in types)
+        try
         {
-            var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            foreach (var method in methods)
-            {
-                var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
+            var currentAssembly = Assembly.GetExecutingAssembly();
+            var types = currentAssembly.GetTypes();
 
-                if (attributes.Length > 0)
+            foreach (var type in types)
+            {
+                var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+                foreach (var method in methods)
                 {
-                    method.Invoke(null, null);
+                    try
+                    {
+                        // Safely attempt to retrieve custom attributes
+                        var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
+
+                        if (attributes.Length > 0)
+                        {
+                            try
+                            {
+                                // Safely attempt to invoke the method
+                                method.Invoke(null, null);
+                            }
+                            catch (TargetInvocationException ex)
+                            {
+                                // Log and continue if method invocation fails (e.g., due to missing dependencies)
+                                Debug.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle errors when fetching custom attributes, due to missing types or dependencies
+                        Debug.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            // Catch any general exceptions that occur in the process
+            Debug.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
         }
     }
 
@@ -97,24 +135,24 @@ internal class Plugin : BaseUnityPlugin
         return ScrapToSell;
     }
 
-    public ScrapToSell GetScrapToSell(string[] sellListJson)
+    public ScrapToSell GetScrapToSell(string[] sellList)
     {
-        ScrapToSell = ScrapHelper.GetScrapToSell(sellListJson);
+        ScrapToSell = ScrapHelper.GetScrapToSell(sellList);
         return ScrapToSell;
     }
 
-    public ScrapToSell SetScrapToSell(List<GrabbableObject> scrap)
+    public ScrapToSell SetScrapToSell(List<ItemData> items)
     {
-        ScrapToSell = new ScrapToSell(scrap);
+        ScrapToSell = new ScrapToSell(items);
         return ScrapToSell;
     }
 
     #region SellRequest Methods
-    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationType confirmationType, int scrapEaterIndex = -1)
+    public void CreateSellRequest(SellType sellType, int value, int requestedValue, ConfirmationStatus confirmationType, int scrapEaterIndex = -1)
     {
         SellRequest = new SellRequest(sellType, value, requestedValue, confirmationType, scrapEaterIndex);
 
-        string message = $"Created sell request. {ScrapToSell.Amount} items for ${value}.";
+        string message = $"Created sell request. {ScrapToSell.ItemCount} items for ${value}.";
 
         if (scrapEaterIndex >= 0)
         {
@@ -128,9 +166,9 @@ internal class Plugin : BaseUnityPlugin
     {
         if (ScrapToSell == null || SellRequest == null) return;
 
-        SellRequest.ConfirmationType = ConfirmationType.Confirmed;
+        SellRequest.ConfirmationStatus = ConfirmationStatus.Confirmed;
 
-        logger.LogInfo($"Attempting to sell {ScrapToSell.Amount} items for ${ScrapToSell.Value}.");
+        logger.LogInfo($"Attempting to sell {ScrapToSell.ItemCount} items for ${ScrapToSell.TotalScrapValue}.");
 
         if (NetworkUtils.IsServer)
         {
@@ -151,7 +189,7 @@ internal class Plugin : BaseUnityPlugin
 
     private void ConfirmSellRequestOnClient()
     {
-        PluginNetworkBehaviour.Instance.PerformSellServerRpc(NetworkUtils.GetNetworkObjectReferences(ScrapToSell.Scrap), SellRequest.SellType, SellRequest.RealValue, ScrapToSell.Amount, SellRequest.ScrapEaterIndex);
+        PluginNetworkBehaviour.Instance.PerformSellServerRpc(ScrapToSell, SellRequest.SellType, SellRequest.ScrapEaterIndex);
     }
 
     public void CancelSellRequest()
@@ -161,17 +199,17 @@ internal class Plugin : BaseUnityPlugin
     }
     #endregion
 
-    public void PerformSellOnServerFromClient(NetworkObjectReference[] networkObjectReferences, SellType sellType, int scrapEaterIndex = -1)
+    public void PerformSellOnServerFromClient(ScrapToSell scrapToSell, SellType sellType, int scrapEaterIndex = -1)
     {
-        ScrapToSell = new ScrapToSell(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
-        CreateSellRequest(sellType, ScrapToSell.Value, ScrapToSell.Value, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        ScrapToSell = scrapToSell;
+        CreateSellRequest(sellType, ScrapToSell.TotalScrapValue, ScrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
         ConfirmSellRequest();
     }
 
     public IEnumerator PerformSellOnServer()
     {
         if (ScrapToSell == null || SellRequest == null) yield return null;
-        if (SellRequest.ConfirmationType != ConfirmationType.Confirmed) yield return null;
+        if (SellRequest.ConfirmationStatus != ConfirmationStatus.Confirmed) yield return null;
 
         if (DepositItemsDeskPatch.Instance == null)
         {
@@ -181,33 +219,69 @@ internal class Plugin : BaseUnityPlugin
 
         int scrapEaterIndex = SellRequest.ScrapEaterIndex;
 
+        List<GrabbableObject> grabbableObjects = ScrapToSell.GrabbableObjects;
+
+        if (ShipInventoryProxy.Enabled && ScrapToSell.ItemDataProxies.Length > 0)
+        {
+            ShipInventoryProxy.SpawnItemsOnServer(ScrapToSell.ItemDataProxies);
+
+            yield return new WaitUntil(() => !ShipInventoryProxy.IsSpawning);
+
+            if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Success)
+            {
+                grabbableObjects.AddRange(ShipInventoryProxy.GetSpawnedGrabbableObjects());
+                ShipInventoryProxy.ClearSpawnedGrabbableObjects();
+            }
+            else if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Failed)
+            {
+                HUDManager.Instance.DisplayTip("SellMyScrap", "Failed to spawn items from ShipInventory!", isWarning: true);
+                yield break;
+            }
+        }
+
         // Try to show a scrap eater if the ship is not leaving.
         if (!StartOfRound.Instance.shipIsLeaving)
         {
             if (scrapEaterIndex == 0)
             {
-                ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
+                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects);
                 yield break;
             }
 
             if (scrapEaterIndex > 0 && ScrapEaterManager.HasScrapEater(scrapEaterIndex - 1))
             {
-                ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, ScrapToSell.Scrap);
+                ScrapEaterManager.StartScrapEaterOnServer(scrapEaterIndex - 1, grabbableObjects);
                 yield break;
             }
 
             if (ScrapEaterManager.CanUseScrapEater())
             {
-                ScrapEaterManager.StartRandomScrapEaterOnServer(ScrapToSell.Scrap);
+                ScrapEaterManager.StartRandomScrapEaterOnServer(grabbableObjects);
                 yield break;
             }
         }
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(ScrapToSell.Scrap);
-        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectReferences(ScrapToSell.Scrap));
+        DepositItemsDeskPatch.PlaceItemsOnCounter(grabbableObjects);
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectReferences(grabbableObjects));
         yield return new WaitForSeconds(0.5f);
         DepositItemsDeskPatch.SellItemsOnServer();
 
         ScrapToSell = null;
+    }
+
+    public void LogInfoExtended(object data)
+    {
+        if (ConfigManager.ExtendedLogging)
+        {
+            logger.LogInfo(data);
+        }
+    }
+
+    public void LogMessageExtended(object data)
+    {
+        if (ConfigManager.ExtendedLogging)
+        {
+            logger.LogMessage(data);
+        }
     }
 }

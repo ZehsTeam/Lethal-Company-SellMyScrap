@@ -142,6 +142,6 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 
     protected Transform GetHangarShipTransform()
     {
-        return ScrapHelper.HangarShip.transform;
+        return ScrapHelper.HangarShipTransform;
     }
 }

@@ -1,7 +1,7 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Data;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -55,12 +55,12 @@ internal class SellAmountCommand : SellCommand
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: withOvertimeBonus);
 
-        if (scrapToSell.Amount == 0)
+        if (scrapToSell.ItemCount == 0)
         {
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.Value, requestedValue, ConfirmationType.AwaitingConfirmation, scrapEaterIndex);
+        Plugin.Instance.CreateSellRequest(SellType.SellAmount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, scrapEaterIndex);
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue, withOvertimeBonus);
@@ -74,25 +74,25 @@ internal class SellAmountCommand : SellCommand
 
         if (withOvertimeBonus)
         {
-            overtimeBonusString = GetOvertimeBonusWithValueString(scrapToSell.RealValue, requestedValue, out bool hasEnoughWithOvertimeBonus);
-            foundColor = scrapToSell.RealValue >= requestedValue || hasEnoughWithOvertimeBonus ? "green" : "red"; 
+            overtimeBonusString = GetOvertimeBonusWithValueString(scrapToSell.RealTotalScrapValue, requestedValue, out bool hasEnoughWithOvertimeBonus);
+            foundColor = scrapToSell.RealTotalScrapValue >= requestedValue || hasEnoughWithOvertimeBonus ? "green" : "red"; 
         }
         else
         {
-            overtimeBonusString = GetOvertimeBonusString(scrapToSell.RealValue);
-            foundColor = scrapToSell.RealValue >= requestedValue ? "green" : "red";
+            overtimeBonusString = GetOvertimeBonusString(scrapToSell.RealTotalScrapValue);
+            foundColor = scrapToSell.RealTotalScrapValue >= requestedValue ? "green" : "red";
         }
 
-        string message = $"Found {scrapToSell.Amount} items with a total value of <color={foundColor}>${scrapToSell.RealValue}</color>\n";
+        string message = $"Found {scrapToSell.ItemCount} items with a total value of <color={foundColor}>${scrapToSell.RealTotalScrapValue}</color>\n";
         message += $"Requested value: ${requestedValue}\n";
-        message += GetQuotaFulfilledString(scrapToSell.RealValue);
+        message += GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue);
         message += overtimeBonusString;
         message += $"The Company is buying at %{CompanyBuyingRate}\n";
         message += "\n";
 
         if (Plugin.ConfigManager.ShowFoundItems)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.Scrap, TerminalPatch.GreenColor2)}\n\n";
+            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList, TerminalPatch.GreenColor2)}\n\n";
         }
 
         message += "Please CONFIRM or DENY.\n\n";

@@ -13,6 +13,7 @@ namespace com.github.zehsteam.SellMyScrap;
 public static class ConfigHelper
 {
     // Config Items
+    private static List<ConfigItem> _generalConfigItems = [];
     private static List<ConfigItem> _sellConfigItems = [];
     private static List<ConfigItem> _advancedSellConfigItems = [];
     private static List<ConfigItem> _terminalConfigItems = [];
@@ -24,6 +25,7 @@ public static class ConfigHelper
         get
         {
             return [
+                .. _generalConfigItems,
                 .. _sellConfigItems,
                 .. _advancedSellConfigItems,
                 .. _terminalConfigItems,
@@ -37,6 +39,10 @@ public static class ConfigHelper
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
+        _generalConfigItems = [
+            new ConfigItem("ExtendedLogging", typeof(bool), isHostOnly: true, value => { configManager.ExtendedLogging = bool.Parse(value); }, () => { return configManager.ExtendedLogging.ToString(); }),
+        ];
+
         _sellConfigItems = [
             new ConfigItem("SellGifts",    typeof(bool), isHostOnly: true, value => { configManager.SellGifts =    bool.Parse(value); }, () => { return configManager.SellGifts.ToString();    }),
             new ConfigItem("SellShotguns", typeof(bool), isHostOnly: true, value => { configManager.SellShotguns = bool.Parse(value); }, () => { return configManager.SellShotguns.ToString(); }),
@@ -48,8 +54,8 @@ public static class ConfigHelper
         _advancedSellConfigItems = [
             new ConfigItem("SellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
             new ConfigItem("OnlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
-            new ConfigItem("DontSellListJson",     typeof(string[]), isHostOnly: true, value => { configManager.DontSellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellListJson); }),
-            new ConfigItem("SellListJson",         typeof(string[]), isHostOnly: true, value => { configManager.SellListJson = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.SellListJson); }),
+            new ConfigItem("DontSellList",         typeof(string[]), isHostOnly: true, value => { configManager.DontSellList = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.DontSellList); }),
+            new ConfigItem("SellList",             typeof(string[]), isHostOnly: true, value => { configManager.SellList = JsonConvert.DeserializeObject<string[]>(value); }, () => { return JsonConvert.SerializeObject(configManager.SellList); }),
         ];
 
         _terminalConfigItems = [
@@ -154,11 +160,11 @@ public static class ConfigHelper
     /// Link your scrap eater SpawnWeight config setting to the SellMyScrap terminal config editor.
     /// </summary>
     /// <param name="key">SpawnWeight config setting key.</param>
-    /// <param name="SetValue">Action for setting your spawnWeight config setting value.</param>
-    /// <param name="GetValue">Func for getting your spawnWeight config setting value.</param>
-    public static void AddScrapEaterConfigItem(string key, Action<string> SetValue, Func<string> GetValue)
+    /// <param name="setValue">Action for setting your spawnWeight config setting value.</param>
+    /// <param name="getValue">Func for getting your spawnWeight config setting value.</param>
+    public static void AddScrapEaterConfigItem(string key, Action<string> setValue, Func<string> getValue)
     {
-        _scrapEaterConfigItems.Add(new ConfigItem(key, typeof(int), isHostOnly: true, SetValue, GetValue));
+        _scrapEaterConfigItems.Add(new ConfigItem(key, typeof(int), isHostOnly: true, setValue, getValue));
     }
 
     private static ConfigItem GetConfigItem(string key)
@@ -177,6 +183,7 @@ public static class ConfigHelper
     internal static string GetConfigSettingsMessage()
     {
         string message = string.Empty;
+        message += GetConfigItemListMessage("[General Settings]", _generalConfigItems);
         message += GetConfigItemListMessage("[Sell Settings]", _sellConfigItems, syncedWithHost: true);
         message += GetConfigItemListMessage("[Advanced Sell Settings]", _advancedSellConfigItems, syncedWithHost: true);
         message += GetConfigItemListMessage("[Terminal Settings]", _terminalConfigItems);

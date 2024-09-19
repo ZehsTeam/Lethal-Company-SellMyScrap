@@ -20,20 +20,20 @@ internal class EditConfigCommand : Command
 
         _dontSellListJsonEditor = new JsonListEditor("dontSellListJson", isHostOnly: true, () =>
         {
-            return configManager.DontSellListJson;
+            return configManager.DontSellList;
         },
         value =>
         {
-            configManager.DontSellListJson = value;
+            configManager.DontSellList = value;
         });
 
         _sellListJsonEditor = new JsonListEditor("sellListJson", isHostOnly: true, () =>
         {
-            return configManager.SellListJson;
+            return configManager.SellList;
         },
         value =>
         {
-            configManager.SellListJson = value;
+            configManager.SellList = value;
         });
     }
 
