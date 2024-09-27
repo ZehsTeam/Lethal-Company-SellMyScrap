@@ -128,18 +128,6 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             return Mathf.Clamp(TargetVariantIndex, 0, Variants.Length - 1);
         }
 
-        if (PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", false))
-        {
-            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterPeepoChickenVariant3", true);
-            return GetVariantIndex(TakeyVariantType.ChickenDance);
-        }
-
-        if (PlayerUtils.IsLocalPlayer(PlayerName.Takerst) && !ModpackSaveSystem.ReadValue("ForcedShowTakeyScrapEaterDinkDonkVariant", false) && targetScrap.Sum(x => x.scrapValue) >= 1000 && Utils.RandomPercent(60))
-        {
-            ModpackSaveSystem.WriteValue("ForcedShowTakeyScrapEaterDinkDonkVariant", true);
-            return GetVariantIndex(TakeyVariantType.DinkDonk);
-        }
-
         return Utils.GetRandomIndexFromWeightList(Variants.Select(x => x.Weight).ToList());
     }
 

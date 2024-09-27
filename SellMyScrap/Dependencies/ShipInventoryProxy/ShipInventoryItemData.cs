@@ -9,10 +9,10 @@ namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 [Serializable]
 public class ShipInventoryItemData : INetworkSerializable
 {
-    public Item Item => ShipInventoryProxy.GetItemById(Id);
+    public Item Item => ScrapHelper.GetItemByName(Id);
     public string ItemName => Item != null ? Item.itemName : string.Empty;
 
-    public int Id;
+    public string Id;
     public int ScrapValue;
     public int SaveData;
 
@@ -21,7 +21,7 @@ public class ShipInventoryItemData : INetworkSerializable
 
     }
 
-    public ShipInventoryItemData(int id, int scrapValue, int saveData)
+    public ShipInventoryItemData(string id, int scrapValue, int saveData)
     {
         Id = id;
         ScrapValue = scrapValue;

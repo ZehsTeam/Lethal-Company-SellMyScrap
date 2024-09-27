@@ -7,7 +7,7 @@
     
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.7.0</Version>                                               <!-- PLUGIN_VERSION -->
+    <Version>1.7.1</Version>                                               <!-- PLUGIN_VERSION -->
     <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +</Description>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -45,9 +45,9 @@
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="56.0.0-beta.1-ngd.0" PrivateAssets="all" />
   </ItemGroup>
   
-  <PropertyGroup>
-    <LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
+  <PropertyGroup><LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
     <PluginsFolder>D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins</PluginsFolder>
+    
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>

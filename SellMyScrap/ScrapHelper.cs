@@ -226,6 +226,21 @@ internal static class ScrapHelper
 
         return yOffset <= 0.1f;
     }
+
+    public static Item GetItemByName(string itemName, bool matchCase = false)
+    {
+        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+
+        foreach (var item in StartOfRound.Instance.allItemsList.itemsList)
+        {
+            if (item.itemName.Equals(itemName, comparisonType))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
     #endregion
 
     #region Get Scrap to Sell

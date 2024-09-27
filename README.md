@@ -170,15 +170,16 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 
 ## Credits
 #### Takey (scrap eater)
-* Pirate Hat model by [ReversedG](https://sketchfab.com/ReversedG) on [Sketchfab](https://sketchfab.com/3d-models/pirate-hat-84b496f5860340eca3cc1d63985aa524).
-* Playing Cards model by [Dumokan Art](https://sketchfab.com/dumokanart) on [Sketchfab](https://sketchfab.com/3d-models/playing-cards-793274af15df4f20848d83ab6d127493).
-* Chicken model by [marksethcaballes](https://sketchfab.com/marksethcaballes) on [Sketchfab](https://sketchfab.com/3d-models/low-poly-chicken-8995b3423ee9430983dd88492b8fa4e2).
-* Bell model by [ApprenticeRaccoon](https://sketchfab.com/ApprenticeRaccoon) on [Sketchfab](https://sketchfab.com/3d-models/bell-3132eda94ea4496fa51e39b8a5b3a4a8).
-* Handbell sounds by [yake01](https://freesound.org/people/yake01/) on [Freesound](https://freesound.org/people/yake01/sounds/586567/).
-* Boxing Gloves (Left) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-left-handed-076293541203455da59a38eea5b6a44b).
-* Boxing Gloves (Right) model by [Gohar.Munir](https://sketchfab.com/Gohar.Munir) on [Sketchfab](https://sketchfab.com/3d-models/boxing-gloves-right-handed-1ae09e8e4959418b9c4274f9515c5d29).
-* Gift Bow model by [buzzkirill](https://sketchfab.com/buzzkirill) on [Sketchfab](https://sketchfab.com/3d-models/gift-bow-4a6528079ece48828f2500964fd60e13).
-* Crystal Heart model by [Kalem.Masters](https://sketchfab.com/Kalem.Masters) on [Sketchfab](https://sketchfab.com/3d-models/crystal-empire-crystal-heart-mlp-53dc64a4841c4a85bf7eda7be3d14570).
+* "Pirate hat" (https://skfb.ly/oDoDr) by ReversedG is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Playing Cards" (https://skfb.ly/oDIqr) by Dumokan Art is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Low poly Chicken" (https://skfb.ly/oARnK) by marksethcaballes is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Bell" (https://skfb.ly/oIUVu) by ApprenticeRaccoon is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* Foley, Hand Bell, Ringing, Muffled.wav by yake01 -- https://freesound.org/s/586567/ -- License: Attribution 4.0
+* "Boxing Gloves - Left Handed" (https://skfb.ly/6XOUS) by Gohar.Munir is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Boxing Gloves - Right Handed" (https://skfb.ly/6XPGF) by Gohar.Munir is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Gift Bow" (https://skfb.ly/oxBKr) by buzzkirill is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Crystal empire - Crystal Heart - MLP" (https://skfb.ly/6uyzt) by Kalem.Masters is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+* "Cake" (https://skfb.ly/ozG96) by Harry Charalambous is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 #### Maxwell (scrap eater) and Cookie Fumo (scrap eater)
 * Models and sounds from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).

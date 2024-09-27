@@ -24,8 +24,6 @@ internal class ShipInventoryProxy
     public const string PLUGIN_GUID = ShipInventory.MyPluginInfo.PLUGIN_GUID;
     public static bool Enabled => Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
 
-    public static List<Item> ItemsAllowed => StartOfRound.Instance.allItemsList.itemsList;
-
     public static bool IsSpawning {  get; private set; }
     public static SpawnItemsStatus SpawnItemsStatus
     {
@@ -60,23 +58,13 @@ internal class ShipInventoryProxy
     public static ShipInventoryItemData[] GetItems()
     {
         List<ShipInventoryItemData> shipInventoryItems = [];
-
-        foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(GetItemById(x.ID))))
+        
+        foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(ScrapHelper.GetItemByName(x.ID))))
         {
             shipInventoryItems.Add(new ShipInventoryItemData(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA));
         }
 
         return shipInventoryItems.ToArray();
-    }
-
-    public static Item GetItemById(int id)
-    {
-        if (id < 0 || id > ItemsAllowed.Count - 1)
-        {
-            return null;
-        }
-        
-        return ItemsAllowed[id];
     }
 
     public static void SpawnItemsOnServer(ShipInventoryItemData[] shipInventoryItems)

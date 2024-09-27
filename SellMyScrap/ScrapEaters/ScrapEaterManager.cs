@@ -91,12 +91,6 @@ public static class ScrapEaterManager
 
     private static int GetRandomScrapEaterIndex()
     {
-        if (PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic) && !ModpackSaveSystem.ReadValue("ForceShowedTakeyScrapEater3", false) && Utils.RandomPercent(80))
-        {
-            ModpackSaveSystem.WriteValue("ForceShowedTakeyScrapEater3", true);
-            return 1; // Takey scrap eater index.
-        }
-
         return Utils.GetRandomIndexFromWeightList(ScrapEaters.Select(x => x.GetSpawnWeight()).ToList());
     }
 }

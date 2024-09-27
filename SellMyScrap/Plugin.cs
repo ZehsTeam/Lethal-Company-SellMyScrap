@@ -8,7 +8,6 @@ using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -95,22 +94,22 @@ internal class Plugin : BaseUnityPlugin
                             catch (TargetInvocationException ex)
                             {
                                 // Log and continue if method invocation fails (e.g., due to missing dependencies)
-                                Debug.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
+                                logger.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (System.Exception ex)
                     {
                         // Handle errors when fetching custom attributes, due to missing types or dependencies
-                        Debug.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
+                        logger.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
                     }
                 }
             }
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
             // Catch any general exceptions that occur in the process
-            Debug.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
+            logger.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
         }
     }
 
