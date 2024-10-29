@@ -16,7 +16,8 @@ internal enum SpawnItemsStatus
     None,
     Spawning,
     Success,
-    Failed
+    Failed,
+    Busy
 }
 
 internal class ShipInventoryProxy
@@ -61,7 +62,7 @@ internal class ShipInventoryProxy
         
         foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(ScrapHelper.GetItemByName(x.ID))))
         {
-            shipInventoryItems.Add(new ShipInventoryItemData(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA));
+            shipInventoryItems.Add(new ShipInventoryItemData(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA, itemData.PERSISTED_THROUGH_ROUNDS));
         }
 
         return shipInventoryItems.ToArray();
@@ -86,6 +87,13 @@ internal class ShipInventoryProxy
             yield break;
         }
 
+        if (ChuteInteract.Instance.spawnCoroutine != null)
+        {
+            Plugin.logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
+            SpawnItemsStatus = SpawnItemsStatus.Busy;
+            yield break;
+        }
+
         ItemData[] items = shipInventoryItems.Select(x => x.GetItemData()).ToArray();
 
         if (items.Length == 0)
@@ -100,28 +108,13 @@ internal class ShipInventoryProxy
             ChuteInteract.Instance.spawnQueue.Enqueue(itemData);
         }
 
-        float startTime;
-
-        if (ChuteInteract.Instance.spawnCoroutine == null)
-        {
-            startTime = Time.realtimeSinceStartup;
-            yield return new WaitUntil(() => ChuteInteract.Instance.spawnCoroutine == null || Time.realtimeSinceStartup - startTime > 30f);
-        }
-
-        if (ChuteInteract.Instance.spawnCoroutine != null)
-        {
-            Plugin.logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
-            SpawnItemsStatus = SpawnItemsStatus.Failed;
-            yield break;
-        }
-
         ChuteInteract.Instance.spawnCoroutine = ChuteInteract.Instance.StartCoroutine(ChuteInteract.Instance.SpawnCoroutine());
 
         Plugin.logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
 
-        float maxWaitTime = (ShipInventory.ShipInventory.Config.SpawnDelay.Value * items.Length) + 10f;
+        float startTime = Time.realtimeSinceStartup;
+        float maxWaitTime = (ShipInventory.ShipInventory.Config.SpawnDelay.Value * items.Length) + 30f;
 
-        startTime = Time.realtimeSinceStartup;
         yield return new WaitUntil(() => ChuteInteract.Instance.spawnCoroutine == null || Time.realtimeSinceStartup - startTime > maxWaitTime);
 
         if (ChuteInteract.Instance.spawnCoroutine == null)
@@ -143,8 +136,8 @@ internal class ShipInventoryProxy
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static void ClearSpawnedGrabbableObjects()
+    public static void ClearSpawnedGrabbableObjectsCache()
     {
-        ChuteInteractPatch.ClearSpawnedGrabbableObjects();
+        ChuteInteractPatch.ClearSpawnedGrabbableObjectsCache();
     }
 }

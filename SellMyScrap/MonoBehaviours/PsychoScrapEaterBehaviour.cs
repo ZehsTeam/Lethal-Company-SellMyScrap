@@ -10,15 +10,17 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Psycho")]
     [Space(5f)]
-    public MeshRenderer meshRenderer = null;
-    public Material normalMaterial = null;
-    public Material suckMaterial = null;
-    public AudioClip hohSFX = null;
-    public AudioClip suckSFX = null;
-    public AudioClip raidSFX = null;
-    public ParticleSystem potatoesParticleSystem = null;
+    public MeshRenderer meshRenderer;
+    public Material normalMaterial;
+    public Material suckMaterial;
+    public AudioClip hohSFX;
+    public AudioClip suckSFX;
+    public AudioClip raidSFX;
+    public AudioClip[] TakeyOffSFXList = [];
+    public ParticleSystem potatoesParticleSystem;
 
-    private bool _raid = false;
+    private int _takeOffSFXListIndex;
+    private bool _raid;
 
     protected override void Start()
     {
@@ -31,16 +33,19 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         if (NetworkUtils.IsServer)
         {
-            _raid = Utils.RandomPercent(100);
-            SetDataClientRpc(_raid);
+            _takeOffSFXListIndex = Random.Range(0, TakeyOffSFXList.Length);
+            _raid = Utils.RandomPercent(100f);
+
+            SetDataClientRpc(_takeOffSFXListIndex, _raid);
         }
 
         base.Start();
     }
 
     [ClientRpc]
-    private void SetDataClientRpc(bool raid)
+    private void SetDataClientRpc(int takeOffSFXListIndex, bool raid)
     {
+        _takeOffSFXListIndex = takeOffSFXListIndex;
         _raid = raid;
     }
 
@@ -85,7 +90,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         yield return new WaitForSeconds(1f);
 
         // Move ScrapEater to spawnPosition
-        PlayOneShotSFX(takeOffSFX);
+        PlayOneShotSFX(TakeyOffSFXList, _takeOffSFXListIndex);
         yield return StartCoroutine(MoveToPosition(startPosition, spawnPosition, 2f));
     }
 

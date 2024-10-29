@@ -10,11 +10,11 @@ public class CookieFumoScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Cookie Fumo")]
     [Space(5f)]
-    public AudioClip fallSFX = null;
-    public AudioClip beforeEatSFX = null;
+    public AudioClip fallSFX;
+    public AudioClip beforeEatSFX;
     public AudioClip[] voiceLineSFX = [];
 
-    private int _voiceLineIndex = 0;
+    private int _voiceLineIndex;
 
     protected override void Start()
     {

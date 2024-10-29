@@ -11,15 +11,15 @@ public class ScrapEaterBehaviour : NetworkBehaviour
 {
     [Header("Scrap Eater")]
     [Space(5f)]
-    public GameObject modelObject = null;
+    public GameObject modelObject;
 
     [HideInInspector]
     public List<GrabbableObject> targetScrap = [];
     [HideInInspector]
     public int TargetVariantIndex = -1;
 
-    private int _clientsReceivedTargetScrap = 0;
-    private int _clientsFinishedAnimation = 0;
+    private int _clientsReceivedTargetScrap;
+    private int _clientsFinishedAnimation;
 
     protected virtual void Start()
     {

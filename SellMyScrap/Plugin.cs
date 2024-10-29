@@ -30,7 +30,7 @@ internal class Plugin : BaseUnityPlugin
     public ScrapToSell ScrapToSell { get; private set; }
     public SellRequest SellRequest { get; private set; }
 
-    void Awake()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
 
@@ -59,9 +59,6 @@ internal class Plugin : BaseUnityPlugin
         CommandManager.Initialize();
         ConfigHelper.Initialize();
         ScrapEaterManager.Initialize();
-
-        ConfigHelper.SetModIcon(Content.ModIcon);
-        ConfigHelper.SetModDescription("Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. SellFromTerminal +");
 
         NetcodePatcherAwake();
     }
@@ -230,11 +227,16 @@ internal class Plugin : BaseUnityPlugin
             if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Success)
             {
                 grabbableObjects.AddRange(ShipInventoryProxy.GetSpawnedGrabbableObjects());
-                ShipInventoryProxy.ClearSpawnedGrabbableObjects();
+                ShipInventoryProxy.ClearSpawnedGrabbableObjectsCache();
             }
             else if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Failed)
             {
                 HUDManager.Instance.DisplayTip("SellMyScrap", "Failed to spawn items from ShipInventory!", isWarning: true);
+                yield break;
+            }
+            else if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Busy)
+            {
+                HUDManager.Instance.DisplayTip("SellMyScrap", "Failed to spawn items from ShipInventory! Chute is busy.", isWarning: true);
                 yield break;
             }
         }

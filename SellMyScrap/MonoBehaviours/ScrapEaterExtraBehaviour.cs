@@ -18,9 +18,9 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
     public Vector3 endPosition = new Vector3(-8.9f, 0f, -6.72f);
 
     [Space(5f)]
-    public Transform mouthTransform = null;
-    public AudioSource soundEffectsAudio = null;
-    public AudioSource movementAudio = null;
+    public Transform mouthTransform;
+    public AudioSource soundEffectsAudio;
+    public AudioSource movementAudio;
 
     [Space(5f)]
     public float movementDuration = 4f;
@@ -29,10 +29,10 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     [Space(5f)]
     public AudioClip[] landSFX = [];
-    public AudioClip eatSFX = null;
-    public AudioClip takeOffSFX = null;
+    public AudioClip eatSFX;
+    public AudioClip takeOffSFX;
 
-    protected int landIndex = 0;
+    protected int landIndex;
 
     protected override void Start()
     {

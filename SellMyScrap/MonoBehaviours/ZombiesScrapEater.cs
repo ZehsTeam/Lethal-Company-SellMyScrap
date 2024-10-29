@@ -1,91 +1,167 @@
 ﻿using System.Collections;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+public enum ZombiesVariantType
+{
+    Happy,
+    Scared,
+    Angry,
+    Drunk,
+    Heart,
+    Dead,
+    Panda,
+    Clown,
+    Sunburnt,
+    Party
+}
+
 public class ZombiesScrapEater : ScrapEaterExtraBehaviour
 {
-    private enum ZombieState
-    {
-        Happy,
-        Scared,
-        Angry,
-        Drunk,
-        Heart
-    }
-
     [Space(20f)]
     [Header("Zombies")]
     [Space(5f)]
-    public Animator animator = null;
-    public GameObject happyObject = null;
-    public GameObject scaredObject = null;
-    public GameObject angryObject = null;
-    public GameObject drunkObject = null;
-    public GameObject heartObject = null;
-    public AudioClip[] happySFX = [];
-    public AudioClip[] scaredSFX = [];
-    public AudioClip[] angrySFX = [];
-    public AudioClip[] drunkSFX = [];
-    public AudioClip[] heartSFX = [];
-    public AudioClip fallDamageSFX = null;
-    public AudioClip dieSFX = null;
-    public AudioClip[] hurtSFX = [];
-    public AudioClip[] idleSFX = [];
-    public AudioClip[] stepSFX = [];
-    public float inbetweenStepDuration = 0.1f;
+    public AudioClip[] BeforeEatSFX = [];
+    public AudioClip[] VoiceLineSFX = [];
+    public ZombiesVariant[] Variants = [];
+    public Animator Animator;
+    public AudioClip FallDamageSFX;
+    public AudioClip DieSFX;
+    public AudioClip[] HurtSFX = [];
+    public AudioClip[] StepSFX = [];
+    public float InbetweenStepDuration = 0.5f;
 
-    private ZombieState _zombieState = ZombieState.Happy;
-    private int _stateSFXIndex = 0;
-    private int _hurtSFXIndex = 0;
-    private int _idleSFXIndex = 0;
-    private bool _playDieAnimation = false;
+    private int _variantIndex;
+    private int _beforeEatIndex;
+    private int _voiceLineIndex;
+    private int _hurtSFXIndex;
+    private bool _playDieAnimation;
 
-    private Coroutine _walkAudioCO = null;
+    private Coroutine _walkAudioCoroutine;
 
     protected override void Start()
     {
         if (NetworkUtils.IsServer)
         {
-            _zombieState = (ZombieState)Random.Range(0, 5);
-            _stateSFXIndex = GetStateSFXIndex();
-            _hurtSFXIndex = Random.Range(0, hurtSFX.Length);
-            _idleSFXIndex = Random.Range(0, idleSFX.Length);
-            _playDieAnimation = Utils.RandomPercent(80);
-            SetDataClientRpc(_zombieState, _stateSFXIndex, _hurtSFXIndex, _idleSFXIndex, _playDieAnimation);
-            UpdateModel();
+            _variantIndex = GetRandomVariantIndex();
+
+            UpdateVariantOnLocalClient();
+
+            _beforeEatIndex = Random.Range(0, BeforeEatSFX.Length);
+            _voiceLineIndex = Random.Range(0, VoiceLineSFX.Length);
+            _hurtSFXIndex = Random.Range(0, HurtSFX.Length);
+            _playDieAnimation = Utils.RandomPercent(90f);
+
+            SetDataClientRpc(_variantIndex, _beforeEatIndex, _voiceLineIndex, _hurtSFXIndex, _playDieAnimation);
         }
 
         base.Start();
     }
 
     [ClientRpc]
-    private void SetDataClientRpc(ZombieState state, int stateSFXIndex, int hurtSFXIndex, int idleSFXIndex, bool playDieAnimation)
+    private void SetDataClientRpc(int variantIndex, int beforeEatIndex, int voiceLineIndex, int hurtSFXIndex, bool playDieAnimation)
     {
         if (NetworkUtils.IsServer) return;
 
-        _zombieState = state;
-        _stateSFXIndex = stateSFXIndex;
+        _variantIndex = variantIndex;
+        _beforeEatIndex = beforeEatIndex;
+        _voiceLineIndex = voiceLineIndex;
         _hurtSFXIndex = hurtSFXIndex;
-        _idleSFXIndex = idleSFXIndex;
         _playDieAnimation = playDieAnimation;
-        UpdateModel();
+
+        UpdateVariantOnLocalClient();
     }
+
+    #region Variant Stuff
+    private int GetRandomVariantIndex()
+    {
+        if (TargetVariantIndex > -1)
+        {
+            return Mathf.Clamp(TargetVariantIndex, 0, Variants.Length - 1);
+        }
+
+        return Utils.GetRandomIndexFromWeightList(Variants.Select(x => x.Weight).ToList());
+    }
+
+    private void UpdateVariantOnLocalClient()
+    {
+        for (int i = 0; i < Variants.Length; i++)
+        {
+            Variants[i].ModelObject.SetActive(i == _variantIndex);
+        }
+
+        ZombiesVariant variant = GetVariant();
+
+        if (variant.MouthTransform != null)
+        {
+            mouthTransform = variant.MouthTransform;
+        }
+
+        if (variant.VoiceLineSFX.Length > 0)
+        {
+            VoiceLineSFX = variant.VoiceLineSFX;
+        }
+    }
+
+    private ZombiesVariant GetVariant()
+    {
+        return Variants[_variantIndex];
+    }
+
+    private ZombiesVariantType GetVariantType()
+    {
+        return GetVariant().Type;
+    }
+
+    public bool IsVariantType(ZombiesVariantType type)
+    {
+        return GetVariantType() == type;
+    }
+
+    public bool IsVariantType(params ZombiesVariantType[] types)
+    {
+        foreach (var type in types)
+        {
+            if (IsVariantType(type))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int GetVariantIndex(ZombiesVariantType type)
+    {
+        for (int i = 0; i < Variants.Length; i++)
+        {
+            if (Variants[i].Type == type)
+            {
+                return i;
+            }
+        }
+
+        return Random.Range(0, Variants.Length);
+    }
+    #endregion
 
     protected override IEnumerator StartAnimation()
     {
         if (_playDieAnimation)
         {
-            yield return StartCoroutine(PlayZombieDeathAnimation());
+            yield return StartCoroutine(PlayZombieDeathAnimationCoroutine());
         }
 
         // Move ScrapEater to startPosition
         yield return StartCoroutine(MoveToPosition(spawnPosition, startPosition, 2f));
         PlayOneShotSFX(landSFX, landIndex);
-        PlayOneShotSFX(fallDamageSFX);
-        PlayOneShotSFX(hurtSFX, _hurtSFXIndex);
+        PlayOneShotSFX(FallDamageSFX);
+        PlayOneShotSFX(HurtSFX, _hurtSFXIndex);
         ShakeCamera();
 
         yield return new WaitForSeconds(1f);
@@ -96,7 +172,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
         StopWalkAudio();
 
         yield return new WaitForSeconds(pauseDuration / 2f);
-        yield return new WaitForSeconds(PlayOneShotSFX(idleSFX, _idleSFXIndex));
+        yield return new WaitForSeconds(PlayOneShotSFX(BeforeEatSFX, _beforeEatIndex));
         yield return new WaitForSeconds(pauseDuration / 2f);
 
         // Move targetScrap to mouthTransform over time.
@@ -105,7 +181,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
 
         yield return new WaitForSeconds(PlayOneShotSFX(eatSFX));
         yield return new WaitForSeconds(pauseDuration / 2f);
-        yield return new WaitForSeconds(PlayStateSFX(_stateSFXIndex));
+        yield return new WaitForSeconds(PlayOneShotSFX(VoiceLineSFX, _voiceLineIndex));
         yield return new WaitForSeconds(pauseDuration / 2f);
 
         // Move ScrapEater to startPosition
@@ -120,15 +196,15 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
         yield return StartCoroutine(MoveToPosition(startPosition, spawnPosition, 2f));
     }
 
-    private IEnumerator PlayZombieDeathAnimation()
+    private IEnumerator PlayZombieDeathAnimationCoroutine()
     {
         Vector3 skyPos = new Vector3(endPosition.x, spawnPosition.y, endPosition.z);
         yield return StartCoroutine(MoveToPosition(skyPos, endPosition, 2f));
         PlayOneShotSFX(landSFX, landIndex);
-        PlayOneShotSFX(fallDamageSFX);
+        PlayOneShotSFX(FallDamageSFX);
         ShakeCamera();
         yield return new WaitForSeconds(0.2f);
-        PlayOneShotSFX(dieSFX);
+        PlayOneShotSFX(DieSFX);
         PlayDeathAnimation();
         yield return new WaitForSeconds(2f);
         transform.position = spawnPosition;
@@ -136,109 +212,53 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
         PlayIdleAnimation();
     }
 
-    private IEnumerator WalkAudio()
+    private IEnumerator WalkAudioCoroutine()
     {
         while (true)
         {
-            PlayOneShotSFX(movementAudio, stepSFX[Random.Range(0, stepSFX.Length)]);
+            PlayOneShotSFX(movementAudio, StepSFX[Random.Range(0, StepSFX.Length)]);
 
-            yield return new WaitForSeconds(inbetweenStepDuration);
+            yield return new WaitForSeconds(InbetweenStepDuration);
         }
     }
 
     private void StartWalkAudio()
     {
         StopWalkAudio();
-        _walkAudioCO = StartCoroutine(WalkAudio());
+        _walkAudioCoroutine = StartCoroutine(WalkAudioCoroutine());
     }
 
     private void StopWalkAudio()
     {
-        if (_walkAudioCO != null)
+        if (_walkAudioCoroutine != null)
         {
-            StopCoroutine(_walkAudioCO);
+            StopCoroutine(_walkAudioCoroutine);
         }
     }
 
     private void PlayDeathAnimation()
     {
-        animator.Play("Die");
+        Animator.Play("Die");
     }
 
     private void PlayIdleAnimation()
     {
-        animator.Play("Idle");
+        Animator.Play("Idle");
     }
 
     private void ShowModel()
     {
         modelObject.SetActive(true);
     }
+}
 
-    private void UpdateModel()
-    {
-        happyObject.SetActive(_zombieState == ZombieState.Happy);
-        scaredObject.SetActive(_zombieState == ZombieState.Scared);
-        angryObject.SetActive(_zombieState == ZombieState.Angry);
-        drunkObject.SetActive(_zombieState == ZombieState.Drunk);
-        heartObject.SetActive(_zombieState == ZombieState.Heart);
-
-        UpdateMouthTransform();
-    }
-
-    private void UpdateMouthTransform()
-    {
-        GameObject activeObject = null;
-
-        for (int i = 0; i < modelObject.transform.childCount; i++)
-        {
-            GameObject obj = modelObject.transform.GetChild(i).gameObject;
-
-            if (obj.activeSelf)
-            {
-                activeObject = obj;
-                break;
-            }
-        }
-
-        mouthTransform = activeObject.transform.Find("Mouth");
-    }
-
-    private int GetStateSFXIndex()
-    {
-        switch (_zombieState)
-        {
-            case ZombieState.Happy:
-                return Random.Range(0, happySFX.Length);
-            case ZombieState.Scared:
-                return Random.Range(0, scaredSFX.Length);
-            case ZombieState.Angry:
-                return Random.Range(0, angrySFX.Length);
-            case ZombieState.Drunk:
-                return Random.Range(0, drunkSFX.Length);
-            case ZombieState.Heart:
-                return Random.Range(0, heartSFX.Length);
-        }
-
-        return 0;
-    }
-
-    private float PlayStateSFX(int index)
-    {
-        switch (_zombieState)
-        {
-            case ZombieState.Happy:
-                return PlayOneShotSFX(happySFX, index);
-            case ZombieState.Scared:
-                return PlayOneShotSFX(scaredSFX, index);
-            case ZombieState.Angry:
-                return PlayOneShotSFX(angrySFX, index);
-            case ZombieState.Drunk:
-                return PlayOneShotSFX(drunkSFX, index);
-            case ZombieState.Heart:
-                return PlayOneShotSFX(heartSFX, index);
-        }
-
-        return 0f;
-    }
+[System.Serializable]
+public class ZombiesVariant
+{
+    public ZombiesVariantType Type;
+    [Range(0, 500)]
+    public int Weight = 25;
+    public GameObject ModelObject;
+    public Transform MouthTransform;
+    public AudioClip[] VoiceLineSFX = [];
 }

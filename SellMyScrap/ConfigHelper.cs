@@ -227,22 +227,6 @@ public static class ConfigHelper
     }
 
     #region LethalConfig
-    public static void SetModIcon(Sprite sprite)
-    {
-        if (LethalConfigProxy.Enabled)
-        {
-            LethalConfigProxy.SetModIcon(sprite);
-        }
-    }
-
-    public static void SetModDescription(string description)
-    {
-        if (LethalConfigProxy.Enabled)
-        {
-            LethalConfigProxy.SetModDescription(description);
-        }
-    }
-
     public static void SkipAutoGen()
     {
         if (LethalConfigProxy.Enabled)

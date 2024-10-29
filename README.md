@@ -3,7 +3,7 @@
 
 #### This mod will sell scrap as close to the requested value as possible.
 
-#### This mod is compatibility with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
+#### This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
 
 #### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
 <br>

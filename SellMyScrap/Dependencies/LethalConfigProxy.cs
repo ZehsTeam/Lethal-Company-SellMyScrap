@@ -2,9 +2,7 @@
 using BepInEx.Configuration;
 using LethalConfig;
 using LethalConfig.ConfigItems;
-using System;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies;
 
@@ -12,18 +10,6 @@ internal static class LethalConfigProxy
 {
     public const string PLUGIN_GUID = "ainavt.lc.lethalconfig";
     public static bool Enabled => Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
-
-    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static void SetModIcon(Sprite sprite)
-    {
-        LethalConfigManager.SetModIcon(sprite);
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static void SetModDescription(string description)
-    {
-        LethalConfigManager.SetModDescription(description);
-    }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void SkipAutoGen()
@@ -50,7 +36,7 @@ internal static class LethalConfigProxy
                 LethalConfigManager.AddConfigItem(new IntInputFieldConfigItem(intEntry, requiresRestart));
                 break;
             default:
-                throw new NotSupportedException($"Unsupported type: {typeof(T)}");
+                throw new System.NotSupportedException($"Unsupported type: {typeof(T)}");
         }
     }
 
@@ -67,12 +53,12 @@ internal static class LethalConfigProxy
                 LethalConfigManager.AddConfigItem(new IntSliderConfigItem(intEntry, requiresRestart));
                 break;
             default:
-                throw new NotSupportedException($"Slider not supported for type: {typeof(T)}");
+                throw new System.NotSupportedException($"Slider not supported for type: {typeof(T)}");
         }
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static void AddButton(string section, string name, string description, string buttonText, Action callback)
+    public static void AddButton(string section, string name, string description, string buttonText, System.Action callback)
     {
         LethalConfigManager.AddConfigItem(new GenericButtonConfigItem(section, name, description, buttonText, () => callback?.Invoke()));
     }

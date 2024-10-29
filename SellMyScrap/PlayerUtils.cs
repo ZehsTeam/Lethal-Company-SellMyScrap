@@ -26,7 +26,7 @@ internal static class PlayerUtils
         return SteamUtils.IsLocalClient(playerName);
     }
 
-    public static bool IsLocalPlayer(PlayerName[] playerNames)
+    public static bool IsLocalPlayer(params PlayerName[] playerNames)
     {
         foreach (var playerName in playerNames)
         {
@@ -51,6 +51,19 @@ internal static class PlayerUtils
         foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
         {
             if (IsPlayer(playerScript, playerName))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool HasPlayer(params PlayerName[] playerNames)
+    {
+        foreach (var playerName in playerNames)
+        {
+            if (HasPlayer(playerName))
             {
                 return true;
             }

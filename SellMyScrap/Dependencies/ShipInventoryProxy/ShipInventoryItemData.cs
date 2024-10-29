@@ -1,12 +1,11 @@
 ﻿using ShipInventory.Objects;
-using System;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-[Serializable]
+[System.Serializable]
 public class ShipInventoryItemData : INetworkSerializable
 {
     public Item Item => ScrapHelper.GetItemByName(Id);
@@ -15,17 +14,19 @@ public class ShipInventoryItemData : INetworkSerializable
     public string Id;
     public int ScrapValue;
     public int SaveData;
+    public bool PersistedThroughRounds;
 
     public ShipInventoryItemData()
     {
 
     }
 
-    public ShipInventoryItemData(string id, int scrapValue, int saveData)
+    public ShipInventoryItemData(string id, int scrapValue, int saveData, bool persistedThroughRounds)
     {
         Id = id;
         ScrapValue = scrapValue;
         SaveData = saveData;
+        PersistedThroughRounds = persistedThroughRounds;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -35,7 +36,8 @@ public class ShipInventoryItemData : INetworkSerializable
         {
             ID = Id,
             SCRAP_VALUE = ScrapValue,
-            SAVE_DATA = SaveData
+            SAVE_DATA = SaveData,
+            PERSISTED_THROUGH_ROUNDS = PersistedThroughRounds
         };
     }
 
@@ -44,5 +46,6 @@ public class ShipInventoryItemData : INetworkSerializable
         serializer.SerializeValue(ref Id);
         serializer.SerializeValue(ref ScrapValue);
         serializer.SerializeValue(ref SaveData);
+        serializer.SerializeValue(ref PersistedThroughRounds);
     }
 }

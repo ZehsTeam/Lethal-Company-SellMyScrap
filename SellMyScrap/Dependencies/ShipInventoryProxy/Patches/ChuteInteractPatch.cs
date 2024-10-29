@@ -18,7 +18,10 @@ internal static class ChuteInteractPatch
         if (!ShipInventoryProxy.IsSpawning) return;
 
         #pragma warning disable Harmony003 // Harmony non-ref patch parameters modified
-        if (!networkObject.TryGet(out NetworkObject netObject)) return;
+        if (!networkObject.TryGet(out NetworkObject netObject))
+        {
+            return;
+        }
         #pragma warning restore Harmony003 // Harmony non-ref patch parameters modified
 
         if (netObject.TryGetComponent(out GrabbableObject grabbableObject))
@@ -26,13 +29,13 @@ internal static class ChuteInteractPatch
             _spawnedGrabbableObjects.Add(grabbableObject);
         }
     }
-
+    
     public static List<GrabbableObject> GetSpawnedGrabbableObjects()
     {
         return _spawnedGrabbableObjects.Where(x => x != null).ToList();
     }
 
-    public static void ClearSpawnedGrabbableObjects()
+    public static void ClearSpawnedGrabbableObjectsCache()
     {
         _spawnedGrabbableObjects.Clear();
     }

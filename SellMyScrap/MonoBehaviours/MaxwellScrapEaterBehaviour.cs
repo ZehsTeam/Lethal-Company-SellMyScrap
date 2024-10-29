@@ -11,24 +11,24 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Maxwell")]
     [Space(5f)]
-    public GameObject bodyObject = null;
-    public GameObject evilObject = null;
-    public Animator danceAnimator = null;
-    public AudioSource purrAudio = null;
-    public AudioSource danceAudio = null;
+    public GameObject bodyObject;
+    public GameObject evilObject;
+    public Animator danceAnimator;
+    public AudioSource purrAudio;
+    public AudioSource danceAudio;
     public AudioClip[] meowSFX = [];
-    public AudioClip evilNoise = null;
+    public AudioClip evilNoise;
 
-    private bool _isEvil = false;
-    private int _meowIndex = 0;
+    private bool _isEvil;
+    private int _meowIndex;
 
-    private bool _isTarget = false;
+    private bool _isTarget;
 
     protected override void Start()
     {
         if (NetworkUtils.IsServer)
         {
-            if (PlayerUtils.HasPlayer(PlayerName.Magoroku))
+            if (PlayerUtils.HasPlayer(PlayerName.Magoroku, PlayerName.PsychoHypnotic))
             {
                 _isEvil = Utils.RandomPercent(80);
             }

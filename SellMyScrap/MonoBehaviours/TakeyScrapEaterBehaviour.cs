@@ -25,7 +25,9 @@ public enum TakeyVariantType
     LUBBERS,
     ALOO,
     Gift,
-    Cake
+    Cake,
+    Dracula,
+    Pumpkin
 }
 
 public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
@@ -33,57 +35,75 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Takey")]
     [Space(5f)]
-    public AudioSource soundEffectsAudioFar = null;
-    public AudioClip takeOffSFXFar = null;
-    public AudioClip takeySitSFX = null;
+    public AudioSource soundEffectsAudioFar;
+    public AudioClip takeOffSFXFar;
+    public AudioClip takeySitSFX;
     public AudioClip[] beforeEatSFX = [];
     public AudioClip[] voiceLineSFX = [];
     public TakeyVariant[] Variants = [];
 
+    [Space(10f)]
     [Header("Jetpack")]
     [Space(5f)]
-    public GameObject jetpackObject = null;
-    public GameObject flameEffectsObject = null;
-    public ParticleSystem smokeTrailParticleSystem = null;
-    public AudioSource jetpackAudio = null;
-    public AudioSource jetpackThrustAudio = null;
-    public AudioSource jetpackBeepAudio = null;
-    public AudioClip jetpackThrustStartSFX = null;
+    public GameObject jetpackObject;
+    public GameObject flameEffectsObject;
+    public ParticleSystem smokeTrailParticleSystem;
+    public AudioSource jetpackAudio;
+    public AudioSource jetpackThrustAudio;
+    public AudioSource jetpackBeepAudio;
+    public AudioClip jetpackThrustStartSFX;
     public float startFlySpeed = 0.5f;
     public float maxFlySpeed = 100f;
     public float flySpeedMultiplier = 5f;
 
+    [Space(10f)]
     [Header("Gamble Variant")]
-    public MeshFilter CardMeshFilter = null;
+    [Space(5f)]
+    public MeshFilter CardMeshFilter;
     public Mesh[] CardMeshes = [];
 
+    [Space(10f)]
     [Header("Peepo Chicken Variant")]
-    public Animator ChickenAnimator = null;
-    public AudioSource ChickenAudio = null;
+    [Space(5f)]
+    public Animator ChickenAnimator;
+    public AudioSource ChickenAudio;
 
+    [Space(10f)]
     [Header("Donk Dink Variant")]
-    public Animator DinkDonkAnimator = null;
-    public AudioSource DinkDonkAudio = null;
-    public AudioClip DinkDonkDropSFX = null;
-    public AudioClip DinkDonkSpecialLine1SFX = null;
-    public AudioClip DinkDonkSpecialLine2SFX = null;
-    public AudioClip DinkDonkSpecialLine3SFX = null;
-    public AudioClip DinkDonkSpecialLine4SFX = null;
+    [Space(5f)]
+    public Animator DinkDonkAnimator;
+    public AudioSource DinkDonkAudio;
+    public AudioClip DinkDonkDropSFX;
+    public AudioClip DinkDonkSpecialLine1SFX;
+    public AudioClip DinkDonkSpecialLine2SFX;
+    public AudioClip DinkDonkSpecialLine3SFX;
+    public AudioClip DinkDonkSpecialLine4SFX;
 
+    [Space(10f)]
     [Header("Feels Variant")]
-    public Animator FeelsAnimator = null;
+    [Space(5f)]
+    public Animator FeelsAnimator;
 
+    [Space(10f)]
     [Header("LUBBERS Variant")]
-    public Animator LUBBERSAnimator = null;
+    [Space(5f)]
+    public Animator LUBBERSAnimator;
 
-    private float _flySpeed = 0f;
+    [Space(10f)]
+    [Header("Party Hat")]
+    [Space(5f)]
+    public GameObject[] PartyHatObjects = [];
+    public Material[] PartyHatMaterials = [];
 
-    private int _variantIndex = 0;
-    private int _cardMeshIndex = 0;
-    private bool _explode = false;
-    private int _beforeEatIndex = 0;
-    private int _voiceLineIndex = 0;
-    
+    private float _flySpeed;
+
+    private int _variantIndex;
+    private int _cardMeshIndex;
+    private bool _explode;
+    private int _beforeEatIndex;
+    private int _voiceLineIndex;
+    private int _partyHatMaterialIndex;
+
     protected override void Start()
     {
         flameEffectsObject.SetActive(false);
@@ -93,6 +113,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             _variantIndex = GetRandomVariantIndex();
             _cardMeshIndex = Random.Range(0, CardMeshes.Length);
+            _partyHatMaterialIndex = Random.Range(0, PartyHatMaterials.Length);
 
             UpdateVariantOnLocalClient();
 
@@ -100,14 +121,14 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
             _beforeEatIndex = Random.Range(0, beforeEatSFX.Length);
 
-            SetDataClientRpc(_variantIndex, _cardMeshIndex, _explode, _voiceLineIndex, _beforeEatIndex);
+            SetDataClientRpc(_variantIndex, _cardMeshIndex, _explode, _voiceLineIndex, _beforeEatIndex, _partyHatMaterialIndex);
         }
 
         base.Start();
     }
 
     [ClientRpc]
-    private void SetDataClientRpc(int variantIndex, int cardMeshIndex, bool explode, int voiceLineIndex, int beforeEatIndex)
+    private void SetDataClientRpc(int variantIndex, int cardMeshIndex, bool explode, int voiceLineIndex, int beforeEatIndex, int partyHatMaterialIndex)
     {
         if (NetworkUtils.IsServer) return;
 
@@ -116,6 +137,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _explode = explode;
         _voiceLineIndex = voiceLineIndex;
         _beforeEatIndex = beforeEatIndex;
+        _partyHatMaterialIndex = partyHatMaterialIndex;
 
         UpdateVariantOnLocalClient();
     }
@@ -159,6 +181,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             ChickenAnimator.SetBool("Animate", false);
         }
+
+        if (IsVariantType(TakeyVariantType.Gift, TakeyVariantType.Cake))
+        {
+            SetPartyHatMaterials();
+        }
     }
 
     private TakeyVariant GetVariant()
@@ -176,6 +203,19 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         return GetVariantType() == type;
     }
 
+    public bool IsVariantType(params TakeyVariantType[] types)
+    {
+        foreach (var type in types)
+        {
+            if (IsVariantType(type))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int GetVariantIndex(TakeyVariantType type)
     {
         for (int i = 0; i < Variants.Length; i++)
@@ -187,6 +227,25 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         }
 
         return Random.Range(0, Variants.Length);
+    }
+
+    private void SetPartyHatMaterials()
+    {
+        if (_partyHatMaterialIndex < 0 || _partyHatMaterialIndex > PartyHatMaterials.Length - 1)
+        {
+            return;
+        }
+
+        Material material = PartyHatMaterials[_partyHatMaterialIndex];
+        if (material == null) return;
+
+        foreach (var partyHatObject in PartyHatObjects)
+        {
+            foreach (var meshRenderer in partyHatObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                meshRenderer.sharedMaterial = material;
+            }
+        }
     }
     #endregion
 
@@ -425,9 +484,9 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 public class TakeyVariant
 {
     public TakeyVariantType Type;
-    [Range(0, 100)]
-    public int Weight;
+    [Range(0, 500)]
+    public int Weight = 25;
     public GameObject ModelObject;
     public Transform MouthTransform;
-    public AudioClip[] BeforeEatSFX;
+    public AudioClip[] BeforeEatSFX = [];
 }

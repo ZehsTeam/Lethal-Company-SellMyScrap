@@ -9,15 +9,15 @@ public class YippeeScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Yippee")]
     [Space(5f)]
-    public Animator animator = null;
-    public AudioSource voiceAudio = null;
-    public AudioSource flyAudio = null;
-    public AudioClip afterEatSFX = null;
+    public Animator animator;
+    public AudioSource voiceAudio;
+    public AudioSource flyAudio;
+    public AudioClip afterEatSFX;
     public float startFlySpeed = 1f;
     public float maxFlySpeed = 100f;
     public float flySpeedMultiplier = 10f;
 
-    private float _flySpeed = 0f;
+    private float _flySpeed;
 
     protected override IEnumerator StartAnimation()
     {

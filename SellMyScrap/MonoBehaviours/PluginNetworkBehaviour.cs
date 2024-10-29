@@ -1,7 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
-using JetBrains.Annotations;
 using System;
 using Unity.Netcode;
 
@@ -9,11 +8,18 @@ namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 internal class PluginNetworkBehaviour : NetworkBehaviour
 {
-    public static PluginNetworkBehaviour Instance;
+    public static PluginNetworkBehaviour Instance {  get; private set; }
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     [ClientRpc]

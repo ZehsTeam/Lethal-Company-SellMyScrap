@@ -20,18 +20,23 @@ internal static class StartMatchLeverPatch
     [HarmonyPostfix]
     private static void BeginHoldingInteractOnLeverPatch(ref StartMatchLever __instance)
     {
-        // Return if there are still more days until the deadline AND reset the timeToHold on the InteractTrigger.
-        if (TimeOfDay.Instance.daysUntilDeadline > 0 && __instance.triggerScript.timeToHold == 4.01f)
+        // Return if there are still more days until the deadline
+        if (TimeOfDay.Instance.daysUntilDeadline > 0 || !Plugin.ConfigManager.ShowQuotaWarning)
         {
-            __instance.triggerScript.timeToHold = 0.7f;
+            // Reset the timeToHold on the InteractTrigger.
+            if (__instance.triggerScript.timeToHold == 4.01f)
+            {
+                __instance.triggerScript.timeToHold = 0.7f;
+            }
+            
             return;
         }
 
         if (StartOfRound.Instance.currentLevelID != 3) return; // Return if not at the Company moon.
         if (!StartOfRound.Instance.shipHasLanded) return; // Return if the ship is not landed.
 
-        // If the profit quota was fulfilled (or ShowQuotaWarning was disabled), reset the timeToHold on the InteractTrigger and return.
-        if (TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota || !Plugin.ConfigManager.ShowQuotaWarning)
+        // If the profit quota was fulfilled, reset the timeToHold on the InteractTrigger and return.
+        if (TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota)
         {
             __instance.triggerScript.timeToHold = 0.7f;
             return;

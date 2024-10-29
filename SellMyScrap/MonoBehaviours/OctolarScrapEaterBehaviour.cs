@@ -10,14 +10,14 @@ public class OctolarScrapEaterBehaviour : ScrapEaterExtraBehaviour
     [Space(20f)]
     [Header("Octolar")]
     [Space(5f)]
-    public MeshRenderer meshRenderer = null;
+    public MeshRenderer meshRenderer;
     public Material[] materialVariants = [];
-    public Material suckMaterial = null;
-    public AudioClip fallSFX = null;
-    public AudioClip suckSFX = null;
-    public AudioClip afterEatSFX = null;
+    public Material suckMaterial;
+    public AudioClip fallSFX;
+    public AudioClip suckSFX;
+    public AudioClip afterEatSFX;
 
-    private int _materialVariantIndex = 0;
+    private int _materialVariantIndex;
 
     protected override void Start()
     {
