@@ -50,17 +50,17 @@ internal static class ModpackSaveSystem
             catch (JsonException ex)
             {
                 // Handle JSON conversion errors
-                Plugin.logger.LogError($"JSON Conversion Error: {ex.Message}");
+                Plugin.Logger.LogError($"JSON Conversion Error: {ex.Message}");
             }
             catch (ArgumentNullException ex)
             {
                 // Handle cases where the JToken is null
-                Plugin.logger.LogError($"Argument Null Error: {ex.Message}");
+                Plugin.Logger.LogError($"Argument Null Error: {ex.Message}");
             }
             catch (Exception ex)
             {
                 // Handle any other unexpected exceptions
-                Plugin.logger.LogError($"Unexpected Error: {ex.Message}");
+                Plugin.Logger.LogError($"Unexpected Error: {ex.Message}");
             }
 
             // Return the default value of T if conversion fails
@@ -98,7 +98,7 @@ internal static class ModpackSaveSystem
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"Failed to read save file.\n\n{e}");
+            Plugin.Logger.LogError($"Failed to read save file.\n\n{e}");
         }
 
         return null;
@@ -117,7 +117,7 @@ internal static class ModpackSaveSystem
         }
         catch (Exception e)
         {
-            Plugin.logger.LogError($"Failed to write save file.\n\n{e}");
+            Plugin.Logger.LogError($"Failed to write save file.\n\n{e}");
         }
 
         return false;

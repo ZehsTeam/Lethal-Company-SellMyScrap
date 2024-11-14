@@ -4,7 +4,7 @@ using com.github.zehsteam.SellMyScrap.Patches;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Reflection;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -40,7 +40,7 @@ public static class ConfigHelper
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
         _generalConfigItems = [
-            new ConfigItem("ExtendedLogging", typeof(bool), isHostOnly: true, value => { configManager.ExtendedLogging = bool.Parse(value); }, () => { return configManager.ExtendedLogging.ToString(); }),
+            new ConfigItem("ExtendedLogging", typeof(bool), isHostOnly: false, value => { configManager.ExtendedLogging = bool.Parse(value); }, () => { return configManager.ExtendedLogging.ToString(); }),
         ];
 
         _sellConfigItems = [
@@ -54,8 +54,9 @@ public static class ConfigHelper
         _advancedSellConfigItems = [
             new ConfigItem("SellScrapWorthZero",   typeof(bool),     isHostOnly: true, value => { configManager.SellScrapWorthZero =   bool.Parse(value); }, () => { return configManager.SellScrapWorthZero.ToString();   }),
             new ConfigItem("OnlySellScrapOnFloor", typeof(bool),     isHostOnly: true, value => { configManager.OnlySellScrapOnFloor = bool.Parse(value); }, () => { return configManager.OnlySellScrapOnFloor.ToString(); }),
-            new ConfigItem("DontSellList",         typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.DontSellList); }),
-            new ConfigItem("SellList",             typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.SellList); }),
+            new ConfigItem("PrioritySellList",     typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.PrioritySellList); }),
+            new ConfigItem("DontSellList",         typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.DontSellList);     }),
+            new ConfigItem("SellList",             typeof(string[]), isHostOnly: true, null, () => { return string.Join(", ", configManager.SellList);         }),
         ];
 
         _terminalConfigItems = [
@@ -81,6 +82,7 @@ public static class ConfigHelper
             new ConfigItem("CookieFumoSpawnWeight", typeof(int), isHostOnly: true, value => { configManager.CookieFumoSpawnWeight = int.Parse(value); }, () => { return configManager.CookieFumoSpawnWeight.ToString(); }),
             new ConfigItem("PsychoSpawnWeight",     typeof(int), isHostOnly: true, value => { configManager.PsychoSpawnWeight =     int.Parse(value); }, () => { return configManager.PsychoSpawnWeight.ToString();     }),
             new ConfigItem("ZombiesSpawnWeight",    typeof(int), isHostOnly: true, value => { configManager.ZombiesSpawnWeight =    int.Parse(value); }, () => { return configManager.ZombiesSpawnWeight.ToString();    }),
+            new ConfigItem("WolfySpawnWeight",      typeof(int), isHostOnly: true, value => { configManager.WolfySpawnWeight =      int.Parse(value); }, () => { return configManager.WolfySpawnWeight.ToString();      }),
         ];
     }
 
@@ -216,7 +218,7 @@ public static class ConfigHelper
         {
             if (configItem.GetValue == null)
             {
-                Plugin.logger.LogError($"Func<string> GetValue() for ConfigItem key: \"{configItem.Key}\" could not be found!");
+                Plugin.Logger.LogError($"Func<string> GetValue() for ConfigItem key: \"{configItem.Key}\" could not be found!");
                 return;
             }
 
@@ -235,6 +237,15 @@ public static class ConfigHelper
         }
     }
 
+    public static void AddButton(string section, string name, string description, string buttonText, Action callback)
+    {
+        if (LethalConfigProxy.Enabled)
+        {
+            LethalConfigProxy.AddButton(section, name, description, buttonText, callback);
+        }
+    }
+    #endregion
+
     public static ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, bool requiresRestart, string description, AcceptableValueBase acceptableValues = null, Action<T> settingChanged = null, ConfigFile configFile = null)
     {
         configFile ??= Plugin.Instance.Config;
@@ -250,36 +261,78 @@ public static class ConfigHelper
 
         if (LethalConfigProxy.Enabled)
         {
-            if (acceptableValues == null)
-            {
-                LethalConfigProxy.AddConfig(configEntry, requiresRestart);
-            }
-            else
-            {
-                LethalConfigProxy.AddConfigSlider(configEntry, requiresRestart);
-            }
+            LethalConfigProxy.AddConfig(configEntry, requiresRestart);
         }
 
         return configEntry;
     }
 
-    public static void AddButton(string section, string name, string description, string buttonText, Action callback)
+    public static Dictionary<ConfigDefinition, string> GetOrphanedConfigEntries(ConfigFile configFile = null)
     {
-        if (LethalConfigProxy.Enabled)
+        configFile ??= Plugin.Instance.Config;
+
+        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+        return (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
+    }
+
+    public static void SetConfigEntryValue<T>(ConfigEntry<T> configEntry, string value)
+    {
+        // Check if T is int
+        if (typeof(T) == typeof(int) && int.TryParse(value, out int parsedInt))
         {
-            LethalConfigProxy.AddButton(section, name, description, buttonText, callback);
+            configEntry.Value = (T)(object)parsedInt;
+        }
+        // Check if T is float
+        else if (typeof(T) == typeof(float) && float.TryParse(value, out float parsedFloat))
+        {
+            configEntry.Value = (T)(object)parsedFloat;
+        }
+        // Check if T is double
+        else if (typeof(T) == typeof(double) && double.TryParse(value, out double parsedDouble))
+        {
+            configEntry.Value = (T)(object)parsedDouble;
+        }
+        // Check if T is bool
+        else if (typeof(T) == typeof(bool) && bool.TryParse(value, out bool parsedBool))
+        {
+            configEntry.Value = (T)(object)parsedBool;
+        }
+        // Check if T is string (no parsing needed)
+        else if (typeof(T) == typeof(string))
+        {
+            configEntry.Value = (T)(object)value;
+        }
+        else
+        {
+            // Optionally handle unsupported types
+            throw new InvalidOperationException($"Unsupported type: {typeof(T)}");
         }
     }
-    #endregion
+
+    // Credit to Kittenji.
+    public static void ClearUnusedEntries(ConfigFile configFile = null)
+    {
+        configFile ??= Plugin.Instance.Config;
+
+        var orphanedEntries = GetOrphanedConfigEntries(configFile);
+
+        if (orphanedEntries == null)
+        {
+            return;
+        }
+
+        orphanedEntries.Clear();
+        configFile.Save();
+    }
 }
 
 public class ConfigItem
 {
-    public string Key;
-    public Type Type;
-    public bool IsHostOnly;
-    public Action<string> SetValue;
-    public Func<string> GetValue;
+    public string Key { get; private set; }
+    public Type Type { get; private set; }
+    public bool IsHostOnly { get; private set; }
+    public Action<string> SetValue { get; private set; }
+    public Func<string> GetValue { get; private set; }
 
     public ConfigItem(string key, Type type, bool isHostOnly, Action<string> setValue, Func<string> getValue)
     {

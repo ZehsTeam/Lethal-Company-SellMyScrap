@@ -60,7 +60,7 @@ internal static class StartOfRoundPatch
             }
         };
 
-        Plugin.logger.LogInfo($"Sending config to client: {clientId}");
+        Plugin.Logger.LogInfo($"Sending config to client: {clientId}");
 
         PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.ConfigManager), clientRpcParams);
     }

@@ -14,7 +14,7 @@ internal static class HUDManagerPatch
     [HarmonyPriority(Priority.First)]
     private static bool DisplayCreditsEarningPatch(ref HUDManager __instance, int creditsEarned, GrabbableObject[] objectsSold, int newGroupCredits, ref Coroutine ___scrollRewardTextCoroutine)
     {
-        Plugin.logger.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");
+        Plugin.Logger.LogInfo($"Earned ${creditsEarned}; sold {objectsSold.Length} items; new credits amount: ${newGroupCredits}");
 
         string message = ScrapHelper.GetScrapMessage(objectsSold.ToList());
 

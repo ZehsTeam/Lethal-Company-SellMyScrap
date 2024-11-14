@@ -95,6 +95,12 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     public GameObject[] PartyHatObjects = [];
     public Material[] PartyHatMaterials = [];
 
+    [Space(10f)]
+    [Header("Cake Variant")]
+    [Space(5f)]
+    public MeshRenderer CakeMeshRenderer;
+    public Material[] CakeMaterials = [];
+
     private float _flySpeed;
 
     private int _variantIndex;
@@ -103,6 +109,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     private int _beforeEatIndex;
     private int _voiceLineIndex;
     private int _partyHatMaterialIndex;
+    private int _cakeMaterialIndex;
 
     protected override void Start()
     {
@@ -114,6 +121,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             _variantIndex = GetRandomVariantIndex();
             _cardMeshIndex = Random.Range(0, CardMeshes.Length);
             _partyHatMaterialIndex = Random.Range(0, PartyHatMaterials.Length);
+            _cakeMaterialIndex = Random.Range(0, CakeMaterials.Length);
 
             UpdateVariantOnLocalClient();
 
@@ -121,14 +129,14 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
             _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
             _beforeEatIndex = Random.Range(0, beforeEatSFX.Length);
 
-            SetDataClientRpc(_variantIndex, _cardMeshIndex, _explode, _voiceLineIndex, _beforeEatIndex, _partyHatMaterialIndex);
+            SetDataClientRpc(_variantIndex, _cardMeshIndex, _explode, _voiceLineIndex, _beforeEatIndex, _partyHatMaterialIndex, _cakeMaterialIndex);
         }
 
         base.Start();
     }
 
     [ClientRpc]
-    private void SetDataClientRpc(int variantIndex, int cardMeshIndex, bool explode, int voiceLineIndex, int beforeEatIndex, int partyHatMaterialIndex)
+    private void SetDataClientRpc(int variantIndex, int cardMeshIndex, bool explode, int voiceLineIndex, int beforeEatIndex, int partyHatMaterialIndex, int cakeMaterialIndex)
     {
         if (NetworkUtils.IsServer) return;
 
@@ -138,6 +146,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _voiceLineIndex = voiceLineIndex;
         _beforeEatIndex = beforeEatIndex;
         _partyHatMaterialIndex = partyHatMaterialIndex;
+        _cakeMaterialIndex = cakeMaterialIndex;
 
         UpdateVariantOnLocalClient();
     }
@@ -185,6 +194,11 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (IsVariantType(TakeyVariantType.Gift, TakeyVariantType.Cake))
         {
             SetPartyHatMaterials();
+        }
+
+        if (IsVariantType(TakeyVariantType.Cake))
+        {
+            SetCakeMaterial();
         }
     }
 
@@ -246,6 +260,19 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
                 meshRenderer.sharedMaterial = material;
             }
         }
+    }
+
+    private void SetCakeMaterial()
+    {
+        if (_cakeMaterialIndex < 0 || _cakeMaterialIndex > CakeMaterials.Length - 1)
+        {
+            return;
+        }
+
+        Material material = CakeMaterials[_cakeMaterialIndex];
+        if (material == null) return;
+
+        CakeMeshRenderer.sharedMaterial = material;
     }
     #endregion
 

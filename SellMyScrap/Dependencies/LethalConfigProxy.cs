@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using LethalConfig;
 using LethalConfig.ConfigItems;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies;
@@ -20,6 +21,23 @@ internal static class LethalConfigProxy
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void AddConfig<T>(ConfigEntry<T> configEntry, bool requiresRestart = false)
     {
+        // Check if the ConfigEntry has an AcceptableValueBase
+        if (configEntry.Description.AcceptableValues is AcceptableValueBase acceptableValue)
+        {
+            // Check if it is an AcceptableValueRange for either float or int
+            if (acceptableValue is AcceptableValueRange<float> || acceptableValue is AcceptableValueRange<int>)
+            {
+                AddConfigSlider(configEntry, requiresRestart);
+                return;
+            }
+            // Check if it is an AcceptableValueList for string
+            else if (acceptableValue is AcceptableValueList<string>)
+            {
+                AddConfigDropdown(configEntry, requiresRestart);
+                return;
+            }
+        }
+
         // Use pattern matching or type checks to determine which type-specific ConfigItem to create
         switch (configEntry)
         {
@@ -36,7 +54,7 @@ internal static class LethalConfigProxy
                 LethalConfigManager.AddConfigItem(new IntInputFieldConfigItem(intEntry, requiresRestart));
                 break;
             default:
-                throw new System.NotSupportedException($"Unsupported type: {typeof(T)}");
+                throw new NotSupportedException($"Unsupported type: {typeof(T)}");
         }
     }
 
@@ -53,12 +71,26 @@ internal static class LethalConfigProxy
                 LethalConfigManager.AddConfigItem(new IntSliderConfigItem(intEntry, requiresRestart));
                 break;
             default:
-                throw new System.NotSupportedException($"Slider not supported for type: {typeof(T)}");
+                throw new NotSupportedException($"Slider not supported for type: {typeof(T)}");
         }
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static void AddButton(string section, string name, string description, string buttonText, System.Action callback)
+    public static void AddConfigDropdown<T>(ConfigEntry<T> configEntry, bool requiresRestart = false)
+    {
+        // Handle dropdown for string or enum-like entries
+        switch (configEntry)
+        {
+            case ConfigEntry<string> stringEntry:
+                LethalConfigManager.AddConfigItem(new TextDropDownConfigItem(stringEntry, requiresRestart));
+                break;
+            default:
+                throw new NotSupportedException($"Dropdown not supported for type: {typeof(T)}");
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public static void AddButton(string section, string name, string description, string buttonText, Action callback)
     {
         LethalConfigManager.AddConfigItem(new GenericButtonConfigItem(section, name, description, buttonText, () => callback?.Invoke()));
     }

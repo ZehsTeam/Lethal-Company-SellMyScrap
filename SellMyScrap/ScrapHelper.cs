@@ -258,58 +258,82 @@ internal static class ScrapHelper
 
         int targetValue = withOvertimeBonus ? GetSellValueWithOvertime(value) : GetSellValue(value);
 
-        return new ScrapToSell(FindBestMatch(items, targetValue));
+        return new ScrapToSell(FindBestMatch(items, targetValue, Plugin.ConfigManager.PrioritySellList));
     }
 
-    public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue)
+    public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue, string[] priorityList)
     {
-        // Step 1: Handle empty list or max target value
+        // Convert priorityList to a case-insensitive HashSet for quick lookups
+        var prioritySet = new HashSet<string>(priorityList, System.StringComparer.OrdinalIgnoreCase);
+
+        // Step 1: Handle edge cases
         if (items.Count == 0 || targetValue == int.MaxValue)
+        {
             return items;
+        }
 
         // Step 2: Find the minimum scrapValue item
-        var minScrapItem = items.OrderBy(go => go.ScrapValue).First();
+        ItemData minScrapItem = items.OrderBy(item => item.ScrapValue).First();
+
         if (targetValue <= minScrapItem.ScrapValue)
+        {
             return [minScrapItem];
+        }
 
         // Step 3: Check if total scrapValue is less than targetValue
-        int totalScrapValue = items.Sum(go => go.ScrapValue);
-        if (totalScrapValue < targetValue)
-            return items;
+        int totalScrapValue = items.Sum(item => item.ScrapValue);
 
-        // Step 4 and 5: Dynamic Programming approach to find the best match
+        if (totalScrapValue < targetValue)
+        {
+            return items;
+        }
+
+        // Step 4: Initialize DP structures with additional priority count tracking
         int maxPossibleValue = totalScrapValue;
         int[] dp = new int[maxPossibleValue + 1];
         List<ItemData>[] dpItems = new List<ItemData>[maxPossibleValue + 1];
+        int[] dpPriorityCount = new int[maxPossibleValue + 1]; // Track priority item counts in the DP states
 
         for (int i = 0; i <= maxPossibleValue; i++)
         {
             dp[i] = int.MaxValue;
             dpItems[i] = new List<ItemData>();
+            dpPriorityCount[i] = 0;
         }
 
         dp[0] = 0; // Base case
 
         foreach (var item in items)
         {
+            bool isPriority = prioritySet.Contains(item.ItemName);
+            int itemPriorityValue = isPriority ? 1 : 0;
+
             for (int j = maxPossibleValue; j >= item.ScrapValue; j--)
             {
                 int remainingValue = j - item.ScrapValue;
-                if (dp[remainingValue] != int.MaxValue && dp[remainingValue] + item.ScrapValue < dp[j])
+                if (dp[remainingValue] != int.MaxValue)
                 {
-                    dp[j] = dp[remainingValue] + item.ScrapValue;
-                    dpItems[j] = new List<ItemData>(dpItems[remainingValue]) { item };
+                    int newScrapValue = dp[remainingValue] + item.ScrapValue;
+                    int newPriorityCount = dpPriorityCount[remainingValue] + itemPriorityValue;
+
+                    // Compare based on scrap value first, then prioritize count if values match
+                    if (newScrapValue < dp[j] || (newScrapValue == dp[j] && newPriorityCount > dpPriorityCount[j]))
+                    {
+                        dp[j] = newScrapValue;
+                        dpItems[j] = new List<ItemData>(dpItems[remainingValue]) { item };
+                        dpPriorityCount[j] = newPriorityCount;
+                    }
                 }
             }
         }
 
-        // Exact match check
+        // Step 5: Return the exact match if possible
         if (dp[targetValue] != int.MaxValue)
         {
             return dpItems[targetValue];
         }
 
-        // Smallest over target check
+        // Step 6: If exact match is not possible, find the smallest valid over-target solution
         for (int i = targetValue + 1; i <= maxPossibleValue; i++)
         {
             if (dp[i] != int.MaxValue)
@@ -318,7 +342,7 @@ internal static class ScrapHelper
             }
         }
 
-        // Fallback in case no valid set is found (which shouldn't happen)
+        // Fallback in case no valid set is found (should not happen in usual cases)
         return items;
     }
 

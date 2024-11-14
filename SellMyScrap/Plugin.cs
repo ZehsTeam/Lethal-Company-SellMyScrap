@@ -20,12 +20,12 @@ namespace com.github.zehsteam.SellMyScrap;
 [BepInDependency(ShipInventoryProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 internal class Plugin : BaseUnityPlugin
 {
-    private readonly Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+    private readonly Harmony _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-    internal static Plugin Instance;
-    internal static ManualLogSource logger;
+    internal static Plugin Instance { get; private set; }
+    internal static new ManualLogSource Logger { get; private set; }
 
-    internal static SyncedConfigManager ConfigManager;
+    internal static SyncedConfigManager ConfigManager { get; private set; }
 
     public ScrapToSell ScrapToSell { get; private set; }
     public SellRequest SellRequest { get; private set; }
@@ -34,21 +34,21 @@ internal class Plugin : BaseUnityPlugin
     {
         if (Instance == null) Instance = this;
 
-        logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
-        logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
+        Logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);
+        Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
-        harmony.PatchAll(typeof(GameNetworkManagerPatch));
-        harmony.PatchAll(typeof(StartOfRoundPatch));
-        harmony.PatchAll(typeof(TimeOfDayPatch));
-        harmony.PatchAll(typeof(HUDManagerPatch));
-        harmony.PatchAll(typeof(TerminalPatch));
-        harmony.PatchAll(typeof(DepositItemsDeskPatch));
-        harmony.PatchAll(typeof(StartMatchLeverPatch));
-        harmony.PatchAll(typeof(InteractTriggerPatch));
+        _harmony.PatchAll(typeof(GameNetworkManagerPatch));
+        _harmony.PatchAll(typeof(StartOfRoundPatch));
+        _harmony.PatchAll(typeof(TimeOfDayPatch));
+        _harmony.PatchAll(typeof(HUDManagerPatch));
+        _harmony.PatchAll(typeof(TerminalPatch));
+        _harmony.PatchAll(typeof(DepositItemsDeskPatch));
+        _harmony.PatchAll(typeof(StartMatchLeverPatch));
+        _harmony.PatchAll(typeof(InteractTriggerPatch));
         
         if (ShipInventoryProxy.Enabled)
         {
-            ShipInventoryProxy.PatchAll(harmony);
+            ShipInventoryProxy.PatchAll(_harmony);
         }
 
         ConfigManager = new SyncedConfigManager();
@@ -91,14 +91,14 @@ internal class Plugin : BaseUnityPlugin
                             catch (TargetInvocationException ex)
                             {
                                 // Log and continue if method invocation fails (e.g., due to missing dependencies)
-                                logger.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
+                                Logger.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
                             }
                         }
                     }
                     catch (System.Exception ex)
                     {
                         // Handle errors when fetching custom attributes, due to missing types or dependencies
-                        logger.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
+                        Logger.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
                     }
                 }
             }
@@ -106,13 +106,13 @@ internal class Plugin : BaseUnityPlugin
         catch (System.Exception ex)
         {
             // Catch any general exceptions that occur in the process
-            logger.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
+            Logger.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
         }
     }
 
     public void OnLocalDisconnect()
     {
-        logger.LogInfo($"Local player disconnected. Removing hostConfigData.");
+        Logger.LogInfo($"Local player disconnected. Removing hostConfigData.");
         ConfigManager.SetHostConfigData(null);
 
         CommandManager.OnLocalDisconnect();
@@ -155,7 +155,7 @@ internal class Plugin : BaseUnityPlugin
             message += $" (ScrapEaterIndex: {scrapEaterIndex}, ScrapEaterVariantIndex: {scrapEaterVariantIndex})";
         }
 
-        logger.LogInfo(message);
+        Logger.LogInfo(message);
     }
 
     public void ConfirmSellRequest()
@@ -164,7 +164,7 @@ internal class Plugin : BaseUnityPlugin
 
         SellRequest.ConfirmationStatus = ConfirmationStatus.Confirmed;
 
-        logger.LogInfo($"Attempting to sell {ScrapToSell.ItemCount} items for ${ScrapToSell.TotalScrapValue}.");
+        Logger.LogInfo($"Attempting to sell {ScrapToSell.ItemCount} items for ${ScrapToSell.TotalScrapValue}.");
 
         if (NetworkUtils.IsServer)
         {
@@ -209,7 +209,7 @@ internal class Plugin : BaseUnityPlugin
 
         if (DepositItemsDeskPatch.Instance == null)
         {
-            logger.LogError($"Could not find depositItemsDesk. Are you landed at The Company building?");
+            Logger.LogError($"Could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;
         }
 
@@ -275,7 +275,7 @@ internal class Plugin : BaseUnityPlugin
     {
         if (ConfigManager.ExtendedLogging)
         {
-            logger.LogInfo(data);
+            Logger.LogInfo(data);
         }
     }
 
@@ -283,7 +283,7 @@ internal class Plugin : BaseUnityPlugin
     {
         if (ConfigManager.ExtendedLogging)
         {
-            logger.LogMessage(data);
+            Logger.LogMessage(data);
         }
     }
 }

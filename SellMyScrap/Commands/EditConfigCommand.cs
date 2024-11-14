@@ -8,6 +8,7 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 internal class EditConfigCommand : Command
 {
     private StringArrayEditor _activeStringArrayEditor;
+    private StringArrayEditor _prioritySellListEditor;
     private StringArrayEditor _dontSellListEditor;
     private StringArrayEditor _sellListEditor;
     private bool _inResetToDefaultMenu = false;
@@ -16,7 +17,16 @@ internal class EditConfigCommand : Command
     {
         SyncedConfigManager configManager = Plugin.ConfigManager;
 
-        _dontSellListEditor = new StringArrayEditor("dontSellList", isHostOnly: true, () =>
+        _prioritySellListEditor = new StringArrayEditor("PrioritySellList", isHostOnly: true, () =>
+        {
+            return configManager.PrioritySellList;
+        },
+        value =>
+        {
+            configManager.PrioritySellList = value;
+        });
+
+        _dontSellListEditor = new StringArrayEditor("DontSellList", isHostOnly: true, () =>
         {
             return configManager.DontSellList;
         },
@@ -25,7 +35,7 @@ internal class EditConfigCommand : Command
             configManager.DontSellList = value;
         });
 
-        _sellListEditor = new StringArrayEditor("sellList", isHostOnly: true, () =>
+        _sellListEditor = new StringArrayEditor("SellList", isHostOnly: true, () =>
         {
             return configManager.SellList;
         },
@@ -72,6 +82,11 @@ internal class EditConfigCommand : Command
         if (_activeStringArrayEditor != null)
         {
             return _activeStringArrayEditor.ExecuteConfirmation(args);
+        }
+
+        if (firstArg.Equals(_prioritySellListEditor.Key, StringComparison.OrdinalIgnoreCase))
+        {
+            return SetActiveEditor(_prioritySellListEditor);
         }
 
         if (firstArg.Equals(_dontSellListEditor.Key, StringComparison.OrdinalIgnoreCase))

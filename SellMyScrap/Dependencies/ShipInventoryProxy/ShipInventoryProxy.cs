@@ -82,14 +82,14 @@ internal class ShipInventoryProxy
 
         if (ChuteInteract.Instance == null)
         {
-            Plugin.logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance is null.");
+            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance is null.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
             yield break;
         }
 
         if (ChuteInteract.Instance.spawnCoroutine != null)
         {
-            Plugin.logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
+            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
             SpawnItemsStatus = SpawnItemsStatus.Busy;
             yield break;
         }
@@ -98,7 +98,7 @@ internal class ShipInventoryProxy
 
         if (items.Length == 0)
         {
-            Plugin.logger.LogError("Failed to spawn ShipInventory items. ItemData array is empty.");
+            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ItemData array is empty.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
             yield break;
         }
@@ -110,7 +110,7 @@ internal class ShipInventoryProxy
 
         ChuteInteract.Instance.spawnCoroutine = ChuteInteract.Instance.StartCoroutine(ChuteInteract.Instance.SpawnCoroutine());
 
-        Plugin.logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
+        Plugin.Logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
 
         float startTime = Time.realtimeSinceStartup;
         float maxWaitTime = (ShipInventory.ShipInventory.Config.SpawnDelay.Value * items.Length) + 30f;
@@ -119,12 +119,12 @@ internal class ShipInventoryProxy
 
         if (ChuteInteract.Instance.spawnCoroutine == null)
         {
-            Plugin.logger.LogInfo($"Successfully spawned items from ShipInventory!");
+            Plugin.Logger.LogInfo($"Successfully spawned items from ShipInventory!");
             SpawnItemsStatus = SpawnItemsStatus.Success;
         }
         else
         {
-            Plugin.logger.LogError($"Failed to spawn items from ShipInventory. ChuteInteract instance spawnCoroutine timed out.");
+            Plugin.Logger.LogError($"Failed to spawn items from ShipInventory. ChuteInteract instance spawnCoroutine timed out.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
         }
     }

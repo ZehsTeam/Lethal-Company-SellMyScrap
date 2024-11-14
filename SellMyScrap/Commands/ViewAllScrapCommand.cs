@@ -28,7 +28,7 @@ internal class ViewAllScrapCommand : Command
 
         string message = GetMessage();
 
-        Plugin.logger.LogInfo($"\n\n{ScrapHelper.GetScrapItemMessage(_scrapItems)}\n");
+        Plugin.Logger.LogInfo($"\n\n{ScrapHelper.GetScrapItemMessage(_scrapItems)}\n");
 
         AwaitingConfirmation = true;
 

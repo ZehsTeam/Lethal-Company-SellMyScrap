@@ -43,7 +43,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 * Using the `-se` flag will spawn a random scrap eater.
     * Usage: `<sell-command> -se`
 * Using the `-se:<number>` flag will spawn a scrap eater by their index (Starts at 1).
-    * 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo, 6 = Psycho, 7 = Zombies
+    * 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo, 6 = Psycho, 7 = Zombies, 8 = Wolfy
     * Usage: `<sell-command> -se:<number>`
 
 <h4>Additional info for the <code>sell &lt;amount&gt;</code> command.</h4>
@@ -102,20 +102,29 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | ----------- | ----------- | ----------- | ----------- |
 | `SellScrapWorthZero` | `Boolean` | `false` | Do you want to sell scrap worth zero? |
 | `OnlySellScrapOnFloor` | `Boolean` | `false` | Do you want to sell scrap that is only on the floor? |
-| `DontSellList` | `String` | ` ` | Array  of item names to not sell. |
+| `PrioritySellList` | `String` | `Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball` | Array of item names to prioritize when selling. |
+| `DontSellList` | `String` | ` ` | Array of item names to not sell. |
 | `SellList` | `String` | `Whoopie cushion, Easter egg, Tragedy, Comedy` | Array of item names to sell when using the `sell list` command. |
 
-<h4>Additional info for the <code>dontSellList</code> config setting.</h4>
+#### Additional info for the <code>PrioritySellList</code> config setting.
 
-* Use the `edit config` command to easily edit the `dontSellList` config setting from the terminal.
+* Use the `edit config` command to easily edit the `PrioritySellList` config setting from the terminal.
+* Use the `view scrap` or `view all scrap` command to see the correct item names to use.
+* Each entry should be separated by a comma.
+* Item names are not case-sensitive but, spaces do matter.
+* Example value: `Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball`
+
+#### Additional info for the <code>DontSellList</code> config setting.
+
+* Use the `edit config` command to easily edit the `DontSellList` config setting from the terminal.
 * Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 * Each entry should be separated by a comma.
 * Item names are not case-sensitive but, spaces do matter.
 * Example value: `Maxwell, Cookie Fumo, Octolar Plush, Smol Takey, Blahaj`
 
-<h4>Additional info for the <code>sellList</code> config setting.</h4>
+#### Additional info for the <code>SellList</code> config setting.
 
-* Use the `edit config` command to easily edit the `sellList` config setting from the terminal.
+* Use the `edit config` command to easily edit the `SellList` config setting from the terminal.
 * Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 * Each entry should be separated by a comma.
 * Item names are not case-sensitive but, spaces do matter.
@@ -145,6 +154,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 | `CookieFumoSpawnWeight` | `Int32` | `1` | The spawn chance weight Cookie Fumo will spawn?! (scrap eater) |
 | `PsychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
 | `ZombiesSpawnWeight` | `Int32` | `1` | The spawn chance weight [Zombies](https://www.twitch.tv/zombiesatemychannel) will spawn?! (scrap eater) |
+| `WolfySpawnWeight` | `Int32` | `1` | The spawn chance weight [Wolfy](https://www.twitch.tv/wolfsmychocolate) will spawn?! (scrap eater) |
 
 </details>
 
@@ -166,7 +176,7 @@ https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues
 | [Lethal Company modding Discord](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
 | [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
 
-#### Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
+#### Email: crithaxxog@gmail.com - Twitch: [CritHaxXoG](https://www.twitch.tv/crithaxxog) - YouTube: [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
 
 ## Credits
 #### Takey (scrap eater)

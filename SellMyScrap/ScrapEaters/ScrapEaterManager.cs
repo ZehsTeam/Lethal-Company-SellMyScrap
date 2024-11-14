@@ -37,6 +37,9 @@ public static class ScrapEaterManager
             new ScrapEater(Content.ZombiesScrapEaterPrefab, () => {
                 return configManager.ZombiesSpawnWeight;
             }),
+            new ScrapEater(Content.WolfyScrapEaterPrefab, () => {
+                return configManager.WolfySpawnWeight;
+            }),
         ];
     }
 
@@ -86,7 +89,7 @@ public static class ScrapEaterManager
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
         behaviour.SetData(scrap, variantIndex);
 
-        Plugin.logger.LogInfo($"Spawned scrap eater #{index + 1}");
+        Plugin.Logger.LogInfo($"Spawned scrap eater #{index + 1}");
     }
 
     private static int GetRandomScrapEaterIndex()

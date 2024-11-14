@@ -27,6 +27,7 @@ public class SyncedConfigManager
     // Advanced Sell Settings (Synced)
     private ConfigEntry<bool> SellScrapWorthZeroCfg;
     private ConfigEntry<bool> OnlySellScrapOnFloorCfg;
+    private ConfigEntry<string> PrioritySellListCfg;
     private ConfigEntry<string> DontSellListCfg;
     private ConfigEntry<string> SellListCfg;
 
@@ -51,6 +52,7 @@ public class SyncedConfigManager
     private ConfigEntry<int> CookieFumoSpawnWeightCfg;
     private ConfigEntry<int> PsychoSpawnWeightCfg;
     private ConfigEntry<int> ZombiesSpawnWeightCfg;
+    private ConfigEntry<int> WolfySpawnWeightCfg;
     #endregion
 
     #region Config Setting Get/Set Properties
@@ -129,6 +131,20 @@ public class SyncedConfigManager
         }
     }
 
+    internal string[] PrioritySellList
+    {
+        get
+        {
+            string text = _hostConfigData == null ? PrioritySellListCfg.Value : _hostConfigData.PrioritySellList;
+            return text.Split(",", System.StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
+        }
+        set
+        {
+            PrioritySellListCfg.Value = string.Join(", ", value);
+            SyncedConfigsChanged();
+        }
+    }
+
     internal string[] DontSellList
     { 
         get
@@ -178,13 +194,14 @@ public class SyncedConfigManager
     internal int CookieFumoSpawnWeight { get { return CookieFumoSpawnWeightCfg.Value; } set => CookieFumoSpawnWeightCfg.Value = value; }
     internal int PsychoSpawnWeight { get { return PsychoSpawnWeightCfg.Value; } set => PsychoSpawnWeightCfg.Value = value; }
     internal int ZombiesSpawnWeight { get { return ZombiesSpawnWeightCfg.Value; } set => ZombiesSpawnWeightCfg.Value = value; }
+    internal int WolfySpawnWeight { get { return WolfySpawnWeightCfg.Value; } set => WolfySpawnWeightCfg.Value = value; }
     #endregion
 
     public SyncedConfigManager()
     {
         BindConfigs();
         MigrateOldConfigSettings();
-        ClearUnusedEntries();
+        ConfigHelper.ClearUnusedEntries();
     }
     
     private void BindConfigs()
@@ -202,10 +219,11 @@ public class SyncedConfigManager
         SellPicklesCfg =  ConfigHelper.Bind("Sell Settings", "SellPickles",  defaultValue: true,  requiresRestart: false, "Do you want to sell Jar of pickles?");
 
         // Advanced Sell Settings
-        SellScrapWorthZeroCfg =   ConfigHelper.Bind("Advanced Sell Settings", "SellScrapWorthZero",   defaultValue: false, requiresRestart: false, "Do you want to sell scrap worth zero?");
-        OnlySellScrapOnFloorCfg = ConfigHelper.Bind("Advanced Sell Settings", "OnlySellScrapOnFloor", defaultValue: false, requiresRestart: false, "Do you want to sell scrap that is only on the floor?");
-        DontSellListCfg =         ConfigHelper.Bind("Advanced Sell Settings", "DontSellList",         defaultValue: "",                                             requiresRestart: false, GetDontSellListDescription());
-        SellListCfg =             ConfigHelper.Bind("Advanced Sell Settings", "SellList",             defaultValue: "Whoopie cushion, Easter egg, Tragedy, Comedy", requiresRestart: false, GetSellListDescription());
+        SellScrapWorthZeroCfg =   ConfigHelper.Bind("Advanced Sell Settings", "SellScrapWorthZero",   defaultValue: false,                                                              requiresRestart: false, "Do you want to sell scrap worth zero?");
+        OnlySellScrapOnFloorCfg = ConfigHelper.Bind("Advanced Sell Settings", "OnlySellScrapOnFloor", defaultValue: false,                                                              requiresRestart: false, "Do you want to sell scrap that is only on the floor?");
+        PrioritySellListCfg =     ConfigHelper.Bind("Advanced Sell Settings", "PrioritySellList",     defaultValue: "Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball", requiresRestart: false, GetPrioritySellListDescription());
+        DontSellListCfg =         ConfigHelper.Bind("Advanced Sell Settings", "DontSellList",         defaultValue: "",                                                                 requiresRestart: false, GetDontSellListDescription());
+        SellListCfg =             ConfigHelper.Bind("Advanced Sell Settings", "SellList",             defaultValue: "Whoopie cushion, Easter egg, Tragedy, Comedy",                     requiresRestart: false, GetSellListDescription());
 
         // Terminal Settings
         OverrideWelcomeMessageCfg = ConfigHelper.Bind("Terminal Settings", "OverrideWelcomeMessage", defaultValue: true, requiresRestart: false, "Overrides the terminal welcome message to add additional info.");
@@ -228,16 +246,27 @@ public class SyncedConfigManager
         CookieFumoSpawnWeightCfg = ConfigHelper.Bind("Scrap Eater Settings", "CookieFumoSpawnWeight", defaultValue: 1,  requiresRestart: false, "The spawn chance weight Cookie Fumo will spawn?! (scrap eater)", new AcceptableValueRange<int>(0, 100));
         PsychoSpawnWeightCfg =     ConfigHelper.Bind("Scrap Eater Settings", "PsychoSpawnWeight",     defaultValue: 1,  requiresRestart: false, "The spawn chance weight Psycho will spawn?! (scrap eater)",      new AcceptableValueRange<int>(0, 100));
         ZombiesSpawnWeightCfg =    ConfigHelper.Bind("Scrap Eater Settings", "ZombiesSpawnWeight",    defaultValue: 1,  requiresRestart: false, "The spawn chance weight Zombies will spawn?! (scrap eater)",     new AcceptableValueRange<int>(0, 100));
+        WolfySpawnWeightCfg =      ConfigHelper.Bind("Scrap Eater Settings", "WolfySpawnWeight",      defaultValue: 1,  requiresRestart: false, "The spawn chance weight Wolfy will spawn?! (scrap eater)",       new AcceptableValueRange<int>(0, 100));
+    }
+
+    private string GetPrioritySellListDescription()
+    {
+        string message = "Array of item names to prioritize when selling.\n";
+        message += "Use the `edit config` command to easily edit the `PrioritySellList` config setting from the terminal.\n";
+        message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
+        message += "Each entry should be separated by a comma.\n";
+        message += "Item names are not case-sensitive but, spaces do matter.";
+
+        return message;
     }
 
     private string GetDontSellListDescription()
     {
         string message = "Array of item names to not sell.\n";
-        message += "Use the `edit config` command to easily edit the `dontSellList` config setting from the terminal.\n";
+        message += "Use the `edit config` command to easily edit the `DontSellList` config setting from the terminal.\n";
         message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
         message += "Each entry should be separated by a comma.\n";
-        message += "Item names are not case-sensitive but, spaces do matter.\n";
-        message += "Example value: Maxwell, Cookie Fumo, Blahaj, Octolar Plush, Smol Takey, Dusty Plush";
+        message += "Item names are not case-sensitive but, spaces do matter.";
 
         return message;
     }
@@ -245,23 +274,17 @@ public class SyncedConfigManager
     private string GetSellListDescription()
     {
         string message = "Array of item names to sell when using the `sell list` command.\n";
-        message += "Use the `edit config` command to easily edit the `sellList` config setting from the terminal.\n";
+        message += "Use the `edit config` command to easily edit the `SellList` config setting from the terminal.\n";
         message += "Use the `view scrap` or `view all scrap` command to see the correct item names to use.\n";
         message += "Each entry should be separated by a comma.\n";
-        message += "Item names are not case-sensitive but, spaces do matter.\n";
-        message += "Example value: Whoopie cushion, Easter egg, Tragedy, Comedy";
+        message += "Item names are not case-sensitive but, spaces do matter.";
 
         return message;
     }
 
     private void MigrateOldConfigSettings()
     {
-        ConfigFile configFile = Plugin.Instance.Config;
-
-        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
-        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
-
-        foreach (var entry in orphanedEntries)
+        foreach (var entry in ConfigHelper.GetOrphanedConfigEntries())
         {
             MigrateOldConfigSetting(entry.Key.Section, entry.Key.Key, entry.Value);
         }
@@ -274,20 +297,20 @@ public class SyncedConfigManager
             switch (key)
             {
                 case "sellGifts":
-                    SellGiftsCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellGiftsCfg, value);
+                    return;
                 case "sellShotguns":
-                    SellShotgunsCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellShotgunsCfg, value);
+                    return;
                 case "sellAmmo":
-                    SellAmmoCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellAmmoCfg, value);
+                    return;
                 case "sellKnives":
-                    SellKnivesCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellKnivesCfg, value);
+                    return;
                 case "sellPickles":
-                    SellPicklesCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellPicklesCfg, value);
+                    return;
             }
         }
 
@@ -296,28 +319,28 @@ public class SyncedConfigManager
             switch (key)
             {
                 case "sellScrapWorthZero":
-                    SellScrapWorthZeroCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SellScrapWorthZeroCfg, value);
+                    return;
                 case "onlySellScrapOnFloor":
-                    OnlySellScrapOnFloorCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(OnlySellScrapOnFloorCfg, value);
+                    return;
             }
 
             try
             {
                 if (key.Equals("DontSellListJson", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    DontSellListCfg.Value = string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", "")));
+                    ConfigHelper.SetConfigEntryValue(DontSellListCfg, string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", ""))));
                 }
 
                 if (key.Equals("SellListJson", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    SellListCfg.Value = string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", "")));
+                    ConfigHelper.SetConfigEntryValue(SellListCfg, string.Join(", ", JsonConvert.DeserializeObject<string[]>(value.Replace("\\", ""))));
                 }
             }
             catch (System.Exception e)
             {
-                Plugin.logger.LogError(e);
+                Plugin.Logger.LogError(e);
             }
         }
 
@@ -326,20 +349,20 @@ public class SyncedConfigManager
             switch (key)
             {
                 case "overrideWelcomeMessage":
-                    OverrideWelcomeMessageCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(OverrideWelcomeMessageCfg, value);
+                    return;
                 case "overrideHelpMessage":
-                    OverrideHelpMessageCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(OverrideHelpMessageCfg, value);
+                    return;
                 case "showFoundItems":
-                    ShowFoundItemsCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(ShowFoundItemsCfg, value);
+                    return;
                 case "sortFoundItemsPrice":
-                    SortFoundItemsPriceCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SortFoundItemsPriceCfg, value);
+                    return;
                 case "alignFoundItemsPrice":
-                    AlignFoundItemsPriceCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(AlignFoundItemsPriceCfg, value);
+                    return;
             }
         }
 
@@ -348,11 +371,11 @@ public class SyncedConfigManager
             switch (key)
             {
                 case "speakInShip":
-                    SpeakInShipCfg.Value = bool.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(SpeakInShipCfg, value);
+                    return;
                 case "rareVoiceLineChance":
-                    RareVoiceLineChanceCfg.Value = float.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(RareVoiceLineChanceCfg, value);
+                    return;
             }
         }
 
@@ -361,82 +384,62 @@ public class SyncedConfigManager
             switch (key)
             {
                 case "scrapEaterChance":
-                    ScrapEaterChanceCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(ScrapEaterChanceCfg, value);
+                    return;
                 case "octolarSpawnWeight":
-                    OctolarSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(OctolarSpawnWeightCfg, value);
+                    return;
                 case "takeySpawnWeight":
-                    TakeySpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(TakeySpawnWeightCfg, value);
+                    return;
                 case "maxwellSpawnWeight":
-                    MaxwellSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(MaxwellSpawnWeightCfg, value);
+                    return;
                 case "yippeeSpawnWeight":
-                    YippeeSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(YippeeSpawnWeightCfg, value);
+                    return;
                 case "cookieFumoSpawnWeight":
-                    CookieFumoSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(CookieFumoSpawnWeightCfg, value);
+                    return;
                 case "psychoSpawnWeight":
-                    PsychoSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(PsychoSpawnWeightCfg, value);
+                    return;
                 case "zombiesSpawnWeight":
-                    ZombiesSpawnWeightCfg.Value = int.Parse(value);
-                    break;
+                    ConfigHelper.SetConfigEntryValue(ZombiesSpawnWeightCfg, value);
+                    return;
             }
         }
     }
 
-    private void ClearUnusedEntries()
-    {
-        ConfigFile configFile = Plugin.Instance.Config;
-
-        // Normally, old unused config entries don't get removed, so we do it with this piece of code. Credit to Kittenji.
-        PropertyInfo orphanedEntriesProp = configFile.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
-        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(configFile, null);
-        orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
-        configFile.Save(); // Save the config file to save these changes
-    }
-
     internal void ResetToDefault()
     {
-        // Sell Settings
-        SellGiftsCfg.Value = (bool)SellGiftsCfg.DefaultValue;
-        SellShotgunsCfg.Value = (bool)SellShotgunsCfg.DefaultValue;
-        SellAmmoCfg.Value = (bool)SellAmmoCfg.DefaultValue;
-        SellKnivesCfg.Value = (bool)SellKnivesCfg.DefaultValue;
-        SellPicklesCfg.Value = (bool)SellPicklesCfg.DefaultValue;
+        var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        // Advanced Sell Settings
-        SellScrapWorthZeroCfg.Value = (bool)SellScrapWorthZeroCfg.DefaultValue;
-        OnlySellScrapOnFloorCfg.Value = (bool)OnlySellScrapOnFloorCfg.DefaultValue;
-        DontSellListCfg.Value = (string)DontSellListCfg.DefaultValue;
-        SellListCfg.Value = (string)SellListCfg.DefaultValue;
+        foreach (var field in fields)
+        {
+            // Check if the field is a ConfigEntry
+            if (field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(ConfigEntry<>))
+            {
+                // Get the ConfigEntry instance
+                var configEntry = field.GetValue(this);
 
-        // Terminal Settings
-        OverrideWelcomeMessageCfg.Value = (bool)OverrideWelcomeMessageCfg.DefaultValue;
-        OverrideHelpMessageCfg.Value = (bool)OverrideHelpMessageCfg.DefaultValue;
-        ShowFoundItemsCfg.Value = (bool)ShowFoundItemsCfg.DefaultValue;
-        SortFoundItemsPriceCfg.Value = (bool)SortFoundItemsPriceCfg.DefaultValue;
-        AlignFoundItemsPriceCfg.Value = (bool)AlignFoundItemsPriceCfg.DefaultValue;
+                if (configEntry != null)
+                {
+                    // Use reflection to access and set the Value property to the DefaultValue
+                    var valueProperty = field.FieldType.GetProperty("Value");
+                    var defaultValueProperty = field.FieldType.GetProperty("DefaultValue");
 
-        // Misc Settings
-        SpeakInShipCfg.Value = (bool)SpeakInShipCfg.DefaultValue;
-        RareVoiceLineChanceCfg.Value = (float)RareVoiceLineChanceCfg.DefaultValue;
-        ShowQuotaWarningCfg.Value = (bool)ShowQuotaWarningCfg.DefaultValue;
+                    if (valueProperty != null && defaultValueProperty != null)
+                    {
+                        // Set Value to DefaultValue
+                        var defaultValue = defaultValueProperty.GetValue(configEntry);
+                        valueProperty.SetValue(configEntry, defaultValue);
+                    }
+                }
+            }
+        }
 
-        // Scrap Eater Settings
-        ScrapEaterChanceCfg.Value = (int)ScrapEaterChanceCfg.DefaultValue;
-        OctolarSpawnWeightCfg.Value = (int)OctolarSpawnWeightCfg.DefaultValue;
-        TakeySpawnWeightCfg.Value = (int)TakeySpawnWeightCfg.DefaultValue;
-        MaxwellSpawnWeightCfg.Value = (int)MaxwellSpawnWeightCfg.DefaultValue;
-        YippeeSpawnWeightCfg.Value = (int)YippeeSpawnWeightCfg.DefaultValue;
-        CookieFumoSpawnWeightCfg.Value = (int)CookieFumoSpawnWeightCfg.DefaultValue;
-        PsychoSpawnWeightCfg.Value = (int)PsychoSpawnWeightCfg.DefaultValue;
-        ZombiesSpawnWeightCfg.Value = (int)ZombiesSpawnWeightCfg.DefaultValue;
-
-        Plugin.logger.LogInfo("Reset all config settings to their default value.");
+        Plugin.Logger.LogInfo("Reset all config settings to their default value.");
 
         SyncedConfigsChanged();
     }
@@ -490,6 +493,13 @@ public class SyncedConfigManager
         {
             List<string> array = DontSellList.ToList();
             array.Add("Takey Box");
+            DontSellListCfg.Value = JsonConvert.SerializeObject(array);
+        }
+
+        if (!Utils.ArrayContains(DontSellList, "Takey Mug"))
+        {
+            List<string> array = DontSellList.ToList();
+            array.Add("Takey Mug");
             DontSellListCfg.Value = JsonConvert.SerializeObject(array);
         }
     }

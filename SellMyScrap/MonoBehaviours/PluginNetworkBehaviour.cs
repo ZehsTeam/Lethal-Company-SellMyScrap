@@ -27,7 +27,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     {
         if (NetworkUtils.IsServer) return;
 
-        Plugin.logger.LogInfo("Syncing config with host.");
+        Plugin.Logger.LogInfo("Syncing config with host.");
         Plugin.ConfigManager.SetHostConfigData(syncedConfigData);
     }
 
@@ -41,13 +41,13 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
         if (playerScript == null)
         {
-            Plugin.logger.LogError("Failed to perform sell server rpc. PlayerControllerB is null.");
+            Plugin.Logger.LogError("Failed to perform sell server rpc. PlayerControllerB is null.");
             return;
         }
 
         string message = $"{playerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {scrapToSell.ItemCount} items for ${scrapToSell.RealTotalScrapValue}";
 
-        Plugin.logger.LogInfo(message);
+        Plugin.Logger.LogInfo(message);
         HUDManager.Instance.DisplayGlobalNotification(message);
 
         Plugin.Instance.PerformSellOnServerFromClient(scrapToSell, sellType, scrapEaterIndex, scrapEaterVariantIndex);

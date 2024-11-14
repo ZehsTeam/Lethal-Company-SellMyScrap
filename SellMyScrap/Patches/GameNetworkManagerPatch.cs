@@ -31,6 +31,6 @@ internal static class GameNetworkManagerPatch
 
         NetworkManager.Singleton.AddNetworkPrefab(prefab);
 
-        Plugin.logger.LogInfo($"Registered \"{prefab.name}\" network prefab.");
+        Plugin.Logger.LogInfo($"Registered \"{prefab.name}\" network prefab.");
     }
 }

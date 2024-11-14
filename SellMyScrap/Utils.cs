@@ -85,7 +85,7 @@ internal static class Utils
 
     public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
     {
-        Plugin.logger.LogInfo($"Spawning explosion at pos: {explosionPosition}");
+        Plugin.Logger.LogInfo($"Spawning explosion at pos: {explosionPosition}");
 
         Transform holder = null;
 
@@ -138,7 +138,7 @@ internal static class Utils
                 Landmine componentInChildren = array[i].gameObject.GetComponentInChildren<Landmine>();
                 if (componentInChildren != null && !componentInChildren.hasExploded && num2 < 6f)
                 {
-                    Plugin.logger.LogInfo("Setting off other mine");
+                    Plugin.Logger.LogInfo("Setting off other mine");
                     StartOfRound.Instance.StartCoroutine(TriggerOtherMineDelayed(componentInChildren));
                 }
             }
@@ -241,7 +241,7 @@ internal static class Utils
             return GameNetworkManager.Instance.StartCoroutine(routine);
         }
 
-        Plugin.logger.LogError("Failed to start coroutine. " + routine);
+        Plugin.Logger.LogError("Failed to start coroutine. " + routine);
 
         return null;
     }

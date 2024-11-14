@@ -32,7 +32,7 @@ internal class SellAmountCommand : SellCommand
         }
         catch
         {
-            Plugin.logger.LogError($"Error: failed to evalute expression for sell <amount>");
+            Plugin.Logger.LogError($"Error: failed to evalute expression for sell <amount>");
         }
 
         if (!int.TryParse(evaluatedExpression, out int requestedValue) || requestedValue <= 0)

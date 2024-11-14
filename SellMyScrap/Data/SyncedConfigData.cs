@@ -17,6 +17,7 @@ public class SyncedConfigData : INetworkSerializable
     // Advanced Sell Settings
     public bool SellScrapWorthZero;
     public bool OnlySellScrapOnFloor;
+    public string PrioritySellList;
     public string DontSellList;
     public string SellList;
 
@@ -34,6 +35,7 @@ public class SyncedConfigData : INetworkSerializable
         // Advanced Sell Settings
         SellScrapWorthZero = configManager.SellScrapWorthZero;
         OnlySellScrapOnFloor = configManager.OnlySellScrapOnFloor;
+        PrioritySellList = string.Join(", ", configManager.PrioritySellList);
         DontSellList = string.Join(", ", configManager.DontSellList);
         SellList = string.Join(", ", configManager.SellList);
     }
@@ -50,6 +52,7 @@ public class SyncedConfigData : INetworkSerializable
         // Advanced Sell Settings
         serializer.SerializeValue(ref SellScrapWorthZero);
         serializer.SerializeValue(ref OnlySellScrapOnFloor);
+        serializer.SerializeValue(ref PrioritySellList);
         serializer.SerializeValue(ref DontSellList);
         serializer.SerializeValue(ref SellList);
     }
