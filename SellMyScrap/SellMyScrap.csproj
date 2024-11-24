@@ -45,9 +45,18 @@
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="56.0.0-beta.1-ngd.0" PrivateAssets="all" />
   </ItemGroup>
   
-  <PropertyGroup><LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
+  <PropertyGroup>
+    <!-- Local libraries folder -->
+    <LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
+
+    <!-- Lethal Company plugins folder -->
     <PluginsFolder>D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins</PluginsFolder>
-    
+
+    <!-- Gale profile name -->
+    <GaleProfile>Mod Development</GaleProfile>
+    <GalePluginsFolder>$(AppData)\com.kesomannen.gale\lethal-company\profiles\$(GaleProfile)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</GalePluginsFolder>
+
+    <!-- Other settings -->
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
@@ -81,5 +90,10 @@
   <Target Name="CopyToPluginsFolder" AfterTargets="PostBuildEvent" DependsOnTargets="NetcodePatch">
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\sellmyscrap_assets" />
+  </Target>
+
+  <Target Name="CopyToGalePluginsFolder" AfterTargets="CopyToPluginsFolder" DependsOnTargets="NetcodePatch">
+    <Copy DestinationFolder="$(GalePluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
+    <Copy DestinationFolder="$(GalePluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\sellmyscrap_assets" />
   </Target>
 </Project>

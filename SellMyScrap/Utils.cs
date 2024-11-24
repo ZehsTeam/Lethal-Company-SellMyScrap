@@ -58,11 +58,13 @@ internal static class Utils
         return string.Empty;
     }
 
-    public static bool ArrayContains(string[] array, string value)
+    public static bool ArrayContains(string[] array, string value, bool matchCase = false)
     {
+        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+
         foreach (var item in array)
         {
-            if (item.Equals(value, System.StringComparison.OrdinalIgnoreCase))
+            if (item.Equals(value, comparisonType))
             {
                 return true;
             }

@@ -30,8 +30,10 @@ internal class Plugin : BaseUnityPlugin
     public ScrapToSell ScrapToSell { get; private set; }
     public SellRequest SellRequest { get; private set; }
 
+    #pragma warning disable IDE0051 // Remove unused private members
     private void Awake()
     {
+    #pragma warning restore IDE0051 // Remove unused private members
         if (Instance == null) Instance = this;
 
         Logger = BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID);

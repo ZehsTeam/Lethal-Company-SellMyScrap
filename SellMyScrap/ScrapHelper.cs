@@ -261,8 +261,10 @@ internal static class ScrapHelper
         return new ScrapToSell(FindBestMatch(items, targetValue, Plugin.ConfigManager.PrioritySellList));
     }
 
-    public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue, string[] priorityList)
+    public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue, string[] priorityList = null)
     {
+        priorityList ??= [];
+
         // Convert priorityList to a case-insensitive HashSet for quick lookups
         var prioritySet = new HashSet<string>(priorityList, System.StringComparer.OrdinalIgnoreCase);
 
@@ -273,7 +275,7 @@ internal static class ScrapHelper
         }
 
         // Step 2: Find the minimum scrapValue item
-        ItemData minScrapItem = items.OrderBy(item => item.ScrapValue).First();
+        var minScrapItem = items.OrderBy(item => item.ScrapValue).First();
 
         if (targetValue <= minScrapItem.ScrapValue)
         {
