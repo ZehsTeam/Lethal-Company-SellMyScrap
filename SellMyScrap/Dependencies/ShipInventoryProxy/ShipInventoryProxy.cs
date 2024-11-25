@@ -60,7 +60,7 @@ internal class ShipInventoryProxy
     {
         List<ShipInventoryItemData> shipInventoryItems = [];
         
-        foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(ScrapHelper.GetItemByName(x.ID))))
+        foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(x.GetItem())))
         {
             shipInventoryItems.Add(new ShipInventoryItemData(itemData.ID, itemData.SCRAP_VALUE, itemData.SAVE_DATA, itemData.PERSISTED_THROUGH_ROUNDS));
         }

@@ -1,4 +1,6 @@
-﻿using ShipInventory.Objects;
+﻿using ShipInventory.Helpers;
+using ShipInventory.Objects;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
 
@@ -8,10 +10,10 @@ namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 [System.Serializable]
 public class ShipInventoryItemData : INetworkSerializable
 {
-    public Item Item => ScrapHelper.GetItemByName(Id);
+    public Item Item => GetItem();
     public string ItemName => Item != null ? Item.itemName : string.Empty;
 
-    public string Id;
+    public int Id;
     public int ScrapValue;
     public int SaveData;
     public bool PersistedThroughRounds;
@@ -21,7 +23,7 @@ public class ShipInventoryItemData : INetworkSerializable
 
     }
 
-    public ShipInventoryItemData(string id, int scrapValue, int saveData, bool persistedThroughRounds)
+    public ShipInventoryItemData(int id, int scrapValue, int saveData, bool persistedThroughRounds)
     {
         Id = id;
         ScrapValue = scrapValue;
@@ -39,6 +41,12 @@ public class ShipInventoryItemData : INetworkSerializable
             SAVE_DATA = SaveData,
             PERSISTED_THROUGH_ROUNDS = PersistedThroughRounds
         };
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public Item GetItem()
+    {
+        return ItemManager.ALLOWED_ITEMS.GetValueOrDefault(Id);
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
