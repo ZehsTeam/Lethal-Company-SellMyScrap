@@ -1,6 +1,8 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using System.Data;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -70,37 +72,40 @@ internal class SellAmountCommand : SellCommand
             foundColor = scrapToSell.RealTotalScrapValue >= requestedValue ? "green" : "red";
         }
 
-        string message = $"Found {scrapToSell.ItemCount} items with a total value of <color={foundColor}>${scrapToSell.RealTotalScrapValue}</color>\n";
-        message += $"Requested value: ${requestedValue}\n";
-        message += GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue);
-        message += overtimeBonusString;
-        message += $"The Company is buying at %{CompanyBuyingRate}\n";
-        message += "\n";
+        StringBuilder builder = new StringBuilder();
 
-        if (Plugin.ConfigManager.ShowFoundItems)
+        builder.AppendLine($"Found {scrapToSell.ItemCount} items with a total value of <color={foundColor}>${scrapToSell.RealTotalScrapValue}</color>");
+        builder.AppendLine($"Requested value: ${requestedValue}");
+        builder.AppendLine(GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue));
+        builder.Append(overtimeBonusString);
+        builder.AppendLine($"The Company is buying at %{CompanyBuyingRate}\n");
+
+        if (Plugin.ConfigManager.ShowFoundItems.Value)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
+            builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n");
         }
 
-        message += "Please CONFIRM or DENY.\n\n";
+        builder.AppendLine("Please CONFIRM or DENY.\n\n");
 
-        return message;
+        return builder.ToString();
     }
 
     private string GetSellAmountInvalidMessage()
     {
-        string message = "Error: sell amount is invalid.\n\n";
-        message += "Usage:\n";
-        message += "    sell <amount>\n";
-        message += "    sell <amount> -o\n\n";
-        message += "Where <amount> is a positive integer or math expression.\n\n";
-        message += "Flags:\n";
-        message += "    -o    Will sell for a less amount so (less amount + overtime bonus) = initial amount.\n\n";
-        message += "Usage examples:\n";
-        message += "    sell 500\n";
-        message += "    sell 110 * 5 - 50\n";
-        message += "    sell 550 -o\n\n";
+        StringBuilder builder = new StringBuilder();
 
-        return message;
+        builder.AppendLine("Error: sell amount is invalid.\n");
+        builder.AppendLine("Usage:");
+        builder.AppendLine("sell <amount>");
+        builder.AppendLine("sell <amount> -o\n");
+        builder.AppendLine("Where <amount> is a positive integer or math expression.\n");
+        builder.AppendLine("Flags:");
+        builder.AppendLine("    -o    Will sell for a less amount so (less amount + overtime bonus) = initial amount.\n");
+        builder.AppendLine("Usage examples:");
+        builder.AppendLine("    sell 500");
+        builder.AppendLine("    sell 110 * 5 - 50");
+        builder.AppendLine("    sell 550 -o\n\n");
+
+        return builder.ToString();
     }
 }

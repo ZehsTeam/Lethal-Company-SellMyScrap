@@ -1,5 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -38,19 +40,20 @@ internal class SellAllCommand : SellCommand
 
     private string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.RealTotalScrapValue}\n";
-        message += GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue);
-        message += GetOvertimeBonusString(scrapToSell.RealTotalScrapValue);
-        message += $"The Company is buying at %{CompanyBuyingRate}\n";
-        message += "\n";
+        StringBuilder builder = new StringBuilder();
 
-        if (Plugin.ConfigManager.ShowFoundItems)
+        builder.AppendLine($"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.RealTotalScrapValue}");
+        builder.AppendLine(GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue));
+        builder.Append(GetOvertimeBonusString(scrapToSell.RealTotalScrapValue));
+        builder.AppendLine($"The Company is buying at %{CompanyBuyingRate}\n");
+
+        if (Plugin.ConfigManager.ShowFoundItems.Value)
         {
-            message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
+            builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n");
         }
 
-        message += "Please CONFIRM or DENY.\n\n";
+        builder.AppendLine("Please CONFIRM or DENY.\n\n");
 
-        return message;
+        return builder.ToString();
     }
 }

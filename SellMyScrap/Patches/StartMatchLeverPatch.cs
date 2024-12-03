@@ -21,7 +21,7 @@ internal static class StartMatchLeverPatch
     private static void BeginHoldingInteractOnLeverPatch(ref StartMatchLever __instance)
     {
         // Return if there are still more days until the deadline
-        if (TimeOfDay.Instance.daysUntilDeadline > 0 || !Plugin.ConfigManager.ShowQuotaWarning)
+        if (TimeOfDay.Instance.daysUntilDeadline > 0 || !Plugin.ConfigManager.ShowQuotaWarning.Value)
         {
             // Reset the timeToHold on the InteractTrigger.
             if (__instance.triggerScript.timeToHold == 4.01f)

@@ -4,6 +4,7 @@ using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
@@ -25,7 +26,7 @@ internal class Plugin : BaseUnityPlugin
     internal static Plugin Instance { get; private set; }
     internal static new ManualLogSource Logger { get; private set; }
 
-    internal static SyncedConfigManager ConfigManager { get; private set; }
+    internal static ConfigManager ConfigManager { get; private set; }
 
     public ScrapToSell ScrapToSell { get; private set; }
     public SellRequest SellRequest { get; private set; }
@@ -53,13 +54,12 @@ internal class Plugin : BaseUnityPlugin
             ShipInventoryProxy.PatchAll(_harmony);
         }
 
-        ConfigManager = new SyncedConfigManager();
+        ConfigManager = new ConfigManager();
 
         Content.Load();
         ModpackSaveSystem.Initialize();
 
         CommandManager.Initialize();
-        ConfigHelper.Initialize();
         ScrapEaterManager.Initialize();
 
         NetcodePatcherAwake();
@@ -114,9 +114,6 @@ internal class Plugin : BaseUnityPlugin
 
     public void OnLocalDisconnect()
     {
-        Logger.LogInfo($"Local player disconnected. Removing hostConfigData.");
-        ConfigManager.SetHostConfigData(null);
-
         CommandManager.OnLocalDisconnect();
         CancelSellRequest();
     }
@@ -275,7 +272,7 @@ internal class Plugin : BaseUnityPlugin
 
     public void LogInfoExtended(object data)
     {
-        if (ConfigManager.ExtendedLogging)
+        if (ConfigManager.ExtendedLogging.Value)
         {
             Logger.LogInfo(data);
         }
@@ -283,7 +280,7 @@ internal class Plugin : BaseUnityPlugin
 
     public void LogMessageExtended(object data)
     {
-        if (ConfigManager.ExtendedLogging)
+        if (ConfigManager.ExtendedLogging.Value)
         {
             Logger.LogMessage(data);
         }

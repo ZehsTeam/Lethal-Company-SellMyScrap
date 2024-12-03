@@ -14,9 +14,6 @@ internal class ViewConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} config\n\n";
-        message += $"{ConfigHelper.GetConfigSettingsMessage()}\n\n";
-
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalPatch.CreateTerminalNode("The SellMyScrap config viewer has been removed. Please use the LethalConfig mod to view the config settings.\n\n");
     }
 }

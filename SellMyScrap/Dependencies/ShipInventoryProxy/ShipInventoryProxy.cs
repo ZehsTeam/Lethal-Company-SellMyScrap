@@ -1,5 +1,6 @@
 ﻿using BepInEx.Bootstrap;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
 using ShipInventory.Helpers;
 using ShipInventory.Objects;

@@ -152,7 +152,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         Vector3 position = transform.position;
         position.y += 0.31f;
-        Utils.CreateExplosion(position, damage: 150);
+        Utils.CreateExplosion(position, spawnExplosionEffect: true, damage: 100);
 
         evilObject.transform.SetParent(null);
         evilObject.AddComponent<DestroyAfterTimeBehaviour>().duration = 15f;

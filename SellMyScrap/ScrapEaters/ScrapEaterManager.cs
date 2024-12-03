@@ -13,39 +13,39 @@ public static class ScrapEaterManager
 
     internal static void Initialize()
     {
-        SyncedConfigManager configManager = Plugin.ConfigManager;
+        ConfigManager configManager = Plugin.ConfigManager;
 
         ScrapEaters = [
             new ScrapEater(Content.OctolarScrapEaterPrefab, () => {
-                return configManager.OctolarSpawnWeight;
+                return configManager.OctolarSpawnWeight.Value;
             }),
             new ScrapEater(Content.TakeyScrapEaterPrefab, () => {
-                return configManager.TakeySpawnWeight;
+                return configManager.TakeySpawnWeight.Value;
             }),
             new ScrapEater(Content.MaxwellScrapEaterPrefab, () => {
-                return configManager.MaxwellSpawnWeight;
+                return configManager.MaxwellSpawnWeight.Value;
             }),
             new ScrapEater(Content.YippeeScrapEaterPrefab, () => {
-                return configManager.YippeeSpawnWeight;
+                return configManager.YippeeSpawnWeight.Value;
             }),
             new ScrapEater(Content.CookieFumoScrapEaterPrefab, () => {
-                return configManager.CookieFumoSpawnWeight;
+                return configManager.CookieFumoSpawnWeight.Value;
             }),
             new ScrapEater(Content.PsychoScrapEaterPrefab, () => {
-                return configManager.PsychoSpawnWeight;
+                return configManager.PsychoSpawnWeight.Value;
             }),
             new ScrapEater(Content.ZombiesScrapEaterPrefab, () => {
-                return configManager.ZombiesSpawnWeight;
+                return configManager.ZombiesSpawnWeight.Value;
             }),
             new ScrapEater(Content.WolfyScrapEaterPrefab, () => {
-                return configManager.WolfySpawnWeight;
+                return configManager.WolfySpawnWeight.Value;
             }),
         ];
     }
 
     internal static bool CanUseScrapEater()
     {
-        int spawnChance = Plugin.ConfigManager.ScrapEaterChance;
+        int spawnChance = Plugin.ConfigManager.ScrapEaterChance.Value;
         return Utils.RandomPercent(spawnChance);
     }
 

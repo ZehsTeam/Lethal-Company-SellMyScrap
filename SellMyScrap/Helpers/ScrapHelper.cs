@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 internal static class ScrapHelper
 {
@@ -154,11 +154,11 @@ internal static class ScrapHelper
     {
         System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
 
-        if (itemName.Equals("Gift", comparisonType) && !Plugin.ConfigManager.SellGifts) return false;
-        if (itemName.Equals("Shotgun", comparisonType) && !Plugin.ConfigManager.SellShotguns) return false;
-        if (itemName.Equals("Ammo", comparisonType) && !Plugin.ConfigManager.SellAmmo) return false;
-        if (itemName.Equals("Kitchen knife", comparisonType) && !Plugin.ConfigManager.SellKnives) return false;
-        if (itemName.Equals("Jar of pickles", comparisonType) && !Plugin.ConfigManager.SellPickles) return false;
+        if (itemName.Equals("Gift", comparisonType) && !Plugin.ConfigManager.SellGifts.Value) return false;
+        if (itemName.Equals("Shotgun", comparisonType) && !Plugin.ConfigManager.SellShotguns.Value) return false;
+        if (itemName.Equals("Ammo", comparisonType) && !Plugin.ConfigManager.SellAmmo.Value) return false;
+        if (itemName.Equals("Kitchen knife", comparisonType) && !Plugin.ConfigManager.SellKnives.Value) return false;
+        if (itemName.Equals("Jar of pickles", comparisonType) && !Plugin.ConfigManager.SellPickles.Value) return false;
 
         foreach (var dontSellItemName in dontSellItemNames)
         {
@@ -177,17 +177,17 @@ internal static class ScrapHelper
 
         if (!IsScrap(grabbableObject)) return false;
 
-        if (!Plugin.ConfigManager.SellScrapWorthZero && grabbableObject.scrapValue <= 0)
+        if (!Plugin.ConfigManager.SellScrapWorthZero.Value && grabbableObject.scrapValue <= 0)
         {
             return false;
         }
 
-        if (Plugin.ConfigManager.OnlySellScrapOnFloor && !IsScrapOnFloor(grabbableObject))
+        if (Plugin.ConfigManager.OnlySellScrapOnFloor.Value && !IsScrapOnFloor(grabbableObject))
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(grabbableObject, Plugin.ConfigManager.DontSellList))
+        if (onlyAllowedScrap && !IsAllowedScrap(grabbableObject, Plugin.ConfigManager.DontSellListArray))
         {
             return false;
         }
@@ -199,12 +199,12 @@ internal static class ScrapHelper
     {
         if (shipInventoryItemData == null) return false;
 
-        if (!Plugin.ConfigManager.SellScrapWorthZero && shipInventoryItemData.ScrapValue <= 0)
+        if (!Plugin.ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, Plugin.ConfigManager.DontSellList))
+        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, Plugin.ConfigManager.DontSellListArray))
         {
             return false;
         }
@@ -243,7 +243,7 @@ internal static class ScrapHelper
 
         int targetValue = withOvertimeBonus ? GetSellValueWithOvertime(value) : GetSellValue(value);
 
-        return new ScrapToSell(FindBestMatch(items, targetValue, Plugin.ConfigManager.PrioritySellList));
+        return new ScrapToSell(FindBestMatch(items, targetValue, Plugin.ConfigManager.PrioritySellListArray));
     }
 
     public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue, string[] priorityList = null)
@@ -304,7 +304,7 @@ internal static class ScrapHelper
                     int newPriorityCount = dpPriorityCount[remainingValue] + itemPriorityValue;
 
                     // Compare based on scrap value first, then prioritize count if values match
-                    if (newScrapValue < dp[j] || (newScrapValue == dp[j] && newPriorityCount > dpPriorityCount[j]))
+                    if (newScrapValue < dp[j] || newScrapValue == dp[j] && newPriorityCount > dpPriorityCount[j])
                     {
                         dp[j] = newScrapValue;
                         dpItems[j] = new List<ItemData>(dpItems[remainingValue]) { item };
@@ -348,7 +348,7 @@ internal static class ScrapHelper
     {
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
-        int valueOver = (quotaFulfilled + value) - profitQuota;
+        int valueOver = quotaFulfilled + value - profitQuota;
         if (valueOver <= 0) return GetSellValue(value);
 
         int profitQuotaLeft = Mathf.Max(profitQuota - quotaFulfilled, 0);
@@ -367,7 +367,7 @@ internal static class ScrapHelper
     #region Get Scrap Message
     public static string GetScrapMessage(List<ItemData> items)
     {
-        return GetScrapMessage(items, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice);
+        return GetScrapMessage(items, Plugin.ConfigManager.SortFoundItemsPrice.Value, Plugin.ConfigManager.AlignFoundItemsPrice.Value);
     }
 
     public static string GetScrapMessage(List<ItemData> items, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
@@ -378,10 +378,10 @@ internal static class ScrapHelper
 
         return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2: TerminalPatch.GreenColor2);
     }
-    
+
     public static string GetScrapMessage(List<GrabbableObject> grabbableObjects)
     {
-        return GetScrapMessage(grabbableObjects, Plugin.ConfigManager.SortFoundItemsPrice, Plugin.ConfigManager.AlignFoundItemsPrice);
+        return GetScrapMessage(grabbableObjects, Plugin.ConfigManager.SortFoundItemsPrice.Value, Plugin.ConfigManager.AlignFoundItemsPrice.Value);
     }
 
     public static string GetScrapMessage(List<GrabbableObject> grabbableObjects, bool sortFoundItemsPrice, bool alignFoundItemsPrice)

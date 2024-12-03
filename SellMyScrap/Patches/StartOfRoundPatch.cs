@@ -45,24 +45,10 @@ internal static class StartOfRoundPatch
     [HarmonyPrefix]
     private static void OnClientConnectPatch(ref ulong clientId)
     {
-        SendConfigToNewConnectedPlayer(clientId);
-    }
-
-    private static void SendConfigToNewConnectedPlayer(ulong clientId)
-    {
-        if (!NetworkUtils.IsServer) return;
-
-        ClientRpcParams clientRpcParams = new ClientRpcParams
+        if (NetworkUtils.IsServer)
         {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = [clientId]
-            }
-        };
-
-        Plugin.Logger.LogInfo($"Sending config to client: {clientId}");
-
-        PluginNetworkBehaviour.Instance.SendConfigToPlayerClientRpc(new SyncedConfigData(Plugin.ConfigManager), clientRpcParams);
+            SyncedConfigEntryBase.SendConfigsToClient(clientId);
+        }
     }
 
     [HarmonyPatch(nameof(StartOfRound.OnLocalDisconnect))]

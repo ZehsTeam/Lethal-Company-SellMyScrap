@@ -1,5 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -43,28 +45,31 @@ internal class SellItemCommand : SellCommand
 
     private static string GetMessage(ScrapToSell scrapToSell)
     {
-        string message = $"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.RealTotalScrapValue}\n";
-        message += GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue);
-        message += GetOvertimeBonusString(scrapToSell.RealTotalScrapValue);
-        message += $"The Company is buying at %{CompanyBuyingRate}\n";
-        message += "\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
-        message += "Please CONFIRM or DENY.\n\n";
+        StringBuilder builder = new StringBuilder();
 
-        return message;
+        builder.AppendLine($"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.RealTotalScrapValue}");
+        builder.AppendLine(GetQuotaFulfilledString(scrapToSell.RealTotalScrapValue));
+        builder.Append(GetOvertimeBonusString(scrapToSell.RealTotalScrapValue));
+        builder.AppendLine($"The Company is buying at %{CompanyBuyingRate}\n");
+        builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n");
+        builder.AppendLine("Please CONFIRM or DENY.\n\n");
+
+        return builder.ToString();
     }
 
     private string GetSellItemInvalidMessage()
     {
-        string message = "Error: sell item name is invalid.\n\n";
-        message += "Usage:\n";
-        message += "    sell item <name>\n\n";
-        message += "Where <name> is an item name.\n\n";
-        message += "Usage examples:\n";
-        message += "    sell item Whoopie cushion\n";
-        message += "    sell item Whoopie\n";
-        message += "    sell item Whoo\n\n";
+        StringBuilder builder = new StringBuilder();
 
-        return message;
+        builder.AppendLine("Error: sell item name is invalid.\n");
+        builder.AppendLine("Usage:");
+        builder.AppendLine("sell item <name>\n");
+        builder.AppendLine("Where <name> is an item name.\n");
+        builder.AppendLine("Usage examples:");
+        builder.AppendLine("    sell item Whoopie cushion");
+        builder.AppendLine("    sell item Whoopie");
+        builder.AppendLine("    sell item Whoo\n\n");
+
+        return builder.ToString();
     }
 }

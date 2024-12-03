@@ -1,6 +1,8 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -23,10 +25,12 @@ internal class ViewScrapCommand : Command
             return TerminalPatch.CreateTerminalNode("No items found.\n\n");
         }
 
-        string message = $"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.TotalScrapValue}\n\n";
-        message += $"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n";
+        StringBuilder builder = new StringBuilder();
 
-        return TerminalPatch.CreateTerminalNode(message);
+        builder.AppendLine($"Found {scrapToSell.ItemCount} items with a total value of ${scrapToSell.TotalScrapValue}\n");
+        builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n\n");
+
+        return TerminalPatch.CreateTerminalNode(builder.ToString());
     }
 
     private bool OnlyUseShipInventory()

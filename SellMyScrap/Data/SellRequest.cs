@@ -1,4 +1,6 @@
-﻿namespace com.github.zehsteam.SellMyScrap.Data;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+
+namespace com.github.zehsteam.SellMyScrap.Data;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 

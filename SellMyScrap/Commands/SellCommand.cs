@@ -83,11 +83,11 @@ internal class SellCommand : Command
 
         if (valueNeeded == 0)
         {
-            return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
+            return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}";
         }
 
         string needColor = valueFound >= valueNeeded ? TerminalPatch.GreenColor2 : "red";
-        return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} <color={needColor}>(Need: ${valueNeeded})</color>\n";
+        return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} <color={needColor}>(Need: ${valueNeeded})</color>";
     }
 
     protected static string GetOvertimeBonusString(int value)

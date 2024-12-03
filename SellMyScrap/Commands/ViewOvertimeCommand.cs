@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -26,10 +27,12 @@ internal class ViewOvertimeCommand : Command
         int profitQuota = TimeOfDay.Instance.profitQuota;
         int newTotalCredits = TerminalPatch.Instance.groupCredits + overtimeBonus;
 
-        string message = $"Your current overtime bonus is ${overtimeBonus}\n";
-        message += $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}\n";
-        message += $"Your new total credits will be ${newTotalCredits}\n\n";
+        StringBuilder builder = new StringBuilder();
 
-        return TerminalPatch.CreateTerminalNode(message);
+        builder.AppendLine($"Your current overtime bonus is ${{overtimeBonus}}\\");
+        builder.AppendLine($"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}");
+        builder.AppendLine($"Your new total credits will be ${newTotalCredits}\n\n");
+
+        return TerminalPatch.CreateTerminalNode(builder.ToString());
     }
 }

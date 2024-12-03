@@ -2,6 +2,7 @@
 using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -85,10 +86,8 @@ internal static class Utils
         return Mathf.Max(overtimeBonus, 0);
     }
 
-    public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = true, int damage = 100, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
+    public static void CreateExplosion(Vector3 explosionPosition, bool spawnExplosionEffect = false, int damage = 80, float minDamageRange = 0f, float maxDamageRange = 6.4f, int enemyHitForce = 6, CauseOfDeath causeOfDeath = CauseOfDeath.Blast, PlayerControllerB attacker = null)
     {
-        Plugin.Logger.LogInfo($"Spawning explosion at pos: {explosionPosition}");
-
         Transform holder = null;
 
         if (RoundManager.Instance != null && RoundManager.Instance.mapPropsContainer != null && RoundManager.Instance.mapPropsContainer.transform != null)
@@ -98,85 +97,87 @@ internal static class Utils
 
         if (spawnExplosionEffect)
         {
-            Object.Instantiate(StartOfRound.Instance.explosionPrefab, explosionPosition, Quaternion.Euler(-90f, 0f, 0f), holder).SetActive(value: true);
+            Object.Instantiate(StartOfRound.Instance.explosionPrefab, explosionPosition, Quaternion.Euler(-90f, 0f, 0f), holder).SetActive(true);
         }
 
-        float num = Vector3.Distance(GameNetworkManager.Instance.localPlayerController.transform.position, explosionPosition);
-        if (num < 14f)
+        float distanceFromExplosion = Vector3.Distance(PlayerUtils.GetLocalPlayerScript().transform.position, explosionPosition);
+
+        if (distanceFromExplosion < 14f)
         {
             HUDManager.Instance.ShakeCamera(ScreenShakeType.Big);
         }
-        else if (num < 25f)
+        else if (distanceFromExplosion < 25f)
         {
             HUDManager.Instance.ShakeCamera(ScreenShakeType.Small);
         }
 
-        Collider[] array = Physics.OverlapSphere(explosionPosition, maxDamageRange, 2621448, QueryTriggerInteraction.Collide);
-        PlayerControllerB playerControllerB = null;
+        Collider[] colliders = Physics.OverlapSphere(explosionPosition, maxDamageRange, 2621448, QueryTriggerInteraction.Collide);
 
-        for (int i = 0; i < array.Length; i++)
+        PlayerControllerB playerScript = null;
+
+        for (int i = 0; i < colliders.Length; i++)
         {
-            float num2 = Vector3.Distance(explosionPosition, array[i].transform.position);
-            if (num2 > 4f && Physics.Linecast(explosionPosition, array[i].transform.position + Vector3.up * 0.3f, 256, QueryTriggerInteraction.Ignore))
+            float distanceFromExplosion2 = Vector3.Distance(explosionPosition, colliders[i].transform.position);
+
+            if (distanceFromExplosion2 > 4f && Physics.Linecast(explosionPosition, colliders[i].transform.position + Vector3.up * 0.3f, 256, QueryTriggerInteraction.Ignore))
             {
                 continue;
             }
 
-            if (array[i].gameObject.layer == 3)
+            if (colliders[i].gameObject.layer == 3)
             {
-                playerControllerB = array[i].gameObject.GetComponent<PlayerControllerB>();
-                if (playerControllerB != null && playerControllerB.IsOwner)
-                {
-                    // calculate damage based on distance, so if player is minDamageRange or closer, they take full damage
-                    // if player is maxDamageRange or further, they take no damage
-                    // distance is num2
-                    float damageMultiplier = 1f - Mathf.Clamp01((num2 - minDamageRange) / (maxDamageRange - minDamageRange));
+                playerScript = colliders[i].gameObject.GetComponent<PlayerControllerB>();
 
-                    playerControllerB.DamagePlayer((int)(damage * damageMultiplier), causeOfDeath: causeOfDeath);
+                if (playerScript != null && playerScript.IsOwner)
+                {
+                    float damageMultiplier = 1f - Mathf.Clamp01((distanceFromExplosion2 - minDamageRange) / (maxDamageRange - minDamageRange));
+                    Vector3 kickDirection = (playerScript.transform.position - explosionPosition).normalized;
+
+                    if (playerScript.TryGetComponent(out Rigidbody rigidbody))
+                    {
+                        rigidbody.AddForce(kickDirection * 500f);
+                    }
+
+                    Vector3 bodyVelocity = Vector3.Normalize((playerScript.transform.position + Vector3.up * 0.75f - explosionPosition) * 100f) * 30f;
+
+                    playerScript.DamagePlayer((int)(damage * damageMultiplier), hasDamageSFX: true, callRPC: true, causeOfDeath, 0, fallDamage: false, bodyVelocity);
                 }
             }
-            else if (array[i].gameObject.layer == 21)
+            else if (colliders[i].gameObject.layer == 21)
             {
-                Landmine componentInChildren = array[i].gameObject.GetComponentInChildren<Landmine>();
-                if (componentInChildren != null && !componentInChildren.hasExploded && num2 < 6f)
+                Landmine landmine = colliders[i].gameObject.GetComponentInChildren<Landmine>();
+
+                if (landmine != null && !landmine.hasExploded && distanceFromExplosion2 < 6f)
                 {
-                    Plugin.Logger.LogInfo("Setting off other mine");
-                    StartOfRound.Instance.StartCoroutine(TriggerOtherMineDelayed(componentInChildren));
+                    Plugin.Instance.LogInfoExtended("Setting off other mine");
+
+                    landmine.StartCoroutine(landmine.TriggerOtherMineDelayed(landmine));
                 }
             }
-            else if (array[i].gameObject.layer == 19)
+            else if (colliders[i].gameObject.layer == 19)
             {
-                EnemyAICollisionDetect componentInChildren2 = array[i].gameObject.GetComponentInChildren<EnemyAICollisionDetect>();
-                if (componentInChildren2 != null && componentInChildren2.mainScript.IsOwner && num2 < 4.5f)
+                EnemyAICollisionDetect enemyAICollisionDetect = colliders[i].gameObject.GetComponentInChildren<EnemyAICollisionDetect>();
+
+                if (enemyAICollisionDetect != null && enemyAICollisionDetect.mainScript.IsOwner && distanceFromExplosion2 < 4.5f)
                 {
-                    componentInChildren2.mainScript.HitEnemyOnLocalClient(enemyHitForce, playerWhoHit: attacker);
+                    enemyAICollisionDetect.mainScript.HitEnemyOnLocalClient(force: enemyHitForce, playerWhoHit: attacker);
+                    enemyAICollisionDetect.mainScript.HitFromExplosion(distanceFromExplosion2);
                 }
             }
         }
 
-        int num3 = ~LayerMask.GetMask("Room");
-        num3 = ~LayerMask.GetMask("Colliders");
-        array = Physics.OverlapSphere(explosionPosition, 10f, num3);
-        for (int j = 0; j < array.Length; j++)
+        int layerMask = ~LayerMask.GetMask("Room");
+        layerMask = ~LayerMask.GetMask("Colliders");
+
+        colliders = Physics.OverlapSphere(explosionPosition, 10f, layerMask);
+
+        for (int j = 0; j < colliders.Length; j++)
         {
-            Rigidbody component = array[j].GetComponent<Rigidbody>();
-            if (component != null)
+            if (colliders[j].TryGetComponent(out Rigidbody rigidbody))
             {
-                component.AddExplosionForce(70f, explosionPosition, 10f);
+                rigidbody.AddExplosionForce(70f, explosionPosition, 10f);
             }
         }
-    }
-
-    private static IEnumerator TriggerOtherMineDelayed(Landmine mine)
-    {
-        if (mine.hasExploded) yield break;
-
-        mine.mineAudio.pitch = UnityEngine.Random.Range(0.75f, 1.07f);
-        mine.hasExploded = true;
-
-        yield return new WaitForSeconds(0.2f);
-
-        mine.SetOffMineAnimation();
     }
 
     public static int GetRandomIndexFromWeightList(List<int> weightList)
@@ -251,5 +252,107 @@ internal static class Utils
     public static string GetStringWithColor(string text, string colorHex)
     {
         return $"<color={colorHex}>{text}</color>";
+    }
+
+    public static bool TryParseValue<T>(string value, out T result)
+    {
+        try
+        {
+            if (typeof(T) == typeof(int) && int.TryParse(value, out var intValue))
+            {
+                result = (T)(object)intValue;
+                return true;
+            }
+
+            if (typeof(T) == typeof(float) && float.TryParse(value, out var floatValue))
+            {
+                result = (T)(object)floatValue;
+                return true;
+            }
+
+            if (typeof(T) == typeof(double) && double.TryParse(value, out var doubleValue))
+            {
+                result = (T)(object)doubleValue;
+                return true;
+            }
+
+            if (typeof(T) == typeof(bool) && bool.TryParse(value, out var boolValue))
+            {
+                result = (T)(object)boolValue;
+                return true;
+            }
+
+            if (typeof(T) == typeof(string))
+            {
+                result = (T)(object)value;
+                return true;
+            }
+        }
+        catch
+        {
+            // Ignored
+        }
+
+        result = default;
+        return false;
+    }
+
+    public static T[] StringToArray<T>(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return [];
+        }
+
+        try
+        {
+            return value.Split(',').Select(x => (T)System.Convert.ChangeType(x.Trim(), typeof(T))).ToArray();
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to convert string to array of type {typeof(T)}. \"{value}\". {ex}");
+        }
+
+        return [];
+    }
+
+    public static string ArrayToString<T>(T[] value)
+    {
+        if (value == null || value.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        return string.Join(", ", value.Select(x => x.ToString()));
+    }
+
+    public static bool StringEquals(string input, string[] values, bool matchCase = true)
+    {
+        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+
+        foreach (var value in values)
+        {
+            if (input.Equals(value, comparisonType))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool StringContains(string input, string[] values, bool matchCase = true)
+    {
+        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+
+        foreach (var value in values)
+        {
+            if (input.Contains(value, comparisonType))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

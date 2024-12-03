@@ -12,23 +12,40 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
     private void Awake()
     {
+        // Ensure there is only one instance of the Singleton
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject); // Destroy duplicate object
+            return;
         }
-        else
+
+        Instance = this;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            // Ensure only the server can handle despawning duplicate instances
+            if (IsServer)
+            {
+                NetworkObject.Despawn(); // Despawn the networked object
+            }
+
+            return;
         }
+
+        Instance = this;
     }
 
     [ClientRpc]
-    public void SendConfigToPlayerClientRpc(SyncedConfigData syncedConfigData, ClientRpcParams clientRpcParams = default)
+    public void SetSyncedConfigValueClientRpc(string section, string key, string value, ClientRpcParams clientRpcParams = default)
     {
         if (NetworkUtils.IsServer) return;
 
-        Plugin.Logger.LogInfo("Syncing config with host.");
-        Plugin.ConfigManager.SetHostConfigData(syncedConfigData);
+        SyncedConfigEntryBase.SetValueFromServer(section, key, value);
     }
 
     [ServerRpc(RequireOwnership = false)]

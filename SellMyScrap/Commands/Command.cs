@@ -18,7 +18,7 @@ public class Command
     }
 
     // This will store the parsed flag data after executing the command
-    private Dictionary<string, string> parsedFlags = [];
+    private Dictionary<string, string> _parsedFlags = [];
 
     public virtual bool IsCommand(ref string[] args)
     {
@@ -85,7 +85,7 @@ public class Command
     // Parses flags in the input string array and returns the remaining non-flag args
     protected string[] ParseFlags(string[] args)
     {
-        parsedFlags.Clear();
+        _parsedFlags.Clear();
 
         List<string> remainingArgs = [];
 
@@ -100,7 +100,7 @@ public class Command
                 string flagDataString = match.Groups[2].Success ? match.Groups[2].Value : string.Empty;
 
                 // Add the flag to the parsedFlags dictionary
-                parsedFlags[flagKey] = flagDataString;
+                _parsedFlags[flagKey] = flagDataString;
             }
             else
             {
@@ -115,7 +115,7 @@ public class Command
     // Retrieve a flag with a specific key, allowing for data type parsing
     protected T GetFlagData<T>(string flagKey, T defaultValue = default)
     {
-        if (parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
+        if (_parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
             try
             {
@@ -134,7 +134,7 @@ public class Command
     {
         flagData = default;
 
-        if (parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
+        if (_parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
             try
             {
@@ -153,6 +153,6 @@ public class Command
     // Check if a flag is present
     protected bool HasFlag(string flagKey)
     {
-        return parsedFlags.ContainsKey(flagKey);
+        return _parsedFlags.ContainsKey(flagKey);
     }
 }

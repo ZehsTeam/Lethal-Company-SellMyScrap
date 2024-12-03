@@ -6,11 +6,27 @@ namespace com.github.zehsteam.SellMyScrap;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static class NetworkUtils
 {
+    public static bool IsConnected
+    {
+        get
+        {
+            if (NetworkManager.Singleton == null)
+            {
+                return false;
+            }
+
+            return NetworkManager.Singleton.IsConnectedClient;
+        }
+    }
+
     public static bool IsServer
     {
         get
         {
-            if (NetworkManager.Singleton == null) return false;
+            if (NetworkManager.Singleton == null)
+            {
+                return false;
+            }
 
             return NetworkManager.Singleton.IsServer;
         }
@@ -20,7 +36,10 @@ public static class NetworkUtils
     {
         get
         {
-            if (NetworkManager.Singleton == null) return false;
+            if (NetworkManager.Singleton == null)
+            {
+                return false;
+            }
 
             return NetworkManager.Singleton.IsHost;
         }

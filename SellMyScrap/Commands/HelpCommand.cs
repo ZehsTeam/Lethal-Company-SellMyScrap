@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Patches;
+using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
 
@@ -18,20 +19,19 @@ internal class HelpCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        // The args here will no longer contain the matched command parts
-        string message = $"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}\n\n";
-        message += "The following commands are available:\n\n";
-        message += "sell <amount>      sell-amount <amount>\n";
-        message += "sell quota         sell-quota\n";
-        message += "sell all           sell-all\n";
-        message += "sell item <name>   sell-item <name>\n";
-        message += "sell list          sell-list\n";
-        message += "view overtime      view-overtime\n";
-        message += "view scrap         view-scrap\n";
-        message += "view all scrap     view-all-scrap\n";
-        message += "view config        view-config\n";
-        message += "edit config        edit-config\n\n";
+        StringBuilder builder = new StringBuilder();
+        
+        builder.AppendLine($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION}\n");
+        builder.AppendLine("The following commands are available:\n");
+        builder.AppendLine("sell <amount>      sell-amount <amount>");
+        builder.AppendLine("sell quota         sell-quota");
+        builder.AppendLine("sell all           sell-all");
+        builder.AppendLine("sell item <name>   sell-item <name>");
+        builder.AppendLine("sell list          sell-list");
+        builder.AppendLine("view overtime      view-overtime");
+        builder.AppendLine("view scrap         view-scrap");
+        builder.AppendLine("view all scrap     view-all-scrap\n\n");
 
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalPatch.CreateTerminalNode(builder.ToString());
     }
 }

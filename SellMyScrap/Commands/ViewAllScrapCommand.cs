@@ -1,6 +1,8 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -84,15 +86,17 @@ internal class ViewAllScrapCommand : Command
         int amount = Mathf.Min(_scrapItems.Count - index, _itemsPerPage);
         List<Item> scrapItemsForPage = _scrapItems.GetRange(index, amount);
 
-        string message = $"Found {_scrapItems.Count} total items from all moons. (Page {_pageIndex + 1} / {_pages})\n\n";
-        message += $"{ScrapHelper.GetScrapItemMessage(scrapItemsForPage, columns, 26)}\n\n";
-        message += "The following commands are available:\n\n";
-        message += "page <number>\n";
-        message += "next\n";
-        message += "prev\n";
-        message += "exit\n\n";
-        message += additionMessage;
+        StringBuilder builder = new StringBuilder();
 
-        return message;
+        builder.AppendLine($"Found {_scrapItems.Count} total items from all moons. (Page {_pageIndex + 1} / {_pages})\n");
+        builder.AppendLine($"{ScrapHelper.GetScrapItemMessage(scrapItemsForPage, columns, 26)}\n");
+        builder.AppendLine("The following commands are available:\n");
+        builder.AppendLine("page <number>");
+        builder.AppendLine("next");
+        builder.AppendLine("prev");
+        builder.AppendLine("exit\n");
+        builder.Append(additionMessage);
+
+        return builder.ToString();
     }
 }

@@ -417,7 +417,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
         if (_explode)
         {
-            Utils.CreateExplosion(transform.position);
+            Utils.CreateExplosion(transform.position, spawnExplosionEffect: true, damage: 100);
         }
 
         flameEffectsObject.SetActive(false);

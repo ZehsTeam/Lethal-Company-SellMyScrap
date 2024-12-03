@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using HarmonyLib;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
