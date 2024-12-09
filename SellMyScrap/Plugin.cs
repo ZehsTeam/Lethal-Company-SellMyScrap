@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;

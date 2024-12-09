@@ -23,9 +23,7 @@
 Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
 
 ## Terminal Commands
-<details>
-  <summary>Click to Expand</summary>
-<br>
+<details><summary>Click to Expand</summary><br>
 
 - You must be landed at The Company building to use sell commands.
 - Each sell command will sell items based on your config settings.
@@ -194,39 +192,37 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 - Model by MissSuperE.
 
 ## Screenshots
-<details>
-  <summary>Click to Expand</summary>
-<br>
+<details><summary>Click to Expand</summary><br>
 
 <div>
-    <img src="https://i.imgur.com/UyX90Y6.png" width="33%">
-    <img src="https://i.imgur.com/lzsWM28.png" width="33%">
-    <img src="https://i.imgur.com/zyDW9TD.png" width="33%">
+    <img src="https://i.imgur.com/UyX90Y6.png" width="32.9%">
+    <img src="https://i.imgur.com/lzsWM28.png" width="32.9%">
+    <img src="https://i.imgur.com/zyDW9TD.png" width="32.9%">
 </div>
 <h4><code>sell &lt;amount&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/BYeYs4d.png" width="49.79%">
-    <img src="https://i.imgur.com/bYQtN1Y.png" width="49.79%">
+    <img src="https://i.imgur.com/BYeYs4d.png" width="49.7%">
+    <img src="https://i.imgur.com/bYQtN1Y.png" width="49.7%">
 </div>
 <h4><code>sell quota</code></h4>
 <div>
-    <img src="https://i.imgur.com/r6SVSBB.png" width="49.79%">
-    <img src="https://i.imgur.com/L1vih92.png" width="49.79%">
+    <img src="https://i.imgur.com/r6SVSBB.png" width="49.7%">
+    <img src="https://i.imgur.com/L1vih92.png" width="49.7%">
 </div>
 <h4><code>sell all</code></h4>
 <div>
-    <img src="https://i.imgur.com/XCz93Yc.png" width="49.79%">
-    <img src="https://i.imgur.com/9eHs2zQ.png" width="49.79%">
+    <img src="https://i.imgur.com/XCz93Yc.png" width="49.7%">
+    <img src="https://i.imgur.com/9eHs2zQ.png" width="49.7%">
 </div>
 <h4><code>sell item &lt;name&gt;</code></h4>
 <div>
-    <img src="https://i.imgur.com/cOQhtLt.png" width="49.79%">
-    <img src="https://i.imgur.com/Z8qRk91.png" width="49.79%">
+    <img src="https://i.imgur.com/cOQhtLt.png" width="49.7%">
+    <img src="https://i.imgur.com/Z8qRk91.png" width="49.7%">
 </div>
 <h4><code>view overtime</code></h4>
 <div>
-    <img src="https://i.imgur.com/Z6nUhNQ.png" width="49.79%">
-    <img src="https://i.imgur.com/Ff8E5sw.png" width="49.79%">
+    <img src="https://i.imgur.com/Z6nUhNQ.png" width="49.7%">
+    <img src="https://i.imgur.com/Ff8E5sw.png" width="49.7%">
 </div>
 <h4><code>view scrap</code></h4>
 <div>
@@ -234,8 +230,8 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 </div>
 <h4><code>view all scrap</code></h4>
 <div>
-    <img src="https://i.imgur.com/VRSSGmC.png" width="49.79%">
-    <img src="https://i.imgur.com/SuOPV4n.png" width="49.79%">
+    <img src="https://i.imgur.com/VRSSGmC.png" width="49.7%">
+    <img src="https://i.imgur.com/SuOPV4n.png" width="49.7%">
 </div>
 
 </details>

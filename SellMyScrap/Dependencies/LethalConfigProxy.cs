@@ -2,11 +2,10 @@
 using BepInEx.Configuration;
 using LethalConfig;
 using LethalConfig.ConfigItems;
-using LethalConfig.ConfigItems.Options;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigProxy;
+namespace com.github.zehsteam.SellMyScrap.Dependencies;
 
 internal static class LethalConfigProxy
 {
