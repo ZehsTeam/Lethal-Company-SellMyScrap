@@ -17,6 +17,9 @@ internal static class Content
     public static GameObject ZombiesScrapEaterPrefab { get; private set; }
     public static GameObject WolfyScrapEaterPrefab { get; private set; }
 
+    // AudioClips
+    public static AudioClip BrainRotIntroSpeechSFX { get; private set; }
+
     public static void Load()
     {
         LoadAssetsFromAssetBundle();
@@ -38,6 +41,9 @@ internal static class Content
         PsychoScrapEaterPrefab = LoadAssetFromAssetBundle<GameObject>("PsychoScrapEater", assetBundle);
         ZombiesScrapEaterPrefab = LoadAssetFromAssetBundle<GameObject>("ZombiesScrapEater", assetBundle);
         WolfyScrapEaterPrefab = LoadAssetFromAssetBundle<GameObject>("WolfyScrapEater", assetBundle);
+
+        // AudioClips
+        BrainRotIntroSpeechSFX = LoadAssetFromAssetBundle<AudioClip>("BrainRotIntroSpeechSFX", assetBundle);
 
         Plugin.Logger.LogInfo("Successfully loaded assets from AssetBundle!");
     }

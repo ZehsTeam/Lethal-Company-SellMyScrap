@@ -29,7 +29,7 @@ internal class ViewOvertimeCommand : Command
 
         StringBuilder builder = new StringBuilder();
 
-        builder.AppendLine($"Your current overtime bonus is ${{overtimeBonus}}\\");
+        builder.AppendLine($"Your current overtime bonus is ${overtimeBonus}");
         builder.AppendLine($"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}");
         builder.AppendLine($"Your new total credits will be ${newTotalCredits}\n\n");
 

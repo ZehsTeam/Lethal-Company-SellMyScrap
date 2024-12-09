@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using BepInEx.Bootstrap;
+﻿using BepInEx.Bootstrap;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
@@ -52,22 +51,6 @@ internal class ShipInventoryProxy
     private static SpawnItemsStatus _spawnItemsStatus;
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static string GetVersion()
-    {
-        try
-        {
-            BepInPlugin metadata = MetadataHelper.GetMetadata(typeof(ShipInventory.ShipInventory));
-            return metadata.Version.ToString();
-        }
-        catch (System.Exception ex)
-        {
-            Plugin.Logger.LogError($"Failed to get ShipInventory version. {ex}");
-        }
-
-        return string.Empty;
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void PatchAll(Harmony harmony)
     {
         try
@@ -77,23 +60,6 @@ internal class ShipInventoryProxy
         catch (System.Exception ex)
         {
             Plugin.Logger.LogError($"Failed to apply ShipInventory patches. {ex}");
-        }
-
-        string version = GetVersion();
-
-        if (version == "1.1.7")
-        {
-            try
-            {
-                harmony.PatchAll(typeof(GameNetworkManager_PatchesPatch));
-                harmony.PatchAll(typeof(StartOfRound_PatchesPatch));
-
-                Plugin.Logger.LogInfo($"Successfully applied fix for ShipInventory's item saving in version {version}");
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Logger.LogError($"Failed to apply fix for ShipInventory's item saving in version {version}. {ex}");
-            }
         }
     }
 

@@ -82,10 +82,7 @@ public class ScrapToSell : INetworkSerializable
     private List<GrabbableObject> _vehicleGrabbableObjects = [];
     private bool _setVehicleGrabbableObjects;
 
-    public ScrapToSell()
-    {
-
-    }
+    public ScrapToSell() { }
 
     public ScrapToSell(List<ItemData> items)
     {

@@ -19,10 +19,10 @@ internal static class GameNetworkManagerPatch
     {
         AddNetworkPrefab(Content.NetworkHandlerPrefab);
 
-        ScrapEaterManager.ScrapEaters.ForEach(scrapEater =>
+        foreach (var scrapEater in ScrapEaterManager.ScrapEaters)
         {
             AddNetworkPrefab(scrapEater.SpawnPrefab);
-        });
+        }
     }
 
     private static void AddNetworkPrefab(GameObject prefab)

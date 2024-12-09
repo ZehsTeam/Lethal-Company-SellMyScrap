@@ -93,24 +93,21 @@ public class ScrapEaterExtraBehaviour : ScrapEaterBehaviour
 
     protected virtual void MoveTargetScrapToTargetTransform(Transform targetTransform, float duration)
     {
-        targetScrap.ForEach(item =>
-        {
-            if (item == null) return;
-
-            SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
-            suckBehaviour.StartEvent(targetTransform, duration);
-        });
+        MoveTargetScrapToTargetTransform(targetScrap, targetTransform, duration);
     }
 
     protected virtual void MoveTargetScrapToTargetTransform(List<GrabbableObject> items, Transform targetTransform, float duration)
     {
-        items.ForEach(item =>
+        foreach(var grabbableObject in items)
         {
-            if (item == null) return;
+            if (grabbableObject == null)
+            {
+                continue;
+            }
 
-            SuckBehaviour suckBehaviour = item.gameObject.AddComponent<SuckBehaviour>();
+            SuckBehaviour suckBehaviour = grabbableObject.gameObject.AddComponent<SuckBehaviour>();
             suckBehaviour.StartEvent(targetTransform, duration);
-        });
+        }
     }
 
     protected virtual IEnumerator MoveTargetScrapToTargetTransformDelayed(Transform targetTransform, float suckDuration, float duration = 10f)
