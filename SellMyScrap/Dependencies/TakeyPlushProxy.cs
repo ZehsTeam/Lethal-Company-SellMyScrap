@@ -12,6 +12,13 @@ internal static class TakeyPlushProxy
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void TriggerDinkDonkScrapEaterSpawnedEvent()
     {
-        Events.OnDinkDonkScrapEaterSpawned?.Invoke();
+        try
+        {
+            Events.OnDinkDonkScrapEaterSpawned?.Invoke();
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to invoke OnDinkDonkScrapEaterSpawned event in TakeyPlush. {ex}");
+        }
     }
 }

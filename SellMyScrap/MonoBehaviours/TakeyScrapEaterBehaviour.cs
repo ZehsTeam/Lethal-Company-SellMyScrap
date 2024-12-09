@@ -27,7 +27,8 @@ public enum TakeyVariantType
     Gift,
     Cake,
     Dracula,
-    Pumpkin
+    Pumpkin,
+    Pilgrim
 }
 
 public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
@@ -381,6 +382,12 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (!(IsVariantType(TakeyVariantType.DinkDonk) && playedCustomSuckAnimation))
         {
             yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
+
+            if (_voiceLineIndex == 2 && PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic))
+            {
+                HUDManager.Instance.DisplayTip("SellMyScrap", "This is NOT a reference to The Wolf of Wall Street");
+            }
+
             yield return new WaitForSeconds(1f);
         }
 

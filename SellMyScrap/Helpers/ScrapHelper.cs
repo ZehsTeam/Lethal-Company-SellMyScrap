@@ -147,7 +147,7 @@ internal static class ScrapHelper
     {
         if (shipInventoryItemData == null) return false;
 
-        return IsAllowedScrap(shipInventoryItemData.ItemName, dontSellItemNames, matchCase);
+        return IsAllowedScrap(shipInventoryItemData.GetItemName(), dontSellItemNames, matchCase);
     }
 
     public static bool IsAllowedScrap(string itemName, string[] dontSellItemNames, bool matchCase = false)

@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using System;

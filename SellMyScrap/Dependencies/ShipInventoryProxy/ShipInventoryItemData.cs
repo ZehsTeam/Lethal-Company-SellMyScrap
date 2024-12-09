@@ -1,6 +1,6 @@
 ﻿using ShipInventory.Helpers;
 using ShipInventory.Objects;
-using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
 
@@ -10,43 +10,99 @@ namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 [System.Serializable]
 public class ShipInventoryItemData : INetworkSerializable
 {
-    public Item Item => GetItem();
-    public string ItemName => Item != null ? Item.itemName : string.Empty;
-
-    public int Id;
+    public string Id;
     public int ScrapValue;
     public int SaveData;
-    public bool PersistedThroughRounds;
 
-    public ShipInventoryItemData()
-    {
+    public ShipInventoryItemData() { }
 
-    }
-
-    public ShipInventoryItemData(int id, int scrapValue, int saveData, bool persistedThroughRounds)
+    public ShipInventoryItemData(string id, int scrapValue, int saveData)
     {
         Id = id;
         ScrapValue = scrapValue;
         SaveData = saveData;
-        PersistedThroughRounds = persistedThroughRounds;
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public ShipInventoryItemData(ItemData itemData)
+    {
+        try
+        {
+            Id = itemData.ID;
+            ScrapValue = itemData.SCRAP_VALUE;
+            SaveData = itemData.SAVE_DATA;
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to create ShipInventoryItemData. {ex}");
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public bool MatchesItemData(ItemData itemData)
+    {
+        try
+        {
+            if (itemData.Equals(default))
+            {
+                return false;
+            }
+
+            if (itemData.ID != Id) return false;
+            if (itemData.SCRAP_VALUE != ScrapValue) return false;
+            if (itemData.SAVE_DATA != SaveData) return false;
+
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to compare ShipInventory ItemData. {ex}");
+        }
+
+        return false;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public ItemData GetItemData()
     {
-        return new ItemData
+        try
         {
-            ID = Id,
-            SCRAP_VALUE = ScrapValue,
-            SAVE_DATA = SaveData,
-            PERSISTED_THROUGH_ROUNDS = PersistedThroughRounds
-        };
+            return ItemManager.GetItems().FirstOrDefault(MatchesItemData);
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to get ShipInventory ItemData. {ex}");
+        }
+
+        return default;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public Item GetItem()
     {
-        return ItemManager.ALLOWED_ITEMS.GetValueOrDefault(Id);
+        try
+        {
+            ItemData itemData = GetItemData();
+
+            if (itemData.Equals(default))
+            {
+                Plugin.Logger.LogError($"Failed to get ShipInventory item. Item does not exist in the ShipInventory storage.");
+                return null;
+            }
+
+            return itemData.GetItem();
+        }
+        catch (System.Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to get ShipInventory Item. {ex}");
+        }
+
+        return null;
+    }
+
+    public string GetItemName()
+    {
+        return GetItem()?.itemName;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -54,6 +110,5 @@ public class ShipInventoryItemData : INetworkSerializable
         serializer.SerializeValue(ref Id);
         serializer.SerializeValue(ref ScrapValue);
         serializer.SerializeValue(ref SaveData);
-        serializer.SerializeValue(ref PersistedThroughRounds);
     }
 }

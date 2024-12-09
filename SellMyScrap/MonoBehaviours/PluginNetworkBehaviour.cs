@@ -1,7 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
-using System;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -62,7 +61,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
             return;
         }
 
-        string message = $"{playerScript.playerUsername} requested to {Enum.GetName(typeof(SellType), sellType)} {scrapToSell.ItemCount} items for ${scrapToSell.RealTotalScrapValue}";
+        string message = $"{playerScript.playerUsername} requested to sell {Utils.GetEnumName(sellType)} {scrapToSell.ItemCount} items for ${scrapToSell.RealTotalScrapValue}";
 
         Plugin.Logger.LogInfo(message);
         HUDManager.Instance.DisplayGlobalNotification(message);

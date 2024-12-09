@@ -36,7 +36,7 @@ internal class SellItemCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellItem, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
+        Plugin.Instance.CreateSellRequest(SellType.Item, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);

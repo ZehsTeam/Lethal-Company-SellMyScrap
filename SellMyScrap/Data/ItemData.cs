@@ -41,7 +41,7 @@ public class ItemData
 
         if (ShipInventoryProxy.Enabled && ShipInventoryItemData != null)
         {
-            return ShipInventoryItemData.ItemName;
+            return ShipInventoryItemData.GetItemName();
         }
 
         return string.Empty;

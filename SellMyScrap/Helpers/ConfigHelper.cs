@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Dependencies;
+using com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigProxy;
+using LethalConfig.ConfigItems.Options;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

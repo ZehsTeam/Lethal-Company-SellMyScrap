@@ -38,7 +38,7 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.SellQuota, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
+        Plugin.Instance.CreateSellRequest(SellType.Quota, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue);

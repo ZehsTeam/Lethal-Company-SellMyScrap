@@ -7,11 +7,11 @@ namespace com.github.zehsteam.SellMyScrap.Data;
 public enum SellType
 {
     None,
-    SellAmount,
-    SellQuota,
-    SellAll,
-    SellItem,
-    SellList
+    Amount,
+    Quota,
+    All,
+    Item,
+    List
 }
 
 public enum ConfirmationStatus

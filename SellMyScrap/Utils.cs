@@ -355,4 +355,9 @@ internal static class Utils
 
         return false;
     }
+
+    public static string GetEnumName<T>(T e) where T : System.Enum
+    {
+        return System.Enum.GetName(typeof(T), e) ?? string.Empty;
+    }
 }
