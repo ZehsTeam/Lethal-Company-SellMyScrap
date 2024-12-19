@@ -52,17 +52,17 @@ internal static class StartOfRoundPatch
             StartOfRound.Instance.shipIntroSpeechSFX = _cachedShipIntroSpeechSFX;
         }
 
-        if (!PlayerUtils.IsLocalPlayer([PlayerName.CritHaxXoG, PlayerName.Takerst, PlayerName.PsychoHypnotic, PlayerName.IElucian, PlayerName.AGlitchedNpc, PlayerName.Lunxara, PlayerName.LustStings, PlayerName.Ariesgoddess168, PlayerName.ZombiesAteMyChannel]))
+        if (!PlayerUtils.IsLocalPlayer([PlayerName.CritHaxXoG, PlayerName.Takerst, PlayerName.PsychoHypnotic, PlayerName.IElucian, PlayerName.AGlitchedNpc, PlayerName.Lunxara, PlayerName.LustStings, PlayerName.Ariesgoddess168, PlayerName.ZombiesAteMyChannel, PlayerName.WolfsMyChocolate, PlayerName.Hiccubz]))
         {
             return;
         }
 
-        if (ModpackSaveSystem.ReadValue("PlayedCustomIntroSpeech", false))
+        if (ModpackSaveSystem.ReadValue("PlayedCustomIntroSpeech_2", false))
         {
             return;
         }
 
-        ModpackSaveSystem.WriteValue("PlayedCustomIntroSpeech", true);
+        ModpackSaveSystem.WriteValue("PlayedCustomIntroSpeech_2", true);
 
         _cachedShipIntroSpeechSFX = StartOfRound.Instance.shipIntroSpeechSFX;
         StartOfRound.Instance.shipIntroSpeechSFX = Content.BrainRotIntroSpeechSFX;

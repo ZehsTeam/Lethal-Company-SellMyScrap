@@ -50,6 +50,18 @@ public static class ConfigHelper
         return configEntry;
     }
 
+    public static SyncedConfigEntry<T> BindSynced<T>(string section, string key, T defaultValue, string description, AcceptableValueBase acceptableValues = null, Action<T> settingChanged = null, ConfigFile configFile = null)
+    {
+        SyncedConfigEntry<T> syncedConfigEntry = new SyncedConfigEntry<T>(section, key, defaultValue, description, acceptableValues, configFile);
+
+        if (settingChanged != null)
+        {
+            syncedConfigEntry.SettingChanged += settingChanged;
+        }
+
+        return syncedConfigEntry;
+    }
+
     public static Dictionary<ConfigDefinition, string> GetOrphanedConfigEntries(ConfigFile configFile = null)
     {
         configFile ??= Plugin.Instance.Config;

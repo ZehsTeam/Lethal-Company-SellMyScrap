@@ -14,6 +14,6 @@ internal class EditConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        return TerminalPatch.CreateTerminalNode("The SellMyScrap config editor has been removed. Please use the LethalConfig mod to edit the config settings.\n\n");
+        return TerminalPatch.CreateTerminalNode("The SellMyScrap config editor has been removed. Please use the LethalConfig mod to edit the config settings in-game.\n\n");
     }
 }

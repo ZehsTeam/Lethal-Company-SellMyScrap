@@ -14,6 +14,6 @@ internal class ViewConfigCommand : Command
 
     public override TerminalNode Execute(string[] args)
     {
-        return TerminalPatch.CreateTerminalNode("The SellMyScrap config viewer has been removed. Please use the LethalConfig mod to view the config settings.\n\n");
+        return TerminalPatch.CreateTerminalNode("The SellMyScrap config viewer has been removed. Please use the LethalConfig mod to view the config settings in-game.\n\n");
     }
 }

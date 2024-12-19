@@ -272,17 +272,25 @@ internal class Plugin : BaseUnityPlugin
 
     public void LogInfoExtended(object data)
     {
-        if (ConfigManager.ExtendedLogging.Value)
-        {
-            Logger.LogInfo(data);
-        }
+        LogExtended(LogLevel.Info, data);
     }
 
     public void LogMessageExtended(object data)
     {
+        LogExtended(LogLevel.Message, data);
+    }
+
+    public void LogExtended(LogLevel level, object data)
+    {
+        if (ConfigManager == null || ConfigManager.ExtendedLogging == null)
+        {
+            Logger.Log(level, data);
+            return;
+        }
+
         if (ConfigManager.ExtendedLogging.Value)
         {
-            Logger.LogMessage(data);
+            Logger.Log(level, data);
         }
     }
 }

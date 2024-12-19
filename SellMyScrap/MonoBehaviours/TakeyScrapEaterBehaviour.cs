@@ -28,7 +28,9 @@ public enum TakeyVariantType
     Cake,
     Dracula,
     Pumpkin,
-    Pilgrim
+    Pilgrim,
+    Santa,
+    Nutcracker
 }
 
 public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour

@@ -101,18 +101,18 @@ internal class ConfigManager
         ExtendedLogging = ConfigHelper.Bind("General", "ExtendedLogging", defaultValue: false, requiresRestart: false, "Enable extended logging.");
 
         // Sell
-        SellGifts =    new SyncedConfigEntry<bool>("Sell", "SellGifts",    defaultValue: false, "Do you want to sell Gifts?");
-        SellShotguns = new SyncedConfigEntry<bool>("Sell", "SellShotguns", defaultValue: false, "Do you want to sell Shotguns?");
-        SellAmmo =     new SyncedConfigEntry<bool>("Sell", "SellAmmo",     defaultValue: false, "Do you want to sell Ammo?");
-        SellKnives =   new SyncedConfigEntry<bool>("Sell", "SellKnives",   defaultValue: false, "Do you want to sell Kitchen knives?");
-        SellPickles =  new SyncedConfigEntry<bool>("Sell", "SellPickles",  defaultValue: true,  "Do you want to sell Jar of pickles?");
+        SellGifts =    ConfigHelper.BindSynced("Sell", "SellGifts",    defaultValue: false, "Do you want to sell Gifts?");
+        SellShotguns = ConfigHelper.BindSynced("Sell", "SellShotguns", defaultValue: false, "Do you want to sell Shotguns?");
+        SellAmmo =     ConfigHelper.BindSynced("Sell", "SellAmmo",     defaultValue: false, "Do you want to sell Ammo?");
+        SellKnives =   ConfigHelper.BindSynced("Sell", "SellKnives",   defaultValue: false, "Do you want to sell Kitchen knives?");
+        SellPickles =  ConfigHelper.BindSynced("Sell", "SellPickles",  defaultValue: true,  "Do you want to sell Jar of pickles?");
 
         // Advanced Sell
-        SellScrapWorthZero =   new SyncedConfigEntry<bool>(  "Advanced Sell", "SellScrapWorthZero",   defaultValue: false,                                                              "Do you want to sell scrap worth zero?");
-        OnlySellScrapOnFloor = new SyncedConfigEntry<bool>(  "Advanced Sell", "OnlySellScrapOnFloor", defaultValue: false,                                                              "Do you want to sell scrap that is only on the floor?");
-        PrioritySellList =     new SyncedConfigEntry<string>("Advanced Sell", "PrioritySellList",     defaultValue: "Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball", GetPrioritySellListDescription());
-        DontSellList =         new SyncedConfigEntry<string>("Advanced Sell", "DontSellList",         defaultValue: "",                                                                 GetDontSellListDescription());
-        SellList =             new SyncedConfigEntry<string>("Advanced Sell", "SellList",             defaultValue: "Whoopie cushion, Easter egg, Tragedy, Comedy",                     GetSellListDescription());
+        SellScrapWorthZero =   ConfigHelper.BindSynced("Advanced Sell", "SellScrapWorthZero",   defaultValue: false,                                                              "Do you want to sell scrap worth zero?");
+        OnlySellScrapOnFloor = ConfigHelper.BindSynced("Advanced Sell", "OnlySellScrapOnFloor", defaultValue: false,                                                              "Do you want to sell scrap that is only on the floor?");
+        PrioritySellList =     ConfigHelper.BindSynced("Advanced Sell", "PrioritySellList",     defaultValue: "Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball", GetPrioritySellListDescription());
+        DontSellList =         ConfigHelper.BindSynced("Advanced Sell", "DontSellList",         defaultValue: "",                                                                 GetDontSellListDescription());
+        SellList =             ConfigHelper.BindSynced("Advanced Sell", "SellList",             defaultValue: "Whoopie cushion, Easter egg, Tragedy, Comedy",                     GetSellListDescription());
 
         // Terminal
         OverrideWelcomeMessage = ConfigHelper.Bind("Terminal", "OverrideWelcomeMessage", defaultValue: true, requiresRestart: false, "Overrides the terminal welcome message to add additional info.");
@@ -123,7 +123,7 @@ internal class ConfigManager
 
         // Misc
         SpeakInShip =         ConfigHelper.Bind("Misc", "SpeakInShip",         defaultValue: true, requiresRestart: false, "The Company will speak inside your ship after selling from the terminal.");
-        RareVoiceLineChance = ConfigHelper.Bind("Misc", "RareVoiceLineChance", defaultValue: 5f,   requiresRestart: false, "The percent chance the Company will say a rare microphone voice line after selling.");
+        RareVoiceLineChance = ConfigHelper.Bind("Misc", "RareVoiceLineChance", defaultValue: 5f,   requiresRestart: false, "The percent chance the Company will say a rare microphone voice line after selling.", new AcceptableValueRange<float>(0.0f, 100.0f));
         ShowQuotaWarning =    ConfigHelper.Bind("Misc", "ShowQuotaWarning",    defaultValue: true, requiresRestart: false, "If enabled, will show a warning when you try to pull the ship's lever when the quota hasn't been fulfilled at the Company building with 0 days left.");
 
         // Scrap Eater
