@@ -109,7 +109,7 @@ internal class ShipInventoryProxy
             yield break;
         }
 
-        ItemData[] items = shipInventoryItems.Select(x => x.GetItemData()).ToArray();
+        ItemData[] items = shipInventoryItems.Select(x => x.GetItemData()).Where(x => !x.Equals(default)).ToArray();
 
         if (items.Length == 0)
         {
@@ -118,22 +118,12 @@ internal class ShipInventoryProxy
             yield break;
         }
 
-        foreach (ItemData itemData in items)
-        {
-            if (itemData.Equals(default))
-            {
-                continue;
-            }
-
-            ChuteInteract.Instance.spawnQueue.Enqueue(itemData);
-        }
-
-        ChuteInteract.Instance.spawnCoroutine = ChuteInteract.Instance.StartCoroutine(ChuteInteract.Instance.SpawnCoroutine());
-
         Plugin.Logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
 
+        ChuteInteract.Instance.RetrieveItems(items);
+
         float startTime = Time.realtimeSinceStartup;
-        float maxWaitTime = (ShipInventory.ShipInventory.Config.SpawnDelay.Value * items.Length) + 30f;
+        float maxWaitTime = (items.Length * ShipInventory.ShipInventory.Config.TimeToRetrieve.Value) + 30f;
 
         yield return new WaitUntil(() => ChuteInteract.Instance.spawnCoroutine == null || Time.realtimeSinceStartup - startTime > maxWaitTime);
 

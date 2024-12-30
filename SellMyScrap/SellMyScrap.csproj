@@ -7,7 +7,7 @@
     
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.10.0</Version>                                              <!-- PLUGIN_VERSION -->
+    <Version>1.10.1</Version>                                              <!-- PLUGIN_VERSION -->
     <Description>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventory mod. SellFromTerminal +</Description>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -46,14 +46,19 @@
   </ItemGroup>
   
   <PropertyGroup>
-    <!-- Local libraries folder -->
+    <!-- Mod libraries folder -->
     <LibraryFolder>D:\Documents\Lethal Company Modding\Mods</LibraryFolder>
 
+    <!-- Steam library folder -->
+    <SteamLibrary>D:\SteamLibrary\steamapps\common</SteamLibrary>
+
     <!-- Lethal Company plugins folder -->
-    <PluginsFolder>D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins</PluginsFolder>
+    <PluginsFolder>$(SteamLibrary)\Lethal Company\BepInEx\plugins</PluginsFolder>
 
     <!-- Gale profile name -->
     <GaleProfile>Mod Development</GaleProfile>
+
+    <!-- Gale plugins folder -->
     <GalePluginsFolder>$(AppData)\com.kesomannen.gale\lethal-company\profiles\$(GaleProfile)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</GalePluginsFolder>
 
     <!-- Other settings -->
