@@ -23,14 +23,22 @@ internal static class ModpackSaveSystem
 
     private static JObject _saveFileObject;
 
-    public static void Initialize()
+    static ModpackSaveSystem()
     {
-        if (!FileExists)
+        try
         {
-            WriteFile(JObject.Parse("{}"));
-        }
+            if (!FileExists)
+            {
+                WriteFile(JObject.Parse("{}"));
+            }
 
-        _saveFileObject = ReadFile();
+            _saveFileObject = ReadFile() ?? JObject.Parse("{}");
+        }
+        catch (Exception ex)
+        {
+            Plugin.Logger.LogError($"Failed to initialize ModpackSaveSystem: {ex}");
+            _saveFileObject = JObject.Parse("{}"); // Fallback to empty object
+        }
     }
 
     public static bool ContainsKey(string key)

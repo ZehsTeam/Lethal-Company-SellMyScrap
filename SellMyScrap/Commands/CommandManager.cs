@@ -9,7 +9,7 @@ internal static class CommandManager
 
     public static Command AwaitingConfirmationCommand;
 
-    public static void Initialize()
+    static CommandManager()
     {
         _commands =
         [

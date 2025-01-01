@@ -24,7 +24,16 @@ internal enum SpawnItemsStatus
 internal class ShipInventoryProxy
 {
     public const string PLUGIN_GUID = ShipInventory.MyPluginInfo.PLUGIN_GUID;
-    public static bool Enabled => Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
+    public static bool Enabled
+    {
+        get
+        {
+            _enabled ??= Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
+            return _enabled.Value;
+        }
+    }
+
+    private static bool? _enabled;
 
     public static bool IsSpawning {  get; private set; }
     public static SpawnItemsStatus SpawnItemsStatus

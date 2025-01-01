@@ -57,9 +57,7 @@ internal class Plugin : BaseUnityPlugin
         ConfigManager = new ConfigManager();
 
         Content.Load();
-        ModpackSaveSystem.Initialize();
 
-        CommandManager.Initialize();
         ScrapEaterManager.Initialize();
 
         NetcodePatcherAwake();
