@@ -38,7 +38,7 @@ internal static class SteamUtils
 {
     public static List<PlayerData> PlayersData { get; private set; } = [];
 
-    public static void Initialize()
+    static SteamUtils()
     {
         PlayersData = [
             new PlayerData(PlayerName.CritHaxXoG,          username: "CritHaxXoG",         steamId: 76561198993712632),
@@ -68,7 +68,7 @@ internal static class SteamUtils
             new PlayerData(PlayerName.Reapermitsuki,       username: "reaper-mitsuki",     steamId: 76561198281494776),
             new PlayerData(PlayerName.Yinisin,             username: "Yinisin",            steamId: 76561199582073183),
             new PlayerData(PlayerName.AGlitchedNpc,        username: "a glitched npc",     steamId: 76561198984467725)
-];
+        ];
     }
 
     public static bool IsPlayer(PlayerName playerName, string username, ulong steamId)

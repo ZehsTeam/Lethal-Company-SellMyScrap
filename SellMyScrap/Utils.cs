@@ -36,14 +36,7 @@ internal static class Utils
 
     public static string[] GetArrayToLower(string[] array)
     {
-        List<string> list = new List<string>();
-
-        foreach (var item in array)
-        {
-            list.Add(item.ToLower());
-        }
-
-        return list.ToArray();
+        return array.Select(x => x.ToLower()).ToArray();
     }
 
     public static string GetItemFromList(List<string> list, string item)

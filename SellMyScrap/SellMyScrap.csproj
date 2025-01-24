@@ -96,7 +96,7 @@
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy DestinationFolder="$(PluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\sellmyscrap_assets" />
   </Target>
-
+  
   <Target Name="CopyToGalePluginsFolder" AfterTargets="CopyToPluginsFolder" DependsOnTargets="NetcodePatch">
     <Copy DestinationFolder="$(GalePluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy DestinationFolder="$(GalePluginsFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\sellmyscrap_assets" />
