@@ -97,8 +97,6 @@ namespace com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms
                 Indeces.Add(itemIndex);
                 TotalScrap += item.ScrapValue;
                 TheoreticalLastItem = null;
-
-                Plugin.Logger.LogInfo("Picked indeces: " + string.Join(" ", Indeces));
             }
 
             public void RemoveLast()
