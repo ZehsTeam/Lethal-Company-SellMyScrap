@@ -24,7 +24,10 @@ internal class SellAllCommand : SellCommand
             return terminalNode;
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(int.MaxValue, onlyUseShipInventory: OnlyUseShipInventory());
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(int.MaxValue)
+        {
+            OnlyUseShipInventory = OnlyUseShipInventory()
+        });
 
         if (scrapToSell.ItemCount == 0)
         {

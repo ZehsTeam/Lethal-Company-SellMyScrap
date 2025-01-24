@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using UnityEngine;
@@ -63,6 +64,16 @@ internal class SellCommand : Command
         if (HasFlag("shipinventory")) return true;
 
         return false;
+    }
+
+    protected BaseScrapMatchAlgorithm GetScrapMatchAlgorithm()
+    {
+        if (TryGetFlagData("a", out int flagIndex))
+        {
+            return BaseScrapMatchAlgorithm.GetAlgorithmByFlag(flagIndex);
+        }
+
+        return BaseScrapMatchAlgorithm.Default;
     }
 
     protected static bool CanUseCommand(out TerminalNode terminalNode)

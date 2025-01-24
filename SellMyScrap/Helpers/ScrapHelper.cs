@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
 using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Linq;
@@ -229,133 +230,15 @@ internal static class ScrapHelper
     #endregion
 
     #region Get Scrap to Sell
-    public static ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false, bool onlyUseShipInventory = false)
+    public static ScrapToSell GetScrapToSell(SellCommandRequest sellRequest)
     {
-        return GetScrapToSell(GetAllScrap(onlyAllowedScrap, onlyUseShipInventory), value, withOvertimeBonus);
-    }
-
-    private static ScrapToSell GetScrapToSell(List<ItemData> items, int value, bool withOvertimeBonus = false)
-    {
-        if (value == int.MaxValue)
-        {
-            return new ScrapToSell(items);
-        }
-
-        int targetValue = withOvertimeBonus ? GetSellValueWithOvertime(value) : GetSellValue(value);
-
-        return new ScrapToSell(FindBestMatch(items, targetValue, Plugin.ConfigManager.PrioritySellListArray));
-    }
-
-    public static List<ItemData> FindBestMatch(List<ItemData> items, int targetValue, string[] priorityList = null)
-    {
-        priorityList ??= [];
-
-        // Convert priorityList to a case-insensitive HashSet for quick lookups
-        var prioritySet = new HashSet<string>(priorityList, System.StringComparer.OrdinalIgnoreCase);
-
-        // Step 1: Handle edge cases
-        if (items.Count == 0 || targetValue == int.MaxValue)
-        {
-            return items;
-        }
-
-        // Step 2: Find the minimum scrapValue item
-        var minScrapItem = items.OrderBy(item => item.ScrapValue).First();
-
-        if (targetValue <= minScrapItem.ScrapValue)
-        {
-            return [minScrapItem];
-        }
-
-        // Step 3: Check if total scrapValue is less than targetValue
-        int totalScrapValue = items.Sum(item => item.ScrapValue);
-
-        if (totalScrapValue < targetValue)
-        {
-            return items;
-        }
-
-        // Step 4: Initialize DP structures with additional priority count tracking
-        int maxPossibleValue = totalScrapValue;
-        int[] dp = new int[maxPossibleValue + 1];
-        List<ItemData>[] dpItems = new List<ItemData>[maxPossibleValue + 1];
-        int[] dpPriorityCount = new int[maxPossibleValue + 1]; // Track priority item counts in the DP states
-
-        for (int i = 0; i <= maxPossibleValue; i++)
-        {
-            dp[i] = int.MaxValue;
-            dpItems[i] = new List<ItemData>();
-            dpPriorityCount[i] = 0;
-        }
-
-        dp[0] = 0; // Base case
-
-        foreach (var item in items)
-        {
-            bool isPriority = prioritySet.Contains(item.ItemName);
-            int itemPriorityValue = isPriority ? 1 : 0;
-
-            for (int j = maxPossibleValue; j >= item.ScrapValue; j--)
-            {
-                int remainingValue = j - item.ScrapValue;
-                if (dp[remainingValue] != int.MaxValue)
-                {
-                    int newScrapValue = dp[remainingValue] + item.ScrapValue;
-                    int newPriorityCount = dpPriorityCount[remainingValue] + itemPriorityValue;
-
-                    // Compare based on scrap value first, then prioritize count if values match
-                    if (newScrapValue < dp[j] || newScrapValue == dp[j] && newPriorityCount > dpPriorityCount[j])
-                    {
-                        dp[j] = newScrapValue;
-                        dpItems[j] = new List<ItemData>(dpItems[remainingValue]) { item };
-                        dpPriorityCount[j] = newPriorityCount;
-                    }
-                }
-            }
-        }
-
-        // Step 5: Return the exact match if possible
-        if (dp[targetValue] != int.MaxValue)
-        {
-            return dpItems[targetValue];
-        }
-
-        // Step 6: If exact match is not possible, find the smallest valid over-target solution
-        for (int i = targetValue + 1; i <= maxPossibleValue; i++)
-        {
-            if (dp[i] != int.MaxValue)
-            {
-                return dpItems[i];
-            }
-        }
-
-        // Fallback in case no valid set is found (should not happen in usual cases)
-        return items;
+        var items = GetAllScrap(sellRequest.OnlyAllowedScrap, sellRequest.OnlyUseShipInventory);
+        return sellRequest.GetScrapToSell(items);
     }
 
     public static ScrapToSell GetScrapToSell(string[] sellList, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
         return new ScrapToSell(GetAllScrapByItemNames(sellList, onlyAllowedScrap, onlyUseShipInventory));
-    }
-
-    private static int GetSellValue(int value)
-    {
-        if (value == int.MaxValue) return value;
-        return Mathf.CeilToInt(value / StartOfRound.Instance.companyBuyingRate);
-    }
-
-    private static int GetSellValueWithOvertime(int value)
-    {
-        int profitQuota = TimeOfDay.Instance.profitQuota;
-        int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
-        int valueOver = quotaFulfilled + value - profitQuota;
-        if (valueOver <= 0) return GetSellValue(value);
-
-        int profitQuotaLeft = Mathf.Max(profitQuota - quotaFulfilled, 0);
-        value -= (TimeOfDayPatch.GetDaysUntilDeadline() + 1) * 15;
-        int newValue = Mathf.CeilToInt((5 * value + profitQuotaLeft + 75) / 6f);
-
-        return GetSellValue(newValue);
     }
 
     public static int GetRealValue(int value)

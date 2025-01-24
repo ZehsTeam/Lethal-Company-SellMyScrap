@@ -31,7 +31,11 @@ internal class SellQuotaCommand : SellCommand
             return TerminalPatch.CreateTerminalNode("Quota has already been fulfilled.\n\n");
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, onlyUseShipInventory: OnlyUseShipInventory());
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(requestedValue)
+        {
+            OnlyUseShipInventory = OnlyUseShipInventory(),
+            ScrapMatchAlgorithm = GetScrapMatchAlgorithm()
+        });
 
         if (scrapToSell.ItemCount == 0)
         {
