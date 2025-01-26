@@ -5,6 +5,7 @@ using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
@@ -122,9 +123,9 @@ internal class Plugin : BaseUnityPlugin
         CancelSellRequest();
     }
 
-    public ScrapToSell GetScrapToSell(int value, bool onlyAllowedScrap = true, bool withOvertimeBonus = false, bool onlyUseShipInventory = false)
+    public ScrapToSell GetScrapToSell(SellCommandRequest sellRequest)
     {
-        ScrapToSell = ScrapHelper.GetScrapToSell(value, onlyAllowedScrap, withOvertimeBonus, onlyUseShipInventory);
+        ScrapToSell = ScrapHelper.GetScrapToSell(sellRequest);
         return ScrapToSell;
     }
 

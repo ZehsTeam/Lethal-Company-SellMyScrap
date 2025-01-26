@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
 using com.github.zehsteam.SellMyScrap.Patches;
 using System.Data;
 using System.Text;
@@ -42,7 +43,12 @@ internal class SellAmountCommand : SellCommand
             return TerminalPatch.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(requestedValue, withOvertimeBonus: WithOvertimeBonus(), onlyUseShipInventory: OnlyUseShipInventory());
+        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(requestedValue)
+        {
+            WithOvertimeBonus = WithOvertimeBonus(),
+            OnlyUseShipInventory = OnlyUseShipInventory(),
+            ScrapMatchAlgorithm = GetScrapMatchAlgorithm()
+        });
 
         if (scrapToSell.ItemCount == 0)
         {
