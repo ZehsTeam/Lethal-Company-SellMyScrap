@@ -57,7 +57,7 @@ namespace com.github.zehsteam.SellMyScrap.Data
         private int GetSellValue(int value)
         {
             if (value == int.MaxValue) return value;
-            return Mathf.CeilToInt(Value / StartOfRound.Instance.companyBuyingRate);
+            return Mathf.CeilToInt(value / StartOfRound.Instance.companyBuyingRate);
         }
 
         private int GetSellValueWithOvertime()
