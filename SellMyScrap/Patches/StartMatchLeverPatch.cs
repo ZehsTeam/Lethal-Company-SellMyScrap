@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using HarmonyLib;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
@@ -32,8 +33,15 @@ internal static class StartMatchLeverPatch
             return;
         }
 
-        if (StartOfRound.Instance.currentLevelID != 3) return; // Return if not at the Company moon.
-        if (!StartOfRound.Instance.shipHasLanded) return; // Return if the ship is not landed.
+        if (DepositItemsDeskHelper.Instance == null)
+        {
+            return; // If not on a moon that has a sell desk.
+        }
+
+        if (!StartOfRound.Instance.shipHasLanded)
+        {
+            return; // If the ship is not landed.
+        }
 
         // If the profit quota was fulfilled, reset the timeToHold on the InteractTrigger and return.
         if (TimeOfDay.Instance.quotaFulfilled >= TimeOfDay.Instance.profitQuota)
