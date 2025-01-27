@@ -1,7 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
-using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,26 +12,50 @@ internal static class ScrapHelper
     public static Transform HangarShipTransform => StartOfRound.Instance.elevatorTransform;
 
     #region Get Scrap
-    private static List<GrabbableObject> GetValidScrap(IEnumerable<GrabbableObject> grabbableObjects, bool onlyAllowedScrap)
+    private static List<GrabbableObject> GetValidScrap(IEnumerable<GrabbableObject> grabbableObjects, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
     {
         if (grabbableObjects == null) return [];
 
-        return grabbableObjects.Where(x => IsValidScrap(x, onlyAllowedScrap)).ToList();
+        return grabbableObjects.Where(x => IsValidScrap(x, onlyAllowedScrap, includeScrapWorthZero)).ToList();
     }
 
-    public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true)
+    public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true, bool includeScrapWorthZero = false)
     {
         if (HangarShipTransform == null) return [];
 
-        return GetValidScrap(HangarShipTransform.GetComponentsInChildren<GrabbableObject>(), onlyAllowedScrap);
+        List<GrabbableObject> grabbableObjects = HangarShipTransform.GetComponentsInChildren<GrabbableObject>().ToList();
+        grabbableObjects.AddRange(GetGrabbableObjectsFromShipPlaceableObjects());
+
+        return GetValidScrap(grabbableObjects, onlyAllowedScrap, includeScrapWorthZero);
     }
 
-    public static List<GrabbableObject> GetScrapFromVehicle(bool onlyAllowedScrap = true)
+    private static List<GrabbableObject> GetGrabbableObjectsFromShipPlaceableObjects()
     {
-        VehicleController vehicleController = Object.FindFirstObjectByType<VehicleController>();
-        if (vehicleController == null) return [];
+        List<GrabbableObject> grabbableObjects = [];
 
-        return GetValidScrap(vehicleController.GetComponentsInChildren<GrabbableObject>(), onlyAllowedScrap);
+        foreach (var autoParentToShip in Object.FindObjectsByType<AutoParentToShip>(FindObjectsSortMode.None))
+        {
+            if (autoParentToShip.transform.parent != null)
+            {
+                continue;
+            }
+
+            grabbableObjects.AddRange(autoParentToShip.GetComponentsInChildren<GrabbableObject>());
+        }
+
+        return grabbableObjects;
+    }
+
+    public static List<GrabbableObject> GetScrapFromVehicle(bool onlyAllowedScrap = true, bool includeScrapWorthZero = false)
+    {
+        if (StartOfRound.Instance == null || StartOfRound.Instance.attachedVehicle == null)
+        {
+            return [];
+        }
+
+        GrabbableObject[] grabbableObjects = StartOfRound.Instance.attachedVehicle.GetComponentsInChildren<GrabbableObject>();
+
+        return GetValidScrap(grabbableObjects, onlyAllowedScrap, includeScrapWorthZero);
     }
 
     public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, ShipInventoryItemData[] shipInventoryItems)
@@ -58,13 +80,13 @@ internal static class ScrapHelper
         return items;
     }
 
-    public static List<ItemData> GetAllScrap(bool onlyAllowedScrap = true, bool onlyUseShipInventory = false)
+    public static List<ItemData> GetAllScrap(bool onlyAllowedScrap = true, bool onlyUseShipInventory = false, bool includeScrapWorthZero = false)
     {
         ShipInventoryItemData[] shipInventoryItems = [];
 
         if (ShipInventoryProxy.Enabled)
         {
-            shipInventoryItems = ShipInventoryProxy.GetItems().Where(x => IsValidScrap(x, onlyAllowedScrap)).ToArray();
+            shipInventoryItems = ShipInventoryProxy.GetItems().Where(x => IsValidScrap(x, onlyAllowedScrap, includeScrapWorthZero)).ToArray();
 
             if (onlyUseShipInventory)
             {
@@ -72,7 +94,7 @@ internal static class ScrapHelper
             }
         }
 
-        return GetItemDataList(GetScrapFromShip(onlyAllowedScrap), GetScrapFromVehicle(onlyAllowedScrap), shipInventoryItems);
+        return GetItemDataList(GetScrapFromShip(onlyAllowedScrap, includeScrapWorthZero), GetScrapFromVehicle(onlyAllowedScrap, includeScrapWorthZero), shipInventoryItems);
     }
 
     public static List<ItemData> GetAllScrapByItemName(string itemName, bool matchCase = false, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
@@ -172,13 +194,13 @@ internal static class ScrapHelper
         return true;
     }
 
-    public static bool IsValidScrap(GrabbableObject grabbableObject, bool onlyAllowedScrap)
+    public static bool IsValidScrap(GrabbableObject grabbableObject, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
     {
         if (grabbableObject == null) return false;
 
         if (!IsScrap(grabbableObject)) return false;
 
-        if (!Plugin.ConfigManager.SellScrapWorthZero.Value && grabbableObject.scrapValue <= 0)
+        if (!includeScrapWorthZero && !Plugin.ConfigManager.SellScrapWorthZero.Value && grabbableObject.scrapValue <= 0)
         {
             return false;
         }
@@ -196,11 +218,11 @@ internal static class ScrapHelper
         return true;
     }
 
-    public static bool IsValidScrap(ShipInventoryItemData shipInventoryItemData, bool onlyAllowedScrap)
+    public static bool IsValidScrap(ShipInventoryItemData shipInventoryItemData, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
     {
         if (shipInventoryItemData == null) return false;
 
-        if (!Plugin.ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
+        if (!includeScrapWorthZero && !Plugin.ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
         {
             return false;
         }
@@ -259,7 +281,7 @@ internal static class ScrapHelper
         int[] scrapValues = items.Select(x => x.ScrapValue).ToArray();
         ItemLocation[] itemLocations = items.Select(x => x.ItemLocation).ToArray();
 
-        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2: TerminalPatch.GreenColor2);
+        return GetScrapMessage(itemNames, scrapValues, itemLocations, sortFoundItemsPrice, alignFoundItemsPrice, color2: TerminalHelper.GreenColor2);
     }
 
     public static string GetScrapMessage(List<GrabbableObject> grabbableObjects)
@@ -355,8 +377,8 @@ internal static class ScrapHelper
     {
         return location switch
         {
-            ItemLocation.Vehicle => $" <color={TerminalPatch.GrayColor}>(Vehicle)</color>",
-            ItemLocation.ShipInventory => $" <color={TerminalPatch.GrayColor}>(ShipInventory)</color>",
+            ItemLocation.Vehicle => $" <color={TerminalHelper.GrayColor}>(Vehicle)</color>",
+            ItemLocation.ShipInventory => $" <color={TerminalHelper.GrayColor}>(ShipInventory)</color>",
             _ => string.Empty
         };
     }

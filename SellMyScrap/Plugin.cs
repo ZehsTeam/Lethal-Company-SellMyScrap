@@ -5,7 +5,6 @@ using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
@@ -20,6 +19,7 @@ namespace com.github.zehsteam.SellMyScrap;
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency(ShipInventoryProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency(TakeyPlushProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 internal class Plugin : BaseUnityPlugin
 {
     private readonly Harmony _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
@@ -205,7 +205,7 @@ internal class Plugin : BaseUnityPlugin
         if (ScrapToSell == null || SellRequest == null) yield return null;
         if (SellRequest.ConfirmationStatus != ConfirmationStatus.Confirmed) yield return null;
 
-        if (DepositItemsDeskPatch.Instance == null)
+        if (DepositItemsDeskHelper.Instance == null)
         {
             Logger.LogError($"Could not find depositItemsDesk. Are you landed at The Company building?");
             yield break;
@@ -261,10 +261,10 @@ internal class Plugin : BaseUnityPlugin
             }
         }
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(grabbableObjects);
+        DepositItemsDeskHelper.PlaceItemsOnCounter(grabbableObjects);
         PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectReferences(grabbableObjects));
         yield return new WaitForSeconds(0.5f);
-        DepositItemsDeskPatch.SellItemsOnServer();
+        DepositItemsDeskHelper.SellItems_Server();
 
         ScrapToSell = null;
     }
@@ -274,9 +274,9 @@ internal class Plugin : BaseUnityPlugin
         LogExtended(LogLevel.Info, data);
     }
 
-    public void LogMessageExtended(object data)
+    public void LogWarningExtended(object data)
     {
-        LogExtended(LogLevel.Message, data);
+        LogExtended(LogLevel.Warning, data);
     }
 
     public void LogExtended(LogLevel level, object data)

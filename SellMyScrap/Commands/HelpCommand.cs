@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -32,6 +32,6 @@ internal class HelpCommand : Command
         builder.AppendLine("view scrap         view-scrap");
         builder.AppendLine("view all scrap     view-all-scrap\n\n");
 
-        return TerminalPatch.CreateTerminalNode(builder.ToString());
+        return TerminalHelper.CreateTerminalNode(builder.ToString());
     }
 }

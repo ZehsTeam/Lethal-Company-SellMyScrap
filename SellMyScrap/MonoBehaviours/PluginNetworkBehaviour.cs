@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using Unity.Netcode;
@@ -74,7 +75,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     {
         if (NetworkUtils.IsServer) return;
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
+        DepositItemsDeskHelper.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
     }
 
     [ClientRpc]
@@ -82,6 +83,6 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     {
         if (NetworkUtils.IsServer) return;
 
-        DepositItemsDeskPatch.SetMicrophoneSpeakDataOnClient(speakInShip, clipIndex);
+        DepositItemsDeskPatch.SetMicrophoneSpeakData_LocalClient(speakInShip, clipIndex);
     }
 }

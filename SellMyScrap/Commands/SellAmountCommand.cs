@@ -1,7 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Data;
 using System.Text;
 
@@ -20,9 +18,9 @@ internal class SellAmountCommand : SellCommand
 
     public override TerminalNode Execute(string[] args)
     {
-        if (!CanUseCommand(out TerminalNode terminalNode))
+        if (!CanUseCommand(out TerminalNode failReason))
         {
-            return terminalNode;
+            return failReason;
         }
 
         string expression = string.Join(" ", args).Trim();
@@ -40,7 +38,7 @@ internal class SellAmountCommand : SellCommand
 
         if (!int.TryParse(evaluatedExpression, out int requestedValue) || requestedValue <= 0)
         {
-            return TerminalPatch.CreateTerminalNode(GetSellAmountInvalidMessage());
+            return TerminalHelper.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(requestedValue)
@@ -52,14 +50,14 @@ internal class SellAmountCommand : SellCommand
 
         if (scrapToSell.ItemCount == 0)
         {
-            return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
+            return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
         Plugin.Instance.CreateSellRequest(SellType.Amount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue, WithOvertimeBonus());
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalHelper.CreateTerminalNode(message);
     }
 
     private string GetMessage(ScrapToSell scrapToSell, int requestedValue, bool withOvertimeBonus)

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class ScrapEaterBehaviour : NetworkBehaviour
+public abstract class ScrapEaterBehaviour : NetworkBehaviour
 {
     [Header("Scrap Eater")]
     [Space(5f)]
@@ -134,7 +134,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     {
         if (targetScrap.Count == 0) return;
 
-        DepositItemsDeskPatch.PlaceItemsOnCounter(targetScrap);
+        DepositItemsDeskHelper.PlaceItemsOnCounter(targetScrap);
         targetScrap.Clear();
     }
 
@@ -142,7 +142,7 @@ public class ScrapEaterBehaviour : NetworkBehaviour
     {
         if (!NetworkUtils.IsServer) return;
 
-        DepositItemsDeskPatch.SellItemsOnServer();
+        DepositItemsDeskHelper.SellItems_Server();
     }
 
     protected Transform GetHangarShipTransform()

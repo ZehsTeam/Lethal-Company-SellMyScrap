@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
 using System.Collections;
 using UnityEngine;
 
@@ -108,11 +108,11 @@ public class SuckBehaviour : MonoBehaviour
     {
         if (_ragdollGrabbableObject == null)
         {
-            DepositItemsDeskPatch.PlaceItemOnCounter(_grabbableObject);
+            DepositItemsDeskHelper.PlaceItemOnCounter(_grabbableObject);
         }
         else
         {
-            DepositItemsDeskPatch.PlaceRagdollOnCounter(_ragdollGrabbableObject);
+            DepositItemsDeskHelper.PlaceRagdollOnCounter(_ragdollGrabbableObject);
         }
     }
 }

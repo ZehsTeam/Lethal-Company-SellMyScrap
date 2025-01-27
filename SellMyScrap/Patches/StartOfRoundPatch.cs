@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -57,12 +58,12 @@ internal static class StartOfRoundPatch
             return;
         }
 
-        if (ModpackSaveSystem.ReadValue("PlayedCustomIntroSpeech_2", false))
+        if (SaveHelper.LoadValue("PlayedCustomIntroSpeech_2", SaveLocation.Modpack, defaultValue: false))
         {
             return;
         }
 
-        ModpackSaveSystem.WriteValue("PlayedCustomIntroSpeech_2", true);
+        SaveHelper.SaveValue("PlayedCustomIntroSpeech_2", value: true, SaveLocation.Modpack);
 
         _cachedShipIntroSpeechSFX = StartOfRound.Instance.shipIntroSpeechSFX;
         StartOfRound.Instance.shipIntroSpeechSFX = Content.BrainRotIntroSpeechSFX;

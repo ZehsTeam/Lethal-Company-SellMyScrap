@@ -347,11 +347,11 @@ internal class ConfigManager
 
         if (DontSellListArray.Length == 1 && DontSellListArray[0].Equals("gold bar", System.StringComparison.OrdinalIgnoreCase))
         {
-            if (!ModpackSaveSystem.ReadValue("ResetScrapEaterChance", false))
+            if (!SaveHelper.LoadValue("ResetScrapEaterChance", SaveLocation.Modpack, defaultValue: false))
             {
                 ScrapEaterChance.Value = (int)ScrapEaterChance.DefaultValue;
 
-                ModpackSaveSystem.WriteValue("ResetScrapEaterChance", true);
+                SaveHelper.SaveValue("ResetScrapEaterChance", value: true, SaveLocation.Modpack);
             }
         }
     }
@@ -360,11 +360,11 @@ internal class ConfigManager
     {
         if (!SteamUtils.IsLocalClient(PlayerName.Thorlar)) return;
 
-        if (TakeySpawnWeight.Value > 0 && !ModpackSaveSystem.ReadValue("RemovedTakeyScrapEaterSpawnWeight", false))
+        if (TakeySpawnWeight.Value > 0 && !SaveHelper.LoadValue("RemovedTakeyScrapEaterSpawnWeight", SaveLocation.Modpack, defaultValue: false))
         {
             TakeySpawnWeight.Value = 0;
 
-            ModpackSaveSystem.WriteValue("RemovedTakeyScrapEaterSpawnWeight", true);
+            SaveHelper.SaveValue("RemovedTakeyScrapEaterSpawnWeight", value: true, SaveLocation.Modpack);
         }
     }
 

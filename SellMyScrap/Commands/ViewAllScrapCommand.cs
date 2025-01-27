@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +33,7 @@ internal class ViewAllScrapCommand : Command
 
         AwaitingConfirmation = true;
 
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalHelper.CreateTerminalNode(message);
     }
 
     public override TerminalNode ExecuteConfirmation(string[] args)
@@ -44,7 +43,7 @@ internal class ViewAllScrapCommand : Command
         if (exitStrings.Contains(args[0].ToLower()))
         {
             AwaitingConfirmation = false;
-            return TerminalPatch.CreateTerminalNode("Closed view all scrap.\n\n");
+            return TerminalHelper.CreateTerminalNode("Closed view all scrap.\n\n");
         }
 
         if ("next".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
@@ -52,7 +51,7 @@ internal class ViewAllScrapCommand : Command
             _pageIndex++;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
 
-            return TerminalPatch.CreateTerminalNode(GetMessage());
+            return TerminalHelper.CreateTerminalNode(GetMessage());
         }
 
         if ("previous".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
@@ -60,23 +59,23 @@ internal class ViewAllScrapCommand : Command
             _pageIndex--;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
 
-            return TerminalPatch.CreateTerminalNode(GetMessage());
+            return TerminalHelper.CreateTerminalNode(GetMessage());
         }
 
         if ("page".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
+            return TerminalHelper.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
         }
 
         if (!int.TryParse(args[1], out int requestedPage))
         {
-            return TerminalPatch.CreateTerminalNode(GetMessage("Error: invalid page number.\n\n"));
+            return TerminalHelper.CreateTerminalNode(GetMessage("Error: invalid page number.\n\n"));
         }
 
         requestedPage = Mathf.Clamp(requestedPage, 1, _pages);
         _pageIndex = requestedPage - 1;
 
-        return TerminalPatch.CreateTerminalNode(GetMessage());
+        return TerminalHelper.CreateTerminalNode(GetMessage());
     }
 
     private string GetMessage(string additionMessage = "")

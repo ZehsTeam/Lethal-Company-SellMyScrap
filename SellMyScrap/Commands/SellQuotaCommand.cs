@@ -1,6 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -17,9 +16,9 @@ internal class SellQuotaCommand : SellCommand
 
     public override TerminalNode Execute(string[] args)
     {
-        if (!CanUseCommand(out TerminalNode terminalNode))
+        if (!CanUseCommand(out TerminalNode failReason))
         {
-            return terminalNode;
+            return failReason;
         }
 
         int profitQuota = TimeOfDay.Instance.profitQuota;
@@ -28,7 +27,7 @@ internal class SellQuotaCommand : SellCommand
 
         if (requestedValue <= 0)
         {
-            return TerminalPatch.CreateTerminalNode("Quota has already been fulfilled.\n\n");
+            return TerminalHelper.CreateTerminalNode("Quota has already been fulfilled.\n\n");
         }
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(requestedValue)
@@ -39,14 +38,14 @@ internal class SellQuotaCommand : SellCommand
 
         if (scrapToSell.ItemCount == 0)
         {
-            return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
+            return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
         Plugin.Instance.CreateSellRequest(SellType.Quota, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue);
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalHelper.CreateTerminalNode(message);
     }
 
     private string GetMessage(ScrapToSell scrapToSell, int requestedValue)

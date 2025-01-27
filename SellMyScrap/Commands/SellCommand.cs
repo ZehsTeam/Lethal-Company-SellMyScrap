@@ -1,6 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
-using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ internal class SellCommand : Command
         Plugin.Instance.ConfirmSellRequest();
         AwaitingConfirmation = false;
 
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalHelper.CreateTerminalNode(message);
     }
 
     protected override TerminalNode OnDeny(string[] args)
@@ -26,7 +26,7 @@ internal class SellCommand : Command
 
         AwaitingConfirmation = false;
 
-        return TerminalPatch.CreateTerminalNode($"Sell aborted.\n\n");
+        return TerminalHelper.CreateTerminalNode($"Sell aborted.\n\n");
     }
 
     protected int GetScrapEaterIndex()
@@ -76,12 +76,19 @@ internal class SellCommand : Command
         return BaseScrapMatchAlgorithm.Default;
     }
 
-    protected static bool CanUseCommand(out TerminalNode terminalNode)
+    protected static bool CanUseCommand(out TerminalNode failReason)
     {
-        terminalNode = TerminalPatch.CreateTerminalNode($"You must be landed at The Company building to sell your scrap.\n\n");
+        failReason = TerminalHelper.CreateTerminalNode($"You must be landed at The Company building to sell your scrap.\n\n");
+        
+        if (DepositItemsDeskHelper.Instance == null)
+        {
+            return false; // If not on a moon that has a sell desk.
+        }
 
-        if (StartOfRound.Instance.currentLevelID != 3) return false; // Return false if not at the Company moon.
-        if (StartOfRound.Instance.inShipPhase) return false; // Return false if the ship is in orbit.
+        if (StartOfRound.Instance.inShipPhase)
+        {
+            return false; // If the ship is in orbit.
+        }
 
         return true;
     }
@@ -97,7 +104,7 @@ internal class SellCommand : Command
             return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota}";
         }
 
-        string needColor = valueFound >= valueNeeded ? TerminalPatch.GreenColor2 : "red";
+        string needColor = valueFound >= valueNeeded ? TerminalHelper.GreenColor2 : "red";
         return $"Quota fulfilled: ${quotaFulfilled} / ${profitQuota} <color={needColor}>(Need: ${valueNeeded})</color>";
     }
 
@@ -110,7 +117,7 @@ internal class SellCommand : Command
             return string.Empty;
         }
 
-        return $"Overtime bonus: ${overtimeBonus} <color={TerminalPatch.GreenColor2}>(With value: ${value + overtimeBonus})</color>\n";
+        return $"Overtime bonus: ${overtimeBonus} <color={TerminalHelper.GreenColor2}>(With value: ${value + overtimeBonus})</color>\n";
     }
 
     protected static string GetOvertimeBonusWithValueString(int value, int targetValue, out bool hasEnoughWithOvertimeBonus)
@@ -124,7 +131,7 @@ internal class SellCommand : Command
             return string.Empty;
         }
 
-        string withValueColor = hasEnoughWithOvertimeBonus ? TerminalPatch.GreenColor2 : "red";
+        string withValueColor = hasEnoughWithOvertimeBonus ? TerminalHelper.GreenColor2 : "red";
         return $"Overtime bonus: ${overtimeBonus} <color={withValueColor}>(With value: ${value + overtimeBonus})</color>\n";
     }
 }

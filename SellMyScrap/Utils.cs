@@ -1,7 +1,10 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using BepInEx;
+using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -10,11 +13,51 @@ namespace com.github.zehsteam.SellMyScrap;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class Utils
 {
+    public static string GetEnumName<T>(T e) where T : System.Enum
+    {
+        return System.Enum.GetName(typeof(T), e) ?? string.Empty;
+    }
+
+    public static string GetPluginDirectoryPath()
+    {
+        return Path.GetDirectoryName(Plugin.Instance.Info.Location);
+    }
+
+    public static string GetConfigDirectoryPath()
+    {
+        return Paths.ConfigPath;
+    }
+
+    public static string GetGlobalConfigDirectoryPath()
+    {
+        return Path.Combine(Application.persistentDataPath, MyPluginInfo.PLUGIN_NAME);
+    }
+
+    public static ConfigFile CreateConfigFile(string directoryPath, string name = null, bool saveOnInit = false)
+    {
+        BepInPlugin metadata = MetadataHelper.GetMetadata(Plugin.Instance);
+        name ??= metadata.GUID;
+        name += ".cfg";
+        return new ConfigFile(Path.Combine(directoryPath, name), saveOnInit, metadata);
+    }
+
+    public static ConfigFile CreateLocalConfigFile(string name = null, bool saveOnInit = false)
+    {
+        name ??= $"{MyPluginInfo.PLUGIN_GUID}-{name}";
+        return CreateConfigFile(Paths.ConfigPath, name, saveOnInit);
+    }
+
+    public static ConfigFile CreateGlobalConfigFile(string name = null, bool saveOnInit = false)
+    {
+        name ??= "global";
+        return CreateConfigFile(GetGlobalConfigDirectoryPath(), name, saveOnInit);
+    }
+
     public static bool RandomPercent(float percent)
     {
         if (percent <= 0f) return false;
         if (percent >= 100f) return true;
-        return Random.value <= percent * 0.01f;
+        return Random.value * 100f <= percent;
     }
 
     public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
@@ -347,10 +390,5 @@ internal static class Utils
         }
 
         return false;
-    }
-
-    public static string GetEnumName<T>(T e) where T : System.Enum
-    {
-        return System.Enum.GetName(typeof(T), e) ?? string.Empty;
     }
 }

@@ -1,37 +1,25 @@
 ﻿using com.github.zehsteam.SellMyScrap.Commands;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
 [HarmonyPatch(typeof(Terminal))]
 internal static class TerminalPatch
 {
-    public static Terminal Instance
+    private static bool _hasOverrideTerminalNodes = false;
+
+    [HarmonyPatch(nameof(Terminal.Start))]
+    [HarmonyPrefix]
+    private static void StartPatchPrefix(ref Terminal __instance)
     {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = Object.FindFirstObjectByType<Terminal>();
-            }
-
-            return _instance;
-        }
+        TerminalHelper.SetInstance(__instance);
     }
-
-    private static Terminal _instance;
-
-    public const string GreenColor2 = "#007f00";
-    public const string GrayColor = "#7f7f7f";
-    public const string RedColor = "#ff0000";
-
-    private static bool hasOverrideTerminalNodes = false;
 
     [HarmonyPatch(nameof(Terminal.Start))]
     [HarmonyPostfix]
     [HarmonyPriority(Priority.Last)]
-    private static void StartPatch(ref TerminalNodesList ___terminalNodes)
+    private static void StartPatchPostfix(ref TerminalNodesList ___terminalNodes)
     {
         OverrideTerminalNodes(___terminalNodes);
     }
@@ -39,8 +27,8 @@ internal static class TerminalPatch
     #region TerminalNode Overrides
     private static void OverrideTerminalNodes(TerminalNodesList terminalNodes)
     {
-        if (hasOverrideTerminalNodes) return;
-        hasOverrideTerminalNodes = true;
+        if (_hasOverrideTerminalNodes) return;
+        _hasOverrideTerminalNodes = true;
 
         if (Plugin.ConfigManager.OverrideWelcomeMessage.Value)
         {
@@ -94,7 +82,7 @@ internal static class TerminalPatch
         {
             if (terminalNode == null)
             {
-                __result = CreateTerminalNode("TerminalNode is null!\n\n");
+                __result = TerminalHelper.CreateTerminalNode("TerminalNode is null!\n\n");
                 return false;
             }
 
@@ -103,16 +91,5 @@ internal static class TerminalPatch
         }
 
         return true;
-    }
-
-    public static TerminalNode CreateTerminalNode(string message, bool clearPreviousText = true)
-    {
-        TerminalNode terminalNode = ScriptableObject.CreateInstance<TerminalNode>();
-
-        terminalNode.displayText = message;
-        terminalNode.clearPreviousText = clearPreviousText;
-        terminalNode.maxCharactersToType = 50;
-
-        return terminalNode;
     }
 }

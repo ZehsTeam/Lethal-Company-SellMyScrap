@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Patches;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,7 +7,7 @@ namespace com.github.zehsteam.SellMyScrap.Commands;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class Command
+public abstract class Command
 {
     public TerminalNode PreviousTerminalNode;
 
@@ -47,7 +47,7 @@ public class Command
 
     public virtual TerminalNode Execute(string[] args)
     {
-        return TerminalPatch.CreateTerminalNode("Execute override was not found.\n\n");
+        return TerminalHelper.CreateTerminalNode("Execute override was not found.\n\n");
     }
 
     public virtual TerminalNode ExecuteConfirmation(string[] args)
@@ -69,12 +69,12 @@ public class Command
 
     protected virtual TerminalNode OnConfirm(string[] args)
     {
-        return TerminalPatch.CreateTerminalNode("OnConfirm override was not found.\n\n");
+        return TerminalHelper.CreateTerminalNode("OnConfirm override was not found.\n\n");
     }
 
     protected virtual TerminalNode OnDeny(string[] args)
     {
-        return TerminalPatch.CreateTerminalNode("OnDeny override was not found.\n\n");
+        return TerminalHelper.CreateTerminalNode("OnDeny override was not found.\n\n");
     }
 
     protected virtual TerminalNode OnInvalidInput(string[] args)

@@ -1,6 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -17,23 +16,23 @@ internal class SellListCommand : SellCommand
 
     public override TerminalNode Execute(string[] args)
     {
-        if (!CanUseCommand(out TerminalNode terminalNode))
+        if (!CanUseCommand(out TerminalNode failReason))
         {
-            return terminalNode;
+            return failReason;
         }
 
         ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellListArray, onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
-            return TerminalPatch.CreateTerminalNode("No items found to sell.\n\n");
+            return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
         Plugin.Instance.CreateSellRequest(SellType.List, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
         
         string message = GetMessage(scrapToSell);
-        return TerminalPatch.CreateTerminalNode(message);
+        return TerminalHelper.CreateTerminalNode(message);
     }
 
     private string GetMessage(ScrapToSell scrapToSell)
