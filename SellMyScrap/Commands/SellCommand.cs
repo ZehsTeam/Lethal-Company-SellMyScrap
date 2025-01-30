@@ -78,16 +78,18 @@ internal class SellCommand : Command
 
     protected static bool CanUseCommand(out TerminalNode failReason)
     {
-        failReason = TerminalHelper.CreateTerminalNode($"You must be landed at The Company building to sell your scrap.\n\n");
-        
-        if (DepositItemsDeskHelper.Instance == null)
-        {
-            return false; // If not on a moon that has a sell desk.
-        }
+        failReason = null;
 
         if (StartOfRound.Instance.inShipPhase)
         {
+            failReason = TerminalHelper.CreateTerminalNode($"You must be landed on a moon that allows selling.\n\n");
             return false; // If the ship is in orbit.
+        }
+
+        if (DepositItemsDeskHelper.Instance == null)
+        {
+            failReason = TerminalHelper.CreateTerminalNode($"You cannot sell on this moon.\n\n");
+            return false; // If not on a moon that has a sell desk.
         }
 
         return true;
