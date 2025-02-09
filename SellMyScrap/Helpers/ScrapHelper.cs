@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,14 +49,12 @@ internal static class ScrapHelper
 
     public static List<GrabbableObject> GetScrapFromVehicle(bool onlyAllowedScrap = true, bool includeScrapWorthZero = false)
     {
-        if (StartOfRound.Instance == null || StartOfRound.Instance.attachedVehicle == null)
+        if (VehicleControllerProxy.Enabled)
         {
-            return [];
+            return GetValidScrap(VehicleControllerProxy.GetGrabbableObjects(), onlyAllowedScrap, includeScrapWorthZero);
         }
 
-        GrabbableObject[] grabbableObjects = StartOfRound.Instance.attachedVehicle.GetComponentsInChildren<GrabbableObject>();
-
-        return GetValidScrap(grabbableObjects, onlyAllowedScrap, includeScrapWorthZero);
+        return [];
     }
 
     public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, ShipInventoryItemData[] shipInventoryItems)

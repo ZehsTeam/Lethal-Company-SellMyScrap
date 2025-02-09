@@ -1,5 +1,6 @@
 ﻿using GameNetcodeStuff;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -158,7 +159,12 @@ internal static class PlayerUtils
 
     public static void SetLocalPlayerAllowDeathEnabled(bool enabled)
     {
-        StartOfRound.Instance.allowLocalPlayerDeath = enabled;
+        if (StartOfRound.Instance == null) return;
+
+        FieldInfo fieldInfo = typeof(StartOfRound).GetField("allowLocalPlayerDeath", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (fieldInfo == null) return;
+
+        fieldInfo.SetValue(StartOfRound.Instance, enabled);
     }
 
     public static void ReviveDeadPlayersAfterTime(float time)

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using System.Collections;
@@ -196,8 +197,8 @@ internal static class Utils
 
                 if (enemyAICollisionDetect != null && enemyAICollisionDetect.mainScript.IsOwner && distanceFromExplosion2 < 4.5f)
                 {
-                    enemyAICollisionDetect.mainScript.HitEnemyOnLocalClient(force: enemyHitForce, playerWhoHit: attacker);
-                    enemyAICollisionDetect.mainScript.HitFromExplosion(distanceFromExplosion2);
+                    EnemyAIHelper.HitEnemyOnLocalClient(enemyAICollisionDetect.mainScript, force: enemyHitForce, playerWhoHit: attacker);
+                    EnemyAIHelper.HitFromExplosion(enemyAICollisionDetect.mainScript, distanceFromExplosion2);
                 }
             }
         }

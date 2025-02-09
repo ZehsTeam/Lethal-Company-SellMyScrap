@@ -96,7 +96,7 @@ public abstract class Command
 
             if (match.Success)
             {
-                string flagKey = match.Groups[1].Value;
+                string flagKey = match.Groups[1].Value.ToLower();
                 string flagDataString = match.Groups[2].Success ? match.Groups[2].Value : string.Empty;
 
                 // Add the flag to the parsedFlags dictionary
@@ -115,7 +115,7 @@ public abstract class Command
     // Retrieve a flag with a specific key, allowing for data type parsing
     protected T GetFlagData<T>(string flagKey, T defaultValue = default)
     {
-        if (_parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
+        if (_parsedFlags.TryGetValue(flagKey.ToLower(), out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
             try
             {
@@ -134,7 +134,7 @@ public abstract class Command
     {
         flagData = default;
 
-        if (_parsedFlags.TryGetValue(flagKey, out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
+        if (_parsedFlags.TryGetValue(flagKey.ToLower(), out string flagDataString) && !string.IsNullOrEmpty(flagDataString))
         {
             try
             {
@@ -153,6 +153,6 @@ public abstract class Command
     // Check if a flag is present
     protected bool HasFlag(string flagKey)
     {
-        return _parsedFlags.ContainsKey(flagKey);
+        return _parsedFlags.ContainsKey(flagKey.ToLower());
     }
 }
