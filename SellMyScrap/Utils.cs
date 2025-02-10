@@ -3,20 +3,23 @@ using BepInEx.Configuration;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace com.github.zehsteam.SellMyScrap;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class Utils
 {
-    public static string GetEnumName<T>(T e) where T : System.Enum
+    public static string GetEnumName<T>(T value) where T : Enum
     {
-        return System.Enum.GetName(typeof(T), e) ?? string.Empty;
+        return Enum.GetName(typeof(T), value) ?? string.Empty;
     }
 
     public static string GetPluginDirectoryPath()
@@ -61,44 +64,9 @@ internal static class Utils
         return Random.value * 100f <= percent;
     }
 
-    public static string GetStringWithSpacingInBetween(string a, string b, int maxLength)
-    {
-        return $"{a}{new string(' ', maxLength - a.Length)} {b}";
-    }
-
-    public static string GetLongestStringFromArray(string[] array)
-    {
-        string longest = string.Empty;
-
-        foreach (var item in array)
-        {
-            if (item.Length > longest.Length) longest = item;
-        }
-
-        return longest;
-    }
-
-    public static string[] GetArrayToLower(string[] array)
-    {
-        return array.Select(x => x.ToLower()).ToArray();
-    }
-
-    public static string GetItemFromList(List<string> list, string item)
-    {
-        foreach (var _item in list)
-        {
-            if (_item.ToLower() == item.ToLower())
-            {
-                return _item;
-            }
-        }
-
-        return string.Empty;
-    }
-
     public static bool ArrayContains(string[] array, string value, bool matchCase = false)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
 
         foreach (var item in array)
         {
@@ -250,7 +218,7 @@ internal static class Utils
         }
 
         // This should never happen if weights are correctly specified
-        throw new System.InvalidOperationException("Weights are not properly specified.");
+        throw new InvalidOperationException("Weights are not properly specified.");
     }
 
     public static List<List<T>> SplitList<T>(List<T> items, int numberOfLists)
@@ -286,110 +254,80 @@ internal static class Utils
         return null;
     }
 
-    public static string GetStringWithColor(string text, string colorHex)
-    {
-        return $"<color={colorHex}>{text}</color>";
-    }
-
-    public static bool TryParseValue<T>(string value, out T result)
-    {
-        try
-        {
-            if (typeof(T) == typeof(int) && int.TryParse(value, out var intValue))
-            {
-                result = (T)(object)intValue;
-                return true;
-            }
-
-            if (typeof(T) == typeof(float) && float.TryParse(value, out var floatValue))
-            {
-                result = (T)(object)floatValue;
-                return true;
-            }
-
-            if (typeof(T) == typeof(double) && double.TryParse(value, out var doubleValue))
-            {
-                result = (T)(object)doubleValue;
-                return true;
-            }
-
-            if (typeof(T) == typeof(bool) && bool.TryParse(value, out var boolValue))
-            {
-                result = (T)(object)boolValue;
-                return true;
-            }
-
-            if (typeof(T) == typeof(string))
-            {
-                result = (T)(object)value;
-                return true;
-            }
-        }
-        catch
-        {
-            // Ignored
-        }
-
-        result = default;
-        return false;
-    }
-
-    public static T[] StringToArray<T>(string value)
+    public static IEnumerable<T> StringToCollection<T>(string value)
     {
         if (string.IsNullOrEmpty(value))
         {
-            return [];
+            return Enumerable.Empty<T>();
         }
 
-        try
-        {
-            return value.Split(',').Select(x => (T)System.Convert.ChangeType(x.Trim(), typeof(T))).ToArray();
-        }
-        catch (System.Exception ex)
-        {
-            Plugin.Logger.LogError($"Failed to convert string to array of type {typeof(T)}. \"{value}\". {ex}");
-        }
-
-        return [];
+        return value.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Select(x => TryConvertStringToType(x, out T result) ? result : default)
+            .Where(x => x is not null);
     }
 
-    public static string ArrayToString<T>(T[] value)
+    public static string CollectionToString<T>(IEnumerable<T> value)
     {
-        if (value == null || value.Length == 0)
+        if (value == null || !value.Any())
         {
             return string.Empty;
         }
 
-        return string.Join(", ", value.Select(x => x.ToString()));
+        return string.Join(", ", value
+            .Where(x => x is not null && !string.IsNullOrWhiteSpace(x.ToString()))
+            .Select(x => x.ToString().Trim()));
+    }
+
+    public static bool TryConvertStringToType<T>(string value, out T result)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = default;
+            return false;
+        }
+
+        try
+        {
+            Type targetType = typeof(T);
+
+            // Handle Enums
+            if (targetType.IsEnum && Enum.TryParse(targetType, value.Trim(), true, out object enumResult))
+            {
+                result = (T)enumResult;
+                return true;
+            }
+
+            // Handle GUIDs
+            if (targetType == typeof(Guid) && Guid.TryParse(value.Trim(), out Guid guidResult))
+            {
+                result = (T)(object)guidResult;
+                return true;
+            }
+
+            // Handle nullable types
+            Type underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+            result = (T)Convert.ChangeType(value.Trim(), underlyingType);
+            return true;
+        }
+        catch
+        {
+            result = default;
+            return false;
+        }
     }
 
     public static bool StringEquals(string input, string[] values, bool matchCase = true)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
-
-        foreach (var value in values)
-        {
-            if (input.Equals(value, comparisonType))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
+        return values.Any(value => input.Equals(value, comparisonType));
     }
 
     public static bool StringContains(string input, string[] values, bool matchCase = true)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
-
-        foreach (var value in values)
-        {
-            if (input.Contains(value, comparisonType))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
+        return values.Any(value => input.Contains(value, comparisonType));
     }
 }

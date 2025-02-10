@@ -29,20 +29,20 @@ internal class ConfigManager
     
     public string[] PrioritySellListArray
     {
-        get => Utils.StringToArray<string>(PrioritySellList.Value);
-        set => PrioritySellList.Value = Utils.ArrayToString(value);
+        get => Utils.StringToCollection<string>(PrioritySellList.Value).ToArray();
+        set => PrioritySellList.Value = Utils.CollectionToString(value);
     }
     
     public string[] DontSellListArray
     {
-        get => Utils.StringToArray<string>(DontSellList.Value);
-        set => DontSellList.Value = Utils.ArrayToString(value);
+        get => Utils.StringToCollection<string>(DontSellList.Value).ToArray();
+        set => DontSellList.Value = Utils.CollectionToString(value);
     }
 
     public string[] SellListArray
     {
-        get => Utils.StringToArray<string>(SellList.Value);
-        set => SellList.Value = Utils.ArrayToString(value);
+        get => Utils.StringToCollection<string>(SellList.Value).ToArray();
+        set => SellList.Value = Utils.CollectionToString(value);
     }
 
     // Terminal

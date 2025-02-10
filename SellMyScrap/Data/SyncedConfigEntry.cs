@@ -99,7 +99,7 @@ public class SyncedConfigEntry<T> : SyncedConfigEntryBase
     {
         if (!NetworkUtils.IsConnected || NetworkUtils.IsServer) return;
 
-        if (Utils.TryParseValue(value, out T parsedValue))
+        if (Utils.TryConvertStringToType(value, out T parsedValue))
         {
             _serverValue = parsedValue;
 
