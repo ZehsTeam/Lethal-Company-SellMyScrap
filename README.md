@@ -3,6 +3,8 @@
 
 #### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
 
+#### <ins>This mod works in all game versions v40 to v69+</ins>
+
 #### This mod will sell scrap as close to the requested value as possible.
 
 #### This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
