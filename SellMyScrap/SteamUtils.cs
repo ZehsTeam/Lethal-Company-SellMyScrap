@@ -1,4 +1,5 @@
 ﻿using Steamworks;
+using System;
 using System.Collections.Generic;
 
 namespace com.github.zehsteam.SellMyScrap;
@@ -118,7 +119,7 @@ internal static class SteamUtils
         if (!SteamClient.IsValid) return false;
         if (!SteamClient.IsLoggedOn) return false;
 
-        if (SteamClient.Name.Equals(username, System.StringComparison.OrdinalIgnoreCase))
+        if (SteamClient.Name.Equals(username, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
@@ -166,7 +167,7 @@ internal class PlayerData
     {
         for (int i = 0; i < Username.Length; i++)
         {
-            if (Username[i].Equals(username, System.StringComparison.OrdinalIgnoreCase))
+            if (Username[i].Equals(username, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

@@ -1,9 +1,11 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
@@ -516,7 +518,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     }
 }
 
-[System.Serializable]
+[Serializable]
 public class TakeyVariant
 {
     public TakeyVariantType Type;

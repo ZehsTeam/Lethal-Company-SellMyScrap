@@ -7,7 +7,7 @@
 
 #### This mod will sell scrap as close to the requested value as possible.
 
-#### This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
+#### This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) and [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/SoftDiamond/ShipInventoryUpdated/) mod.
 <br>
 
 - You must be landed on a moon that has a sell desk (e.g., The Company) to use sell commands.
@@ -165,9 +165,9 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 </details>
 
 ## ShipInventory Compatibility
-This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) mod.
+This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) and [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/SoftDiamond/ShipInventoryUpdated/) mod.
 
-If you use the command flag `-inv` when writing sell commands, you can make the command only target the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) storage.
+If you use the command flag `-inv` when writing sell commands, you can make the command only target the ShipInventory storage.
 
 ## Want more Scrap Eaters?
 - [GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*

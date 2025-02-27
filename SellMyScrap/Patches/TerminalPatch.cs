@@ -1,6 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
+using System;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
@@ -76,7 +77,7 @@ internal static class TerminalPatch
     [HarmonyPriority(Priority.First)]
     private static bool ParsePlayerSentencePatch(ref Terminal __instance, ref TerminalNode __result)
     {
-        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+        string[] array = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         if (CommandManager.TryExecuteCommand(array, out TerminalNode terminalNode))
         {

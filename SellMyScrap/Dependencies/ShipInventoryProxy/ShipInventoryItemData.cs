@@ -1,5 +1,6 @@
-﻿using ShipInventory.Helpers;
-using ShipInventory.Objects;
+﻿using ShipInventory.Extensions;
+using ShipInventory.Items;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
@@ -7,7 +8,7 @@ using Unity.Netcode;
 namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-[System.Serializable]
+[Serializable]
 public class ShipInventoryItemData : INetworkSerializable
 {
     public string Id;
@@ -32,7 +33,7 @@ public class ShipInventoryItemData : INetworkSerializable
             ScrapValue = itemData.SCRAP_VALUE;
             SaveData = itemData.SAVE_DATA;
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to create ShipInventoryItemData. {ex}");
         }
@@ -54,7 +55,7 @@ public class ShipInventoryItemData : INetworkSerializable
 
             return true;
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to compare ShipInventory ItemData. {ex}");
         }
@@ -69,7 +70,7 @@ public class ShipInventoryItemData : INetworkSerializable
         {
             return ItemManager.GetItems().FirstOrDefault(MatchesItemData);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to get ShipInventory ItemData. {ex}");
         }
@@ -92,7 +93,7 @@ public class ShipInventoryItemData : INetworkSerializable
 
             return itemData.GetItem();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to get ShipInventory Item. {ex}");
         }

@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,7 +47,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalHelper.CreateTerminalNode("Closed view all scrap.\n\n");
         }
 
-        if ("next".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
+        if ("next".Contains(args[0], StringComparison.OrdinalIgnoreCase))
         {
             _pageIndex++;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
@@ -54,7 +55,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalHelper.CreateTerminalNode(GetMessage());
         }
 
-        if ("previous".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
+        if ("previous".Contains(args[0], StringComparison.OrdinalIgnoreCase))
         {
             _pageIndex--;
             _pageIndex = Mathf.Clamp(_pageIndex, 0, _pages - 1);
@@ -62,7 +63,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalHelper.CreateTerminalNode(GetMessage());
         }
 
-        if ("page".Contains(args[0], System.StringComparison.OrdinalIgnoreCase))
+        if ("page".Contains(args[0], StringComparison.OrdinalIgnoreCase))
         {
             return TerminalHelper.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
         }

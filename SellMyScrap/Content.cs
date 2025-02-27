@@ -1,6 +1,8 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+using System;
 using System.IO;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -56,7 +58,7 @@ internal static class Content
             var assetBundleFilePath = Path.Combine(dllFolderPath, fileName);
             return AssetBundle.LoadFromFile(assetBundleFilePath);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Plugin.Logger.LogError($"Failed to load AssetBundle \"{fileName}\". {e}");
         }

@@ -2,8 +2,10 @@
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
-using ShipInventory.Helpers;
+using ShipInventory.Extensions;
+using ShipInventory.Items;
 using ShipInventory.Objects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +37,8 @@ internal class ShipInventoryProxy
 
     private static bool? _enabled;
 
-    public static bool IsSpawning {  get; private set; }
+    public static bool IsSpawning { get; private set; }
+
     public static SpawnItemsStatus SpawnItemsStatus
     {
         get
@@ -66,7 +69,7 @@ internal class ShipInventoryProxy
         {
             harmony.PatchAll(typeof(ChuteInteractPatch));
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to apply ShipInventory patches. {ex}");
         }
@@ -84,7 +87,7 @@ internal class ShipInventoryProxy
                 shipInventoryItems.Add(new ShipInventoryItemData(itemData));
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to get ShipInventory items. {ex}");
         }
@@ -132,7 +135,7 @@ internal class ShipInventoryProxy
         ChuteInteract.Instance.RetrieveItems(items);
 
         float startTime = Time.realtimeSinceStartup;
-        float maxWaitTime = (items.Length * ShipInventory.ShipInventory.Config.TimeToRetrieve.Value) + 30f;
+        float maxWaitTime = (items.Length * ShipInventory.ShipInventory.Configuration.TimeToRetrieve.Value) + 30f;
 
         yield return new WaitUntil(() => ChuteInteract.Instance.spawnCoroutine == null || Time.realtimeSinceStartup - startTime > maxWaitTime);
 

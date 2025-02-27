@@ -1,7 +1,11 @@
-﻿using HarmonyLib;
+﻿using CSync.Lib;
+using HarmonyLib;
+using ShipInventory;
 using ShipInventory.Objects;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
@@ -38,5 +42,59 @@ internal static class ChuteInteractPatch
     public static void ClearSpawnedGrabbableObjectsCache()
     {
         _spawnedGrabbableObjects.Clear();
+    }
+
+    [HarmonyPatch(nameof(ChuteInteract.SpawnCoroutine), MethodType.Enumerator)]
+    [HarmonyTranspiler]
+    private static IEnumerable<CodeInstruction> SpawnCoroutineTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        FieldInfo targetField = AccessTools.Field(typeof(Configuration), nameof(Configuration.StopAfter));
+        MethodInfo targetMethod = AccessTools.PropertyGetter(typeof(SyncedEntry<int>), nameof(SyncedEntry<int>.Value));
+        MethodInfo replacementMethod = AccessTools.Method(typeof(ChuteInteractPatch), nameof(GetStopAfterValue));
+
+        if (targetField == null || targetMethod == null || replacementMethod == null)
+        {
+            Plugin.Logger.LogError("Failed to apply SpawnCoroutine transpiler.");
+            return instructions;
+        }
+
+        List<CodeInstruction> newInstructions = [];
+
+        foreach (var instruction in instructions)
+        {
+            if (instruction.opcode != OpCodes.Call && instruction.opcode != OpCodes.Callvirt)
+            {
+                newInstructions.Add(instruction);
+                continue;
+            }
+
+            if (instruction.operand is not MethodInfo methodInfo)
+            {
+                newInstructions.Add(instruction);
+                continue;
+            }
+
+            if (methodInfo == targetMethod && newInstructions[^1].operand is FieldInfo fieldInfo && fieldInfo == targetField)
+            {
+                newInstructions.RemoveAt(newInstructions.Count - 1);
+                newInstructions.RemoveAt(newInstructions.Count - 1);
+                newInstructions.Add(new CodeInstruction(OpCodes.Call, replacementMethod));
+                continue;
+            }
+
+            newInstructions.Add(instruction);
+        }
+
+        return newInstructions.AsEnumerable();
+    }
+
+    private static int GetStopAfterValue()
+    {
+        if (ShipInventoryProxy.IsSpawning)
+        {
+            return int.MaxValue;
+        }
+
+        return ShipInventory.ShipInventory.Configuration.StopAfter.Value;
     }
 }

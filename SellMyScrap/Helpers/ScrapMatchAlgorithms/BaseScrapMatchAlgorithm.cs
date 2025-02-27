@@ -26,7 +26,7 @@ public abstract class BaseScrapMatchAlgorithm
     {
         this.items = items;
         this.targetValue = targetValue;
-        this.prioritySet = new HashSet<string>(priorityList ?? [], System.StringComparer.OrdinalIgnoreCase);
+        this.prioritySet = new HashSet<string>(priorityList ?? [], StringComparer.OrdinalIgnoreCase);
 
         // Step 1: Handle edge cases
         if (items.Count == 0 || targetValue == int.MaxValue)

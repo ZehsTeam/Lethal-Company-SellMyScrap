@@ -1,8 +1,10 @@
 ﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace com.github.zehsteam.SellMyScrap.ScrapEaters;
 
@@ -62,7 +64,7 @@ public static class ScrapEaterManager
     /// </summary>
     /// <param name="spawnPrefab">Your scrap eater spawn prefab.</param>
     /// <param name="GetSpawnWeight">Func for getting your spawnWeight config setting value.</param>
-    public static void AddScrapEater(GameObject spawnPrefab, System.Func<int> GetSpawnWeight)
+    public static void AddScrapEater(GameObject spawnPrefab, Func<int> GetSpawnWeight)
     {
         ScrapEaters.Add(new ScrapEater(spawnPrefab, GetSpawnWeight));
     }

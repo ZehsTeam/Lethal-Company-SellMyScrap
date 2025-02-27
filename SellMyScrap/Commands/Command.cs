@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,7 +34,7 @@ public abstract class Command
 
         for (int i = 0; i < pattern.Length; i++)
         {
-            if (!args[i].Equals(pattern[i], System.StringComparison.OrdinalIgnoreCase))
+            if (!args[i].Equals(pattern[i], StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -119,11 +120,11 @@ public abstract class Command
         {
             try
             {
-                return (T)System.Convert.ChangeType(flagDataString, typeof(T));
+                return (T)Convert.ChangeType(flagDataString, typeof(T));
             }
-            catch (System.InvalidCastException)
+            catch (InvalidCastException)
             {
-                throw new System.ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
+                throw new ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
             }
         }
 
@@ -138,12 +139,12 @@ public abstract class Command
         {
             try
             {
-                flagData = (T)System.Convert.ChangeType(flagDataString, typeof(T));
+                flagData = (T)Convert.ChangeType(flagDataString, typeof(T));
                 return true;
             }
-            catch (System.InvalidCastException)
+            catch (InvalidCastException)
             {
-                throw new System.ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
+                throw new ArgumentException($"Flag {flagKey} could not be parsed as {typeof(T)}");
             }
         }
 

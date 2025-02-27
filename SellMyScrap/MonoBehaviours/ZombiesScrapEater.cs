@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
 
@@ -252,7 +254,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
     }
 }
 
-[System.Serializable]
+[Serializable]
 public class ZombiesVariant
 {
     public ZombiesVariantType Type;

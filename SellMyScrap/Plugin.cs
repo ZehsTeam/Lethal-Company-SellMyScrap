@@ -9,6 +9,7 @@ using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -96,7 +97,7 @@ internal class Plugin : BaseUnityPlugin
                             }
                         }
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
                         // Handle errors when fetching custom attributes, due to missing types or dependencies
                         Logger.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
@@ -104,7 +105,7 @@ internal class Plugin : BaseUnityPlugin
                 }
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             // Catch any general exceptions that occur in the process
             Logger.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");

@@ -1,10 +1,12 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace com.github.zehsteam.SellMyScrap.Helpers;
 
@@ -98,7 +100,7 @@ internal static class ScrapHelper
 
     public static List<ItemData> GetAllScrapByItemName(string itemName, bool matchCase = false, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
 
         return GetAllScrap(onlyAllowedScrap, onlyUseShipInventory).Where(item =>
         {
@@ -108,7 +110,7 @@ internal static class ScrapHelper
 
     public static List<ItemData> GetAllScrapByItemNames(string[] itemNames, bool matchCase = false, bool onlyAllowedScrap = false, bool onlyUseShipInventory = false)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
 
         return GetAllScrap(onlyAllowedScrap, onlyUseShipInventory).Where(item =>
         {
@@ -174,7 +176,7 @@ internal static class ScrapHelper
 
     public static bool IsAllowedScrap(string itemName, string[] dontSellItemNames, bool matchCase = false)
     {
-        System.StringComparison comparisonType = matchCase ? System.StringComparison.CurrentCulture : System.StringComparison.OrdinalIgnoreCase;
+        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
 
         if (itemName.Equals("Gift", comparisonType) && !Plugin.ConfigManager.SellGifts.Value) return false;
         if (itemName.Equals("Shotgun", comparisonType) && !Plugin.ConfigManager.SellShotguns.Value) return false;

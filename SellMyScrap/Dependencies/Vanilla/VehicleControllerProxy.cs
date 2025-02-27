@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
@@ -23,7 +24,7 @@ internal static class VehicleControllerProxy
             Assembly assembly = typeof(StartOfRound).Assembly;
             return assembly.GetType("VehicleController") != null;
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to get enabled state from VehicleControllerProxy. {ex}");
             return false;
@@ -45,7 +46,7 @@ internal static class VehicleControllerProxy
 
             return vehicleController.GetComponentsInChildren<GrabbableObject>();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to get GrabbableObjects from attached vehicle. {ex}");
             return [];

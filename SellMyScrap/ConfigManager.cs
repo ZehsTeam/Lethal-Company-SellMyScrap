@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,7 +164,7 @@ internal class ConfigManager
 
     private void MigrateOldConfigSetting(string section, string key, string value)
     {
-        System.StringComparison comparisonType = System.StringComparison.OrdinalIgnoreCase;
+        StringComparison comparisonType = StringComparison.OrdinalIgnoreCase;
 
         if (section.Equals("Sell Settings", comparisonType))
         {
@@ -345,7 +346,7 @@ internal class ConfigManager
 
         if (ScrapEaterChance.Value != 0) return;
 
-        if (DontSellListArray.Length == 1 && DontSellListArray[0].Equals("gold bar", System.StringComparison.OrdinalIgnoreCase))
+        if (DontSellListArray.Length == 1 && DontSellListArray[0].Equals("gold bar", StringComparison.OrdinalIgnoreCase))
         {
             if (!SaveHelper.LoadValue("ResetScrapEaterChance", SaveLocation.Modpack, defaultValue: false))
             {

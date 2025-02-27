@@ -1,5 +1,6 @@
 ﻿using BepInEx.Bootstrap;
 using com.github.zehsteam.TakeyPlush;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies;
@@ -25,7 +26,7 @@ internal static class TakeyPlushProxy
         {
             Events.InvokeOnDinkDonkScrapEaterSpawned();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Plugin.Logger.LogError($"Failed to invoke OnDinkDonkScrapEaterSpawned event in TakeyPlush. {ex}");
         }

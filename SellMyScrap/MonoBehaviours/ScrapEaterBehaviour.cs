@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
