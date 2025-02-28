@@ -1,5 +1,5 @@
 # SellMyScrap
-#### Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventory mod. SellFromTerminal +
+#### Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +
 
 #### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
 
@@ -7,7 +7,7 @@
 
 #### This mod will sell scrap as close to the requested value as possible.
 
-#### This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) and [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/SoftDiamond/ShipInventoryUpdated/) mod.
+#### This mod is compatible with the [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/LethalCompanyModding/ShipInventoryUpdated/) mod.
 <br>
 
 - You must be landed on a moon that has a sell desk (e.g., The Company) to use sell commands.
@@ -164,8 +164,8 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 
 </details>
 
-## ShipInventory Compatibility
-This mod is compatible with the [ShipInventory](https://thunderstore.io/c/lethal-company/p/WarperSan/ShipInventory/) and [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/SoftDiamond/ShipInventoryUpdated/) mod.
+## ShipInventoryUpdated Compatibility
+This mod is compatible with the [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/LethalCompanyModding/ShipInventoryUpdated/) mod.
 
 If you use the command flag `-inv` when writing sell commands, you can make the command only target the ShipInventory storage.
 
