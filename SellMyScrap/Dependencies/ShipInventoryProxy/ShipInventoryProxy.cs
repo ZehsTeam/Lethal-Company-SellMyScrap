@@ -25,7 +25,8 @@ internal enum SpawnItemsStatus
 
 internal class ShipInventoryProxy
 {
-    public const string PLUGIN_GUID = ShipInventory.MyPluginInfo.PLUGIN_GUID;
+    public const string PLUGIN_GUID = "ShipInventoryUpdated";
+    //ShipInventory.MyPluginInfo.PLUGIN_GUID will require publicizing the dll
     public static bool Enabled
     {
         get
