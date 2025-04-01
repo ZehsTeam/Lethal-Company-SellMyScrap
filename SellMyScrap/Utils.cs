@@ -267,7 +267,7 @@ internal static class Utils
             .Select(x => TryConvertStringToType(x, out T result) ? result : default)
             .Where(x => x is not null);
     }
-
+    
     public static string CollectionToString<T>(IEnumerable<T> value)
     {
         if (value == null || !value.Any())

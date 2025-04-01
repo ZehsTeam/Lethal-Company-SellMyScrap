@@ -1,5 +1,4 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Helpers;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -43,31 +42,13 @@ internal static class StartOfRoundPatch
         gameObject.SetActive(false);
     }
 
-    //[HarmonyPatch(nameof(StartOfRound.firstDayAnimation))]
-    //[HarmonyPrefix]
-    //[HarmonyPriority(Priority.First)]
-    //private static void FirstDayAnimationPatchPrefix()
-    //{
-    //    if (_cachedShipIntroSpeechSFX != null)
-    //    {
-    //        StartOfRound.Instance.shipIntroSpeechSFX = _cachedShipIntroSpeechSFX;
-    //    }
-
-    //    if (!PlayerUtils.IsLocalPlayer([PlayerName.CritHaxXoG, PlayerName.Takerst, PlayerName.PsychoHypnotic, PlayerName.IElucian, PlayerName.AGlitchedNpc, PlayerName.Lunxara, PlayerName.LustStings, PlayerName.Ariesgoddess168, PlayerName.ZombiesAteMyChannel, PlayerName.WolfsMyChocolate, PlayerName.Hiccubz]))
-    //    {
-    //        return;
-    //    }
-
-    //    if (SaveHelper.LoadValue("PlayedCustomIntroSpeech_2", SaveLocation.Modpack, defaultValue: false))
-    //    {
-    //        return;
-    //    }
-
-    //    SaveHelper.SaveValue("PlayedCustomIntroSpeech_2", value: true, SaveLocation.Modpack);
-
-    //    _cachedShipIntroSpeechSFX = StartOfRound.Instance.shipIntroSpeechSFX;
-    //    StartOfRound.Instance.shipIntroSpeechSFX = Content.BrainRotIntroSpeechSFX;
-    //}
+    [HarmonyPatch(nameof(StartOfRound.firstDayAnimation))]
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    private static void FirstDayAnimationPatchPrefix()
+    {
+        StartOfRound.Instance.shipIntroSpeechSFX = Content.BrainRotIntroSpeechSFX;
+    }
 
     [HarmonyPatch(nameof(StartOfRound.OnClientConnect))]
     [HarmonyPrefix]
