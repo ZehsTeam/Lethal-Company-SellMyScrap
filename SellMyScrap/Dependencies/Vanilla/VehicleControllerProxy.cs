@@ -26,7 +26,7 @@ internal static class VehicleControllerProxy
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to get enabled state from VehicleControllerProxy. {ex}");
+            Logger.LogError($"Failed to get enabled state from VehicleControllerProxy. {ex}");
             return false;
         }
     }
@@ -48,7 +48,7 @@ internal static class VehicleControllerProxy
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to get GrabbableObjects from attached vehicle. {ex}");
+            Logger.LogError($"Failed to get GrabbableObjects from attached vehicle. {ex}");
             return [];
         }
     }

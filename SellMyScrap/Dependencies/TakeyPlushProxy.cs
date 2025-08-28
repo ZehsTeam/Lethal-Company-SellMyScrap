@@ -28,7 +28,7 @@ internal static class TakeyPlushProxy
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to invoke OnDinkDonkScrapEaterSpawned event in TakeyPlush. {ex}");
+            Logger.LogError($"Failed to invoke OnDinkDonkScrapEaterSpawned event in TakeyPlush. {ex}");
         }
     }
 }

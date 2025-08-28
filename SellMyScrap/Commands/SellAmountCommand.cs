@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using System.Data;
 using System.Text;
 
@@ -33,7 +34,7 @@ internal class SellAmountCommand : SellCommand
         }
         catch
         {
-            Plugin.Logger.LogError($"Error: failed to evalute expression for sell <amount>");
+            Logger.LogError($"Error: failed to evalute expression for sell <amount>");
         }
 
         if (!int.TryParse(evaluatedExpression, out int requestedValue) || requestedValue <= 0)
@@ -41,7 +42,7 @@ internal class SellAmountCommand : SellCommand
             return TerminalHelper.CreateTerminalNode(GetSellAmountInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(new SellCommandRequest(requestedValue)
+        ScrapToSell scrapToSell = SellManager.GetScrapToSell(new SellCommandRequest(requestedValue)
         {
             WithOvertimeBonus = WithOvertimeBonus(),
             OnlyUseShipInventory = OnlyUseShipInventory(),
@@ -53,7 +54,7 @@ internal class SellAmountCommand : SellCommand
             return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.Amount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
+        SellManager.CreateSellRequest(SellType.Amount, scrapToSell.TotalScrapValue, requestedValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell, requestedValue, WithOvertimeBonus());
@@ -76,7 +77,7 @@ internal class SellAmountCommand : SellCommand
             foundColor = scrapToSell.RealTotalScrapValue >= requestedValue ? "green" : "red";
         }
 
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
 
         builder.AppendLine($"Found {scrapToSell.ItemCount} items with a total value of <color={foundColor}>${scrapToSell.RealTotalScrapValue}</color>");
         builder.AppendLine($"Requested value: ${requestedValue}");
@@ -84,7 +85,7 @@ internal class SellAmountCommand : SellCommand
         builder.Append(overtimeBonusString);
         builder.AppendLine($"The Company is buying at %{CompanyBuyingRate}\n");
 
-        if (Plugin.ConfigManager.ShowFoundItems.Value)
+        if (ConfigManager.ShowFoundItems.Value)
         {
             builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n");
         }
@@ -96,8 +97,7 @@ internal class SellAmountCommand : SellCommand
 
     private string GetSellAmountInvalidMessage()
     {
-        StringBuilder builder = new StringBuilder();
-
+        var builder = new StringBuilder();
         builder.AppendLine("Error: sell amount is invalid.\n");
         builder.AppendLine("Usage:");
         builder.AppendLine("sell <amount>");
@@ -109,7 +109,6 @@ internal class SellAmountCommand : SellCommand
         builder.AppendLine("    sell 500");
         builder.AppendLine("    sell 110 * 5 - 50");
         builder.AppendLine("    sell 550 -o\n\n");
-
         return builder.ToString();
     }
 }

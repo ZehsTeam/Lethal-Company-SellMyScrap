@@ -4,10 +4,8 @@ using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -17,44 +15,29 @@ namespace com.github.zehsteam.SellMyScrap;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class Utils
 {
-    public static string GetEnumName<T>(T value) where T : Enum
-    {
-        return Enum.GetName(typeof(T), value) ?? string.Empty;
-    }
-
-    public static string GetPluginDirectoryPath()
-    {
-        return Path.GetDirectoryName(Plugin.Instance.Info.Location);
-    }
-
-    public static string GetConfigDirectoryPath()
-    {
-        return Paths.ConfigPath;
-    }
-
-    public static string GetGlobalConfigDirectoryPath()
+    public static string GetPluginPersistentDataPath()
     {
         return Path.Combine(Application.persistentDataPath, MyPluginInfo.PLUGIN_NAME);
     }
 
-    public static ConfigFile CreateConfigFile(string directoryPath, string name = null, bool saveOnInit = false)
+    public static ConfigFile CreateConfigFile(BaseUnityPlugin plugin, string path, string name = null, bool saveOnInit = false)
     {
-        BepInPlugin metadata = MetadataHelper.GetMetadata(Plugin.Instance);
+        BepInPlugin metadata = MetadataHelper.GetMetadata(plugin);
         name ??= metadata.GUID;
         name += ".cfg";
-        return new ConfigFile(Path.Combine(directoryPath, name), saveOnInit, metadata);
+        return new ConfigFile(Path.Combine(path, name), saveOnInit, metadata);
     }
 
-    public static ConfigFile CreateLocalConfigFile(string name = null, bool saveOnInit = false)
+    public static ConfigFile CreateLocalConfigFile(BaseUnityPlugin plugin, string name = null, bool saveOnInit = false)
     {
-        name ??= $"{MyPluginInfo.PLUGIN_GUID}-{name}";
-        return CreateConfigFile(Paths.ConfigPath, name, saveOnInit);
+        return CreateConfigFile(plugin, Paths.ConfigPath, name, saveOnInit);
     }
 
-    public static ConfigFile CreateGlobalConfigFile(string name = null, bool saveOnInit = false)
+    public static ConfigFile CreateGlobalConfigFile(BaseUnityPlugin plugin, string name = null, bool saveOnInit = false)
     {
+        string path = GetPluginPersistentDataPath();
         name ??= "global";
-        return CreateConfigFile(GetGlobalConfigDirectoryPath(), name, saveOnInit);
+        return CreateConfigFile(plugin, path, name, saveOnInit);
     }
 
     public static bool RandomPercent(float percent)
@@ -154,7 +137,7 @@ internal static class Utils
 
                 if (landmine != null && !landmine.hasExploded && distanceFromExplosion2 < 6f)
                 {
-                    Plugin.Instance.LogInfoExtended("Setting off other mine");
+                    Logger.LogInfo("Setting off other mine", extended: true);
 
                     landmine.StartCoroutine(landmine.TriggerOtherMineDelayed(landmine));
                 }
@@ -185,149 +168,37 @@ internal static class Utils
         }
     }
 
-    public static int GetRandomIndexFromWeightList(List<int> weightList)
+    public static int GetRandomIndexFromWeightList(IEnumerable<int> weights)
     {
-        List<(int index, int weight)> weightedItems = [];
-
-        for (int i = 0; i < weightList.Count; i++)
-        {
-            int spawnWeight = weightList[i];
-            if (spawnWeight <= 0) continue;
-
-            weightedItems.Add((i, spawnWeight));
-        }
+        if (weights == null)
+            throw new ArgumentNullException(nameof(weights));
 
         int totalWeight = 0;
-        foreach (var (_, weight) in weightedItems)
+        int index = 0;
+
+        foreach (var w in weights)
         {
-            totalWeight += weight;
+            if (w < 0)
+                throw new ArgumentException("Weights must be non-negative.");
+            totalWeight += w;
         }
 
-        if (totalWeight == 0) return -1;
+        if (totalWeight == 0)
+            throw new ArgumentException("At least one weight must be greater than zero.");
 
-        int randomNumber = Random.Range(0, totalWeight);
+        int randomValue = Random.Range(0, totalWeight);
+        int cumulative = 0;
+        index = 0;
 
-        int cumulativeWeight = 0;
-        foreach (var (index, weight) in weightedItems)
+        foreach (var w in weights)
         {
-            cumulativeWeight += weight;
-            if (randomNumber < cumulativeWeight)
-            {
+            cumulative += w;
+            if (randomValue < cumulative)
                 return index;
-            }
+            index++;
         }
 
-        // This should never happen if weights are correctly specified
-        throw new InvalidOperationException("Weights are not properly specified.");
-    }
-
-    public static List<List<T>> SplitList<T>(List<T> items, int numberOfLists)
-    {
-        List<List<T>> result = [];
-
-        int count = items.Count;
-        int size = Mathf.CeilToInt(count / (float)numberOfLists);
-
-        for (int i = 0; i < numberOfLists; i++)
-        {
-            List<T> sublist = items.GetRange(i * size, Mathf.Min(size, count - i * size));
-            result.Add(sublist);
-        }
-
-        return result;
-    }
-
-    public static Coroutine StartCoroutine(IEnumerator routine)
-    {
-        if (Plugin.Instance != null)
-        {
-            return Plugin.Instance.StartCoroutine(routine);
-        }
-
-        if (GameNetworkManager.Instance != null)
-        {
-            return GameNetworkManager.Instance.StartCoroutine(routine);
-        }
-
-        Plugin.Logger.LogError("Failed to start coroutine. " + routine);
-
-        return null;
-    }
-
-    public static IEnumerable<T> StringToCollection<T>(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return Enumerable.Empty<T>();
-        }
-
-        return value.Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Select(x => TryConvertStringToType(x, out T result) ? result : default)
-            .Where(x => x is not null);
-    }
-    
-    public static string CollectionToString<T>(IEnumerable<T> value)
-    {
-        if (value == null || !value.Any())
-        {
-            return string.Empty;
-        }
-
-        return string.Join(", ", value
-            .Where(x => x is not null && !string.IsNullOrWhiteSpace(x.ToString()))
-            .Select(x => x.ToString().Trim()));
-    }
-
-    public static bool TryConvertStringToType<T>(string value, out T result)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            result = default;
-            return false;
-        }
-
-        try
-        {
-            Type targetType = typeof(T);
-
-            // Handle Enums
-            if (targetType.IsEnum && Enum.TryParse(targetType, value.Trim(), true, out object enumResult))
-            {
-                result = (T)enumResult;
-                return true;
-            }
-
-            // Handle GUIDs
-            if (targetType == typeof(Guid) && Guid.TryParse(value.Trim(), out Guid guidResult))
-            {
-                result = (T)(object)guidResult;
-                return true;
-            }
-
-            // Handle nullable types
-            Type underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
-
-            result = (T)Convert.ChangeType(value.Trim(), underlyingType);
-            return true;
-        }
-        catch
-        {
-            result = default;
-            return false;
-        }
-    }
-
-    public static bool StringEquals(string input, string[] values, bool matchCase = true)
-    {
-        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
-        return values.Any(value => input.Equals(value, comparisonType));
-    }
-
-    public static bool StringContains(string input, string[] values, bool matchCase = true)
-    {
-        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
-        return values.Any(value => input.Contains(value, comparisonType));
+        // Safety fallback
+        return index - 1;
     }
 }

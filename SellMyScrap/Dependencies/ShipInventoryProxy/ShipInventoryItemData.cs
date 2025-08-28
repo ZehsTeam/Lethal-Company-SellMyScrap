@@ -35,7 +35,7 @@ public class ShipInventoryItemData : INetworkSerializable
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to create ShipInventoryItemData. {ex}");
+            Logger.LogError($"Failed to create ShipInventoryItemData. {ex}");
         }
     }
 
@@ -57,7 +57,7 @@ public class ShipInventoryItemData : INetworkSerializable
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to compare ShipInventory ItemData. {ex}");
+            Logger.LogError($"Failed to compare ShipInventory ItemData. {ex}");
         }
 
         return false;
@@ -72,7 +72,7 @@ public class ShipInventoryItemData : INetworkSerializable
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to get ShipInventory ItemData. {ex}");
+            Logger.LogError($"Failed to get ShipInventory ItemData. {ex}");
         }
 
         return default;
@@ -87,7 +87,7 @@ public class ShipInventoryItemData : INetworkSerializable
 
             if (itemData.Equals(default))
             {
-                Plugin.Logger.LogError($"Failed to get ShipInventory item. Item does not exist in the ShipInventory storage.");
+                Logger.LogError($"Failed to get ShipInventory item. Item does not exist in the ShipInventory storage.");
                 return null;
             }
 
@@ -95,7 +95,7 @@ public class ShipInventoryItemData : INetworkSerializable
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to get ShipInventory Item. {ex}");
+            Logger.LogError($"Failed to get ShipInventory Item. {ex}");
         }
 
         return null;

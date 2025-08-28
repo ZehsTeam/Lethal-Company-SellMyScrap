@@ -1,4 +1,5 @@
-﻿using GameNetcodeStuff;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using GameNetcodeStuff;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -28,7 +29,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         if (NetworkUtils.IsServer)
         {
-            if (PlayerUtils.HasPlayer(PlayerName.Magoroku, PlayerName.PsychoHypnotic))
+            if (PlayerUtils.HasPlayerMagoroku() || PlayerUtils.HasPlayerPsychoHypnotic())
             {
                 _isEvil = Utils.RandomPercent(80);
             }
@@ -51,7 +52,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _isEvil = isEvil;
         _meowIndex = meowIndex;
 
-        if (PlayerUtils.IsLocalPlayer(PlayerName.Magoroku) && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
+        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
         {
             _isTarget = true;
         }

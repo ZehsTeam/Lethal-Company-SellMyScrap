@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Data;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -21,7 +22,7 @@ internal static class StartOfRoundPatch
     {
         if (!NetworkUtils.IsServer) return;
 
-        var networkHandlerHost = Object.Instantiate(Content.NetworkHandlerPrefab, Vector3.zero, Quaternion.identity);
+        var networkHandlerHost = Object.Instantiate(Assets.NetworkHandlerPrefab, Vector3.zero, Quaternion.identity);
         networkHandlerHost.GetComponent<NetworkObject>().Spawn();
     }
 
@@ -29,8 +30,6 @@ internal static class StartOfRoundPatch
     [HarmonyPostfix]
     private static void StartPatch()
     {
-        Plugin.ConfigManager.TrySetCustomValues();
-
         RemoveMapPropsContainerForTesting();
     }
 
@@ -64,6 +63,6 @@ internal static class StartOfRoundPatch
     [HarmonyPrefix]
     private static void OnLocalDisconnectPatch()
     {
-        Plugin.Instance.OnLocalDisconnect();
+        Plugin.HandleLocalDisconnect();
     }
 }

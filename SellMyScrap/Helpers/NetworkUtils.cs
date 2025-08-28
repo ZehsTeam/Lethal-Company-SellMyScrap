@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.Netcode;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static class NetworkUtils

@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -387,7 +388,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
 
-            if (_voiceLineIndex == 2 && PlayerUtils.IsLocalPlayer(PlayerName.PsychoHypnotic))
+            if (_voiceLineIndex == 2 && PlayerUtils.IsLocalPlayerPsychoHypnotic())
             {
                 HUDManager.Instance.DisplayTip("SellMyScrap", "This is NOT a reference to The Wolf of Wall Street");
             }
@@ -447,7 +448,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private IEnumerator DinkDonkSpecialSuckAnimation()
     {
-        List<List<GrabbableObject>> targetScrapLists = Utils.SplitList(targetScrap.OrderBy(x => x.scrapValue).ToList(), numberOfLists: 3);
+        List<List<GrabbableObject>> targetScrapLists = Extensions.CollectionExtensions.SplitList(targetScrap.OrderBy(x => x.scrapValue).ToList(), numberOfLists: 3);
 
         yield return new WaitForSeconds(PlayOneShotSFX(DinkDonkSpecialLine1SFX));
         yield return new WaitForSeconds(0.5f);

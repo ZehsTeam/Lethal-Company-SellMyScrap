@@ -1,9 +1,10 @@
 ﻿using GameNetcodeStuff;
+using Steamworks;
 using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class PlayerUtils
@@ -24,70 +25,6 @@ internal static class PlayerUtils
     public static bool IsLocalPlayer(PlayerControllerB playerScript)
     {
         return playerScript == GetLocalPlayerScript();
-    }
-
-    public static bool IsLocalPlayer(PlayerName playerName)
-    {
-        return SteamUtils.IsLocalClient(playerName);
-    }
-
-    public static bool IsLocalPlayer(params PlayerName[] playerNames)
-    {
-        foreach (var playerName in playerNames)
-        {
-            if (SteamUtils.IsLocalClient(playerName))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static bool IsPlayer(PlayerControllerB playerScript, PlayerName playerName)
-    {
-        if (playerScript == null) return false;
-
-        return SteamUtils.IsPlayer(playerName, playerScript.playerUsername, playerScript.playerSteamId);
-    }
-
-    public static bool HasPlayer(PlayerName playerName)
-    {
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
-        {
-            if (IsPlayer(playerScript, playerName))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static bool HasPlayer(params PlayerName[] playerNames)
-    {
-        foreach (var playerName in playerNames)
-        {
-            if (HasPlayer(playerName))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static PlayerControllerB GetPlayerScript(PlayerName playerName)
-    {
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
-        {
-            if (IsPlayer(playerScript, playerName))
-            {
-                return playerScript;
-            }
-        }
-
-        return null;
     }
 
     public static PlayerControllerB GetPlayerScriptByClientId(ulong clientId)
@@ -181,4 +118,61 @@ internal static class PlayerUtils
             StartOfRound.Instance.ReviveDeadPlayers();
         }
     }
+
+    #region Other
+    public static bool IsLocalPlayer(string username, ulong steamId)
+    {
+        return SteamClient.Name == username || SteamClient.SteamId == steamId;
+    }
+
+    public static bool HasPlayer(string username, ulong steamId)
+    {
+        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (playerScript.playerUsername == username)
+            {
+                return true;
+            }
+
+            if (playerScript.playerSteamId == steamId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Magoroku
+    public static bool IsLocalPlayerMagoroku()
+    {
+        return IsLocalPlayer(GetMagorokuInfo().Item1, GetMagorokuInfo().Item2);
+    }
+
+    public static bool HasPlayerMagoroku()
+    {
+        return HasPlayer(GetMagorokuInfo().Item1, GetMagorokuInfo().Item2);
+    }
+
+    // PsychoHypnotic
+    public static bool IsLocalPlayerPsychoHypnotic()
+    {
+        return IsLocalPlayer(GetPsychoHypnoticInfo().Item1, GetPsychoHypnoticInfo().Item2);
+    }
+
+    public static bool HasPlayerPsychoHypnotic()
+    {
+        return HasPlayer(GetPsychoHypnoticInfo().Item1, GetPsychoHypnoticInfo().Item2);
+    }
+
+    private static (string, ulong) GetMagorokuInfo()
+    {
+        return ("Magoroku", 76561197982837475);
+    }
+
+    private static (string, ulong) GetPsychoHypnoticInfo()
+    {
+        return ("PsychoHypnotic", 76561197970440803);
+    }
+    #endregion
 }

@@ -10,14 +10,14 @@ internal static class EnemyAIHelper
     {
         if (enemyAI == null)
         {
-            Plugin.Logger.LogError("EnemyAI instance is null!");
+            Logger.LogError("EnemyAI instance is null!");
             return;
         }
 
         MethodInfo method = typeof(EnemyAI).GetMethod("HitEnemyOnLocalClient", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         if (method == null)
         {
-            Plugin.Logger.LogError("HitEnemyOnLocalClient method not found on EnemyAI!");
+            Logger.LogError("HitEnemyOnLocalClient method not found on EnemyAI!");
             return;
         }
 
@@ -46,14 +46,14 @@ internal static class EnemyAIHelper
     {
         if (enemyAI == null)
         {
-            Plugin.Logger.LogError("EnemyAI instance is null!");
+            Logger.LogError("EnemyAI instance is null!");
             return;
         }
 
         MethodInfo method = typeof(EnemyAI).GetMethod("HitFromExplosion", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         if (method == null)
         {
-            Plugin.Logger.LogWarning("HitFromExplosion method not found on EnemyAI!");
+            Logger.LogWarning("HitFromExplosion method not found on EnemyAI!");
             return;
         }
 

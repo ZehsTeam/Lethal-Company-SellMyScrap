@@ -17,7 +17,7 @@ internal static class GameNetworkManagerPatch
 
     private static void AddNetworkPrefabs()
     {
-        AddNetworkPrefab(Content.NetworkHandlerPrefab);
+        AddNetworkPrefab(Assets.NetworkHandlerPrefab);
 
         foreach (var scrapEater in ScrapEaterManager.ScrapEaters)
         {
@@ -29,12 +29,12 @@ internal static class GameNetworkManagerPatch
     {
         if (prefab == null)
         {
-            Plugin.Logger.LogError("Failed to register network prefab. GameObject is null.");
+            Logger.LogError("Failed to register network prefab. GameObject is null.");
             return;
         }
 
         NetworkManager.Singleton.AddNetworkPrefab(prefab);
 
-        Plugin.Logger.LogInfo($"Registered \"{prefab.name}\" network prefab.");
+        Logger.LogInfo($"Registered \"{prefab.name}\" network prefab.");
     }
 }

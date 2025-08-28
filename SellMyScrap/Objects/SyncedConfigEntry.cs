@@ -1,11 +1,12 @@
 ﻿using BepInEx.Configuration;
+using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 
-namespace com.github.zehsteam.SellMyScrap.Data;
+namespace com.github.zehsteam.SellMyScrap.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -99,11 +100,11 @@ public class SyncedConfigEntry<T> : SyncedConfigEntryBase
     {
         if (!NetworkUtils.IsConnected || NetworkUtils.IsServer) return;
 
-        if (Utils.TryConvertStringToType(value, out T parsedValue))
+        if (value.TryConvertTo(out T parsedValue))
         {
             _serverValue = parsedValue;
 
-            Plugin.Instance.LogInfoExtended($"Set synced config entry value from server. (Section: \"{Section}\", Key: \"{Key}\", Value: \"{value}\")");
+            Logger.LogInfo($"Set synced config entry value from server. (Section: \"{Section}\", Key: \"{Key}\", Value: \"{value}\")", extended: true);
 
             SettingChanged?.Invoke(parsedValue);
 
@@ -167,7 +168,7 @@ public abstract class SyncedConfigEntryBase
 
         if (syncedConfigEntryBase == null)
         {
-            Plugin.Logger.LogWarning($"No matching synced config entry found for section: \"{section}\", key: \"{key}\"");
+            Logger.LogWarning($"No matching synced config entry found for section: \"{section}\", key: \"{key}\"");
             return;
         }
 

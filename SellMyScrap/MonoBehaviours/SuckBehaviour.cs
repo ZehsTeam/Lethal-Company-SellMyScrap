@@ -70,7 +70,7 @@ public class SuckBehaviour : MonoBehaviour
     {
         if (_ragdollGrabbableObject == null || !_ragdollGrabbableObject.foundRagdollObject)
         {
-            Plugin.Logger.LogError("RagdollGrabbableObject is null or the ragdoll object was not found.");
+            Logger.LogError("RagdollGrabbableObject is null or the ragdoll object was not found.");
             yield return new WaitForSeconds(duration);
             yield break;
         }

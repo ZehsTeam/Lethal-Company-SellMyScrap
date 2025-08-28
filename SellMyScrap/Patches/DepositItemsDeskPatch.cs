@@ -56,7 +56,7 @@ internal static class DepositItemsDeskPatch
         __instance.speakerAudio.PlayOneShot(audioClip, 1f);
 
         // Play audio clip in the ship
-        if (SpeakInShip && Plugin.ConfigManager.SpeakInShip.Value)
+        if (SpeakInShip && ConfigManager.SpeakInShip.Value)
         {
             StartOfRound.Instance.speakerAudioSource.PlayOneShot(audioClip, 1f);
         }
@@ -69,7 +69,7 @@ internal static class DepositItemsDeskPatch
 
     private static int GetRandomAudioClipIndex()
     {
-        if (Utils.RandomPercent(Plugin.ConfigManager.RareVoiceLineChance.Value))
+        if (Utils.RandomPercent(ConfigManager.RareVoiceLineChance.Value))
         {
             return Random.Range(0, DepositItemsDeskHelper.Instance.rareMicrophoneAudios.Length) + DepositItemsDeskHelper.Instance.microphoneAudios.Length;
         }

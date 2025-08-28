@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -21,14 +22,14 @@ internal class SellListCommand : SellCommand
             return failReason;
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.GetScrapToSell(Plugin.ConfigManager.SellListArray, onlyUseShipInventory: OnlyUseShipInventory());
+        ScrapToSell scrapToSell = SellManager.GetScrapToSell(ConfigManager.SellListArray, onlyUseShipInventory: OnlyUseShipInventory());
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.List, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
+        SellManager.CreateSellRequest(SellType.List, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
         
         string message = GetMessage(scrapToSell);
@@ -44,7 +45,7 @@ internal class SellListCommand : SellCommand
         builder.Append(GetOvertimeBonusString(scrapToSell.RealTotalScrapValue));
         builder.AppendLine($"The Company is buying at %{CompanyBuyingRate}\n");
 
-        if (Plugin.ConfigManager.ShowFoundItems.Value)
+        if (ConfigManager.ShowFoundItems.Value)
         {
             builder.AppendLine($"{ScrapHelper.GetScrapMessage(scrapToSell.ItemDataList)}\n");
         }

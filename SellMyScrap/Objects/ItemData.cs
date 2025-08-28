@@ -1,6 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 
-namespace com.github.zehsteam.SellMyScrap.Data;
+namespace com.github.zehsteam.SellMyScrap.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 

@@ -30,7 +30,7 @@ internal class ViewAllScrapCommand : Command
 
         string message = GetMessage();
 
-        Plugin.Logger.LogInfo($"\n\n{ScrapHelper.GetScrapItemMessage(_scrapItems)}\n");
+        Logger.LogInfo($"\n\n{ScrapHelper.GetScrapItemMessage(_scrapItems)}\n");
 
         AwaitingConfirmation = true;
 
@@ -63,7 +63,7 @@ internal class ViewAllScrapCommand : Command
             return TerminalHelper.CreateTerminalNode(GetMessage());
         }
 
-        if ("page".Contains(args[0], StringComparison.OrdinalIgnoreCase))
+        if (!"page".Contains(args[0], StringComparison.OrdinalIgnoreCase))
         {
             return TerminalHelper.CreateTerminalNode(GetMessage("Error: invalid command.\n\n"));
         }
@@ -86,7 +86,7 @@ internal class ViewAllScrapCommand : Command
         int amount = Mathf.Min(_scrapItems.Count - index, _itemsPerPage);
         List<Item> scrapItemsForPage = _scrapItems.GetRange(index, amount);
 
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
 
         builder.AppendLine($"Found {_scrapItems.Count} total items from all moons. (Page {_pageIndex + 1} / {_pages})\n");
         builder.AppendLine($"{ScrapHelper.GetScrapItemMessage(scrapItemsForPage, columns, 26)}\n");

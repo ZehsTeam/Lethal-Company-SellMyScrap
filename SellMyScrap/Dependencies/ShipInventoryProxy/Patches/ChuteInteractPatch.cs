@@ -54,7 +54,7 @@ internal static class ChuteInteractPatch
 
         if (targetField == null || targetMethod == null || replacementMethod == null)
         {
-            Plugin.Logger.LogError("Failed to apply SpawnCoroutine transpiler.");
+            Logger.LogError("Failed to apply SpawnCoroutine transpiler.");
             return instructions;
         }
 

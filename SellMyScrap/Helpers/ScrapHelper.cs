@@ -1,6 +1,6 @@
-﻿using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
+using com.github.zehsteam.SellMyScrap.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,11 +178,11 @@ internal static class ScrapHelper
     {
         StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
 
-        if (itemName.Equals("Gift", comparisonType) && !Plugin.ConfigManager.SellGifts.Value) return false;
-        if (itemName.Equals("Shotgun", comparisonType) && !Plugin.ConfigManager.SellShotguns.Value) return false;
-        if (itemName.Equals("Ammo", comparisonType) && !Plugin.ConfigManager.SellAmmo.Value) return false;
-        if (itemName.Equals("Kitchen knife", comparisonType) && !Plugin.ConfigManager.SellKnives.Value) return false;
-        if (itemName.Equals("Jar of pickles", comparisonType) && !Plugin.ConfigManager.SellPickles.Value) return false;
+        if (itemName.Equals("Gift", comparisonType) && !ConfigManager.SellGifts.Value) return false;
+        if (itemName.Equals("Shotgun", comparisonType) && !ConfigManager.SellShotguns.Value) return false;
+        if (itemName.Equals("Ammo", comparisonType) && !ConfigManager.SellAmmo.Value) return false;
+        if (itemName.Equals("Kitchen knife", comparisonType) && !ConfigManager.SellKnives.Value) return false;
+        if (itemName.Equals("Jar of pickles", comparisonType) && !ConfigManager.SellPickles.Value) return false;
 
         foreach (var dontSellItemName in dontSellItemNames)
         {
@@ -201,17 +201,17 @@ internal static class ScrapHelper
 
         if (!IsScrap(grabbableObject)) return false;
 
-        if (!includeScrapWorthZero && !Plugin.ConfigManager.SellScrapWorthZero.Value && grabbableObject.scrapValue <= 0)
+        if (!includeScrapWorthZero && !ConfigManager.SellScrapWorthZero.Value && grabbableObject.scrapValue <= 0)
         {
             return false;
         }
 
-        if (Plugin.ConfigManager.OnlySellScrapOnFloor.Value && !IsScrapOnFloor(grabbableObject))
+        if (ConfigManager.OnlySellScrapOnFloor.Value && !IsScrapOnFloor(grabbableObject))
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(grabbableObject, Plugin.ConfigManager.DontSellListArray))
+        if (onlyAllowedScrap && !IsAllowedScrap(grabbableObject, ConfigManager.DontSellListArray))
         {
             return false;
         }
@@ -223,12 +223,12 @@ internal static class ScrapHelper
     {
         if (shipInventoryItemData == null) return false;
 
-        if (!includeScrapWorthZero && !Plugin.ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
+        if (!includeScrapWorthZero && !ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, Plugin.ConfigManager.DontSellListArray))
+        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, ConfigManager.DontSellListArray))
         {
             return false;
         }
@@ -273,7 +273,7 @@ internal static class ScrapHelper
     #region Get Scrap Message
     public static string GetScrapMessage(List<ItemData> items)
     {
-        return GetScrapMessage(items, Plugin.ConfigManager.SortFoundItemsPrice.Value, Plugin.ConfigManager.AlignFoundItemsPrice.Value);
+        return GetScrapMessage(items, ConfigManager.SortFoundItemsPrice.Value, ConfigManager.AlignFoundItemsPrice.Value);
     }
 
     public static string GetScrapMessage(List<ItemData> items, bool sortFoundItemsPrice, bool alignFoundItemsPrice)
@@ -287,7 +287,7 @@ internal static class ScrapHelper
 
     public static string GetScrapMessage(List<GrabbableObject> grabbableObjects)
     {
-        return GetScrapMessage(grabbableObjects, Plugin.ConfigManager.SortFoundItemsPrice.Value, Plugin.ConfigManager.AlignFoundItemsPrice.Value);
+        return GetScrapMessage(grabbableObjects, ConfigManager.SortFoundItemsPrice.Value, ConfigManager.AlignFoundItemsPrice.Value);
     }
 
     public static string GetScrapMessage(List<GrabbableObject> grabbableObjects, bool sortFoundItemsPrice, bool alignFoundItemsPrice)

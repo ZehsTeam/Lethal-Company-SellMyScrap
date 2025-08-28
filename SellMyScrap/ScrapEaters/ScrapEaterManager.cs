@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+﻿using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,39 +16,37 @@ public static class ScrapEaterManager
 
     internal static void Initialize()
     {
-        ConfigManager configManager = Plugin.ConfigManager;
-
         ScrapEaters = [
-            new ScrapEater(Content.OctolarScrapEaterPrefab, () => {
-                return configManager.OctolarSpawnWeight.Value;
+            new ScrapEater(Assets.OctolarScrapEaterPrefab, () => {
+                return ConfigManager.OctolarSpawnWeight.Value;
             }),
-            new ScrapEater(Content.TakeyScrapEaterPrefab, () => {
-                return configManager.TakeySpawnWeight.Value;
+            new ScrapEater(Assets.TakeyScrapEaterPrefab, () => {
+                return ConfigManager.TakeySpawnWeight.Value;
             }),
-            new ScrapEater(Content.MaxwellScrapEaterPrefab, () => {
-                return configManager.MaxwellSpawnWeight.Value;
+            new ScrapEater(Assets.MaxwellScrapEaterPrefab, () => {
+                return ConfigManager.MaxwellSpawnWeight.Value;
             }),
-            new ScrapEater(Content.YippeeScrapEaterPrefab, () => {
-                return configManager.YippeeSpawnWeight.Value;
+            new ScrapEater(Assets.YippeeScrapEaterPrefab, () => {
+                return ConfigManager.YippeeSpawnWeight.Value;
             }),
-            new ScrapEater(Content.CookieFumoScrapEaterPrefab, () => {
-                return configManager.CookieFumoSpawnWeight.Value;
+            new ScrapEater(Assets.CookieFumoScrapEaterPrefab, () => {
+                return ConfigManager.CookieFumoSpawnWeight.Value;
             }),
-            new ScrapEater(Content.PsychoScrapEaterPrefab, () => {
-                return configManager.PsychoSpawnWeight.Value;
+            new ScrapEater(Assets.PsychoScrapEaterPrefab, () => {
+                return ConfigManager.PsychoSpawnWeight.Value;
             }),
-            new ScrapEater(Content.ZombiesScrapEaterPrefab, () => {
-                return configManager.ZombiesSpawnWeight.Value;
+            new ScrapEater(Assets.ZombiesScrapEaterPrefab, () => {
+                return ConfigManager.ZombiesSpawnWeight.Value;
             }),
-            new ScrapEater(Content.WolfyScrapEaterPrefab, () => {
-                return configManager.WolfySpawnWeight.Value;
+            new ScrapEater(Assets.WolfyScrapEaterPrefab, () => {
+                return ConfigManager.WolfySpawnWeight.Value;
             }),
         ];
     }
 
     internal static bool CanUseScrapEater()
     {
-        int spawnChance = Plugin.ConfigManager.ScrapEaterChance.Value;
+        int spawnChance = ConfigManager.ScrapEaterChance.Value;
         return Utils.RandomPercent(spawnChance);
     }
 
@@ -91,7 +90,7 @@ public static class ScrapEaterManager
         ScrapEaterBehaviour behaviour = gameObject.GetComponent<ScrapEaterBehaviour>();
         behaviour.SetData(scrap, variantIndex);
 
-        Plugin.Logger.LogInfo($"Spawned scrap eater #{index + 1}");
+        Logger.LogInfo($"Spawned scrap eater #{index + 1}");
     }
 
     private static int GetRandomScrapEaterIndex()

@@ -31,12 +31,12 @@ internal static class TerminalPatch
         if (_hasOverrideTerminalNodes) return;
         _hasOverrideTerminalNodes = true;
 
-        if (Plugin.ConfigManager.OverrideWelcomeMessage.Value)
+        if (ConfigManager.OverrideWelcomeMessage.Value)
         {
             OverrideWelcomeTerminalNode(terminalNodes);
         }
 
-        if (Plugin.ConfigManager.OverrideHelpMessage.Value)
+        if (ConfigManager.OverrideHelpMessage.Value)
         {
             OverrideHelpTerminalNode(terminalNodes);
         }
@@ -69,7 +69,7 @@ internal static class TerminalPatch
     [HarmonyPostfix]
     private static void QuitTerminalPatch()
     {
-        Plugin.Instance.OnTerminalQuit();
+        Plugin.HandleTerminalQuit();
     }
 
     [HarmonyPatch(nameof(Terminal.ParsePlayerSentence))]

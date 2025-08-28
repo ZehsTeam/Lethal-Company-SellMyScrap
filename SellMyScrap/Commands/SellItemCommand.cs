@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;
@@ -28,14 +29,14 @@ internal class SellItemCommand : SellCommand
             return TerminalHelper.CreateTerminalNode(GetSellItemInvalidMessage());
         }
 
-        ScrapToSell scrapToSell = Plugin.Instance.SetScrapToSell(ScrapHelper.GetAllScrapByItemName(itemName, onlyUseShipInventory: OnlyUseShipInventory()));
+        ScrapToSell scrapToSell = SellManager.SetScrapToSell(ScrapHelper.GetAllScrapByItemName(itemName, onlyUseShipInventory: OnlyUseShipInventory()));
 
         if (scrapToSell.ItemCount == 0)
         {
             return TerminalHelper.CreateTerminalNode("No items found to sell.\n\n");
         }
 
-        Plugin.Instance.CreateSellRequest(SellType.Item, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
+        SellManager.CreateSellRequest(SellType.Item, scrapToSell.TotalScrapValue, scrapToSell.TotalScrapValue, ConfirmationStatus.AwaitingConfirmation, GetScrapEaterIndex(), GetScrapEaterVariantIndex());
         AwaitingConfirmation = true;
 
         string message = GetMessage(scrapToSell);

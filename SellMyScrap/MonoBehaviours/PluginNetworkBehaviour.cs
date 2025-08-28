@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using Unity.Netcode;
@@ -58,16 +59,16 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
 
         if (playerScript == null)
         {
-            Plugin.Logger.LogError("Failed to perform sell server rpc. PlayerControllerB is null.");
+            Logger.LogError("Failed to perform sell server rpc. PlayerControllerB is null.");
             return;
         }
 
-        string message = $"{playerScript.playerUsername} requested to sell {Utils.GetEnumName(sellType)} {scrapToSell.ItemCount} items for ${scrapToSell.RealTotalScrapValue}";
+        string message = $"{playerScript.playerUsername} requested to sell {sellType} {scrapToSell.ItemCount} items for ${scrapToSell.RealTotalScrapValue}";
 
-        Plugin.Logger.LogInfo(message);
+        Logger.LogInfo(message);
         HUDManager.Instance.DisplayGlobalNotification(message);
 
-        Plugin.Instance.PerformSellOnServerFromClient(scrapToSell, sellType, scrapEaterIndex, scrapEaterVariantIndex);
+        SellManager.PerformSellOnServerFromClient(scrapToSell, sellType, scrapEaterIndex, scrapEaterVariantIndex);
     }
 
     [ClientRpc]

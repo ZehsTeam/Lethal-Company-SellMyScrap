@@ -1,6 +1,7 @@
 ﻿using BepInEx.Bootstrap;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
 using ShipInventory.Extensions;
 using ShipInventory.Items;
@@ -71,7 +72,7 @@ internal class ShipInventoryProxy
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to apply ShipInventory patches. {ex}");
+            Logger.LogError($"Failed to apply ShipInventory patches. {ex}");
         }
     }
 
@@ -89,7 +90,7 @@ internal class ShipInventoryProxy
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"Failed to get ShipInventory items. {ex}");
+            Logger.LogError($"Failed to get ShipInventory items. {ex}");
         }
         
         return shipInventoryItems.ToArray();
@@ -99,7 +100,7 @@ internal class ShipInventoryProxy
     {
         if (!NetworkUtils.IsServer) return;
 
-        Utils.StartCoroutine(SpawnItemsOnServerCoroutine(shipInventoryItems));
+        CoroutineRunner.Start(SpawnItemsOnServerCoroutine(shipInventoryItems));
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -109,14 +110,14 @@ internal class ShipInventoryProxy
 
         if (ChuteInteract.Instance == null)
         {
-            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance is null.");
+            Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance is null.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
             yield break;
         }
 
         if (ChuteInteract.Instance.spawnCoroutine != null)
         {
-            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
+            Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
             SpawnItemsStatus = SpawnItemsStatus.Busy;
             yield break;
         }
@@ -125,12 +126,12 @@ internal class ShipInventoryProxy
 
         if (items.Length == 0)
         {
-            Plugin.Logger.LogError("Failed to spawn ShipInventory items. ItemData array is empty.");
+            Logger.LogError("Failed to spawn ShipInventory items. ItemData array is empty.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
             yield break;
         }
 
-        Plugin.Logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
+        Logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
 
         ChuteInteract.Instance.RetrieveItems(items);
 
@@ -141,12 +142,12 @@ internal class ShipInventoryProxy
 
         if (ChuteInteract.Instance.spawnCoroutine == null)
         {
-            Plugin.Logger.LogInfo($"Successfully spawned items from ShipInventory!");
+            Logger.LogInfo($"Successfully spawned items from ShipInventory!");
             SpawnItemsStatus = SpawnItemsStatus.Success;
         }
         else
         {
-            Plugin.Logger.LogError($"Failed to spawn items from ShipInventory. ChuteInteract instance spawnCoroutine timed out.");
+            Logger.LogError($"Failed to spawn items from ShipInventory. ChuteInteract instance spawnCoroutine timed out.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
         }
     }

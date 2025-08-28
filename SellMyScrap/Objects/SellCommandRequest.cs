@@ -3,7 +3,7 @@ using com.github.zehsteam.SellMyScrap.Patches;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace com.github.zehsteam.SellMyScrap.Data
+namespace com.github.zehsteam.SellMyScrap.Objects
 {
     /// <summary>
     /// Scrap sell request with settings from config and flags to choose correct 
@@ -51,7 +51,7 @@ namespace com.github.zehsteam.SellMyScrap.Data
                 return new ScrapToSell(items);
             }
 
-            return new ScrapToSell(ScrapMatchAlgorithm.FindMatch(items, TargetValue, Plugin.ConfigManager.PrioritySellListArray));
+            return new ScrapToSell(ScrapMatchAlgorithm.FindMatch(items, TargetValue, ConfigManager.PrioritySellListArray));
         }
 
         private int GetSellValue(int value)

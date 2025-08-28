@@ -1,6 +1,6 @@
-﻿using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Objects;
 using System.Text;
 
 namespace com.github.zehsteam.SellMyScrap.Commands;

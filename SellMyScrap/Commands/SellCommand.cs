@@ -12,9 +12,9 @@ internal class SellCommand : Command
 
     protected override TerminalNode OnConfirm(string[] args)
     {
-        string message = $"Sell confirmed. Processing {Plugin.Instance.SellRequest.RealScrapValue}...\n\n";
+        string message = $"Sell confirmed. Processing {SellManager.SellRequest.RealScrapValue}...\n\n";
 
-        Plugin.Instance.ConfirmSellRequest();
+        SellManager.ConfirmSellRequest();
         AwaitingConfirmation = false;
 
         return TerminalHelper.CreateTerminalNode(message);
@@ -22,7 +22,7 @@ internal class SellCommand : Command
 
     protected override TerminalNode OnDeny(string[] args)
     {
-        Plugin.Instance.CancelSellRequest();
+        SellManager.CancelSellRequest();
 
         AwaitingConfirmation = false;
 
