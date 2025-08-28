@@ -1,13 +1,17 @@
 # SellMyScrap
-#### Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +
 
-#### <ins>THIS MOD IS FOR ALL CLIENTS!</ins>
+[![Thunderstore Version](https://img.shields.io/thunderstore/v/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
 
-#### <ins>This mod works in all game versions v40 to v69+</ins>
+**Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +**
 
-#### This mod will sell scrap as close to the requested value as possible.
+**<ins>Who needs this mod installed for it to work?</ins> Everyone!**
 
-#### This mod is compatible with the [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/LethalCompanyModding/ShipInventoryUpdated/) mod.
+**<ins>This mod works in all game versions from v40 to v72+</ins>**
+
+**This mod will sell scrap as close to the requested value as possible.**
+
+**This mod is compatible with the [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/LethalCompanyModding/ShipInventoryUpdated/) mod.**
 <br>
 
 - You must be landed on a moon that has a sell desk (e.g., The Company) to use sell commands.
@@ -20,11 +24,8 @@
 <br><br>
 - This mod will show how much overtime bonus you will receive on the sell confirmation screen.
 
-## <img src="https://i.imgur.com/TpnrFSH.png" width="20px"> Download
-
-Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap/) on Thunderstore.
-
 ## Terminal Commands
+
 <details><summary>Click to Expand</summary><br>
 
 - You must be landed on a moon that has a sell desk (e.g., The Company) to use sell commands.
@@ -89,6 +90,7 @@ Download [SellMyScrap](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScr
 </details>
 
 ## Config Settings
+
 <details><summary>Click to Expand</summary><br>
 
 I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/p/AinaVT/LethalConfig/) mod to edit the config settings.
@@ -115,21 +117,21 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 | `DontSellList` | `String` | ` ` | Array of item names to not sell. |
 | `SellList` | `String` | `Whoopie cushion, Easter egg, Tragedy, Comedy` | Array of item names to sell when using the `sell list` command. |
 
-#### Additional info for the <code>PrioritySellList</code> config setting.
+**Additional info for the <code>PrioritySellList</code> config setting.**
 
 - Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 - Each entry should be separated by a comma.
 - Item names are not case-sensitive but, spaces do matter.
 - Example value: `Tragedy, Comedy, Whoopie cushion, Easter egg, Clock, Soccer ball`
 
-#### Additional info for the <code>DontSellList</code> config setting.
+**Additional info for the <code>DontSellList</code> config setting.**
 
 - Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 - Each entry should be separated by a comma.
 - Item names are not case-sensitive but, spaces do matter.
 - Example value: `Maxwell, Cookie Fumo, Octolar Plush, Smol Takey, Blahaj`
 
-#### Additional info for the <code>SellList</code> config setting.
+**Additional info for the <code>SellList</code> config setting.**
 
 - Use the `view scrap` or `view all scrap` command to see the correct item names to use.
 - Each entry should be separated by a comma.
@@ -152,7 +154,7 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 
 | Scrap Eater | Setting type | Default value | Description |
 | ----------- | ----------- | ----------- | ----------- |
-| `ScrapEaterChance` | `Int32` | `75` | The percent chance a scrap eater will spawn?! |
+| `ScrapEaterChance` | `Int32` | `0` | The percent chance a scrap eater will spawn?! |
 | `OctolarSpawnWeight` | `Int32` | `1` | The spawn chance weight [Octolar](https://www.twitch.tv/thorlar) will spawn?! (scrap eater) |
 | `TakeySpawnWeight` | `Int32` | `1` | The spawn chance weight [Takey](https://www.twitch.tv/takerst) will spawn?! (scrap eater) |
 | `MaxwellSpawnWeight` | `Int32` | `1` | The spawn chance weight Maxwell will spawn?! (scrap eater) |
@@ -165,16 +167,20 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 </details>
 
 ## ShipInventoryUpdated Compatibility
+
 This mod is compatible with the [ShipInventoryUpdated](https://thunderstore.io/c/lethal-company/p/LethalCompanyModding/ShipInventoryUpdated/) mod.
 
 If you use the command flag `-inv` when writing sell commands, you can make the command only target the ShipInventory storage.
 
 ## Want more Scrap Eaters?
+
 - [GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*
 - [BigEyes](https://thunderstore.io/c/lethal-company/p/Wexop/BigEyes/) - *Adds an additional scrap eater.*
 
 ## Developer Contact
-#### Report bugs, suggest features, or provide feedback:  
+
+**Report bugs, suggest features, or provide feedback:**
+
 - **GitHub Issues Page:** [SellMyScrap](https://github.com/ZehsTeam/Lethal-Company-SellMyScrap/issues)
 
 | **Discord Server** | **Forum** | **Post** |  
@@ -182,11 +188,12 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 | [Lethal Company Modding](https://discord.gg/XeyYqRdRGC) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1168655651455639582/1197731003800760320) |
 | [Unofficial Lethal Company Community](https://discord.gg/nYcQFEpXfU) | `#mod-releases` | [SellMyScrap](https://discord.com/channels/1169792572382773318/1198746789185069177) |
 
-- **Email:** crithaxxog@gmail.com  
-- **Twitch:** [CritHaxXoG](https://www.twitch.tv/crithaxxog)  
-- **YouTube:** [Zehs](https://www.youtube.com/channel/UCb4VEkc-_im0h8DKXlwmIAA)
+https://solo.to/crithaxxog
+
+[<img src="https://i.imgur.com/duJZQTS.png" width="200px">](https://ko-fi.com/zehsteam)
 
 ## Screenshots
+
 <details><summary>Click to Expand</summary><br>
 
 <div>
@@ -232,7 +239,8 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 </details>
 
 ## Credits
-#### Takey (scrap eater)
+
+**Takey (scrap eater)**
 - "Pirate hat" (https://skfb.ly/oDoDr) by ReversedG is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "Playing Cards" (https://skfb.ly/oDIqr) by Dumokan Art is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "Low poly Chicken" (https://skfb.ly/oARnK) by marksethcaballes is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
@@ -245,8 +253,8 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 - "Cake" (https://skfb.ly/ozG96) by Harry Charalambous is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "Pilgrims Hat" (https://skfb.ly/6TYHC) by The Elliseran Modeller is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
-#### Maxwell (scrap eater) and Cookie Fumo (scrap eater)
+**Maxwell (scrap eater) and Cookie Fumo (scrap eater)**
 - Models and sounds from [LethalThings](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalThings/).
 
-#### Zombies (scrap eater)
+**Zombies (scrap eater)**
 - Model by MissSuperE.
