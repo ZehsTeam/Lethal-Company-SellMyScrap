@@ -7,7 +7,7 @@
     
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.13.0</Version>                                              <!-- PLUGIN_VERSION -->
+    <Version>1.13.1</Version>                                              <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
     <Description>[v40/v72+] Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description>
     <Copyright>Copyright © 2025 Zehs</Copyright>
