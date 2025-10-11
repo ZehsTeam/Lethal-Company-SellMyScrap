@@ -93,7 +93,6 @@
   <PropertyGroup>
     <Game>lethal-company</Game>
     <AssetBundleFileName>sellmyscrap_assets</AssetBundleFileName>
-    <GaleProfileName>Mod Development</GaleProfileName>
     <GaleDataFolder>$(AppData)\com.kesomannen.gale</GaleDataFolder>
     <GaleProfilesFolder>$(GaleDataFolder)\$(Game)\profiles</GaleProfilesFolder>
     <BepInExPluginsFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
