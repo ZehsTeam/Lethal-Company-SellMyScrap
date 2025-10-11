@@ -41,6 +41,23 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        NyawrServerRpc($"Networking works! YIPPEE!");
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void NyawrServerRpc(string message)
+    {
+        NyawrClientRpc(message);
+    }
+
+    [ClientRpc]
+    private void NyawrClientRpc(string message)
+    {
+        Logger.LogMessage($"Nyawr: {message}");
+    }
+
     [ClientRpc]
     public void SetSyncedConfigValueClientRpc(string section, string key, string value, ClientRpcParams clientRpcParams = default)
     {

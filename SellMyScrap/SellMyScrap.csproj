@@ -7,9 +7,9 @@
     
     <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
     <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.13.1</Version>                                              <!-- PLUGIN_VERSION -->
+    <Version>1.14.0</Version>                                              <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
-    <Description>[v40/v72+] Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description>
+    <Description_>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
     <Copyright>Copyright © 2025 Zehs</Copyright>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -27,6 +27,22 @@
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json;
     </RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <!-- Lethal Company version toggle -->
+  <!-- "73" for v73+ -->
+  <!-- "72" for v72- -->
+  <PropertyGroup>
+    <LCVersion>73</LCVersion>
+  </PropertyGroup>
+  
+  <!-- Conditional descriptions -->
+  <PropertyGroup Condition="'$(LCVersion)' == '73'">
+    <Description>[v73+] $(Description_)</Description>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(LCVersion)' == '72'">
+    <Description>[v40/v72] $(Description_)</Description>
   </PropertyGroup>
   
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
@@ -51,64 +67,103 @@
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  
+  <!-- v73+ dependencies -->
+  <ItemGroup Condition="'$(LCVersion)' == '73'">
+    <PackageReference Include="UnityEngine.Modules" Version="2022.3.62" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="LethalCompany.GameLibs.Steam" Version="73.0.0-ngd.0" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <!-- v72- dependencies -->
+  <ItemGroup Condition="'$(LCVersion)' == '72'">
     <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" PrivateAssets="all" />
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="70.0.0-ngd.0" PrivateAssets="all" />
   </ItemGroup>
   
+  <!-- Mod dependencies -->
   <ItemGroup>
     <Reference Include="LethalConfig" HintPath="$(BepInExPluginsFolder)\AinaVT-LethalConfig\LethalConfig\LethalConfig.dll" />
     <Reference Include="ShipInventoryUpdated" HintPath="$(BepInExPluginsFolder)\LethalCompanyModding-ShipInventoryUpdated\ShipInventoryUpdated.dll" Publicize="true" />
     <Reference Include="CSync" HintPath="$(BepInExPluginsFolder)\Sigurd-CSync\CSync\com.sigurd.csync.dll" />
     <Reference Include="TakeyPlush" HintPath="$(BepInExPluginsFolder)\Zehs-TakeyPlush\com.github.zehsteam.TakeyPlush.dll" />
-	</ItemGroup>
+  </ItemGroup>
   
+  <!-- Settings -->
   <PropertyGroup>
     <Game>lethal-company</Game>
     <AssetBundleFileName>sellmyscrap_assets</AssetBundleFileName>
     <GaleProfileName>Mod Development</GaleProfileName>
     <GaleDataFolder>$(AppData)\com.kesomannen.gale</GaleDataFolder>
-    <BepInExPluginsFolder>$(GaleDataFolder)\$(Game)\profiles\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
+    <GaleProfilesFolder>$(GaleDataFolder)\$(Game)\profiles</GaleProfilesFolder>
+    <BepInExPluginsFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
     <PluginFolder>$(BepInExPluginsFolder)\Zehs-$(MSBuildProjectName)</PluginFolder>
+    <PluginFolder2>$(GaleProfilesFolder)\$(GaleProfileName2)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolder2>
+  </PropertyGroup>
+  
+  <!-- Gale profile names -->
+  <PropertyGroup>
+    <GaleProfileName>Mod Development</GaleProfileName>
+    <GaleProfileName2>SellMyScrap Test</GaleProfileName2>
   </PropertyGroup>
   
   <PropertyGroup>
     <SteamLibrary>D:\SteamLibrary\steamapps\common</SteamLibrary>
-    <PluginFolderV40>$(SteamLibrary)\Lethal Company v40\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV40>
-    <PluginFolderV45>$(SteamLibrary)\Lethal Company v45 final\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV45>
-    <PluginFolderV49>$(SteamLibrary)\Lethal Company v49\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV49>
-    <PluginFolderV50>$(SteamLibrary)\Lethal Company v50 hotfix\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV50>
-    <PluginFolderV56>$(SteamLibrary)\Lethal Company v56 hotfix\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV56>
-    <PluginFolderV62>$(SteamLibrary)\Lethal Company v62\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderV62>
-	</PropertyGroup>
+    <PluginFolderEnding>BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolderEnding>
+    <PluginFolderV40>$(SteamLibrary)\Lethal Company v40\$(PluginFolderEnding)</PluginFolderV40>
+    <PluginFolderV45>$(SteamLibrary)\Lethal Company v45 final\$(PluginFolderEnding)</PluginFolderV45>
+    <PluginFolderV49>$(SteamLibrary)\Lethal Company v49\$(PluginFolderEnding)</PluginFolderV49>
+    <PluginFolderV50>$(SteamLibrary)\Lethal Company v50 hotfix\$(PluginFolderEnding)</PluginFolderV50>
+    <PluginFolderV56>$(SteamLibrary)\Lethal Company v56 hotfix\$(PluginFolderEnding)</PluginFolderV56>
+    <PluginFolderV62>$(SteamLibrary)\Lethal Company v62\$(PluginFolderEnding)</PluginFolderV62>
+  </PropertyGroup>
   
-  <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
-    <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
+  <!-- NetcodePatch v73+ -->
+  <Target Name="NetcodePatchV73" Condition="'$(LCVersion)' == '73'" AfterTargets="PostBuildEvent">
+    <Message Text="Running NetcodePatch for v73+" Importance="high" />
+    <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.0 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
-  
-  <!-- Copy files to Gale plugin folder -->
-  <Target Name="CopyToGalePluginFolder" AfterTargets="NetcodePatch">
+
+  <!-- NetcodePatch v72- -->
+  <Target Name="NetcodePatchV72" Condition="'$(LCVersion)' == '72'" AfterTargets="PostBuildEvent">
+    <Message Text="Running NetcodePatch for v72-" Importance="high" />
+    <Exec Command="netcode-patch -uv 2022.3.9 -nv 1.5.2 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
+  </Target>
+
+  <!-- Copy files to Gale plugin folder (v73+) -->
+  <Target Name="CopyToGalePluginFolder" Condition="'$(LCVersion)' == '73'" AfterTargets="NetcodePatchV73">
+    <Message Text="Copying to Gale plugin folders (v73+)" Importance="high" />
+
+    <!-- PluginFolder -->
     <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
+
+    <!-- PluginFolder2 -->
+    <Copy Condition="Exists('$(PluginFolder2)')" DestinationFolder="$(PluginFolder2)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
+    <Copy Condition="Exists('$(PluginFolder2)')" DestinationFolder="$(PluginFolder2)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
   </Target>
   
-  <!-- Copy files to older versions plugin folders -->
-  <Target Name="CopyToOlderVersionsPluginFolders" AfterTargets="CopyToGalePluginFolder">
+  <!-- Copy files to older versions plugin folders (v72-) -->
+  <Target Name="CopyToOlderVersionsPluginFolders" Condition="'$(LCVersion)' == '72'" AfterTargets="NetcodePatchV72">
+    <Message Text="Copying to legacy plugin folders (v72-)" Importance="high" />
+
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
-    
+
     <Copy Condition="Exists('$(PluginFolderV45)')" DestinationFolder="$(PluginFolderV45)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV45)')" DestinationFolder="$(PluginFolderV45)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
-    
+
     <Copy Condition="Exists('$(PluginFolderV49)')" DestinationFolder="$(PluginFolderV49)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV49)')" DestinationFolder="$(PluginFolderV49)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
-    
+
     <Copy Condition="Exists('$(PluginFolderV50)')" DestinationFolder="$(PluginFolderV50)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV50)')" DestinationFolder="$(PluginFolderV50)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
-    
+
     <Copy Condition="Exists('$(PluginFolderV56)')" DestinationFolder="$(PluginFolderV56)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV56)')" DestinationFolder="$(PluginFolderV56)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
-    
+
     <Copy Condition="Exists('$(PluginFolderV62)')" DestinationFolder="$(PluginFolderV62)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV62)')" DestinationFolder="$(PluginFolderV62)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
   </Target>
 </Project>
+  
