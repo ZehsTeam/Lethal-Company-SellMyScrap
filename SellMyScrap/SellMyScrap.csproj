@@ -31,9 +31,9 @@
 
   <!-- Lethal Company version toggle -->
   <!-- "73" for v73+ -->
-  <!-- "72" for v72- -->
+  <!-- "72" for v40/v72 -->
   <PropertyGroup>
-    <LCVersion>73</LCVersion>
+    <LCVersion>72</LCVersion>
   </PropertyGroup>
   
   <!-- Conditional descriptions -->
@@ -75,7 +75,7 @@
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="73.0.0-ngd.0" PrivateAssets="all" />
   </ItemGroup>
   
-  <!-- v72- dependencies -->
+  <!-- v40/v72 dependencies -->
   <ItemGroup Condition="'$(LCVersion)' == '72'">
     <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" PrivateAssets="all" />
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="70.0.0-ngd.0" PrivateAssets="all" />
@@ -124,9 +124,9 @@
     <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.0 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
-  <!-- NetcodePatch v72- -->
+  <!-- NetcodePatch v40/v72 -->
   <Target Name="NetcodePatchV72" Condition="'$(LCVersion)' == '72'" AfterTargets="PostBuildEvent">
-    <Message Text="Running NetcodePatch for v72-" Importance="high" />
+    <Message Text="Running NetcodePatch for v40/v72" Importance="high" />
     <Exec Command="netcode-patch -uv 2022.3.9 -nv 1.5.2 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
@@ -143,9 +143,9 @@
     <Copy Condition="Exists('$(PluginFolder2)')" DestinationFolder="$(PluginFolder2)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
   </Target>
   
-  <!-- Copy files to older versions plugin folders (v72-) -->
+  <!-- Copy files to older versions plugin folders (v40/v72) -->
   <Target Name="CopyToOlderVersionsPluginFolders" Condition="'$(LCVersion)' == '72'" AfterTargets="NetcodePatchV72">
-    <Message Text="Copying to legacy plugin folders (v72-)" Importance="high" />
+    <Message Text="Copying to legacy plugin folders (v40/v72)" Importance="high" />
 
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
