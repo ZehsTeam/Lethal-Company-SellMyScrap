@@ -15,6 +15,11 @@ namespace com.github.zehsteam.SellMyScrap;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class Utils
 {
+    public static bool IsUnityVersion(string targetUnityVersion)
+    {
+        return Application.unityVersion.StartsWith(targetUnityVersion, StringComparison.OrdinalIgnoreCase);
+    }
+
     public static string GetPluginPersistentDataPath()
     {
         return Path.Combine(Application.persistentDataPath, MyPluginInfo.PLUGIN_NAME);

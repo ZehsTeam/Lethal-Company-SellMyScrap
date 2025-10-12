@@ -21,13 +21,28 @@ internal class Plugin : BaseUnityPlugin
 
     internal static Plugin Instance { get; private set; }
 
+#if LC_VERSION_73
+    const string TargetUnityVersion = "2022.3.62";
+#elif LC_VERSION_72
+    const string TargetUnityVersion = "2022.3.9";
+#else
+    const string TargetUnityVersion = "2022.3";
+#endif
+
     #pragma warning disable IDE0051 // Remove unused private members
     private void Awake()
     #pragma warning restore IDE0051 // Remove unused private members
     {
-        Instance = this;
-
         SellMyScrap.Logger.Initialize(BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID));
+
+        if (!Utils.IsUnityVersion(TargetUnityVersion))
+        {
+            SellMyScrap.Logger.LogWarning($"Skipping {MyPluginInfo.PLUGIN_NAME} because it targets a different version of Unity ({TargetUnityVersion})");
+            return;
+        }
+
+        Instance = this;
+        
         SellMyScrap.Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
         _harmony.PatchAll(typeof(GameNetworkManagerPatch));

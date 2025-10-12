@@ -5,9 +5,9 @@
     <LangVersion>latest</LangVersion>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     
-    <AssemblyName>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName> <!-- PLUGIN_GUID -->
-    <Product>$(MSBuildProjectName)</Product>                               <!-- PLUGIN_NAME -->
-    <Version>1.14.0</Version>                                              <!-- PLUGIN_VERSION -->
+    <AssemblyName_>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName_> <!-- PLUGIN_GUID -->
+    <Product_>$(MSBuildProjectName)</Product_>                               <!-- PLUGIN_NAME -->
+    <Version>1.14.0</Version>                                                <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
     <Description_>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
     <Copyright>Copyright © 2025 Zehs</Copyright>
@@ -36,12 +36,20 @@
     <LCVersion>72</LCVersion>
   </PropertyGroup>
   
-  <!-- Conditional descriptions -->
-  <PropertyGroup Condition="'$(LCVersion)' == '73'">
-    <Description>[v73+] $(Description_)</Description>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);LC_VERSION_$(LCVersion)</DefineConstants>
   </PropertyGroup>
   
+  <!-- Conditional properties -->
+  <PropertyGroup Condition="'$(LCVersion)' == '73'">
+    <AssemblyName>$(AssemblyName_)</AssemblyName>
+    <Product>$(Product_) v73+</Product>
+    <Description>[v73+] $(Description_)</Description>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(LCVersion)' == '72'">
+    <AssemblyName>$(AssemblyName_).v40-v72</AssemblyName>
+    <Product>$(Product_) v40-v72</Product>
     <Description>[v40/v72] $(Description_)</Description>
   </PropertyGroup>
   
@@ -88,7 +96,7 @@
     <Reference Include="CSync" HintPath="$(BepInExPluginsFolder)\Sigurd-CSync\CSync\com.sigurd.csync.dll" />
     <Reference Include="TakeyPlush" HintPath="$(BepInExPluginsFolder)\Zehs-TakeyPlush\com.github.zehsteam.TakeyPlush.dll" />
   </ItemGroup>
-
+  
   <!-- Gale profile names -->
   <PropertyGroup>
     <GaleProfileName>Mod Development</GaleProfileName>
@@ -102,6 +110,7 @@
     <GaleDataFolder>$(AppData)\com.kesomannen.gale</GaleDataFolder>
     <GaleProfilesFolder>$(GaleDataFolder)\$(Game)\profiles</GaleProfilesFolder>
     <BepInExPluginsFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
+    <BepInExPatchersFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\patchers</BepInExPatchersFolder>
     <PluginFolder>$(BepInExPluginsFolder)\Zehs-$(MSBuildProjectName)</PluginFolder>
     <PluginFolder2>$(GaleProfilesFolder)\$(GaleProfileName2)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolder2>
   </PropertyGroup>
@@ -128,9 +137,9 @@
     <Message Text="Running NetcodePatch for v40/v72" Importance="high" />
     <Exec Command="netcode-patch -uv 2022.3.9 -nv 1.5.2 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
-
+  
   <!-- Copy files to Gale plugin folder (v73+) -->
-  <Target Name="CopyToGalePluginFolder" Condition="'$(LCVersion)' == '73'" AfterTargets="NetcodePatchV73">
+  <Target Name="CopyToGalePluginFolder" AfterTargets="NetcodePatchV73">
     <Message Text="Copying to Gale plugin folders (v73+)" Importance="high" />
     
     <!-- PluginFolder -->
