@@ -88,7 +88,13 @@
     <Reference Include="CSync" HintPath="$(BepInExPluginsFolder)\Sigurd-CSync\CSync\com.sigurd.csync.dll" />
     <Reference Include="TakeyPlush" HintPath="$(BepInExPluginsFolder)\Zehs-TakeyPlush\com.github.zehsteam.TakeyPlush.dll" />
   </ItemGroup>
-  
+
+  <!-- Gale profile names -->
+  <PropertyGroup>
+    <GaleProfileName>Mod Development</GaleProfileName>
+    <GaleProfileName2>SellMyScrap Test</GaleProfileName2>
+  </PropertyGroup>
+
   <!-- Settings -->
   <PropertyGroup>
     <Game>lethal-company</Game>
@@ -98,12 +104,6 @@
     <BepInExPluginsFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
     <PluginFolder>$(BepInExPluginsFolder)\Zehs-$(MSBuildProjectName)</PluginFolder>
     <PluginFolder2>$(GaleProfilesFolder)\$(GaleProfileName2)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolder2>
-  </PropertyGroup>
-  
-  <!-- Gale profile names -->
-  <PropertyGroup>
-    <GaleProfileName>Mod Development</GaleProfileName>
-    <GaleProfileName2>SellMyScrap Test</GaleProfileName2>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -132,7 +132,7 @@
   <!-- Copy files to Gale plugin folder (v73+) -->
   <Target Name="CopyToGalePluginFolder" Condition="'$(LCVersion)' == '73'" AfterTargets="NetcodePatchV73">
     <Message Text="Copying to Gale plugin folders (v73+)" Importance="high" />
-
+    
     <!-- PluginFolder -->
     <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
