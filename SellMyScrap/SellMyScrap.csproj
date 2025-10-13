@@ -9,7 +9,7 @@
     <Product_>$(MSBuildProjectName)</Product_>                               <!-- PLUGIN_NAME -->
     <Version>1.14.0</Version>                                                <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
-    <Description_>Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
+    <Description_>Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
     <Copyright>Copyright © 2025 Zehs</Copyright>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
@@ -33,7 +33,7 @@
   <!-- "73" for v73+ -->
   <!-- "72" for v40/v72 -->
   <PropertyGroup>
-    <LCVersion>72</LCVersion>
+    <LCVersion>73</LCVersion>
   </PropertyGroup>
   
   <PropertyGroup>

@@ -1,13 +1,14 @@
 # SellMyScrap
 
+[![GitHub](https://img.shields.io/badge/GitHub-SellMyScrap-brightgreen?style=for-the-badge&logo=GitHub)](https://github.com/ZehsTeam/Lethal-Company-SellMyScrap)
 [![Thunderstore Version](https://img.shields.io/thunderstore/v/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
 [![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
 
-**Adds a few terminal commands to sell your scrap from the ship. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +**
+**Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +**
 
 **<ins>Who needs this mod installed for it to work?</ins> Everyone!**
 
-**<ins>This mod works in all game versions from v40 to v72+</ins>**
+**<ins>This mod works in all game versions from v40 to v73+</ins>**
 
 **This mod will sell scrap as close to the requested value as possible.**
 
