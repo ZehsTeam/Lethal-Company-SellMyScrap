@@ -110,7 +110,6 @@
     <GaleDataFolder>$(AppData)\com.kesomannen.gale</GaleDataFolder>
     <GaleProfilesFolder>$(GaleDataFolder)\$(Game)\profiles</GaleProfilesFolder>
     <BepInExPluginsFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\plugins</BepInExPluginsFolder>
-    <BepInExPatchersFolder>$(GaleProfilesFolder)\$(GaleProfileName)\BepInEx\patchers</BepInExPatchersFolder>
     <PluginFolder>$(BepInExPluginsFolder)\Zehs-$(MSBuildProjectName)</PluginFolder>
     <PluginFolder2>$(GaleProfilesFolder)\$(GaleProfileName2)\BepInEx\plugins\Zehs-$(MSBuildProjectName)</PluginFolder2>
   </PropertyGroup>
