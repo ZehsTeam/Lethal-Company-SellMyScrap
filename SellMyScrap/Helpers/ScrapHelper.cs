@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
+using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Objects;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 internal static class ScrapHelper
 {
-    public static Transform HangarShipTransform => StartOfRound.Instance.elevatorTransform;
+    public static Transform ShipTransform => StartOfRound.Instance.elevatorTransform;
 
     #region Get Scrap
     private static List<GrabbableObject> GetValidScrap(IEnumerable<GrabbableObject> grabbableObjects, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
@@ -24,9 +25,9 @@ internal static class ScrapHelper
 
     public static List<GrabbableObject> GetScrapFromShip(bool onlyAllowedScrap = true, bool includeScrapWorthZero = false)
     {
-        if (HangarShipTransform == null) return [];
+        if (ShipTransform == null) return [];
 
-        List<GrabbableObject> grabbableObjects = HangarShipTransform.GetComponentsInChildren<GrabbableObject>().ToList();
+        List<GrabbableObject> grabbableObjects = ShipTransform.GetComponentsInChildren<GrabbableObject>().ToList();
         grabbableObjects.AddRange(GetGrabbableObjectsFromShipPlaceableObjects());
 
         return GetValidScrap(grabbableObjects, onlyAllowedScrap, includeScrapWorthZero);
@@ -206,7 +207,7 @@ internal static class ScrapHelper
             return false;
         }
 
-        if (ConfigManager.OnlySellScrapOnFloor.Value && !IsScrapOnFloor(grabbableObject))
+        if (ConfigManager.OnlySellScrapOnFloor.Value && !grabbableObject.IsOnShipFloor())
         {
             return false;
         }
@@ -234,21 +235,6 @@ internal static class ScrapHelper
         }
 
         return true;
-    }
-
-    public static bool IsScrapOnFloor(GrabbableObject grabbableObject)
-    {
-        if (grabbableObject == null) return false;
-
-        BoxCollider boxCollider = grabbableObject.GetComponent<BoxCollider>();
-        if (boxCollider == null) return true;
-
-        Bounds bounds = boxCollider.bounds;
-        float shipY = HangarShipTransform.position.y;
-        float bottomY = bounds.center.y - bounds.extents.y;
-        float yOffset = bottomY - shipY;
-
-        return yOffset <= 0.1f;
     }
     #endregion
 

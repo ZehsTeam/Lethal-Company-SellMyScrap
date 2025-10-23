@@ -6,44 +6,9 @@ namespace com.github.zehsteam.SellMyScrap.Helpers;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static class NetworkUtils
 {
-    public static bool IsConnected
-    {
-        get
-        {
-            if (NetworkManager.Singleton == null)
-            {
-                return false;
-            }
-
-            return NetworkManager.Singleton.IsConnectedClient;
-        }
-    }
-
-    public static bool IsServer
-    {
-        get
-        {
-            if (NetworkManager.Singleton == null)
-            {
-                return false;
-            }
-
-            return NetworkManager.Singleton.IsServer;
-        }
-    }
-
-    public static bool IsHost
-    {
-        get
-        {
-            if (NetworkManager.Singleton == null)
-            {
-                return false;
-            }
-
-            return NetworkManager.Singleton.IsHost;
-        }
-    }
+    public static bool IsConnected => NetworkManager.Singleton?.IsConnectedClient ?? false;
+    public static bool IsServer => NetworkManager.Singleton?.IsServer ?? false;
+    public static bool IsHost => NetworkManager.Singleton?.IsHost ?? false;
 
     public static ulong GetLocalClientId()
     {
