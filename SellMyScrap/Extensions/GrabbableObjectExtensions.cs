@@ -7,17 +7,17 @@ internal static class GrabbableObjectExtensions
 {
     public static bool IsOnShipFloor(this GrabbableObject grabbableObject)
     {
-        Collider collider = grabbableObject.GetComponent<Collider>();
-        if (collider == null) return false;
+        float objectVerticalOffset = grabbableObject.itemProperties.verticalOffset;
+        float objectBottomY = grabbableObject.transform.position.y - objectVerticalOffset;
 
         Transform shipTransform = ScrapHelper.ShipTransform;
         float shipFloorY = shipTransform.position.y;
 
-        Bounds objectBounds = collider.bounds;
-        float objectBottomY = objectBounds.center.y - objectBounds.extents.y;
-
         float yOffset = objectBottomY - shipFloorY;
 
-        return yOffset >= -0.02f && yOffset <= 0.1f;
+        float min = -0.1f;
+        float max = 0.1f;
+
+        return yOffset >= min && yOffset <= max;
     }
 }
