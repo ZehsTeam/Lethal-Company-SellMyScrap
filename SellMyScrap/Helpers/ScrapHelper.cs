@@ -305,6 +305,11 @@ internal static class ScrapHelper
             })
             .ToList();
 
+        if (combinedScrap.Count == 0)
+        {
+            return $"No scrap found.";
+        }
+
         // Sort if needed
         if (sortFoundItemsPrice)
         {
