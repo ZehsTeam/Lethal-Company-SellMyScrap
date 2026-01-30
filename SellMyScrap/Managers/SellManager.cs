@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Managers;
 
 internal static class SellManager
 {

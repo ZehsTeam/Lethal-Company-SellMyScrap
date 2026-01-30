@@ -1,6 +1,7 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Helpers.ScrapMatchAlgorithms;
+using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using UnityEngine;
 

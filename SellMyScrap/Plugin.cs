@@ -2,6 +2,8 @@
 using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Dependencies;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;

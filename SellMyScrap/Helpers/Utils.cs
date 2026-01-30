@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
 using System;
@@ -10,7 +9,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace com.github.zehsteam.SellMyScrap;
+namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class Utils
