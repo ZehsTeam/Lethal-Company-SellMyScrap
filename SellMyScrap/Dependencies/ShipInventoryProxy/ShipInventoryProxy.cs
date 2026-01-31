@@ -1,17 +1,19 @@
 ﻿using BepInEx.Bootstrap;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Extensions;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
-using ShipInventory.Extensions;
-using ShipInventory.Items;
-using ShipInventory.Objects;
+using ShipInventoryUpdated.Configurations;
+using ShipInventoryUpdated.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using SI_ItemData = ShipInventoryUpdated.Objects.ItemData;
 
 namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
 
@@ -20,13 +22,12 @@ internal enum SpawnItemsStatus
     None,
     Spawning,
     Success,
-    Failed,
-    Busy
+    Failed
 }
 
 internal class ShipInventoryProxy
 {
-    public const string PLUGIN_GUID = LCMPluginInfo.PLUGIN_GUID;
+    public const string PLUGIN_GUID = ShipInventoryUpdated.MyPluginInfo.PLUGIN_GUID;
     public static bool Enabled
     {
         get
@@ -38,54 +39,33 @@ internal class ShipInventoryProxy
 
     private static bool? _enabled;
 
-    public static bool IsSpawning { get; private set; }
+    public static bool IsSpawning => SpawnItemsStatus == SpawnItemsStatus.Spawning;
 
-    public static SpawnItemsStatus SpawnItemsStatus
-    {
-        get
-        {
-            return _spawnItemsStatus;
-        }
-        set
-        {
-            _spawnItemsStatus = value;
-
-            if (_spawnItemsStatus == SpawnItemsStatus.Spawning)
-            {
-                IsSpawning = true;
-            }
-            else
-            {
-                IsSpawning = false;
-            }
-        }
-    }
-
-    private static SpawnItemsStatus _spawnItemsStatus;
+    public static SpawnItemsStatus SpawnItemsStatus { get; private set; }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void PatchAll(Harmony harmony)
     {
         try
         {
-            harmony.PatchAll(typeof(ChuteInteractPatch));
+            harmony.PatchAll(typeof(ChuteRetrievePatch));
         }
         catch (Exception ex)
         {
-            Logger.LogError($"Failed to apply ShipInventory patches. {ex}");
+            Logger.LogError($"[ShipInventoryProxy] Failed to apply patches. {ex}");
         }
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    public static ShipInventoryItemData[] GetItems()
+    public static SI_ItemDataProxy[] GetItemsAsProxies()
     {
-        List<ShipInventoryItemData> shipInventoryItems = [];
-        
+        List<SI_ItemDataProxy> items = [];
+
         try
         {
-            foreach (var itemData in ItemManager.GetItems().Where(x => ScrapHelper.IsScrap(x.GetItem())))
+            foreach (var itemData in Inventory.Items.Where(x => x.IsScrap()))
             {
-                shipInventoryItems.Add(new ShipInventoryItemData(itemData));
+                items.Add(new SI_ItemDataProxy(itemData));
             }
         }
         catch (Exception ex)
@@ -93,74 +73,101 @@ internal class ShipInventoryProxy
             Logger.LogError($"Failed to get ShipInventory items. {ex}");
         }
         
-        return shipInventoryItems.ToArray();
-    }
-
-    public static void SpawnItemsOnServer(ShipInventoryItemData[] shipInventoryItems)
-    {
-        if (!NetworkUtils.IsServer) return;
-
-        CoroutineRunner.Start(SpawnItemsOnServerCoroutine(shipInventoryItems));
+        return items.ToArray();
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-    private static IEnumerator SpawnItemsOnServerCoroutine(ShipInventoryItemData[] shipInventoryItems)
+    private static SI_ItemData[] GetValidItemsFromProxies(SI_ItemDataProxy[] proxyItems)
+    {
+        List<SI_ItemData> items = [];
+        List<SI_ItemData> inventoryItems = Inventory.Items.ToList();
+
+        foreach (var proxyItem in proxyItems)
+        {
+            SI_ItemData itemData = proxyItem.CreateItemData();
+
+            if (inventoryItems.Contains(itemData))
+            {
+                inventoryItems.Remove(itemData);
+                items.Add(itemData);
+            }
+        }
+
+        return items.ToArray();
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public static void SpawnItems_Server(SI_ItemDataProxy[] proxyItems)
+    {
+        if (!NetworkUtils.IsServer) return;
+
+        CoroutineRunner.Start(SpawnItems_ServerCoroutine(proxyItems));
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    private static IEnumerator SpawnItems_ServerCoroutine(SI_ItemDataProxy[] proxyItems)
     {
         SpawnItemsStatus = SpawnItemsStatus.Spawning;
 
-        if (ChuteInteract.Instance == null)
-        {
-            Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance is null.");
-            SpawnItemsStatus = SpawnItemsStatus.Failed;
-            yield break;
-        }
-
-        if (ChuteInteract.Instance.spawnCoroutine != null)
-        {
-            Logger.LogError("Failed to spawn ShipInventory items. ChuteInteract instance spawnCoroutine is busy.");
-            SpawnItemsStatus = SpawnItemsStatus.Busy;
-            yield break;
-        }
-
-        ItemData[] items = shipInventoryItems.Select(x => x.GetItemData()).Where(x => !x.Equals(default)).ToArray();
+        SI_ItemData[] items = GetValidItemsFromProxies(proxyItems);
 
         if (items.Length == 0)
         {
-            Logger.LogError("Failed to spawn ShipInventory items. ItemData array is empty.");
+            Logger.LogError("[ShipInventoryProxy] Failed to spawn ShipInventory items. No items to spawn.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
             yield break;
         }
 
-        Logger.LogInfo($"Server scheduled to spawn {items.Count()} new ShipInventory items!");
+        if (proxyItems.Length != items.Length)
+        {
+            Logger.LogWarning($"[ShipInventoryProxy] Received {proxyItems.Length} proxy items, but only {items.Length} are valid!");
+        }
 
-        ChuteInteract.Instance.RetrieveItems(items);
+        Logger.LogInfo($"[ShipInventoryProxy] Server scheduled to spawn {items.Count()} items!");
+
+        ChuteRetrievePatch.StartCapturingSpawnedItems(items);
+
+        Inventory.Remove(items);
 
         float startTime = Time.realtimeSinceStartup;
-        float maxWaitTime = (items.Length * ShipInventory.ShipInventory.Configuration.TimeToRetrieve.Value) + 30f;
+        float retrieveSpeed = Configuration.Instance.Inventory.RetrieveSpeed.Value;
+        float maxWaitTime = (ChuteRetrievePatch.Instance._spawnQueue.Count * retrieveSpeed) + 5f;
 
-        yield return new WaitUntil(() => ChuteInteract.Instance.spawnCoroutine == null || Time.realtimeSinceStartup - startTime > maxWaitTime);
+        float getElapsedTime() => Time.realtimeSinceStartup - startTime;
 
-        if (ChuteInteract.Instance.spawnCoroutine == null)
+        yield return new WaitUntil(() =>
+            ChuteRetrievePatch.Instance.SpawnCoroutine == null ||
+            ChuteRetrievePatch.SpawnedGrabbableObjects.Count >= items.Length ||
+            getElapsedTime() >= maxWaitTime
+        );
+
+        ChuteRetrievePatch.StopCapturingSpawnItems();
+
+        List<GrabbableObject> grabbableObjects = GetSpawnedGrabbableObjects();
+
+        if (grabbableObjects.Count != items.Length)
         {
-            Logger.LogInfo($"Successfully spawned items from ShipInventory!");
-            SpawnItemsStatus = SpawnItemsStatus.Success;
-        }
-        else
-        {
-            Logger.LogError($"Failed to spawn items from ShipInventory. ChuteInteract instance spawnCoroutine timed out.");
+            Logger.LogError($"[ShipInventoryProxy] Something went wrong when spawning items. Found {grabbableObjects.Count} GrabbableObject(s), but expected {items.Length}.");
             SpawnItemsStatus = SpawnItemsStatus.Failed;
+            yield break;
         }
+
+        ChuteRetrievePatch.StopCapturingSpawnItems();
+
+        Logger.LogInfo($"[ShipInventoryProxy] Successfully spawned {grabbableObjects.Count} items from ShipInventory!");
+
+        SpawnItemsStatus = SpawnItemsStatus.Success;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static List<GrabbableObject> GetSpawnedGrabbableObjects()
     {
-        return ChuteInteractPatch.GetSpawnedGrabbableObjects();
+        return ChuteRetrievePatch.SpawnedGrabbableObjects;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void ClearSpawnedGrabbableObjectsCache()
     {
-        ChuteInteractPatch.ClearSpawnedGrabbableObjectsCache();
+        ChuteRetrievePatch.ClearSpawnedGrabbableObjectsCache();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
 using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
 using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Objects;
@@ -60,7 +61,7 @@ internal static class ScrapHelper
         return [];
     }
 
-    public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, ShipInventoryItemData[] shipInventoryItems)
+    public static List<ItemData> GetItemDataList(List<GrabbableObject> shipGrabbableObjects, List<GrabbableObject> vehicleGrabbableObjects, SI_ItemDataProxy[] shipInventoryItems)
     {
         List<ItemData> items = [];
 
@@ -74,9 +75,9 @@ internal static class ScrapHelper
             items.Add(new ItemData(grabbableObject, ItemLocation.Vehicle));
         }
 
-        foreach (var shipInventoryItemData in shipInventoryItems)
+        foreach (var SI_ItemDataProxy in shipInventoryItems)
         {
-            items.Add(new ItemData(shipInventoryItemData, ItemLocation.ShipInventory));
+            items.Add(new ItemData(SI_ItemDataProxy, ItemLocation.ShipInventory));
         }
 
         return items;
@@ -84,11 +85,11 @@ internal static class ScrapHelper
 
     public static List<ItemData> GetAllScrap(bool onlyAllowedScrap = true, bool onlyUseShipInventory = false, bool includeScrapWorthZero = false)
     {
-        ShipInventoryItemData[] shipInventoryItems = [];
+        SI_ItemDataProxy[] shipInventoryItems = [];
 
         if (ShipInventoryProxy.Enabled)
         {
-            shipInventoryItems = ShipInventoryProxy.GetItems().Where(x => IsValidScrap(x, onlyAllowedScrap, includeScrapWorthZero)).ToArray();
+            shipInventoryItems = ShipInventoryProxy.GetItemsAsProxies().Where(x => IsValidScrap(x, onlyAllowedScrap, includeScrapWorthZero)).ToArray();
 
             if (onlyUseShipInventory)
             {
@@ -168,11 +169,11 @@ internal static class ScrapHelper
         return IsAllowedScrap(item.itemName, dontSellItemNames, matchCase);
     }
 
-    public static bool IsAllowedScrap(ShipInventoryItemData shipInventoryItemData, string[] dontSellItemNames, bool matchCase = false)
+    public static bool IsAllowedScrap(SI_ItemDataProxy SI_ItemDataProxy, string[] dontSellItemNames, bool matchCase = false)
     {
-        if (shipInventoryItemData == null) return false;
+        if (!SI_ItemDataProxy.IsValid()) return false;
 
-        return IsAllowedScrap(shipInventoryItemData.GetItemName(), dontSellItemNames, matchCase);
+        return IsAllowedScrap(SI_ItemDataProxy.ItemName, dontSellItemNames, matchCase);
     }
 
     public static bool IsAllowedScrap(string itemName, string[] dontSellItemNames, bool matchCase = false)
@@ -220,16 +221,16 @@ internal static class ScrapHelper
         return true;
     }
 
-    public static bool IsValidScrap(ShipInventoryItemData shipInventoryItemData, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
+    public static bool IsValidScrap(SI_ItemDataProxy SI_ItemDataProxy, bool onlyAllowedScrap, bool includeScrapWorthZero = false)
     {
-        if (shipInventoryItemData == null) return false;
+        if (!SI_ItemDataProxy.IsValid()) return false;
 
-        if (!includeScrapWorthZero && !ConfigManager.SellScrapWorthZero.Value && shipInventoryItemData.ScrapValue <= 0)
+        if (!includeScrapWorthZero && !ConfigManager.SellScrapWorthZero.Value && SI_ItemDataProxy.ScrapValue <= 0)
         {
             return false;
         }
 
-        if (onlyAllowedScrap && !IsAllowedScrap(shipInventoryItemData, ConfigManager.DontSellListArray))
+        if (onlyAllowedScrap && !IsAllowedScrap(SI_ItemDataProxy, ConfigManager.DontSellListArray))
         {
             return false;
         }

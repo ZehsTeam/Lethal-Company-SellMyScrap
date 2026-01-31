@@ -110,7 +110,7 @@ internal static class SellManager
 
         if (ShipInventoryProxy.Enabled && ScrapToSell.ShipInventoryItems.Length > 0)
         {
-            ShipInventoryProxy.SpawnItemsOnServer(ScrapToSell.ShipInventoryItems);
+            ShipInventoryProxy.SpawnItems_Server(ScrapToSell.ShipInventoryItems);
 
             yield return new WaitUntil(() => !ShipInventoryProxy.IsSpawning);
 
@@ -121,14 +121,18 @@ internal static class SellManager
             }
             else if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Failed)
             {
+                ShipInventoryProxy.ClearSpawnedGrabbableObjectsCache();
                 HUDManager.Instance.DisplayTip("SellMyScrap", "Failed to spawn items from ShipInventory!", isWarning: true);
                 yield break;
             }
-            else if (ShipInventoryProxy.SpawnItemsStatus == SpawnItemsStatus.Busy)
-            {
-                HUDManager.Instance.DisplayTip("SellMyScrap", "Failed to spawn items from ShipInventory! Chute is busy.", isWarning: true);
-                yield break;
-            }
+        }
+
+        if (grabbableObjects.Count == 0)
+        {
+            Logger.LogError($"Something went wrong when selling! No items found.");
+            HUDManager.Instance?.DisplayTip("SellMyScrap", "Something went wrong! Not items found", isWarning: true);
+            ScrapToSell = null;
+            yield break;
         }
 
         // Try to show a scrap eater if the ship is not leaving.

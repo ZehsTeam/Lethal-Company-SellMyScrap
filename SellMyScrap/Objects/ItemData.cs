@@ -1,4 +1,5 @@
 ﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
 
 namespace com.github.zehsteam.SellMyScrap.Objects;
 
@@ -14,7 +15,7 @@ public enum ItemLocation
 public class ItemData
 {
     public GrabbableObject GrabbableObject { get; set; }
-    public ShipInventoryItemData ShipInventoryItemData { get; set; }
+    public SI_ItemDataProxy SI_ItemDataProxy { get; set; }
 
     public ItemLocation ItemLocation { get; set; }
     public string ItemName => GetItemName();
@@ -26,9 +27,9 @@ public class ItemData
         ItemLocation = itemLocation;
     }
 
-    public ItemData(ShipInventoryItemData shipInventoryItemData, ItemLocation itemLocation)
+    public ItemData(SI_ItemDataProxy si_ItemDataProxy, ItemLocation itemLocation)
     {
-        ShipInventoryItemData = shipInventoryItemData;
+        SI_ItemDataProxy = si_ItemDataProxy;
         ItemLocation = itemLocation;
     }
 
@@ -39,12 +40,12 @@ public class ItemData
             return GrabbableObject.itemProperties.itemName;
         }
 
-        if (ShipInventoryProxy.Enabled && ShipInventoryItemData != null)
+        if (ShipInventoryProxy.Enabled && SI_ItemDataProxy.IsValid())
         {
-            return ShipInventoryItemData.GetItemName();
+            return SI_ItemDataProxy.ItemName;
         }
 
-        return string.Empty;
+        return "Unknown Item";
     }
 
     private int GetScrapValue()
@@ -54,9 +55,9 @@ public class ItemData
             return GrabbableObject.scrapValue;
         }
 
-        if (ShipInventoryProxy.Enabled && ShipInventoryItemData != null)
+        if (ShipInventoryProxy.Enabled && SI_ItemDataProxy.IsValid())
         {
-            return ShipInventoryItemData.ScrapValue;
+            return SI_ItemDataProxy.ScrapValue;
         }
 
         return 0;

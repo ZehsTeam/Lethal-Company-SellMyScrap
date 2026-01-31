@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using System;
 using System.Collections.Generic;
@@ -73,7 +73,7 @@ public class ScrapToSell : INetworkSerializable
 
     public NetworkObjectReference[] ShipNetworkObjectReferences = [];
     public NetworkObjectReference[] VehicleNetworkObjectReferences = [];
-    public ShipInventoryItemData[] ShipInventoryItems = [];
+    public SI_ItemDataProxy[] ShipInventoryItems = [];
 
     private List<ItemData> _itemDataList = [];
     private bool _setItemDataList;
@@ -89,7 +89,7 @@ public class ScrapToSell : INetworkSerializable
         ItemDataList = items;
         ShipGrabbableObjects = items.Where(x => x.GrabbableObject != null && x.ItemLocation == ItemLocation.Ship).Select(x => x.GrabbableObject).ToList();
         VehicleGrabbableObjects = items.Where(x => x.GrabbableObject != null && x.ItemLocation == ItemLocation.Vehicle).Select(x => x.GrabbableObject).ToList();
-        ShipInventoryItems = items.Where(x => x.ShipInventoryItemData != null).Select(x => x.ShipInventoryItemData).ToArray();
+        ShipInventoryItems = items.Where(x => x.SI_ItemDataProxy.IsValid()).Select(x => x.SI_ItemDataProxy).ToArray();
 
         SetShipNetworkObjectReferences();
         SetVehicleNetworkObjectReferences();

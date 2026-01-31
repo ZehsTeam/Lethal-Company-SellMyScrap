@@ -3,6 +3,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-SellMyScrap-brightgreen?style=for-the-badge&logo=GitHub)](https://github.com/ZehsTeam/Lethal-Company-SellMyScrap)
 [![Thunderstore Version](https://img.shields.io/thunderstore/v/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
 [![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Zehs/SellMyScrap?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Zehs/SellMyScrap)
+[![Ko-fi](https://img.shields.io/badge/Donate-F16061.svg?style=for-the-badge&logo=ko-fi&logoColor=white&label=Ko-fi)](https://ko-fi.com/zehsteam)
 
 **Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +**
 
@@ -175,7 +176,7 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 
 ## Want more Scrap Eaters?
 
-- [GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*
+- ~~[GiantScrapEaters](https://thunderstore.io/c/lethal-company/p/XuXiaolan/GiantScrapEaters/) - *Adds an additional scrap eater.*~~ (Not working anymore)
 - [BigEyes](https://thunderstore.io/c/lethal-company/p/Wexop/BigEyes/) - *Adds an additional scrap eater.*
 
 ## Developer Contact
@@ -191,7 +192,9 @@ If you use the command flag `-inv` when writing sell commands, you can make the 
 
 https://solo.to/crithaxxog
 
-[<img src="https://i.imgur.com/duJZQTS.png" width="200px">](https://ko-fi.com/zehsteam)
+<a href="https://ko-fi.com/zehsteam" target="_blank">
+<img src="https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_dark.png" alt="Ko-Fi" width="200px"/>
+</a>
 
 ## Screenshots
 
