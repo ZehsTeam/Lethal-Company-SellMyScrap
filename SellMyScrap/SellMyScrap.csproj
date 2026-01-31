@@ -10,7 +10,7 @@
     <Version>1.14.4</Version>                                                <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
     <Description_>Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
-    <Copyright>Copyright © 2025 Zehs</Copyright>
+    <Copyright>Copyright © 2026 Zehs</Copyright>
     
     <RootNamespace>com.github.zehsteam.$(MSBuildProjectName)</RootNamespace>
     
