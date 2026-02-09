@@ -68,6 +68,7 @@ internal static class ConfigManager
     public static ConfigEntry<int> PsychoSpawnWeight { get; private set; }
     public static ConfigEntry<int> ZombiesSpawnWeight { get; private set; }
     public static ConfigEntry<int> WolfySpawnWeight { get; private set; }
+    public static ConfigEntry<int> GlitchSpawnWeight { get; private set; }
 
     public static void Initialize(ConfigFile configFile)
     {
@@ -118,6 +119,7 @@ internal static class ConfigManager
         PsychoSpawnWeight =     ConfigHelper.Bind("Scrap Eater", "PsychoSpawnWeight",     defaultValue: 1, requiresRestart: false, "The spawn chance weight Psycho will spawn?! (scrap eater)",      new AcceptableValueRange<int>(0, 100));
         ZombiesSpawnWeight =    ConfigHelper.Bind("Scrap Eater", "ZombiesSpawnWeight",    defaultValue: 1, requiresRestart: false, "The spawn chance weight Zombies will spawn?! (scrap eater)",     new AcceptableValueRange<int>(0, 100));
         WolfySpawnWeight =      ConfigHelper.Bind("Scrap Eater", "WolfySpawnWeight",      defaultValue: 1, requiresRestart: false, "The spawn chance weight Wolfy will spawn?! (scrap eater)",       new AcceptableValueRange<int>(0, 100));
+        GlitchSpawnWeight =     ConfigHelper.Bind("Scrap Eater", "GlitchSpawnWeight",     defaultValue: 1, requiresRestart: false, "The spawn chance weight Glitch will spawn?! (scrap eater)",      new AcceptableValueRange<int>(0, 100));
     }
 
     private static string GetPrioritySellListDescription()

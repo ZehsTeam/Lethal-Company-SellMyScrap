@@ -18,6 +18,7 @@ internal static class Assets
     public static GameObject PsychoScrapEaterPrefab { get; private set; }
     public static GameObject ZombiesScrapEaterPrefab { get; private set; }
     public static GameObject WolfyScrapEaterPrefab { get; private set; }
+    public static GameObject GlitchScrapEaterPrefab { get; private set; }
 
     // AudioClips
     public static AudioClip BrainRotIntroSpeechSFX { get; private set; }
@@ -58,6 +59,7 @@ internal static class Assets
         PsychoScrapEaterPrefab = LoadAsset<GameObject>("PsychoScrapEater", assetBundle);
         ZombiesScrapEaterPrefab = LoadAsset<GameObject>("ZombiesScrapEater", assetBundle);
         WolfyScrapEaterPrefab = LoadAsset<GameObject>("WolfyScrapEater", assetBundle);
+        GlitchScrapEaterPrefab = LoadAsset<GameObject>("GlitchScrapEater", assetBundle);
 
         // AudioClips
         BrainRotIntroSpeechSFX = LoadAsset<AudioClip>("BrainRotIntroSpeechSFX", assetBundle);

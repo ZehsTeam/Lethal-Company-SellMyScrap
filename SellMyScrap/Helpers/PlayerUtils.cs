@@ -154,6 +154,11 @@ internal static class PlayerUtils
         return HasPlayer(GetMagorokuInfo().Item1, GetMagorokuInfo().Item2);
     }
 
+    public static bool HasPlayerLunxara()
+    {
+        return HasPlayer(GetLunxaraInfo().Item1, GetMagorokuInfo().Item2);
+    }
+
     // PsychoHypnotic
     public static bool IsLocalPlayerPsychoHypnotic()
     {
@@ -173,6 +178,11 @@ internal static class PlayerUtils
     private static (string, ulong) GetPsychoHypnoticInfo()
     {
         return ("PsychoHypnotic", 76561197970440803);
+    }
+
+    private static (string, ulong) GetLunxaraInfo()
+    {
+        return ("Lunxara", 76561198086325047);
     }
     #endregion
 }

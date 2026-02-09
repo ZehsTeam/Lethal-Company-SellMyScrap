@@ -69,7 +69,7 @@ internal static class DepositItemsDeskPatch
 
     private static int GetRandomAudioClipIndex()
     {
-        if (Utils.RandomPercent(ConfigManager.RareVoiceLineChance.Value))
+        if (Utils.RollPercentChance(ConfigManager.RareVoiceLineChance.Value))
         {
             return Random.Range(0, DepositItemsDeskHelper.Instance.rareMicrophoneAudios.Length) + DepositItemsDeskHelper.Instance.microphoneAudios.Length;
         }

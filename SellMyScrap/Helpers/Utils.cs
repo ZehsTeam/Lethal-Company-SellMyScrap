@@ -44,7 +44,7 @@ internal static class Utils
         return CreateConfigFile(plugin, path, name, saveOnInit);
     }
 
-    public static bool RandomPercent(float percent)
+    public static bool RollPercentChance(float percent)
     {
         if (percent <= 0f) return false;
         if (percent >= 100f) return true;

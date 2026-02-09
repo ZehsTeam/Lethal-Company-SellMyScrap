@@ -41,13 +41,16 @@ public static class ScrapEaterManager
             new ScrapEater(Assets.WolfyScrapEaterPrefab, () => {
                 return ConfigManager.WolfySpawnWeight.Value;
             }),
+            new ScrapEater(Assets.GlitchScrapEaterPrefab, () => {
+                return ConfigManager.GlitchSpawnWeight.Value;
+            }),
         ];
     }
 
     internal static bool CanUseScrapEater()
     {
         int spawnChance = ConfigManager.ScrapEaterChance.Value;
-        return Utils.RandomPercent(spawnChance);
+        return Utils.RollPercentChance(spawnChance);
     }
 
     internal static bool HasScrapEater(int index)

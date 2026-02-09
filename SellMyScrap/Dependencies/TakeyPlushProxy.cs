@@ -1,5 +1,5 @@
 ﻿using BepInEx.Bootstrap;
-using com.github.zehsteam.TakeyPlush;
+using com.github.zehsteam.TakeyPlush.Managers;
 using System;
 using System.Runtime.CompilerServices;
 

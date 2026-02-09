@@ -35,7 +35,7 @@ public class PsychoScrapEaterBehaviour : ScrapEaterExtraBehaviour
         if (NetworkUtils.IsServer)
         {
             _takeOffSFXListIndex = Random.Range(0, TakeyOffSFXList.Length);
-            _raid = Utils.RandomPercent(100f);
+            _raid = Utils.RollPercentChance(100f);
 
             SetDataClientRpc(_takeOffSFXListIndex, _raid);
         }

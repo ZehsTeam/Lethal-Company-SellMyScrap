@@ -58,7 +58,7 @@ public class ZombiesScrapEater : ScrapEaterExtraBehaviour
             _beforeEatIndex = Random.Range(0, BeforeEatSFX.Length);
             _voiceLineIndex = Random.Range(0, VoiceLineSFX.Length);
             _hurtSFXIndex = Random.Range(0, HurtSFX.Length);
-            _playDieAnimation = Utils.RandomPercent(90f);
+            _playDieAnimation = Utils.RollPercentChance(90f);
 
             SetDataClientRpc(_variantIndex, _beforeEatIndex, _voiceLineIndex, _hurtSFXIndex, _playDieAnimation);
         }

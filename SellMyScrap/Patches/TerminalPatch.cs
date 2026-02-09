@@ -8,7 +8,16 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(Terminal))]
 internal static class TerminalPatch
 {
+    public static Terminal Instance { get; private set; }
+
     private static bool _hasOverrideTerminalNodes = false;
+
+    [HarmonyPatch(nameof(Terminal.Awake))]
+    [HarmonyPrefix]
+    private static void AwakePatch(Terminal __instance)
+    {
+        Instance = __instance;
+    }
 
     [HarmonyPatch(nameof(Terminal.Start))]
     [HarmonyPrefix]

@@ -131,7 +131,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
             UpdateVariantOnLocalClient();
 
-            _explode = Utils.RandomPercent(50f);
+            _explode = Utils.RollPercentChance(50f);
             _voiceLineIndex = Random.Range(0, voiceLineSFX.Length);
             _beforeEatIndex = Random.Range(0, beforeEatSFX.Length);
 

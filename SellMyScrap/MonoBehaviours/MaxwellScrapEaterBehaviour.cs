@@ -31,11 +31,11 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             if (PlayerUtils.HasPlayerMagoroku() || PlayerUtils.HasPlayerPsychoHypnotic())
             {
-                _isEvil = Utils.RandomPercent(80);
+                _isEvil = Utils.RollPercentChance(80);
             }
             else
             {
-                _isEvil = Utils.RandomPercent(50);
+                _isEvil = Utils.RollPercentChance(50);
             }
             
             _meowIndex = Random.Range(0, meowSFX.Length);
@@ -52,7 +52,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _isEvil = isEvil;
         _meowIndex = meowIndex;
 
-        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RandomPercent(40) || (isEvil && Utils.RandomPercent(80))))
+        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RollPercentChance(40) || (isEvil && Utils.RollPercentChance(80))))
         {
             _isTarget = true;
         }
