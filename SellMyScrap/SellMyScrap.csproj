@@ -7,7 +7,7 @@
     
     <AssemblyName_>com.github.zehsteam.$(MSBuildProjectName)</AssemblyName_> <!-- PLUGIN_GUID -->
     <Product_>$(MSBuildProjectName)</Product_>                               <!-- PLUGIN_NAME -->
-    <Version>1.15.0</Version>                                                <!-- PLUGIN_VERSION -->
+    <Version>1.15.1</Version>                                                <!-- PLUGIN_VERSION -->
     <Authors>Zehs</Authors>
     <Description_>Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +</Description_>
     <Copyright>Copyright © 2026 Zehs</Copyright>
@@ -100,7 +100,7 @@
   <!-- Gale profile names -->
   <PropertyGroup>
     <GaleProfileName>Mod Development</GaleProfileName>
-    <GaleProfileName2>SellMyScrap Test</GaleProfileName2>
+    <GaleProfileName2>Mod Development Beta</GaleProfileName2>
   </PropertyGroup>
 
   <!-- Settings -->
@@ -153,6 +153,14 @@
   <!-- Copy files to older versions plugin folders (v40/v72) -->
   <Target Name="CopyToOlderVersionsPluginFolders" Condition="'$(LCVersion)' == '72'" AfterTargets="NetcodePatchV72">
     <Message Text="Copying to legacy plugin folders (v40/v72)" Importance="high" />
+    
+    <!-- PluginFolder -->
+    <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
+    <Copy Condition="Exists('$(PluginFolder)')" DestinationFolder="$(PluginFolder)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
+
+    <!-- PluginFolder2 -->
+    <Copy Condition="Exists('$(PluginFolder2)')" DestinationFolder="$(PluginFolder2)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
+    <Copy Condition="Exists('$(PluginFolder2)')" DestinationFolder="$(PluginFolder2)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />
 
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetPath)" />
     <Copy Condition="Exists('$(PluginFolderV40)')" DestinationFolder="$(PluginFolderV40)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" SourceFiles="$(TargetDir)\$(AssetBundleFileName)" />

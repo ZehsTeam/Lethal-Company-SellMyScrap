@@ -9,8 +9,6 @@ namespace com.github.zehsteam.SellMyScrap.Patches;
 [HarmonyPatch(typeof(StartOfRound))]
 internal static class StartOfRoundPatch
 {
-    //private static AudioClip _cachedShipIntroSpeechSFX;
-
     [HarmonyPatch(nameof(StartOfRound.Awake))]
     [HarmonyPostfix]
     private static void AwakePatch()
@@ -41,13 +39,13 @@ internal static class StartOfRoundPatch
         gameObject.SetActive(false);
     }
 
-    //[HarmonyPatch(nameof(StartOfRound.firstDayAnimation))]
-    //[HarmonyPrefix]
-    //[HarmonyPriority(Priority.First)]
-    //private static void FirstDayAnimationPatchPrefix()
-    //{
-    //    StartOfRound.Instance.shipIntroSpeechSFX = Content.BrainRotIntroSpeechSFX;
-    //}
+    [HarmonyPatch(nameof(StartOfRound.firstDayAnimation))]
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    private static void FirstDayAnimationPatchPrefix()
+    {
+        StartOfRound.Instance.shipIntroSpeechSFX = Assets.BrainRotIntroSpeechSFX;
+    }
 
     [HarmonyPatch(nameof(StartOfRound.OnClientConnect))]
     [HarmonyPrefix]
