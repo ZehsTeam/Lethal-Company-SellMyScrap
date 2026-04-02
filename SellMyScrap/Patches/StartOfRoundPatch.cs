@@ -1,8 +1,10 @@
 ﻿using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Objects;
 using HarmonyLib;
+using System;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace com.github.zehsteam.SellMyScrap.Patches;
 
@@ -44,7 +46,12 @@ internal static class StartOfRoundPatch
     [HarmonyPriority(Priority.First)]
     private static void FirstDayAnimationPatchPrefix()
     {
-        StartOfRound.Instance.shipIntroSpeechSFX = Assets.BrainRotIntroSpeechSFX;
+        bool isAprilFirst = DateTime.Today.Month == 4 && DateTime.Today.Day == 1;
+        
+        if (isAprilFirst)
+        {
+            StartOfRound.Instance.shipIntroSpeechSFX = Assets.BrainRotIntroSpeechSFX;
+        }
     }
 
     [HarmonyPatch(nameof(StartOfRound.OnClientConnect))]
