@@ -7,7 +7,7 @@ namespace com.github.zehsteam.SellMyScrap.Extensions;
 
 internal static class CollectionExtensions
 {
-    public static IEnumerable<T> StringToCollection<T>(string s, string separator = ",")
+    public static IEnumerable<T> StringToCollection<T>(this string s, string separator = ",")
     {
         if (string.IsNullOrEmpty(s))
             return [];
@@ -19,7 +19,7 @@ internal static class CollectionExtensions
             .Where(x => x is not null);
     }
 
-    public static string CollectionToString<T>(IEnumerable<T> value, string separator = ", ")
+    public static string CollectionToString<T>(this IEnumerable<T> value, string separator = ", ")
     {
         if (value == null || !value.Any())
             return string.Empty;
