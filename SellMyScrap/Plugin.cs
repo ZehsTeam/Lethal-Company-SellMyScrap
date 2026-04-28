@@ -1,7 +1,8 @@
 ﻿using BepInEx;
 using com.github.zehsteam.SellMyScrap.Commands;
-using com.github.zehsteam.SellMyScrap.Dependencies;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigMod;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
+using com.github.zehsteam.SellMyScrap.Dependencies.TakeyPlushMod;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.Patches;
@@ -56,7 +57,7 @@ internal class Plugin : BaseUnityPlugin
         _harmony.PatchAll(typeof(StartMatchLeverPatch));
         _harmony.PatchAll(typeof(InteractTriggerPatch));
         
-        if (ShipInventoryProxy.Enabled)
+        if (ShipInventoryProxy.IsEnabled)
         {
             ShipInventoryProxy.PatchAll(_harmony);
         }

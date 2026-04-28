@@ -1,5 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Objects;
 using com.github.zehsteam.SellMyScrap.Dependencies.Vanilla;
 using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Objects;
@@ -53,7 +53,7 @@ internal static class ScrapHelper
 
     public static List<GrabbableObject> GetScrapFromVehicle(bool onlyAllowedScrap = true, bool includeScrapWorthZero = false)
     {
-        if (VehicleControllerProxy.Enabled)
+        if (VehicleControllerProxy.IsEnabled)
         {
             return GetValidScrap(VehicleControllerProxy.GetGrabbableObjects(), onlyAllowedScrap, includeScrapWorthZero);
         }
@@ -87,7 +87,7 @@ internal static class ScrapHelper
     {
         SI_ItemDataProxy[] shipInventoryItems = [];
 
-        if (ShipInventoryProxy.Enabled)
+        if (ShipInventoryProxy.IsEnabled)
         {
             shipInventoryItems = ShipInventoryProxy.GetItemsAsProxies().Where(x => IsValidScrap(x, onlyAllowedScrap, includeScrapWorthZero)).ToArray();
 

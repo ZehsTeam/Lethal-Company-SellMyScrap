@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
+using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using com.github.zehsteam.SellMyScrap.Objects;
@@ -108,7 +109,7 @@ internal static class SellManager
 
         List<GrabbableObject> grabbableObjects = ScrapToSell.GrabbableObjects;
 
-        if (ShipInventoryProxy.Enabled && ScrapToSell.ShipInventoryItems.Length > 0)
+        if (ShipInventoryProxy.IsEnabled && ScrapToSell.ShipInventoryItems.Length > 0)
         {
             ShipInventoryProxy.SpawnItems_Server(ScrapToSell.ShipInventoryItems);
 
@@ -158,7 +159,7 @@ internal static class SellManager
         }
 
         DepositItemsDeskHelper.PlaceItemsOnCounter(grabbableObjects);
-        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc(NetworkUtils.GetNetworkObjectReferences(grabbableObjects));
+        PluginNetworkBehaviour.Instance.PlaceItemsOnCounterClientRpc([.. NetworkObjectExtensions.GetNetworkObjectReferences(grabbableObjects)]);
         yield return new WaitForSeconds(0.5f);
         DepositItemsDeskHelper.SellItems_Server();
 

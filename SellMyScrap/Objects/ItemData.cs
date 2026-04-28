@@ -1,5 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Objects;
 
 namespace com.github.zehsteam.SellMyScrap.Objects;
 
@@ -40,7 +40,7 @@ public class ItemData
             return GrabbableObject.itemProperties.itemName;
         }
 
-        if (ShipInventoryProxy.Enabled && SI_ItemDataProxy.IsValid())
+        if (ShipInventoryProxy.IsEnabled && SI_ItemDataProxy.IsValid())
         {
             return SI_ItemDataProxy.ItemName;
         }
@@ -55,7 +55,7 @@ public class ItemData
             return GrabbableObject.scrapValue;
         }
 
-        if (ShipInventoryProxy.Enabled && SI_ItemDataProxy.IsValid())
+        if (ShipInventoryProxy.IsEnabled && SI_ItemDataProxy.IsValid())
         {
             return SI_ItemDataProxy.ScrapValue;
         }

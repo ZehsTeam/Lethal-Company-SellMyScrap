@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Objects;
 using System.Text;
@@ -34,7 +34,7 @@ internal class ViewScrapCommand : Command
 
     private bool OnlyUseShipInventory()
     {
-        if (!ShipInventoryProxy.Enabled) return false;
+        if (!ShipInventoryProxy.IsEnabled) return false;
 
         if (HasFlag("inv")) return true;
         if (HasFlag("inventory")) return true;

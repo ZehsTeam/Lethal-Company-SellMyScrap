@@ -7,14 +7,21 @@ internal class CoroutineRunner : MonoBehaviour
 {
     public static CoroutineRunner Instance { get; private set; }
 
-    public static void Spawn()
+    public static CoroutineRunner Spawn()
     {
         if (Instance != null)
         {
-            return;
+            return Instance;
         }
 
-        new GameObject($"{MyPluginInfo.PLUGIN_NAME} {nameof(CoroutineRunner)}", [typeof(CoroutineRunner)]);
+        var gameObject = new GameObject($"{MyPluginInfo.PLUGIN_NAME} {nameof(CoroutineRunner)}", [typeof(CoroutineRunner)])
+        {
+            hideFlags = HideFlags.HideAndDontSave
+        };
+
+        DontDestroyOnLoad(gameObject);
+
+        return gameObject.GetComponent<CoroutineRunner>();
     }
 
     private void Awake()
@@ -26,32 +33,25 @@ internal class CoroutineRunner : MonoBehaviour
         }
 
         Instance = this;
-
-        hideFlags = HideFlags.HideAndDontSave;
-        DontDestroyOnLoad(this);
     }
 
     public static Coroutine Start(IEnumerator routine)
     {
         if (Instance == null)
-            Spawn();
+        {
+            return Spawn()?.StartCoroutine(routine) ?? null;
+        }
 
         return Instance?.StartCoroutine(routine) ?? null;
     }
 
     public static void Stop(IEnumerator routine)
     {
-        if (Instance == null)
-            return;
-
-        Instance.StopCoroutine(routine);
+        Instance?.StopCoroutine(routine);
     }
 
     public static void Stop(Coroutine routine)
     {
-        if (Instance == null)
-            return;
-
-        Instance.StopCoroutine(routine);
+        Instance?.StopCoroutine(routine);
     }
 }

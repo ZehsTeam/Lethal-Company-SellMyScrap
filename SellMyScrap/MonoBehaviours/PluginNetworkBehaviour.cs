@@ -1,9 +1,11 @@
 ﻿using com.github.zehsteam.SellMyScrap.Data;
+using com.github.zehsteam.SellMyScrap.Extensions;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.Objects;
 using com.github.zehsteam.SellMyScrap.Patches;
 using GameNetcodeStuff;
+using System.Linq;
 using Unity.Netcode;
 
 namespace com.github.zehsteam.SellMyScrap.MonoBehaviours;
@@ -94,7 +96,7 @@ internal class PluginNetworkBehaviour : NetworkBehaviour
     {
         if (NetworkUtils.IsServer) return;
 
-        DepositItemsDeskHelper.PlaceItemsOnCounter(NetworkUtils.GetGrabbableObjects(networkObjectReferences));
+        DepositItemsDeskHelper.PlaceItemsOnCounter([.. NetworkObjectExtensions.GetNetworkBehaviours<GrabbableObject>(networkObjectReferences)]);
     }
 
     [ClientRpc]

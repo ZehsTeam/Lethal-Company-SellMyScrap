@@ -1,0 +1,47 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "Zehs"
+name = "SellMyScrap"
+description = "[v40/v81] Adds a few terminal commands to sell your scrap from the ship or cruiser. Highly Configurable. Compatible with the ShipInventoryUpdated mod. SellFromTerminal +"
+websiteUrl = "https://github.com/ZehsTeam/Lethal-Company-SellMyScrap"
+containsNsfwContent = false
+
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2305"
+Evaisa-FixPluginTypesSerialization = "1.1.4"
+
+[build]
+icon = "./icon.png"
+readme = "../../README.md"
+outdir = "./Packages"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "/"
+
+[[build.copy]]
+source = "../../LICENSE.txt"
+target = "/"
+
+[[build.copy]]
+source = "../../SellMyScrap/bin/Release/v73+/netstandard2.1/com.github.zehsteam.SellMyScrap.dll"
+target = "BepInEx/plugins/"
+
+[[build.copy]]
+source = "../../SellMyScrap/bin/Release/v73+/netstandard2.1/com.github.zehsteam.SellMyScrap.xml"
+target = "BepInEx/plugins/"
+
+[[build.copy]]
+source = "../../SellMyScrap/bin/Release/v73+/netstandard2.1/sellmyscrap_assets"
+target = "BepInEx/plugins/"
+
+# v40-v72
+[[build.copy]]
+source = "../../SellMyScrap/bin/Release/v40-v72/netstandard2.1/com.github.zehsteam.SellMyScrap.v40-v72.dll"
+target = "BepInEx/plugins/"
+
+[[build.copy]]
+source = "../../SellMyScrap/bin/Release/v40-v72/netstandard2.1/com.github.zehsteam.SellMyScrap.v40-v72.xml"
+target = "BepInEx/plugins/"

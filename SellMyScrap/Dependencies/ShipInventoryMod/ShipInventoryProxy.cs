@@ -1,7 +1,7 @@
 ﻿using BepInEx.Bootstrap;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Extensions;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
-using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Extensions;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Objects;
+using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Patches;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using com.github.zehsteam.SellMyScrap.MonoBehaviours;
 using HarmonyLib;
@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using SI_ItemData = ShipInventoryUpdated.Objects.ItemData;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy;
+namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
 
 internal enum SpawnItemsStatus
 {
@@ -28,16 +28,8 @@ internal enum SpawnItemsStatus
 internal class ShipInventoryProxy
 {
     public const string PLUGIN_GUID = ShipInventoryUpdated.MyPluginInfo.PLUGIN_GUID;
-    public static bool Enabled
-    {
-        get
-        {
-            _enabled ??= Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
-            return _enabled.Value;
-        }
-    }
-
-    private static bool? _enabled;
+    public static bool IsEnabled { get { _isEnabled ??= Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID); return _isEnabled ?? false; } }
+    private static bool? _isEnabled;
 
     public static bool IsSpawning => SpawnItemsStatus == SpawnItemsStatus.Spawning;
 

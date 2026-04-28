@@ -8,6 +8,10 @@ namespace com.github.zehsteam.SellMyScrap;
 
 internal static class Assets
 {
+    public static readonly string AssetBundleFileName = "sellmyscrap_assets";
+    public static AssetBundle AssetBundle { get; private set; }
+    public static bool IsLoaded { get; private set; }
+
     // Prefabs
     public static GameObject NetworkHandlerPrefab { get; private set; }
     public static GameObject OctolarScrapEaterPrefab { get; private set; }
@@ -26,27 +30,28 @@ internal static class Assets
     public static void Load()
     {
         string pluginFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        string assetBundleFileName = "sellmyscrap_assets";
-        string assetBundlePath = Path.Combine(pluginFolder, assetBundleFileName);
+        string assetBundlePath = Path.Combine(pluginFolder, AssetBundleFileName);
 
         if (!File.Exists(assetBundlePath))
         {
-            Logger.LogFatal($"Failed to load assets. AssetBundle file could not be found at path \"{assetBundlePath}\". Make sure the \"{assetBundleFileName}\" file is in the same folder as the mod's DLL file.");
+            Logger.LogFatal($"Failed to load assets. AssetBundle file could not be found at path \"{assetBundlePath}\". Make sure the \"{AssetBundleFileName}\" file is in the same folder as the mod's DLL file.");
             return;
         }
 
-        AssetBundle assetBundle = AssetBundle.LoadFromFile(assetBundlePath);
+        AssetBundle = AssetBundle.LoadFromFile(assetBundlePath);
 
-        if (assetBundle == null)
+        if (AssetBundle == null)
         {
             Logger.LogFatal($"Failed to load assets. AssetBundle is null.");
             return;
         }
 
-        HandleAssetBundleLoaded(assetBundle);
+        OnAssetBundleLoaded(AssetBundle);
+
+        IsLoaded = true;
     }
 
-    private static void HandleAssetBundleLoaded(AssetBundle assetBundle)
+    private static void OnAssetBundleLoaded(AssetBundle assetBundle)
     {
         // Prefabs
         NetworkHandlerPrefab = LoadAsset<GameObject>("NetworkHandler", assetBundle);

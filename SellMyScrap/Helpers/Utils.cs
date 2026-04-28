@@ -51,21 +51,6 @@ internal static class Utils
         return Random.value * 100f <= percent;
     }
 
-    public static bool ArrayContains(string[] array, string value, bool matchCase = false)
-    {
-        StringComparison comparisonType = matchCase ? StringComparison.CurrentCulture : StringComparison.OrdinalIgnoreCase;
-
-        foreach (var item in array)
-        {
-            if (item.Equals(value, comparisonType))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static int GetOvertimeBonus(int value)
     {
         int profitQuota = TimeOfDay.Instance.profitQuota;
@@ -92,7 +77,7 @@ internal static class Utils
             Object.Instantiate(StartOfRound.Instance.explosionPrefab, explosionPosition, Quaternion.Euler(-90f, 0f, 0f), holder).SetActive(true);
         }
 
-        float distanceFromExplosion = Vector3.Distance(PlayerUtils.GetLocalPlayerScript().transform.position, explosionPosition);
+        float distanceFromExplosion = Vector3.Distance(PlayerUtils.LocalPlayerScript.transform.position, explosionPosition);
 
         if (distanceFromExplosion < 14f)
         {

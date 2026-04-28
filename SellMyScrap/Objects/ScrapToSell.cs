@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Objects;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using System;
 using System.Collections.Generic;

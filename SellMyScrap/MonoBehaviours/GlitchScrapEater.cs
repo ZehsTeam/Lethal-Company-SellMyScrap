@@ -33,7 +33,7 @@ public class GlitchScrapEater : ScrapEaterExtraBehaviour
     {
         if (NetworkUtils.IsServer)
         {
-            if (PlayerUtils.HasPlayerLunxara())
+            if (PlayerIdentityUtils.HasPlayer(PlayerIdentityUtils.LunxaraIdentity))
             {
                 _playLunxaraSFX = Utils.RollPercentChance(50);
             }

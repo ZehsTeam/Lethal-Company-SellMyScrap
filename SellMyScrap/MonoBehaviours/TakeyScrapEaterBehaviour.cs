@@ -1,4 +1,4 @@
-﻿using com.github.zehsteam.SellMyScrap.Dependencies;
+﻿using com.github.zehsteam.SellMyScrap.Dependencies.TakeyPlushMod;
 using com.github.zehsteam.SellMyScrap.Helpers;
 using System;
 using System.Collections;
@@ -388,7 +388,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
         {
             yield return new WaitForSeconds(PlayOneShotSFX(voiceLineSFX, _voiceLineIndex));
 
-            if (_voiceLineIndex == 2 && PlayerUtils.IsLocalPlayerPsychoHypnotic())
+            if (_voiceLineIndex == 2 && PlayerIdentityUtils.IsLocalPlayer(PlayerIdentityUtils.PsychoHypnoticIdentity))
             {
                 HUDManager.Instance.DisplayTip("SellMyScrap", "This is NOT a reference to The Wolf of Wall Street");
             }
@@ -440,7 +440,7 @@ public class TakeyScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         if (!IsVariantType(TakeyVariantType.DinkDonk)) return;
 
-        if (TakeyPlushProxy.Enabled)
+        if (TakeyPlushProxy.IsEnabled)
         {
             TakeyPlushProxy.TriggerDinkDonkScrapEaterSpawnedEvent();
         }

@@ -29,7 +29,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
     {
         if (NetworkUtils.IsServer)
         {
-            if (PlayerUtils.HasPlayerMagoroku() || PlayerUtils.HasPlayerPsychoHypnotic())
+            if (PlayerIdentityUtils.HasPlayerAny([PlayerIdentityUtils.MagorokuIdentity, PlayerIdentityUtils.PsychoHypnoticIdentity]))
             {
                 _isEvil = Utils.RollPercentChance(80);
             }
@@ -52,7 +52,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
         _isEvil = isEvil;
         _meowIndex = meowIndex;
 
-        if (PlayerUtils.IsLocalPlayerMagoroku() && (Utils.RollPercentChance(40) || (isEvil && Utils.RollPercentChance(80))))
+        if (PlayerIdentityUtils.IsLocalPlayer(PlayerIdentityUtils.MagorokuIdentity) && (Utils.RollPercentChance(40) || (isEvil && Utils.RollPercentChance(80))))
         {
             _isTarget = true;
         }
@@ -115,7 +115,7 @@ public class MaxwellScrapEaterBehaviour : ScrapEaterExtraBehaviour
 
     private IEnumerator MoveLocalPlayerToMaxwell(float duration)
     {
-        PlayerControllerB localPlayerScript = PlayerUtils.GetLocalPlayerScript();
+        PlayerControllerB localPlayerScript = PlayerUtils.LocalPlayerScript;
 
         _isTarget = true;
         PlayerUtils.SetLocalPlayerMovementEnabled(false);

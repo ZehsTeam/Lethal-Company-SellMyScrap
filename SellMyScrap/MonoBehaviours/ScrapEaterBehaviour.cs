@@ -1,4 +1,5 @@
-﻿using com.github.zehsteam.SellMyScrap.Helpers;
+﻿using com.github.zehsteam.SellMyScrap.Extensions;
+using com.github.zehsteam.SellMyScrap.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -29,7 +30,7 @@ public abstract class ScrapEaterBehaviour : NetworkBehaviour
         {
             if (GameNetworkManager.Instance.connectedPlayers > 1)
             {
-                SetTargetScrapClientRpc(NetworkUtils.GetNetworkObjectReferences(targetScrap));
+                SetTargetScrapClientRpc([.. NetworkObjectExtensions.GetNetworkObjectReferences(targetScrap)]);
             }
             else
             {
@@ -55,7 +56,7 @@ public abstract class ScrapEaterBehaviour : NetworkBehaviour
             return;
         }
 
-        targetScrap = NetworkUtils.GetGrabbableObjects(networkObjectReferences);
+        targetScrap = [.. NetworkObjectExtensions.GetNetworkBehaviours<GrabbableObject>(networkObjectReferences)];
         targetScrap.ForEach(item => item.grabbable = false);
 
         ReceivedTargetScrapServerRpc();

@@ -1,63 +1,120 @@
-﻿using GameNetcodeStuff;
-using Steamworks;
+﻿using com.github.zehsteam.SellMyScrap.MonoBehaviours;
+using GameNetcodeStuff;
+using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace com.github.zehsteam.SellMyScrap.Helpers;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 internal static class PlayerUtils
 {
-    private static float _previousPlayerMovementSpeed;
-    private static float _previousPlayerJumpForce;
+    public static PlayerControllerB LocalPlayerScript => GameNetworkManager.Instance?.localPlayerController ?? null;
 
-    public static PlayerControllerB GetLocalPlayerScript()
-    {
-        if (GameNetworkManager.Instance == null)
-        {
-            return null;
-        }
-
-        return GameNetworkManager.Instance.localPlayerController;
-    }
+    public static PlayerControllerB[] AllPlayerScripts => StartOfRound.Instance?.allPlayerScripts ?? [];
+    public static PlayerControllerB[] ConnectedPlayerScripts => [.. AllPlayerScripts.Where(IsConnected)];
+    public static PlayerControllerB[] AlivePlayerScripts => [.. ConnectedPlayerScripts.Where(x => !x.isPlayerDead)];
+    public static PlayerControllerB[] DeadPlayerScripts => [.. ConnectedPlayerScripts.Where(x => x.isPlayerDead)];
 
     public static bool IsLocalPlayer(PlayerControllerB playerScript)
     {
-        return playerScript == GetLocalPlayerScript();
+        if (playerScript == null)
+            return false;
+
+        return playerScript == LocalPlayerScript;
     }
 
+    public static bool IsConnected(PlayerControllerB playerScript)
+    {
+        if (playerScript == null)
+            return false;
+
+        return playerScript.isPlayerControlled || playerScript.isPlayerDead;
+    }
+
+    #region Get by
+    // Client ID
     public static PlayerControllerB GetPlayerScriptByClientId(ulong clientId)
     {
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
-        {
-            if (playerScript.actualClientId == clientId)
-            {
-                return playerScript;
-            }
-        }
-
-        return null;
+        return ConnectedPlayerScripts.FirstOrDefault(playerScript => playerScript.actualClientId == clientId);
     }
 
-    public static bool AreAllPlayersDead()
+    public static bool TryGetPlayerScriptByClientId(ulong clientId, out PlayerControllerB playerScript)
     {
-        bool result = true;
-
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
-        {
-            if (!playerScript.isPlayerDead)
-            {
-                result = false;
-            }
-        }
-
-        return result;
+        playerScript = GetPlayerScriptByClientId(clientId);
+        return playerScript != null;
     }
+
+    // Player Index
+    public static PlayerControllerB GetPlayerScriptByPlayerId(int playerId)
+    {
+        if (playerId < 0 || playerId > ConnectedPlayerScripts.Length - 1)
+            return null;
+
+        return ConnectedPlayerScripts[playerId];
+    }
+
+    public static bool TryGetPlayerScriptByPlayerId(int playerId, out PlayerControllerB playerScript)
+    {
+        playerScript = GetPlayerScriptByPlayerId(playerId);
+        return playerScript != null;
+    }
+
+    // Username
+    public static PlayerControllerB GetPlayerScriptByUsername(string username)
+    {
+        PlayerControllerB[] playerScripts = [.. ConnectedPlayerScripts.OrderBy(x => x.playerUsername.Length)];
+
+        PlayerControllerB targetPlayerScript = playerScripts.FirstOrDefault(x => x.playerUsername.Equals(username, StringComparison.OrdinalIgnoreCase));
+        targetPlayerScript ??= playerScripts.FirstOrDefault(x => x.playerUsername.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+        targetPlayerScript ??= playerScripts.FirstOrDefault(x => x.playerUsername.Contains(username, StringComparison.OrdinalIgnoreCase));
+        return targetPlayerScript;
+    }
+
+    public static bool TryGetPlayerScriptByUsername(string username, out PlayerControllerB playerScript)
+    {
+        playerScript = GetPlayerScriptByUsername(username);
+        return playerScript != null;
+    }
+    #endregion
+
+    // Random
+    public static PlayerControllerB GetRandomPlayerScript(PlayerControllerB[] playerScripts, bool excludeLocal = false)
+    {
+        if (playerScripts == null || playerScripts.Length == 0)
+            return null;
+
+        PlayerControllerB[] filteredPlayerScripts = [.. playerScripts.Where(playerScript =>
+        {
+            if (!excludeLocal)
+                return true;
+
+            return !IsLocalPlayer(playerScript);
+        })];
+
+        if (filteredPlayerScripts.Length == 0)
+            return null;
+
+        return filteredPlayerScripts[Random.Range(0, filteredPlayerScripts.Length)];
+    }
+
+    public static bool TryGetRandomPlayerScript(PlayerControllerB[] playerScripts, out PlayerControllerB playerScript, bool excludeLocal = false)
+    {
+        playerScript = GetRandomPlayerScript(playerScripts, excludeLocal);
+        return playerScript != null;
+    }
+
+
+
+    private static float _previousPlayerMovementSpeed;
+    private static float _previousPlayerJumpForce;
 
     public static void SetLocalPlayerMovementEnabled(bool enabled)
     {
-        PlayerControllerB playerScript = GetLocalPlayerScript();
+        if (LocalPlayerScript == null) return;
 
         // Enabled
         if (enabled)
@@ -72,26 +129,25 @@ internal static class PlayerUtils
                 _previousPlayerJumpForce = 13f;
             }
 
-            playerScript.movementSpeed = _previousPlayerMovementSpeed;
-            playerScript.jumpForce = _previousPlayerJumpForce;
+            LocalPlayerScript.movementSpeed = _previousPlayerMovementSpeed;
+            LocalPlayerScript.jumpForce = _previousPlayerJumpForce;
 
             return;
         }
 
         // Disabled
-
-        if (playerScript.movementSpeed > 0f)
+        if (LocalPlayerScript.movementSpeed > 0f)
         {
-            _previousPlayerMovementSpeed = playerScript.movementSpeed;
+            _previousPlayerMovementSpeed = LocalPlayerScript.movementSpeed;
         }
 
-        if (playerScript.jumpForce > 0f)
+        if (LocalPlayerScript.jumpForce > 0f)
         {
-            _previousPlayerJumpForce = playerScript.jumpForce;
+            _previousPlayerJumpForce = LocalPlayerScript.jumpForce;
         }
 
-        playerScript.movementSpeed = 0f;
-        playerScript.jumpForce = 0f;
+        LocalPlayerScript.movementSpeed = 0f;
+        LocalPlayerScript.jumpForce = 0f;
     }
 
     public static void SetLocalPlayerAllowDeathEnabled(bool enabled)
@@ -106,83 +162,16 @@ internal static class PlayerUtils
 
     public static void ReviveDeadPlayersAfterTime(float time)
     {
-        StartOfRound.Instance.StartCoroutine(ReviveDeadPlayersAfterTimeCO(time));
+        CoroutineRunner.Start(ReviveDeadPlayersAfterTime_Coroutine(time));
     }
 
-    private static IEnumerator ReviveDeadPlayersAfterTimeCO(float time)
+    private static IEnumerator ReviveDeadPlayersAfterTime_Coroutine(float delay)
     {
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(delay);
 
-        if (AreAllPlayersDead())
+        if (AlivePlayerScripts.Length == 0)
         {
             StartOfRound.Instance.ReviveDeadPlayers();
         }
     }
-
-    #region Other
-    public static bool IsLocalPlayer(string username, ulong steamId)
-    {
-        return SteamClient.Name == username || SteamClient.SteamId == steamId;
-    }
-
-    public static bool HasPlayer(string username, ulong steamId)
-    {
-        foreach (var playerScript in StartOfRound.Instance.allPlayerScripts)
-        {
-            if (playerScript.playerUsername == username)
-            {
-                return true;
-            }
-
-            if (playerScript.playerSteamId == steamId)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // Magoroku
-    public static bool IsLocalPlayerMagoroku()
-    {
-        return IsLocalPlayer(GetMagorokuInfo().Item1, GetMagorokuInfo().Item2);
-    }
-
-    public static bool HasPlayerMagoroku()
-    {
-        return HasPlayer(GetMagorokuInfo().Item1, GetMagorokuInfo().Item2);
-    }
-
-    public static bool HasPlayerLunxara()
-    {
-        return HasPlayer(GetLunxaraInfo().Item1, GetMagorokuInfo().Item2);
-    }
-
-    // PsychoHypnotic
-    public static bool IsLocalPlayerPsychoHypnotic()
-    {
-        return IsLocalPlayer(GetPsychoHypnoticInfo().Item1, GetPsychoHypnoticInfo().Item2);
-    }
-
-    public static bool HasPlayerPsychoHypnotic()
-    {
-        return HasPlayer(GetPsychoHypnoticInfo().Item1, GetPsychoHypnoticInfo().Item2);
-    }
-
-    private static (string, ulong) GetMagorokuInfo()
-    {
-        return ("Magoroku", 76561197982837475);
-    }
-
-    private static (string, ulong) GetPsychoHypnoticInfo()
-    {
-        return ("PsychoHypnotic", 76561197970440803);
-    }
-
-    private static (string, ulong) GetLunxaraInfo()
-    {
-        return ("Lunxara", 76561198086325047);
-    }
-    #endregion
 }

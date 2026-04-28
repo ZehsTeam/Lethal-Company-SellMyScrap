@@ -5,21 +5,13 @@ using LethalConfig.ConfigItems;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies;
+namespace com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigMod;
 
 internal static class LethalConfigProxy
 {
     public const string PLUGIN_GUID = "ainavt.lc.lethalconfig";
-    public static bool Enabled
-    {
-        get
-        {
-            _enabled ??= Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID);
-            return _enabled.Value;
-        }
-    }
-
-    private static bool? _enabled;
+    public static bool IsEnabled { get { _isEnabled ??= Chainloader.PluginInfos.ContainsKey(PLUGIN_GUID); return _isEnabled ?? false; } }
+    private static bool? _isEnabled;
 
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static void SkipAutoGen()

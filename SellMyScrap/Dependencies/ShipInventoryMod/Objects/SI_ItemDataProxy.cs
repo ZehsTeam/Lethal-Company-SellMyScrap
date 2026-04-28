@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using SI_ItemData = ShipInventoryUpdated.Objects.ItemData;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Objects;
+namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Objects;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [Serializable]

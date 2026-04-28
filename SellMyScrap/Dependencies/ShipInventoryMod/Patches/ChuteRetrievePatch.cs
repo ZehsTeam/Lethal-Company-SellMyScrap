@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.Netcode;
 using SI_ItemData = ShipInventoryUpdated.Objects.ItemData;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Patches;
+namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Patches;
 
 [HarmonyPatch(typeof(ChuteRetrieve))]
 internal static class ChuteRetrievePatch

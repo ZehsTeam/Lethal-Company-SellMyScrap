@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using SI_ItemData = ShipInventoryUpdated.Objects.ItemData;
 
-namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryProxy.Extensions;
+namespace com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod.Extensions;
 
 internal static class SI_ItemDataExtensions
 {
