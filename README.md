@@ -9,7 +9,7 @@
 
 **<ins>Who needs this mod installed for it to work?</ins> Everyone!**
 
-**<ins>This mod works in all game versions from v40 to v73+</ins>**
+**<ins>This mod works in all game versions from v40 to v80</ins>**
 
 **This mod will sell scrap as close to the requested value as possible.**
 
@@ -46,7 +46,7 @@
 - Using the `-se` flag will spawn a random scrap eater.
     - *Usage: `<sell-command> -se`*
 - Using the `-se:<number>` flag will spawn a scrap eater by their index (Starts at 1).
-    - 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo, 6 = Psycho, 7 = Zombies, 8 = Wolfy
+    - 1 = Octolar, 2 = Takey, 3 = Maxwell, 4 = Yippee, 5 = Cookie Fumo, 6 = Psycho, 7 = Zombies, 8 = Wolfy, 9 = Glitch
     - *Usage: `<sell-command> -se:<number>`*
 
 <h4>Additional info for the <code>sell &lt;amount&gt;</code> and <code>sell quota</code> commands.</h4>
@@ -165,6 +165,7 @@ I recommend you use the [LethalConfig](https://thunderstore.io/c/lethal-company/
 | `PsychoSpawnWeight` | `Int32` | `1` | The spawn chance weight [Psycho](https://www.twitch.tv/psychohypnotic) will spawn?! (scrap eater) |
 | `ZombiesSpawnWeight` | `Int32` | `1` | The spawn chance weight [Zombies](https://www.twitch.tv/zombiesatemychannel) will spawn?! (scrap eater) |
 | `WolfySpawnWeight` | `Int32` | `1` | The spawn chance weight [Wolfy](https://www.twitch.tv/wolfsmychocolate) will spawn?! (scrap eater) |
+| `GlitchSpawnWeight` | `Int32` | `1` | The spawn chance weight [Glitch](https://www.twitch.tv/a_glitched_npc) will spawn?! (scrap eater) |
 
 </details>
 
