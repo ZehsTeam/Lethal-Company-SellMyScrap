@@ -9,7 +9,7 @@
 
 **<ins>Who needs this mod installed for it to work?</ins> Everyone!**
 
-**<ins>This mod works in all game versions from v40 to v80</ins>**
+**<ins>This mod works in all game versions from v40 to v81</ins>**
 
 **This mod will sell scrap as close to the requested value as possible.**
 
