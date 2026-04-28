@@ -1,5 +1,6 @@
 ﻿using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Managers;
 using HarmonyLib;
 using System;
 
@@ -78,7 +79,8 @@ internal static class TerminalPatch
     [HarmonyPostfix]
     private static void QuitTerminalPatch()
     {
-        Plugin.HandleTerminalQuit();
+        CommandManager.OnTerminalQuit();
+        SellManager.CancelSellRequest();
     }
 
     [HarmonyPatch(nameof(Terminal.ParsePlayerSentence))]

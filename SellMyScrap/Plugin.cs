@@ -1,16 +1,11 @@
 ﻿using BepInEx;
-using com.github.zehsteam.SellMyScrap.Commands;
 using com.github.zehsteam.SellMyScrap.Dependencies.LethalConfigMod;
 using com.github.zehsteam.SellMyScrap.Dependencies.ShipInventoryMod;
 using com.github.zehsteam.SellMyScrap.Dependencies.TakeyPlushMod;
 using com.github.zehsteam.SellMyScrap.Helpers;
-using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.Patches;
 using com.github.zehsteam.SellMyScrap.ScrapEaters;
 using HarmonyLib;
-using System;
-using System.Reflection;
-using UnityEngine;
 
 namespace com.github.zehsteam.SellMyScrap;
 
@@ -37,6 +32,7 @@ internal class Plugin : BaseUnityPlugin
     #pragma warning restore IDE0051 // Remove unused private members
     {
         SellMyScrap.Logger.Initialize(BepInEx.Logging.Logger.CreateLogSource(MyPluginInfo.PLUGIN_GUID));
+        SellMyScrap.Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
         if (!Utils.IsUnityVersion(TargetUnityVersion))
         {
@@ -45,8 +41,6 @@ internal class Plugin : BaseUnityPlugin
         }
 
         Instance = this;
-        
-        SellMyScrap.Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} has awoken!");
 
         _harmony.PatchAll(typeof(GameNetworkManagerPatch));
         _harmony.PatchAll(typeof(StartOfRoundPatch));
@@ -67,65 +61,6 @@ internal class Plugin : BaseUnityPlugin
         ConfigManager.Initialize(Config);
         ScrapEaterManager.Initialize();
 
-        NetcodePatcherAwake();
-    }
-
-    private void NetcodePatcherAwake()
-    {
-        try
-        {
-            var currentAssembly = Assembly.GetExecutingAssembly();
-            var types = currentAssembly.GetTypes();
-
-            foreach (var type in types)
-            {
-                var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-
-                foreach (var method in methods)
-                {
-                    try
-                    {
-                        // Safely attempt to retrieve custom attributes
-                        var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
-
-                        if (attributes.Length > 0)
-                        {
-                            try
-                            {
-                                // Safely attempt to invoke the method
-                                method.Invoke(null, null);
-                            }
-                            catch (TargetInvocationException ex)
-                            {
-                                // Log and continue if method invocation fails (e.g., due to missing dependencies)
-                                Logger.LogWarning($"Failed to invoke method {method.Name}: {ex.Message}");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // Handle errors when fetching custom attributes, due to missing types or dependencies
-                        Logger.LogWarning($"Error processing method {method.Name} in type {type.Name}: {ex.Message}");
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            // Catch any general exceptions that occur in the process
-            Logger.LogError($"An error occurred in NetcodePatcherAwake: {ex.Message}");
-        }
-    }
-
-    public static void HandleLocalDisconnect()
-    {
-        CommandManager.OnLocalDisconnect();
-        SellManager.CancelSellRequest();
-    }
-
-    public static void HandleTerminalQuit()
-    {
-        CommandManager.OnTerminalQuit();
-        SellManager.CancelSellRequest();
+        NetworkUtils.NetcodePatcherAwake();
     }
 }

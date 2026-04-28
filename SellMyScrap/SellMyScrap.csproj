@@ -28,7 +28,7 @@
       https://nuget.samboy.dev/v3/index.json;
     </RestoreAdditionalProjectSources>
   </PropertyGroup>
-
+  
   <!-- Lethal Company version toggle -->
   <!-- "73" for v73+ -->
   <!-- "72" for v40/v72 -->

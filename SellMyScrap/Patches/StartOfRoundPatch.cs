@@ -1,4 +1,6 @@
-﻿using com.github.zehsteam.SellMyScrap.Helpers;
+﻿using com.github.zehsteam.SellMyScrap.Commands;
+using com.github.zehsteam.SellMyScrap.Helpers;
+using com.github.zehsteam.SellMyScrap.Managers;
 using com.github.zehsteam.SellMyScrap.Objects;
 using HarmonyLib;
 using System;
@@ -68,6 +70,7 @@ internal static class StartOfRoundPatch
     [HarmonyPrefix]
     private static void OnLocalDisconnectPatch()
     {
-        Plugin.HandleLocalDisconnect();
+        CommandManager.OnLocalDisconnect();
+        SellManager.CancelSellRequest();
     }
 }
